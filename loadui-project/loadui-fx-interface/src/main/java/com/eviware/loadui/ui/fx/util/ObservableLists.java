@@ -1,9 +1,13 @@
 package com.eviware.loadui.ui.fx.util;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.WeakHashMap;
 import java.util.concurrent.Callable;
 
 import javafx.application.Platform;
@@ -28,6 +32,7 @@ import com.eviware.loadui.util.ReleasableUtils;
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
+import com.google.common.base.Supplier;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -36,6 +41,8 @@ import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 
 /**
  * Utility class for dealing with JavaFX ObservableLists.
@@ -44,6 +51,17 @@ import com.google.common.collect.Lists;
  */
 public class ObservableLists
 {
+	//Used to create references from key to values, preventing the values from being GCd unless the key has.
+	private static final Multimap<Object, Object> references = Multimaps.newSetMultimap(
+			new WeakHashMap<Object, Collection<Object>>(), new Supplier<Set<Object>>()
+			{
+				@Override
+				public Set<Object> get()
+				{
+					return new HashSet<>();
+				}
+			} );
+
 	/**
 	 * Creates a readonly ObservableList containing all OSGi published services
 	 * for the given Class type. The list is dynamically updated to reflect
@@ -233,6 +251,7 @@ public class ObservableLists
 		}
 
 		list2.addListener( ( ListChangeListener<? super E> )contentListeners.getUnchecked( list1 ) );
+		references.put( list1, list2 );
 	}
 
 	public static <E> void bindSorted( final List<E> list1, ObservableList<? extends E> list2,
@@ -273,6 +292,7 @@ public class ObservableLists
 	public static <E> void unbindContent( List<? super E> list1, ObservableList<E> list2 )
 	{
 		list2.removeListener( ( ListChangeListener<? super E> )contentListeners.getUnchecked( list1 ) );
+		references.remove( list1, list2 );
 	}
 
 	private static final Cache<ObservableList<?>, Releasable> lists = CacheBuilder.newBuilder().weakKeys()
@@ -460,7 +480,9 @@ public class ObservableLists
 		public void release()
 		{
 			for( ObservableList<? extends T> listToRelease : originalLists )
+			{
 				listToRelease.removeListener( this );
+			}
 		}
 	}
 
