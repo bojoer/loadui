@@ -190,6 +190,10 @@ public class CanvasView extends StackPane
 	@FXML
 	private void initialize()
 	{
+		//Hack for setting CSS resources within an OSGi framework
+		String gridUrl = CanvasView.class.getResource( "grid.png" ).toExternalForm();
+		lookup( ".canvas-view" ).setStyle( "-fx-background-image: url('" + gridUrl + "');" );
+
 		Selectable.installDragToSelectArea( this );
 
 		bindContentUnordered( componentLayer.getChildren(), components );

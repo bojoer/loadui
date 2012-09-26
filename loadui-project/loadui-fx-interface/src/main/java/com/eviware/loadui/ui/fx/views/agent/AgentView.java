@@ -43,6 +43,10 @@ public class AgentView extends StackPane
 	@FXML
 	private void initialize()
 	{
+		//Hack for setting CSS resources within an OSGi framework
+		String dotPatternUrl = AgentView.class.getResource( "dot-pattern.png" ).toExternalForm();
+		lookup( ".agent-view" ).setStyle( "-fx-background-image: url('" + dotPatternUrl + "');" );
+
 		onOffSwitch.selectedProperty().bindBidirectional( enabledProperty );
 		onOffSwitch.textProperty().bind(
 				Bindings.when( enabledProperty ).then( Bindings.when( readyProperty ).then( "C" ).otherwise( "D" ) )
