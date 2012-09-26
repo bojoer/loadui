@@ -1,5 +1,6 @@
 package com.eviware.loadui.ui.fx.util;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -191,6 +192,25 @@ public class ObservableLists
 				}
 			} );
 
+	//TODO: Document this with Javadoc!
+	/**
+	 * 
+	 * @param listsToConcat
+	 * @return
+	 */
+
+	@SafeVarargs
+	public static final <T> ObservableList<T> concat( ObservableList<? extends T>... listsToConcat )
+	{
+		List<ObservableList<? extends T>> myList = Arrays.asList( listsToConcat );
+		ConcatenatedListData<T> data = new ConcatenatedListData<T>( myList );
+
+		ObservableList<T> readOnlyList = FXCollections.unmodifiableObservableList( data.list );
+		lists.put( readOnlyList, data );
+
+		return readOnlyList;
+	}
+
 	/**
 	 * Like Bindings.bindContent(), but doesn't take ordering into account. This
 	 * means that list1 can be reordered after binding, and the content will
@@ -200,24 +220,19 @@ public class ObservableLists
 	 * @param list2
 	 */
 	@SuppressWarnings( "unchecked" )
-	public static <E> void bindContentUnordered( List<E> list1, ObservableList<? extends E>... lists2 )
+	public static <E> void bindContentUnordered( List<E> list1, ObservableList<? extends E> list2 )
 	{
 		if( list1 instanceof ObservableList )
 		{
-			//			( ( ObservableList<E> )list1 ).setAll( list2 );
-			( ( ObservableList<E> )list1 ).clear();
-			for( ObservableList<? extends E> l : lists2 )
-				( ( ObservableList<E> )list1 ).addAll( l );
+			( ( ObservableList<E> )list1 ).setAll( list2 );
 		}
 		else
 		{
 			list1.clear();
-			for( ObservableList<? extends E> l : lists2 )
-				list1.addAll( l );
+			list1.addAll( list2 );
 		}
 
-		for( ObservableList<? extends E> l : lists2 )
-			l.addListener( ( ListChangeListener<? super E> )contentListeners.getUnchecked( list1 ) );
+		list2.addListener( ( ListChangeListener<? super E> )contentListeners.getUnchecked( list1 ) );
 	}
 
 	public static <E> void bindSorted( final List<E> list1, ObservableList<? extends E> list2,
@@ -412,6 +427,40 @@ public class ObservableLists
 		public void release()
 		{
 			originalList.removeListener( this );
+		}
+	}
+
+	private static class ConcatenatedListData<T> implements ListChangeListener<T>, Releasable
+	{
+		private final ObservableList<T> list = FXCollections.observableArrayList();
+		private final List<ObservableList<? extends T>> originalLists;
+
+		private ConcatenatedListData( List<ObservableList<? extends T>> originalLists )
+		{
+			this.originalLists = originalLists;
+
+			for( ObservableList<? extends T> listToAdd : originalLists )
+			{
+				listToAdd.addListener( this );
+				list.addAll( listToAdd );
+			}
+		}
+
+		@Override
+		public void onChanged( ListChangeListener.Change<? extends T> change )
+		{
+			while( change.next() )
+			{
+				list.removeAll( change.getRemoved() );
+				list.addAll( change.getAddedSubList() );
+			}
+		}
+
+		@Override
+		public void release()
+		{
+			for( ObservableList<? extends T> listToRelease : originalLists )
+				listToRelease.removeListener( this );
 		}
 	}
 

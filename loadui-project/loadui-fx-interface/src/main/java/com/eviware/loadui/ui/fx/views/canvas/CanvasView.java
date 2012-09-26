@@ -54,7 +54,9 @@ import com.eviware.loadui.ui.fx.api.input.Selectable;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.control.ToolBox;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
+import com.eviware.loadui.ui.fx.util.ObservableLists;
 import com.google.common.base.Function;
+import com.google.common.base.Functions;
 import com.google.common.base.Predicate;
 
 public class CanvasView extends StackPane
@@ -65,8 +67,25 @@ public class CanvasView extends StackPane
 	private static final int GRID_SIZE = 36;
 	private static final double PADDING = 100;
 	private final UninstallCanvasObjectView uninstallCanvasObject = new UninstallCanvasObjectView();
-	private final Function<ComponentItem, ComponentView> COMPONENT_TO_VIEW = new CanvasObjectToView<>();
-	private final Function<SceneItem, ScenarioView> SCENARIO_TO_VIEW = new CanvasObjectToView<>();
+
+	private final Function<ComponentItem, ComponentView> COMPONENT_TO_VIEW = Functions.compose(
+			new InitializeCanvasObjectView<ComponentView>(), new Function<ComponentItem, ComponentView>()
+			{
+				@Override
+				public ComponentView apply( ComponentItem input )
+				{
+					return new ComponentView( input );
+				}
+			} );
+	private final Function<SceneItem, ScenarioView> SCENARIO_TO_VIEW = Functions.compose(
+			new InitializeCanvasObjectView<ScenarioView>(), new Function<SceneItem, ScenarioView>()
+			{
+				@Override
+				public ScenarioView apply( SceneItem input )
+				{
+					return new ScenarioView( input );
+				}
+			} );
 
 	private static final Function<ComponentDescriptor, ComponentDescriptorView> DESCRIPTOR_TO_VIEW = new Function<ComponentDescriptor, ComponentDescriptorView>()
 	{
@@ -115,7 +134,7 @@ public class CanvasView extends StackPane
 	@FXML
 	private void initialize()
 	{
-		bindContentUnordered( componentLayer.getChildren(), components, scenarios );
+		bindContentUnordered( componentLayer.getChildren(), ObservableLists.concat( components, scenarios ) );
 
 		ToolBox<ComponentDescriptorView> descriptors = new ToolBox<>( "Components" );
 		descriptors.setMaxWidth( 100 );
@@ -358,14 +377,12 @@ public class CanvasView extends StackPane
 		}
 	}
 
-	private final class CanvasObjectToView<F extends CanvasObjectItem, T extends CanvasObjectView> implements
-			Function<F, T>
+	private final class InitializeCanvasObjectView<T extends CanvasObjectView> implements Function<T, T>
 	{
-		@SuppressWarnings( "unchecked" )
 		@Override
-		public T apply( final F item )
+		public T apply( final T view )
 		{
-			final T view = CanvasObjectView.newInstanceUnchecked( ( Class<T> )item.getClass(), item );
+			final CanvasObjectItem item = view.getCanvasObject();
 			view.setLayoutX( Integer.parseInt( item.getAttribute( "gui.layoutX", "0" ) ) );
 			view.setLayoutY( Integer.parseInt( item.getAttribute( "gui.layoutY", "0" ) ) );
 

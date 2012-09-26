@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.MenuButton;
 import javafx.scene.layout.Priority;
@@ -128,6 +129,7 @@ public class ProjectView extends StackPane
 					toolbar.setAlignment( Pos.TOP_CENTER );
 					StackPane.setAlignment( toolbar, Pos.TOP_CENTER );
 					CanvasView canvas = new CanvasView( scenario );
+					StackPane.setMargin( canvas, new Insets( 60, 0, 0, 0 ) );
 					StackPane pane = StackPaneBuilder.create().children( canvas, toolbar ).build();
 					designTab.setDetachableContent( pane );
 					event.consume();

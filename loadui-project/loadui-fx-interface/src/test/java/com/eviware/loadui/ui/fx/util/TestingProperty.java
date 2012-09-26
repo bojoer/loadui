@@ -6,7 +6,6 @@ import org.springframework.core.convert.ConversionService;
 
 import com.eviware.loadui.api.model.PropertyHolder;
 import com.eviware.loadui.api.property.Property;
-import com.eviware.loadui.ui.fx.control.SettingsDialogTest;
 import com.eviware.loadui.util.BeanInjector;
 
 /**
