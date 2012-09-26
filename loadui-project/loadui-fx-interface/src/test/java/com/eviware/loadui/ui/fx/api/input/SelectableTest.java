@@ -52,8 +52,9 @@ public class SelectableTest
 
 			background = PaneBuilder.create().children( rect2, rect1 ).build();
 
-			selectable1 = Selectable.install( background, rect1 );
-			selectable2 = Selectable.install( background, rect2 );
+			Selectable.installDragToSelectArea( background );
+			selectable1 = Selectable.installSelectable( rect1 );
+			selectable2 = Selectable.installSelectable( rect2 );
 
 			rect1.fillProperty().bind(
 					Bindings.when( selectable1.selectedProperty() ).then( Color.GREEN ).otherwise( Color.GREY ) );

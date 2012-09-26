@@ -24,10 +24,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.ui.fx.util.NodeUtils;
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Multimap;
 
 public class Selectable
 {
@@ -39,9 +37,10 @@ public class Selectable
 			.newSetFromMap( new WeakHashMap<Selectable, Boolean>() );
 	@Nonnull
 	private static SelectionRectangle SELECTION_RECTANGLE = new SelectionRectangle();
+	private static final Collection<Node> SELECTABLE_NODES = Collections
+			.newSetFromMap( new WeakHashMap<Node, Boolean>() );
 	private static final HideSelectionRectangle HIDE_SELECTION_RECTANGLE = new HideSelectionRectangle();
 	private static boolean isDragging;
-	private static final Multimap<Region, Node> AREA_TO_NODES = HashMultimap.create();
 
 	/**
 	 * Makes the node selectable by clicking anywhere on the node.
@@ -49,63 +48,24 @@ public class Selectable
 	 * @param node
 	 * @return
 	 */
-	public static Selectable install( @Nonnull final Region selectionArea, @Nonnull final Node node )
+	public static Selectable installSelectable( @Nonnull Node node )
 	{
 		Selectable selectable = new Selectable( node );
 		node.addEventHandler( MouseEvent.MOUSE_PRESSED, PRESS_TO_SELECT_HANDLER );
 		node.addEventHandler( MouseEvent.MOUSE_RELEASED, HIDE_SELECTION_RECTANGLE );
 		node.getProperties().put( SELECTABLE_PROP_KEY, selectable );
-
-		AREA_TO_NODES.put( selectionArea, node );
+		SELECTABLE_NODES.add( node );
 		return selectable;
+	}
+
+	public static boolean isSelectable( Node node )
+	{
+		return node.getProperties().containsKey( SELECTABLE_PROP_KEY );
 	}
 
 	public static Selectable get( @Nonnull final Node node )
 	{
 		return ( Selectable )node.getProperties().get( SELECTABLE_PROP_KEY );
-	}
-
-	public static void uninstall( @Nonnull final Region selectionArea, @Nonnull Node node )
-	{
-		node.removeEventHandler( MouseEvent.MOUSE_PRESSED, PRESS_TO_SELECT_HANDLER );
-		node.removeEventHandler( MouseEvent.MOUSE_RELEASED, HIDE_SELECTION_RECTANGLE );
-		node.getProperties().remove( SELECTABLE_PROP_KEY );
-		AREA_TO_NODES.remove( selectionArea, node );
-	}
-
-	public static void install( @Nonnull final Region selectionArea )
-	{
-		if( !AREA_TO_NODES.containsKey( selectionArea ) )
-		{
-			selectionArea.addEventHandler( MouseEvent.DRAG_DETECTED, new EventHandler<MouseEvent>()
-			{
-				@Override
-				public void handle( MouseEvent event )
-				{
-					if( !event.isShortcutDown() )
-					{
-						isDragging = true;
-						SELECTION_RECTANGLE.setOwner( selectionArea );
-						SELECTION_RECTANGLE.startSelection( event );
-					}
-				}
-			} );
-
-			selectionArea.addEventHandler( MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>()
-			{
-				@Override
-				public void handle( MouseEvent event )
-				{
-					if( isDragging )
-					{
-						SELECTION_RECTANGLE.updateSelection( event );
-					}
-				}
-			} );
-
-			selectionArea.addEventHandler( MouseEvent.MOUSE_RELEASED, HIDE_SELECTION_RECTANGLE );
-			selectionArea.addEventHandler( MouseEvent.MOUSE_RELEASED, CLICK_TO_DESELECT_HANDLER );
-		}
 	}
 
 	private ReadOnlyBooleanWrapper selectedProperty;
@@ -165,6 +125,38 @@ public class Selectable
 	public static ImmutableSet<Selectable> getSelected()
 	{
 		return ImmutableSet.copyOf( CURRENTLY_SELECTED );
+	}
+
+	public static void installDragToSelectArea( @Nonnull final Region selectionArea )
+	{
+		selectionArea.addEventHandler( MouseEvent.DRAG_DETECTED, new EventHandler<MouseEvent>()
+		{
+			@Override
+			public void handle( MouseEvent event )
+			{
+				if( !event.isShortcutDown() )
+				{
+					isDragging = true;
+					SELECTION_RECTANGLE.setOwner( selectionArea );
+					SELECTION_RECTANGLE.startSelection( event );
+				}
+			}
+		} );
+
+		selectionArea.addEventHandler( MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>()
+		{
+			@Override
+			public void handle( MouseEvent event )
+			{
+				if( isDragging )
+				{
+					SELECTION_RECTANGLE.updateSelection( event );
+				}
+			}
+		} );
+
+		selectionArea.addEventHandler( MouseEvent.MOUSE_RELEASED, HIDE_SELECTION_RECTANGLE );
+		selectionArea.addEventHandler( MouseEvent.MOUSE_RELEASED, CLICK_TO_DESELECT_HANDLER );
 	}
 
 	private static void selectAll( Collection<Selectable> selectables )
@@ -252,10 +244,10 @@ public class Selectable
 
 	private static class SelectionRectangle extends Popup
 	{
-		private ImmutableList<Selectable> selectedAtSelectionStart = null;
+		private static ImmutableList<Selectable> selectedAtSelectionStart = null;
 		private double startX;
 		private double startY;
-		private Region ownerNode;
+		private Node ownerNode;
 		private final HBox box = new HBox();
 
 		SelectionRectangle()
@@ -265,7 +257,7 @@ public class Selectable
 			setAutoFix( false );
 		}
 
-		void setOwner( Region selectionArea )
+		public void setOwner( Region selectionArea )
 		{
 			this.ownerNode = selectionArea;
 		}
@@ -296,7 +288,7 @@ public class Selectable
 
 			Rectangle2D selectionArea = new Rectangle2D( getX(), getY(), width, height );
 
-			for( Node node : AREA_TO_NODES.get( ownerNode ) )
+			for( Node node : SELECTABLE_NODES )
 			{
 				Scene scene = node.getScene();
 				if( scene.getWindow().isFocused() )
@@ -314,10 +306,5 @@ public class Selectable
 				}
 			}
 		}
-	}
-
-	public static boolean isSelectable( Node node )
-	{
-		return node.getProperties().containsKey( SELECTABLE_PROP_KEY );
 	}
 }

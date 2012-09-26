@@ -125,8 +125,7 @@ public class CanvasView extends StackPane
 
 			ConnectionView connectionView = new ConnectionView( connection, outputComponentView, inputComponentView );
 
-			ReadOnlyBooleanProperty selectedProperty = Selectable.install( CanvasView.this, connectionView )
-					.selectedProperty();
+			ReadOnlyBooleanProperty selectedProperty = Selectable.installSelectable( connectionView ).selectedProperty();
 			connectionView.fillProperty().bind(
 					Bindings.when( selectedProperty ).then( Color.BLUE ).otherwise( Color.LIGHTGRAY ) );
 			connectionView.effectProperty().bind(
@@ -278,7 +277,7 @@ public class CanvasView extends StackPane
 
 		getChildren().addAll( createGrid(), componentWrapper, zoomSlider, descriptors );
 
-		Selectable.install( this );
+		Selectable.installDragToSelectArea( this );
 		initScrolling();
 	}
 
@@ -443,7 +442,7 @@ public class CanvasView extends StackPane
 					for( CanvasObjectView component : change.getRemoved() )
 					{
 						Movable.uninstall( component );
-						Selectable.uninstall( CanvasView.this, component );
+						//Selectable.uninstall( component );
 						MultiMovable.uninstall( CanvasView.this, component );
 					}
 				}
@@ -475,7 +474,7 @@ public class CanvasView extends StackPane
 					}
 				}
 			} );
-			Selectable selectable = Selectable.install( CanvasView.this, view );
+			Selectable selectable = Selectable.installSelectable( view );
 			view.effectProperty().bind(
 					Bindings.when( selectable.selectedProperty() ).then( selectedEffect ).otherwise( ( Effect )null ) );
 

@@ -66,9 +66,10 @@ public class MultiMovableTest
 
 			background = PaneBuilder.create().children( stack, rect2, rect1 ).build();
 
-			selectable1 = Selectable.install( background, rect1 );
-			selectable2 = Selectable.install( background, rect2 );
-			selectable3 = Selectable.install( background, stack );
+			Selectable.installDragToSelectArea( background );
+			selectable1 = Selectable.installSelectable( rect1 );
+			selectable2 = Selectable.installSelectable( rect2 );
+			selectable3 = Selectable.installSelectable( stack );
 
 			rect1.fillProperty().bind(
 					Bindings.when( selectable1.selectedProperty() ).then( Color.GREEN ).otherwise( Color.GREY ) );
