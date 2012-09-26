@@ -7,7 +7,6 @@ import javafx.beans.binding.Bindings;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
@@ -35,10 +34,10 @@ public abstract class CanvasObjectView extends StackPane
 {
 	protected static final Logger log = LoggerFactory.getLogger( CanvasObjectView.class );
 
-	private static final Function<InputTerminal, Node> INPUT_TERMINAL_TO_VIEW = new Function<InputTerminal, Node>()
+	private static final Function<InputTerminal, InputTerminalView> INPUT_TERMINAL_TO_VIEW = new Function<InputTerminal, InputTerminalView>()
 	{
 		@Override
-		public Node apply( final InputTerminal terminal )
+		public InputTerminalView apply( final InputTerminal terminal )
 		{
 			InputTerminalView terminalView = new InputTerminalView( terminal );
 			HBox.setHgrow( terminalView, Priority.ALWAYS );
@@ -46,10 +45,10 @@ public abstract class CanvasObjectView extends StackPane
 		}
 	};
 
-	private static final Function<OutputTerminal, Node> OUTPUT_TERMINAL_TO_VIEW = new Function<OutputTerminal, Node>()
+	private static final Function<OutputTerminal, OutputTerminalView> OUTPUT_TERMINAL_TO_VIEW = new Function<OutputTerminal, OutputTerminalView>()
 	{
 		@Override
-		public Node apply( final OutputTerminal terminal )
+		public OutputTerminalView apply( final OutputTerminal terminal )
 		{
 			OutputTerminalView terminalView = new OutputTerminalView( terminal );
 			HBox.setHgrow( terminalView, Priority.ALWAYS );
@@ -65,9 +64,9 @@ public abstract class CanvasObjectView extends StackPane
 		return ( T )new ScenarioView( ( SceneItem )item );
 	}
 
-	protected final CanvasObjectItem canvasObject;
-	protected final ObservableList<Node> inputTerminals;
-	protected final ObservableList<Node> outputTerminals;
+	private final CanvasObjectItem canvasObject;
+	private final ObservableList<InputTerminalView> inputTerminals;
+	private final ObservableList<OutputTerminalView> outputTerminals;
 
 	@FXML
 	protected Label canvasObjectLabel;
@@ -143,5 +142,15 @@ public abstract class CanvasObjectView extends StackPane
 	public CanvasObjectItem getCanvasObject()
 	{
 		return canvasObject;
+	}
+
+	public ObservableList<OutputTerminalView> getOutputTerminalViews()
+	{
+		return outputTerminals;
+	}
+
+	public ObservableList<InputTerminalView> getInputTerminalViews()
+	{
+		return inputTerminals;
 	}
 }

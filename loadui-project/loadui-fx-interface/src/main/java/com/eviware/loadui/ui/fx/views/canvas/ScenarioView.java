@@ -28,7 +28,7 @@ public class ScenarioView extends CanvasObjectView
 	@FXML
 	public void open()
 	{
-		fireEvent( IntentEvent.create( IntentEvent.INTENT_OPEN, canvasObject ) );
+		fireEvent( IntentEvent.create( IntentEvent.INTENT_OPEN, getCanvasObject() ) );
 	}
 
 	@FXML

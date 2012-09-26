@@ -203,7 +203,7 @@ public class ObservableLists
 	public static final <T> ObservableList<T> concat( ObservableList<? extends T>... listsToConcat )
 	{
 		List<ObservableList<? extends T>> myList = Arrays.asList( listsToConcat );
-		ConcatenatedListData<T> data = new ConcatenatedListData<T>( myList );
+		ConcatenatedListData<T> data = new ConcatenatedListData<>( myList );
 
 		ObservableList<T> readOnlyList = FXCollections.unmodifiableObservableList( data.list );
 		lists.put( readOnlyList, data );

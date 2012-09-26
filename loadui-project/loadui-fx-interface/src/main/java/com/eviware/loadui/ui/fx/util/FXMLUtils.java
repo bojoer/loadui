@@ -1,20 +1,15 @@
 package com.eviware.loadui.ui.fx.util;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.eviware.loadui.ui.fx.views.canvas.CanvasObjectView;
-import com.eviware.loadui.ui.fx.views.canvas.CanvasView;
-import com.google.common.util.concurrent.UncheckedExecutionException;
-
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FXMLUtils
 {

@@ -5,6 +5,7 @@ import javafx.event.EventType;
 import javafx.scene.Node;
 import javafx.scene.input.InputEvent;
 
+@SuppressWarnings( "serial" )
 public class DraggableEvent extends InputEvent
 {
 	@SuppressWarnings( "hiding" )
@@ -16,9 +17,20 @@ public class DraggableEvent extends InputEvent
 	public static final EventType<DraggableEvent> DRAGGABLE_ENTERED = new EventType<>( ANY, "DRAGGABLE_ENTERED" );
 
 	/**
-	 * Called when a Node being dragged enters a potential drop target.
+	 * Called when a Node starts being dragged.
+	 */
+	public static final EventType<DraggableEvent> DRAGGABLE_STARTED = new EventType<>( ANY, "DRAGGABLE_STARTED" );
+
+	/**
+	 * Called when a Node being dragged is moved.
 	 */
 	public static final EventType<DraggableEvent> DRAGGABLE_DRAGGED = new EventType<>( ANY, "DRAGGABLE_DRAGGED" );
+
+	/**
+	 * Called when a Node being dragged released, regardless if it was accepted
+	 * or not.
+	 */
+	public static final EventType<DraggableEvent> DRAGGABLE_STOPPED = new EventType<>( ANY, "DRAGGABLE_STOPPED" );
 
 	/**
 	 * Called when a Node being dragged exits a potential drop target, being
@@ -34,24 +46,18 @@ public class DraggableEvent extends InputEvent
 	private final double sceneX;
 	private final double sceneY;
 	private final Runnable onAccept;
-	private final Object data;
+	private final Draggable draggable;
 	private boolean accepted = false;
 
 	public DraggableEvent( Runnable onAccept, Node source, EventTarget target,
-			EventType<? extends DraggableEvent> eventType, Object data, double x, double y )
+			EventType<? extends DraggableEvent> eventType, Draggable draggable, double x, double y )
 	{
 		super( source, target, eventType );
 
 		this.onAccept = onAccept;
-		this.data = data;
+		this.draggable = draggable;
 		this.sceneX = x;
 		this.sceneY = y;
-	}
-
-	@Override
-	public Node getSource()
-	{
-		return ( Node )super.getSource();
 	}
 
 	public double getSceneX()
@@ -64,9 +70,14 @@ public class DraggableEvent extends InputEvent
 		return sceneY;
 	}
 
+	public Draggable getDraggable()
+	{
+		return draggable;
+	}
+
 	public Object getData()
 	{
-		return data;
+		return draggable == null ? null : draggable.getData();
 	}
 
 	public boolean isAccepted()

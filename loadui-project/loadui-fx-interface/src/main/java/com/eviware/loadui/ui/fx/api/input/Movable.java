@@ -207,7 +207,7 @@ public class Movable implements Draggable
 						if( movable.currentlyHovered != null )
 						{
 							movable.currentlyHovered.fireEvent( new DraggableEvent( null, node, movable.currentlyHovered,
-									DraggableEvent.DRAGGABLE_EXITED, movable.getData(), event.getSceneX(), event.getSceneY() ) );
+									DraggableEvent.DRAGGABLE_EXITED, movable, event.getSceneX(), event.getSceneY() ) );
 						}
 						if( currentNode != null )
 						{
@@ -218,8 +218,8 @@ public class Movable implements Draggable
 								{
 									movable.setAcceptable( true );
 								}
-							}, node, currentNode, DraggableEvent.DRAGGABLE_ENTERED, movable.getData(), event.getSceneX(),
-									event.getSceneY() ) );
+							}, node, currentNode, DraggableEvent.DRAGGABLE_ENTERED, movable, event.getSceneX(), event
+									.getSceneY() ) );
 						}
 
 						movable.currentlyHovered = currentNode;
@@ -250,12 +250,12 @@ public class Movable implements Draggable
 					{
 						Point2D point = movable.currentlyHovered.sceneToLocal( event.getSceneX(), event.getSceneY() );
 						movable.currentlyHovered.fireEvent( new DraggableEvent( null, node, movable.currentlyHovered,
-								DraggableEvent.DRAGGABLE_EXITED, movable.getData(), point.getX(), point.getY() ) );
+								DraggableEvent.DRAGGABLE_EXITED, movable, point.getX(), point.getY() ) );
 
 						if( movable.isAcceptable() )
 						{
 							movable.currentlyHovered.fireEvent( new DraggableEvent( null, node, movable.currentlyHovered,
-									DraggableEvent.DRAGGABLE_DROPPED, movable.getData(), point.getX(), point.getY() ) );
+									DraggableEvent.DRAGGABLE_DROPPED, movable, point.getX(), point.getY() ) );
 						}
 					}
 

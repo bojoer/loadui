@@ -30,7 +30,8 @@ public class Dialog extends Stage
 	private final Pane rootPane;
 	private final Window parentWindow;
 
-	protected static final Logger log = LoggerFactory.getLogger( Dialog.class );
+	@SuppressWarnings( "unused" )
+	private static final Logger log = LoggerFactory.getLogger( Dialog.class );
 
 	public Dialog( @Nonnull final Node owner, @Nonnull String title )
 	{

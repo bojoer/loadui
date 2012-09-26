@@ -27,7 +27,6 @@ import com.eviware.loadui.ui.fx.util.NodeUtils;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
 
 public class Selectable

@@ -26,6 +26,7 @@ import com.google.common.base.Strings;
 
 public class ProjectSettingsDialog extends ConfirmationDialog
 {
+	@SuppressWarnings( "hiding" )
 	private static final Logger log = LoggerFactory.getLogger( ProjectSettingsDialog.class );
 
 	public static String IGNORE_INVALID_CANVAS = "gui.ignore_invalid_canvas";

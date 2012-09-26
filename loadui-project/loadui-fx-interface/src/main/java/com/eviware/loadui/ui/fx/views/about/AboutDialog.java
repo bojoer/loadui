@@ -1,9 +1,6 @@
 package com.eviware.loadui.ui.fx.views.about;
 
-import java.awt.Desktop;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -116,7 +113,7 @@ public class AboutDialog extends PopupControl
 
 	public void smartbearSite()
 	{
-		UIUtils.openInExternalBrowser("http://www.smartbear.com" );
+		UIUtils.openInExternalBrowser( "http://www.smartbear.com" );
 	}
 
 }

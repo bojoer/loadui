@@ -28,8 +28,9 @@ public class TerminalView extends StackPane
 	protected void initialize()
 	{
 		Node terminalNode = lookup( ".terminal-view" );
-		DragNode dragNode = DragNode.install( terminalNode, CircleBuilder.create().radius( 10 ).fill( Color.GREEN )
+		final DragNode dragNode = DragNode.install( terminalNode, CircleBuilder.create().radius( 10 ).fill( Color.GREEN )
 				.build() );
+		dragNode.setRevert( false );
 		dragNode.setData( terminal );
 
 		Tooltip tooltip = new Tooltip();

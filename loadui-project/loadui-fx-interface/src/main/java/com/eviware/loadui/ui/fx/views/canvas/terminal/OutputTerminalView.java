@@ -25,10 +25,14 @@ public class OutputTerminalView extends TerminalView
 			@Override
 			public void handle( DraggableEvent event )
 			{
-				if( event.getEventType() == DraggableEvent.DRAGGABLE_ENTERED && event.getData() instanceof InputTerminal )
+				if( event.getEventType() == DraggableEvent.DRAGGABLE_ENTERED )
 				{
-					event.accept();
-					event.consume();
+					//Only accept if we do not already have a connection from this OutputTerminal.
+					if( event.getData() instanceof InputTerminal && getTerminal().getConnections().isEmpty() )
+					{
+						event.accept();
+						event.consume();
+					}
 				}
 				else if( event.getEventType() == DraggableEvent.DRAGGABLE_DROPPED )
 				{
