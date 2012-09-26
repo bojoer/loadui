@@ -85,6 +85,7 @@ public class SelectableTest
 	{
 		selectable1.deselect();
 		selectable2.deselect();
+		controller.release( KeyCode.SHIFT ).release( KeyCode.CONTROL );
 		FXTestUtils.awaitEvents();
 	}
 
@@ -107,7 +108,7 @@ public class SelectableTest
 	}
 
 	@Test
-	public void shouldHandleShortcutKey() throws Throwable
+	public void shouldHandleShiftKey() throws Throwable
 	{
 		final Node rectangle1 = selectable1.getNode();
 		final Node rectangle2 = selectable2.getNode();
@@ -118,9 +119,10 @@ public class SelectableTest
 		controller.click( rectangle1 ).release( KeyCode.SHIFT );
 
 		assertThat( selectable1.isSelected(), is( false ) );
-		controller.click( rectangle1 );
-		assertThat( selectable1.isSelected(), is( true ) );
-		assertThat( selectable2.isSelected(), is( false ) );
+
+		controller.press( KeyCode.SHIFT ).click( rectangle1 ).release( KeyCode.SHIFT ).click( rectangle2 );
+		assertThat( selectable2.isSelected(), is( true ) );
+		assertThat( selectable1.isSelected(), is( false ) );
 	}
 
 	@Test
