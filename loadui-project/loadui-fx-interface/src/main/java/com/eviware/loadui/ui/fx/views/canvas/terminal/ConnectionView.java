@@ -1,15 +1,8 @@
 package com.eviware.loadui.ui.fx.views.canvas.terminal;
 
 import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
-import javafx.beans.property.ReadOnlyBooleanProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
-import javafx.scene.effect.Effect;
-import javafx.scene.effect.GlowBuilder;
-import javafx.scene.paint.Color;
 
 import com.eviware.loadui.api.events.TerminalConnectionEvent;
 import com.eviware.loadui.api.terminal.Connection;
@@ -17,7 +10,6 @@ import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.api.traits.Deletable;
 import com.eviware.loadui.ui.fx.api.input.DraggableEvent;
-import com.eviware.loadui.ui.fx.api.input.Selectable;
 import com.eviware.loadui.ui.fx.views.canvas.CanvasObjectView;
 import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
@@ -25,11 +17,9 @@ import com.google.common.collect.Iterables;
 
 public class ConnectionView extends Wire implements Deletable
 {
-	private static final Effect SELECTED_EFFECT = GlowBuilder.create().build();
 	private final Connection connection;
 	private final OutputTerminalView outputTerminalView;
 	private final InputTerminalView inputTerminalView;
-	private final ReadOnlyBooleanProperty selectedProperty;
 
 	public ConnectionView( final Connection connection, final CanvasObjectView outputComponentView,
 			final CanvasObjectView inputComponentView )
@@ -70,22 +60,6 @@ public class ConnectionView extends Wire implements Deletable
 		};
 		outputComponentView.addEventHandler( DraggableEvent.DRAGGABLE_DRAGGED, eventHandler );
 		inputComponentView.addEventHandler( DraggableEvent.DRAGGABLE_DRAGGED, eventHandler );
-
-		//TODO: Missing Selectable Region!
-		selectedProperty = Selectable.install( null, this ).selectedProperty();
-		fillProperty().bind( Bindings.when( selectedProperty ).then( Color.BLUE ).otherwise( Color.LIGHTGRAY ) );
-		effectProperty().bind( Bindings.when( selectedProperty ).then( SELECTED_EFFECT ).otherwise( ( Effect )null ) );
-		selectedProperty.addListener( new ChangeListener<Boolean>()
-		{
-			@Override
-			public void changed( ObservableValue<? extends Boolean> property, Boolean oldSelected, Boolean selected )
-			{
-				if( selected )
-				{
-					toFront();
-				}
-			}
-		} );
 
 		//Remove listeners when the Connection is disconnected:
 		outputTerminal.addEventListener( TerminalConnectionEvent.class,
@@ -140,16 +114,6 @@ public class ConnectionView extends Wire implements Deletable
 	public InputTerminalView getInputTerminalView()
 	{
 		return inputTerminalView;
-	}
-
-	public ReadOnlyBooleanProperty selectedProperty()
-	{
-		return selectedProperty;
-	}
-
-	public boolean isSelected()
-	{
-		return selectedProperty.get();
 	}
 
 	@Override

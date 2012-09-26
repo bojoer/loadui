@@ -60,6 +60,11 @@ public class Selectable
 		return selectable;
 	}
 
+	public static Selectable get( @Nonnull final Node node )
+	{
+		return ( Selectable )node.getProperties().get( SELECTABLE_PROP_KEY );
+	}
+
 	public static void uninstall( @Nonnull final Region selectionArea, @Nonnull Node node )
 	{
 		node.removeEventHandler( MouseEvent.MOUSE_PRESSED, PRESS_TO_SELECT_HANDLER );

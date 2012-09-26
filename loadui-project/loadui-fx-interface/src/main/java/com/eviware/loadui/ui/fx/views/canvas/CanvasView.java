@@ -11,6 +11,7 @@ import java.util.concurrent.Callable;
 
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
@@ -122,7 +123,27 @@ public class CanvasView extends StackPane
 				}
 			} );
 
-			return new ConnectionView( connection, outputComponentView, inputComponentView );
+			ConnectionView connectionView = new ConnectionView( connection, outputComponentView, inputComponentView );
+
+			ReadOnlyBooleanProperty selectedProperty = Selectable.install( CanvasView.this, connectionView )
+					.selectedProperty();
+			connectionView.fillProperty().bind(
+					Bindings.when( selectedProperty ).then( Color.BLUE ).otherwise( Color.LIGHTGRAY ) );
+			connectionView.effectProperty().bind(
+					Bindings.when( selectedProperty ).then( selectedEffect ).otherwise( ( Effect )null ) );
+			selectedProperty.addListener( new ChangeListener<Boolean>()
+			{
+				@Override
+				public void changed( ObservableValue<? extends Boolean> property, Boolean oldSelected, Boolean selected )
+				{
+					if( selected )
+					{
+						toFront();
+					}
+				}
+			} );
+
+			return connectionView;
 		}
 	};
 
@@ -504,7 +525,8 @@ public class CanvasView extends StackPane
 						{
 							//Dragging the OutputTerminal (only connection) of a Connection, OR dragging the InputTerminal of a selected Connection:
 							return draggedTerminal.equals( input.getConnection().getOutputTerminal() )
-									|| draggedTerminal.equals( input.getConnection().getInputTerminal() ) && input.isSelected();
+									|| draggedTerminal.equals( input.getConnection().getInputTerminal() )
+									&& Selectable.get( input ).isSelected();
 						}
 					}, null );
 
