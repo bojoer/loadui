@@ -27,8 +27,8 @@ import javafx.stage.Stage;
 import com.eviware.loadui.ui.fx.control.Carousel;
 import com.eviware.loadui.ui.fx.control.ConfirmationDialog;
 import com.eviware.loadui.ui.fx.control.Dialog;
-import com.eviware.loadui.ui.fx.views.canvas.ScenarioPlaybackPanel;
 import com.eviware.loadui.ui.fx.views.canvas.MiniScenarioPlaybackPanel;
+import com.eviware.loadui.ui.fx.views.scenario.ScenarioPlaybackPanel;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 

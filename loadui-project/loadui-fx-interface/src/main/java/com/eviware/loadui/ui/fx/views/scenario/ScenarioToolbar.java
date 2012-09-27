@@ -12,7 +12,6 @@ import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.Properties;
 import com.eviware.loadui.ui.fx.util.UIUtils;
-import com.eviware.loadui.ui.fx.views.canvas.ScenarioPlaybackPanel;
 import com.eviware.loadui.ui.fx.views.canvas.ScenarioView;
 
 public class ScenarioToolbar extends StackPane
@@ -52,12 +51,6 @@ public class ScenarioToolbar extends StackPane
 	{
 		log.info( "Close scenario requested" );
 		fireEvent( IntentEvent.create( IntentEvent.INTENT_CLOSE, scenario ) );
-	}
-
-	@FXML
-	public void openSettings()
-	{
-		log.info( "Open scenario settings requested" );
 	}
 
 	@FXML

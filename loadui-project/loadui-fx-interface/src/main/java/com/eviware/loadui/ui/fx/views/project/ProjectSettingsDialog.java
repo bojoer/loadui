@@ -24,9 +24,9 @@ import com.eviware.loadui.ui.fx.util.UIUtils;
 import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 
+//TODO: Refactor this class to extend SettingsDialog instead?
 public class ProjectSettingsDialog extends ConfirmationDialog
 {
-	@SuppressWarnings( "hiding" )
 	private static final Logger log = LoggerFactory.getLogger( ProjectSettingsDialog.class );
 
 	public static String IGNORE_INVALID_CANVAS = "gui.ignore_invalid_canvas";

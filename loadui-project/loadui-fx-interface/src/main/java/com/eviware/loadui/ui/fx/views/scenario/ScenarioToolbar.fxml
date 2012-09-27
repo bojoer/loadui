@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.eviware.loadui.ui.fx.control.DetachableTab?>
-<?import com.eviware.loadui.ui.fx.views.canvas.ScenarioPlaybackPanel?>
+<?import com.eviware.loadui.ui.fx.views.scenario.ScenarioPlaybackPanel?>
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
@@ -40,7 +40,6 @@
 			</MenuButton>
 		</HBox>
 		<HBox maxWidth="200" minHeight="60" alignment="CENTER_RIGHT" StackPane.alignment="TOP_RIGHT">
-			<Button fx:id="settingsButton" text="Settings" onAction="#openSettings" />
 			<Button fx:id="openHelpPageButton" text="Help" onAction="#openHelpPage" />
 			<Button fx:id="close" text="Close" onAction="#closeScenario" />
 		</HBox>

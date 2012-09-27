@@ -44,9 +44,7 @@ public class MiniScenarioPlaybackPanel extends HBox
 	};
 
 	protected final ScenarioCounterDisplay time;
-
 	protected final ScenarioCounterDisplay requests;
-
 	protected final ScenarioCounterDisplay failures;
 
 	public MiniScenarioPlaybackPanel()
