@@ -1,15 +1,19 @@
 package com.eviware.loadui.ui.fx.views.inspector;
 
+import javafx.animation.Interpolator;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.TimelineBuilder;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 
@@ -33,25 +37,6 @@ public class InspectorView extends VBox
 	protected void initialize()
 	{
 		setMaxHeight( 50 );
-
-		minimizedProperty.addListener( new ChangeListener<Boolean>()
-		{
-			@Override
-			public void changed( ObservableValue<? extends Boolean> property, Boolean oldVal, Boolean newVal )
-			{
-				if( newVal )
-				{
-					lastHeight = getHeight();
-					System.out.println( "Storing height: " + lastHeight );
-					setMaxHeight( 0 );
-				}
-				else
-				{
-					System.out.println( "Restoring height: " + lastHeight );
-					setMaxHeight( lastHeight );
-				}
-			}
-		} );
 
 		buttonBar.addEventHandler( MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>()
 		{
@@ -87,6 +72,10 @@ public class InspectorView extends VBox
 			public void handle( MouseEvent event )
 			{
 				dragging = false;
+				if( getHeight() > getMaxHeight() )
+				{
+					minimizedProperty.set( true );
+				}
 			}
 		} );
 
@@ -97,8 +86,28 @@ public class InspectorView extends VBox
 			{
 				if( event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2 )
 				{
-					minimizedProperty.set( !minimizedProperty.get() );
-					System.out.println( "TOGGLE!" );
+					double target = 0;
+					if( minimizedProperty.get() )
+					{
+						target = lastHeight;
+					}
+					else
+					{
+						lastHeight = getHeight();
+					}
+
+					TimelineBuilder
+							.create()
+							.keyFrames(
+									new KeyFrame( Duration.seconds( 0.3 ), new KeyValue( maxHeightProperty(), target,
+											Interpolator.EASE_BOTH ) ) ).onFinished( new EventHandler<ActionEvent>()
+							{
+								@Override
+								public void handle( ActionEvent arg0 )
+								{
+									minimizedProperty.set( !minimizedProperty.get() );
+								}
+							} ).build().playFromStart();
 				}
 			}
 		} );
