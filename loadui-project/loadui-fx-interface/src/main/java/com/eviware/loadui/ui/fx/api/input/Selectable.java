@@ -58,6 +58,14 @@ public class Selectable
 		return selectable;
 	}
 
+	public static void uninstallSelectable( @Nonnull Node node )
+	{
+		node.removeEventHandler( MouseEvent.MOUSE_PRESSED, PRESS_TO_SELECT_HANDLER );
+		node.removeEventHandler( MouseEvent.MOUSE_RELEASED, HIDE_SELECTION_RECTANGLE );
+		node.getProperties().remove( SELECTABLE_PROP_KEY );
+		SELECTABLE_NODES.remove( node );
+	}
+
 	public static boolean isSelectable( Node node )
 	{
 		return node.getProperties().containsKey( SELECTABLE_PROP_KEY );
@@ -184,13 +192,22 @@ public class Selectable
 	private static final class HideSelectionRectangle implements EventHandler<MouseEvent>
 	{
 		@Override
-		public void handle( MouseEvent event )
+		public void handle( final MouseEvent event )
 		{
 			Platform.runLater( new Runnable()
 			{
 				@Override
 				public void run()
 				{
+					Node node = ( Node )event.getSource();
+					boolean isMoving = Movable.isMovable( node ) && Movable.getMovable( node ).isDragging();
+					System.out.println( "isMoving: " + isMoving );
+					if( !SELECTION_RECTANGLE.isShowing() && !isMoving && !event.isShortcutDown() && !event.isShiftDown() )
+					{
+						deselectAll();
+						if( Selectable.isSelectable( node ) )
+							Selectable.get( node ).select();
+					}
 					SELECTION_RECTANGLE.hide();
 					isDragging = false;
 				}
@@ -265,8 +282,6 @@ public class Selectable
 		void startSelection( MouseEvent e )
 		{
 			selectedAtSelectionStart = ImmutableList.copyOf( CURRENTLY_SELECTED );
-			//			if( !e.isShiftDown() )
-			//				deselectAll();
 			this.startX = e.getScreenX();
 			this.startY = e.getScreenY();
 		}
@@ -291,7 +306,7 @@ public class Selectable
 			for( Node node : SELECTABLE_NODES )
 			{
 				Scene scene = node.getScene();
-				if( scene.getWindow().isFocused() )
+				if( scene != null && scene.getWindow().isFocused() )
 				{
 					Rectangle2D selectableRectangle = NodeUtils.localToScreen( node, scene );
 
