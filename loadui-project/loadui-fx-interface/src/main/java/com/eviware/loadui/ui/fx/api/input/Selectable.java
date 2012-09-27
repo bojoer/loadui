@@ -13,6 +13,8 @@ import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
@@ -23,9 +25,13 @@ import javax.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.eviware.loadui.api.traits.Deletable;
+import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.util.NodeUtils;
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 
 public class Selectable
 {
@@ -41,6 +47,15 @@ public class Selectable
 			.newSetFromMap( new WeakHashMap<Node, Boolean>() );
 	private static final HideSelectionRectangle HIDE_SELECTION_RECTANGLE = new HideSelectionRectangle();
 	private static boolean isDragging;
+
+	private static final Function<Selectable, Node> SELECTABLE_TO_NODE = new Function<Selectable, Node>()
+	{
+		@Override
+		public Node apply( Selectable input )
+		{
+			return input.getNode();
+		}
+	};
 
 	/**
 	 * Makes the node selectable by clicking anywhere on the node.
@@ -64,6 +79,25 @@ public class Selectable
 		node.removeEventHandler( MouseEvent.MOUSE_RELEASED, HIDE_SELECTION_RECTANGLE );
 		node.getProperties().remove( SELECTABLE_PROP_KEY );
 		SELECTABLE_NODES.remove( node );
+	}
+
+	public static void installDeleteKeyHandler( Node node )
+	{
+		node.addEventFilter( KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>()
+		{
+			@Override
+			public void handle( KeyEvent event )
+			{
+				if( event.getCode() == KeyCode.DELETE && !event.isConsumed() )
+				{
+					for( Deletable deletable : Iterables.filter( Iterables.transform( getSelected(), SELECTABLE_TO_NODE ),
+							Deletable.class ) )
+					{
+						( ( Node )deletable ).fireEvent( IntentEvent.create( IntentEvent.INTENT_DELETE, deletable ) );
+					}
+				}
+			}
+		} );
 	}
 
 	public static boolean isSelectable( Node node )

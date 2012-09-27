@@ -23,6 +23,7 @@ import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.api.terminal.TerminalHolder;
+import com.eviware.loadui.api.traits.Deletable;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.util.Properties;
 import com.eviware.loadui.ui.fx.views.canvas.terminal.InputTerminalView;
@@ -30,7 +31,7 @@ import com.eviware.loadui.ui.fx.views.canvas.terminal.OutputTerminalView;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 
-public abstract class CanvasObjectView extends StackPane
+public abstract class CanvasObjectView extends StackPane implements Deletable
 {
 	protected static final Logger log = LoggerFactory.getLogger( CanvasObjectView.class );
 
@@ -128,6 +129,7 @@ public abstract class CanvasObjectView extends StackPane
 	}
 
 	@FXML
+	@Override
 	public void delete()
 	{
 		fireEvent( IntentEvent.create( IntentEvent.INTENT_DELETE, canvasObject ) );
