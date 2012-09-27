@@ -210,15 +210,18 @@ public class ObservableLists
 				}
 			} );
 
-	//TODO: Document this with Javadoc!
 	/**
+	 * Returns a new ObservableList that contains all the elements of the given
+	 * lists, and keeps the new list in sync with any changes to the original
+	 * lists. The order of the elements are NOT guaranteed to correspond to the
+	 * order of the elements in the sublists.
 	 * 
 	 * @param listsToConcat
 	 * @return
 	 */
 
 	@SafeVarargs
-	public static final <T> ObservableList<T> concat( ObservableList<? extends T>... listsToConcat )
+	public static final <T> ObservableList<T> concatUnordered( ObservableList<? extends T>... listsToConcat )
 	{
 		List<ObservableList<? extends T>> myList = Arrays.asList( listsToConcat );
 		ConcatenatedListData<T> data = new ConcatenatedListData<>( myList );
@@ -254,33 +257,41 @@ public class ObservableLists
 		references.put( list1, list2 );
 	}
 
-	public static <E> void bindSorted( final List<E> list1, ObservableList<? extends E> list2,
+	public static <E> void bindSorted( final List<E> list1, final ObservableList<? extends E> list2,
 			final Comparator<? super E> comparator, Observable... observables )
 	{
-		bindContentUnordered( list1, list2 );
-		InvalidationListener invalidationListener = new InvalidationListener()
+		final InvalidationListener invalidationListener = new InvalidationListener()
 		{
 			@Override
 			public void invalidated( Observable arg0 )
 			{
-				Platform.runLater( new Runnable()
+				if( list1 instanceof ObservableList )
 				{
-					@Override
-					public void run()
-					{
-						if( list1 instanceof ObservableList )
-						{
-							FXCollections.sort( ( ObservableList<E> )list1, comparator );
-						}
-						else
-						{
-							Collections.sort( list1, comparator );
-						}
-					}
-				} );
+					FXCollections.sort( ( ObservableList<E> )list1, comparator );
+				}
+				else
+				{
+					Collections.sort( list1, comparator );
+				}
 			}
 		};
 		list2.addListener( invalidationListener );
+		bindContentUnordered( list1, list2 );
+
+		@SuppressWarnings( "unchecked" )
+		final ListChangeListener<E> contentSyncer = ( ListChangeListener<E> )contentListeners.getUnchecked( list1 );
+		final ListChangeListener<E> sortingListener = new ListChangeListener<E>()
+		{
+			@Override
+			public void onChanged( ListChangeListener.Change<? extends E> change )
+			{
+				contentSyncer.onChanged( change );
+				invalidationListener.invalidated( list2 );
+			}
+		};
+		contentListeners.put( list1, sortingListener );
+		list2.removeListener( contentSyncer );
+		list2.addListener( sortingListener );
 		for( Observable observable : observables )
 		{
 			observable.addListener( invalidationListener );

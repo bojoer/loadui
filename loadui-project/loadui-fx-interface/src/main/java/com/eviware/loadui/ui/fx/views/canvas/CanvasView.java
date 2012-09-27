@@ -199,7 +199,7 @@ public class CanvasView extends StackPane
 	@FXML
 	private void initialize()
 	{
-		bindContentUnordered( componentLayer.getChildren(), ObservableLists.concat( components, scenarios ) );
+		bindContentUnordered( componentLayer.getChildren(), ObservableLists.concatUnordered( components, scenarios ) );
 		bindContentUnordered( connectionLayer.getChildren(), connections );
 
 		ToolBox<ComponentDescriptorView> descriptors = new ToolBox<>( "Components" );
