@@ -15,6 +15,7 @@
  */
 package com.eviware.loadui.util;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -186,4 +187,12 @@ public class StringUtils
 		return strings;
 	}
 
+	public static String toHhMmSs( long seconds )
+	{
+		DecimalFormat f = new DecimalFormat( "00" );
+		long h = seconds / 3600;
+		long m = ( seconds % 3600 ) / 60;
+		long s = seconds % 60;
+		return f.format( h ) + ":" + f.format( m ) + ":" + f.format( s );
+	}
 }

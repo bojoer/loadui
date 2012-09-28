@@ -1,12 +1,8 @@
 package com.eviware.loadui.ui.fx.views.canvas;
 
-import javax.annotation.Nonnull;
-
-import com.eviware.loadui.api.counter.CounterHolder;
-import com.eviware.loadui.api.model.CanvasItem;
-
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -23,6 +19,12 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.StackPaneBuilder;
 import javafx.util.Duration;
+
+import javax.annotation.Nonnull;
+
+import com.eviware.loadui.api.counter.CounterHolder;
+import com.eviware.loadui.api.model.CanvasItem;
+import com.eviware.loadui.ui.fx.util.TestExecutionUtils;
 
 public abstract class PlaybackPanel extends HBox
 {
@@ -43,6 +45,8 @@ public abstract class PlaybackPanel extends HBox
 		failures = timeFailures();
 	}
 
+	private ToggleButton playButton;
+
 	protected abstract CounterDisplay timeCounter();
 
 	protected abstract CounterDisplay timeRequests();
@@ -56,12 +60,19 @@ public abstract class PlaybackPanel extends HBox
 		{
 			if( isSelected )
 			{
-				canvas.triggerAction( CounterHolder.COUNTER_RESET_ACTION );
-				canvas.triggerAction( CanvasItem.START_ACTION );
+				if( TestExecutionUtils.startCanvas( canvas ) == null )
+					Platform.runLater( new Runnable()
+					{
+						@Override
+						public void run()
+						{
+							playButton.setSelected( false );
+						}
+					} );
 			}
 			else
 			{
-				canvas.triggerAction( CanvasItem.STOP_ACTION );
+				TestExecutionUtils.stopCanvas( canvas );
 			}
 		}
 	};
@@ -108,8 +119,8 @@ public abstract class PlaybackPanel extends HBox
 
 	protected Button limitsButton()
 	{
-		return ButtonBuilder.create().text( "Limits\u2026" ).style( "-fx-font-size: 10px;" ).onAction( openLimitsDialog )
-				.build();
+		return ButtonBuilder.create().text( "Set Limits\u2026" ).style( "-fx-font-size: 10px;" )
+				.onAction( openLimitsDialog ).build();
 	}
 
 	protected static Separator separator()
@@ -124,13 +135,12 @@ public abstract class PlaybackPanel extends HBox
 
 	protected StackPane playStack()
 	{
-		ToggleButton playButton = new ToggleButton();
+		playButton = new ToggleButton();
 		playButton.selectedProperty().addListener( playCanvas );
 		ProgressIndicator playSpinner = new ProgressIndicator();
 		playSpinner.visibleProperty().bind( playButton.selectedProperty() );
 		playButton.textProperty().bind(
 				Bindings.when( playButton.selectedProperty() ).then( "\u25FC" ).otherwise( "\u25B6" ) );
-		StackPane playStack = StackPaneBuilder.create().children( playSpinner, playButton ).build();
-		return playStack;
+		return StackPaneBuilder.create().children( playSpinner, playButton ).build();
 	}
 }

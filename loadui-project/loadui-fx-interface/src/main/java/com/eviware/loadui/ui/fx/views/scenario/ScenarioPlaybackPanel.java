@@ -1,6 +1,7 @@
 package com.eviware.loadui.ui.fx.views.scenario;
 
 import com.eviware.loadui.ui.fx.views.canvas.CounterDisplay;
+import com.eviware.loadui.ui.fx.views.canvas.CounterDisplay.Formatting;
 import com.eviware.loadui.ui.fx.views.canvas.PlaybackPanel;
 import com.eviware.loadui.ui.fx.views.canvas.ToolbarCounterDisplay;
 
@@ -22,7 +23,7 @@ public class ScenarioPlaybackPanel extends PlaybackPanel
 	@Override
 	protected CounterDisplay timeCounter()
 	{
-		return new ToolbarCounterDisplay( TIME );
+		return new ToolbarCounterDisplay( TIME, Formatting.TIME );
 	}
 
 	@Override
