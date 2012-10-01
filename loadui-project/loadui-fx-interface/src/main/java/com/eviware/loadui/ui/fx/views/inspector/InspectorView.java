@@ -4,20 +4,20 @@ import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.TimelineBuilder;
+import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.fxml.FXML;
+import javafx.scene.control.TabPane;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 
-public class InspectorView extends VBox
+public class InspectorView extends TabPane
 {
 	private final BooleanProperty minimizedProperty = new SimpleBooleanProperty( this, "minimized", false );
 
@@ -25,20 +25,29 @@ public class InspectorView extends VBox
 	private double startY = 0;
 	private double lastHeight = 0;
 
-	@FXML
-	private Region buttonBar;
+	private Region tabHeaderArea;
 
 	public InspectorView()
 	{
 		FXMLUtils.load( this );
+
+		//This needs to be deferred so that tabHeaderArea has been created before init() is invoked.
+		Platform.runLater( new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				init();
+			}
+		} );
 	}
 
-	@FXML
-	protected void initialize()
+	private void init()
 	{
-		setMaxHeight( 50 );
+		tabHeaderArea = ( Region )lookup( ".tab-header-area" );
+		setMaxHeight( tabHeaderArea.prefHeight( -1 ) );
 
-		buttonBar.addEventHandler( MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>()
+		tabHeaderArea.addEventHandler( MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>()
 		{
 			@Override
 			public void handle( MouseEvent event )
@@ -46,7 +55,7 @@ public class InspectorView extends VBox
 				startY = event.getScreenY() + getHeight();
 			}
 		} );
-		buttonBar.addEventHandler( MouseEvent.DRAG_DETECTED, new EventHandler<MouseEvent>()
+		tabHeaderArea.addEventHandler( MouseEvent.DRAG_DETECTED, new EventHandler<MouseEvent>()
 		{
 			@Override
 			public void handle( MouseEvent event )
@@ -55,18 +64,18 @@ public class InspectorView extends VBox
 				minimizedProperty.set( false );
 			}
 		} );
-		buttonBar.addEventHandler( MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>()
+		tabHeaderArea.addEventHandler( MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>()
 		{
 			@Override
 			public void handle( MouseEvent event )
 			{
 				if( dragging )
 				{
-					setMaxHeight( startY - event.getScreenY() );
+					setMaxHeight( Math.max( tabHeaderArea.prefHeight( -1 ), startY - event.getScreenY() ) );
 				}
 			}
 		} );
-		buttonBar.addEventHandler( MouseEvent.MOUSE_RELEASED, new EventHandler<MouseEvent>()
+		tabHeaderArea.addEventHandler( MouseEvent.MOUSE_RELEASED, new EventHandler<MouseEvent>()
 		{
 			@Override
 			public void handle( MouseEvent event )
@@ -79,14 +88,14 @@ public class InspectorView extends VBox
 			}
 		} );
 
-		buttonBar.addEventHandler( MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>()
+		tabHeaderArea.addEventHandler( MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>()
 		{
 			@Override
 			public void handle( MouseEvent event )
 			{
 				if( event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2 )
 				{
-					double target = 0;
+					double target = tabHeaderArea.prefHeight( -1 );
 					if( minimizedProperty.get() )
 					{
 						target = lastHeight;

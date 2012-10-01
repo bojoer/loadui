@@ -2,15 +2,17 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.Tab?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.HBox?>
 <?import java.net.URL?>
 
-<fx:root type="javafx.scene.layout.VBox" xmlns:fx="http://javafx.com/fxml" styleClass="inspector-view">
-	<HBox style="-fx-background-color: red;" fx:id="buttonBar">
-		<Button text="System log" />
-		<Button text="Agents" />
-	</HBox>
-	<Region style="-fx-background-color: blue;" VBox.vgrow="ALWAYS" />
+<fx:root type="javafx.scene.control.TabPane" xmlns:fx="http://javafx.com/fxml" styleClass="inspector-view" tabClosingPolicy="unavailable">
+	<stylesheets>
+		<URL value="@InspectorView.css" />
+	</stylesheets>
+	<Tab text="System log" />
+	<Tab text="Agents" />
 </fx:root>
