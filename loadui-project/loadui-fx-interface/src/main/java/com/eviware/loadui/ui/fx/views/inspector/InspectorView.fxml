@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.layout.HBox?>
 <?import java.net.URL?>
 
 <fx:root type="javafx.scene.control.TabPane" xmlns:fx="http://javafx.com/fxml" styleClass="inspector-view" tabClosingPolicy="unavailable">
 	<stylesheets>
 		<URL value="@InspectorView.css" />
 	</stylesheets>
-	<Tab text="System log" />
-	<Tab text="Agents" />
+	<Tab text="System log">
+		<Region id="mrgreen" style="-fx-background-color: green;" />
+	</Tab>
+	<Tab text="Agents">
+		<Region id="mryellow" style="-fx-background-color: yellow;" maxHeight="250" />
+	</Tab>
 </fx:root>

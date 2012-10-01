@@ -5,10 +5,15 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.TimelineBuilder;
 import javafx.application.Platform;
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.Cursor;
+import javafx.scene.Node;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -19,11 +24,11 @@ import com.eviware.loadui.ui.fx.util.FXMLUtils;
 
 public class InspectorView extends TabPane
 {
-	private final BooleanProperty minimizedProperty = new SimpleBooleanProperty( this, "minimized", false );
+	private final BooleanProperty minimizedProperty = new SimpleBooleanProperty( this, "minimized", true );
 
 	private boolean dragging = false;
 	private double startY = 0;
-	private double lastHeight = 0;
+	private double lastHeight = 250;
 
 	private Region tabHeaderArea;
 
@@ -42,10 +47,48 @@ public class InspectorView extends TabPane
 		} );
 	}
 
+	private double boundHeight( double desiredHeight )
+	{
+		Tab selectedTab = getSelectionModel().getSelectedItem();
+		if( selectedTab != null )
+		{
+			Node selectedNode = selectedTab.getContent();
+			if( selectedNode != null )
+			{
+				desiredHeight = Math.min( desiredHeight, selectedNode.maxHeight( -1 ) );
+			}
+		}
+		return Math.max( tabHeaderArea.prefHeight( -1 ), desiredHeight );
+	}
+
 	private void init()
 	{
 		tabHeaderArea = ( Region )lookup( ".tab-header-area" );
-		setMaxHeight( tabHeaderArea.prefHeight( -1 ) );
+		setMaxHeight( boundHeight( 0 ) );
+
+		tabHeaderArea.setCursor( Cursor.V_RESIZE );
+
+		getSelectionModel().selectedItemProperty().addListener( new InvalidationListener()
+		{
+			@Override
+			public void invalidated( Observable arg0 )
+			{
+				double oldHeight = getMaxHeight();
+				double newHeight = boundHeight( oldHeight );
+				if( newHeight < oldHeight - 5.0 )
+				{
+					TimelineBuilder
+							.create()
+							.keyFrames(
+									new KeyFrame( Duration.seconds( 0.1 ), new KeyValue( maxHeightProperty(), newHeight,
+											Interpolator.EASE_BOTH ) ) ).build().playFromStart();
+				}
+				else
+				{
+					setMaxHeight( newHeight );
+				}
+			}
+		} );
 
 		tabHeaderArea.addEventHandler( MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>()
 		{
@@ -71,7 +114,7 @@ public class InspectorView extends TabPane
 			{
 				if( dragging )
 				{
-					setMaxHeight( Math.max( tabHeaderArea.prefHeight( -1 ), startY - event.getScreenY() ) );
+					setMaxHeight( boundHeight( startY - event.getScreenY() ) );
 				}
 			}
 		} );
@@ -95,10 +138,10 @@ public class InspectorView extends TabPane
 			{
 				if( event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2 )
 				{
-					double target = tabHeaderArea.prefHeight( -1 );
+					double target = boundHeight( 0 );
 					if( minimizedProperty.get() )
 					{
-						target = lastHeight;
+						target = boundHeight( lastHeight );
 					}
 					else
 					{
@@ -108,7 +151,7 @@ public class InspectorView extends TabPane
 					TimelineBuilder
 							.create()
 							.keyFrames(
-									new KeyFrame( Duration.seconds( 0.3 ), new KeyValue( maxHeightProperty(), target,
+									new KeyFrame( Duration.seconds( 0.2 ), new KeyValue( maxHeightProperty(), target,
 											Interpolator.EASE_BOTH ) ) ).onFinished( new EventHandler<ActionEvent>()
 							{
 								@Override
