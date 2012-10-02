@@ -11,28 +11,35 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Region;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 
-public class InspectorView extends TabPane
+public class InspectorView extends AnchorPane
 {
-
 	private final BooleanProperty minimizedProperty = new SimpleBooleanProperty( this, "minimized", true );
 
-	private Region tabHeaderArea;
+	private StackPane tabHeaderArea;
+
+	@FXML
+	private TabPane tabPane;
+
+	@FXML
+	private HBox buttonBar;
 
 	public InspectorView()
 	{
 		FXMLUtils.load( this );
 
-		//This needs to be deferred so that tabHeaderArea has been created before init() is invoked.
 		Platform.runLater( new Runnable()
 		{
 			@Override
@@ -45,10 +52,12 @@ public class InspectorView extends TabPane
 
 	private void init()
 	{
-		tabHeaderArea = ( Region )lookup( ".tab-header-area" );
+		tabHeaderArea = ( StackPane )tabPane.lookup( ".tab-header-area" );
 		tabHeaderArea.addEventHandler( MouseEvent.ANY, new DragBehavior() );
 
-		getSelectionModel().selectedItemProperty().addListener( new InvalidationListener()
+		buttonBar.setPrefHeight( tabHeaderArea.prefHeight( -1 ) );
+
+		tabPane.getSelectionModel().selectedItemProperty().addListener( new InvalidationListener()
 		{
 			@Override
 			public void invalidated( Observable arg0 )
@@ -76,7 +85,7 @@ public class InspectorView extends TabPane
 	private double boundHeight( double desiredHeight )
 	{
 		double headerHeight = tabHeaderArea.prefHeight( -1 );
-		Tab selectedTab = getSelectionModel().getSelectedItem();
+		Tab selectedTab = tabPane.getSelectionModel().getSelectedItem();
 		if( selectedTab != null )
 		{
 			Node selectedNode = selectedTab.getContent();

@@ -2,17 +2,30 @@
 
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.geometry.Insets?>
 <?import java.net.URL?>
 
-<fx:root type="javafx.scene.control.TabPane" xmlns:fx="http://javafx.com/fxml" styleClass="inspector-view" tabClosingPolicy="unavailable">
+<fx:root type="javafx.scene.layout.AnchorPane" xmlns:fx="http://javafx.com/fxml" styleClass="inspector-view">
 	<stylesheets>
 		<URL value="@InspectorView.css" />
 	</stylesheets>
-	<Tab text="System log">
-		<Region id="mrgreen" style="-fx-background-color: green;" />
-	</Tab>
-	<Tab text="Agents">
-		<Region id="mryellow" style="-fx-background-color: yellow;" maxHeight="250" />
-	</Tab>
+	<TabPane fx:id="tabPane" tabClosingPolicy="unavailable" AnchorPane.topAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0">
+		<Tab text="System log">
+			<Region id="mrgreen" style="-fx-background-color: green;" />
+		</Tab>
+		<Tab text="Agents">
+			<Region id="mryellow" style="-fx-background-color: yellow;" maxHeight="250" />
+		</Tab>
+	</TabPane>
+	<HBox fx:id="buttonBar" alignment="CENTER_RIGHT" spacing="4" AnchorPane.topAnchor="0" AnchorPane.rightAnchor="0">
+		<padding>
+			<Insets right="4" />
+		</padding>
+		<Button text="?" />
+		<Button text="!" />
+	</HBox>
 </fx:root>
