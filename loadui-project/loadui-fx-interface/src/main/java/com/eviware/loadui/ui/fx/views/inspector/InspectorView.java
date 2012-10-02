@@ -11,7 +11,6 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -47,7 +46,6 @@ public class InspectorView extends TabPane
 	private void init()
 	{
 		tabHeaderArea = ( Region )lookup( ".tab-header-area" );
-		tabHeaderArea.setCursor( Cursor.V_RESIZE );
 		tabHeaderArea.addEventHandler( MouseEvent.ANY, new DragBehavior() );
 
 		getSelectionModel().selectedItemProperty().addListener( new InvalidationListener()
