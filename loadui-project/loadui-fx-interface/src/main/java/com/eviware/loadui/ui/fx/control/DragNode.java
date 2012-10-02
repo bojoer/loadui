@@ -6,6 +6,8 @@ import javafx.animation.KeyValue;
 import javafx.animation.TimelineBuilder;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.Bindings.*;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
@@ -15,13 +17,17 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableNumberValue;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.PopupControl;
+import javafx.scene.effect.Effect;
+import javafx.scene.effect.Glow;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.PopupWindow;
 import javafx.stage.Stage;
@@ -51,6 +57,7 @@ public class DragNode extends PopupControl implements Draggable
 
 	public static DragNode install( Node node, Node draggableNode )
 	{
+		node.setCursor( Cursor.MOVE );
 		DragNode dragNode = new DragNode( draggableNode );
 		BEHAVIOR.install( node, dragNode );
 
@@ -257,6 +264,8 @@ public class DragNode extends PopupControl implements Draggable
 
 	private static class DragNodeBehavior
 	{
+		private static final Effect ACCEPTABLE_EFFECT = new Glow( 0.5 );
+
 		private final EventHandler<MouseEvent> PRESSED_HANDLER = new EventHandler<MouseEvent>()
 		{
 			@Override
@@ -390,6 +399,13 @@ public class DragNode extends PopupControl implements Draggable
 			node.addEventHandler( MouseEvent.DRAG_DETECTED, PRESSED_HANDLER );
 			node.addEventHandler( MouseEvent.MOUSE_DRAGGED, DRAGGED_HANDLER );
 			node.addEventHandler( MouseEvent.MOUSE_RELEASED, RELEASED_HANDLER );
+
+			dragNode
+					.getNode()
+					.effectProperty()
+					.bind(
+							Bindings.when( dragNode.acceptableProperty() ).then( ACCEPTABLE_EFFECT )
+									.otherwise( ( Effect )null ) );
 		}
 
 		private void uninstall( Node node )

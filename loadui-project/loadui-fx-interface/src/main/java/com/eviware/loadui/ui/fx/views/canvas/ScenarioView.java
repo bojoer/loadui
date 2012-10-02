@@ -30,10 +30,4 @@ public class ScenarioView extends CanvasObjectView
 	{
 		fireEvent( IntentEvent.create( IntentEvent.INTENT_OPEN, getCanvasObject() ) );
 	}
-
-	@FXML
-	public void settings()
-	{
-		//TODO
-	}
 }

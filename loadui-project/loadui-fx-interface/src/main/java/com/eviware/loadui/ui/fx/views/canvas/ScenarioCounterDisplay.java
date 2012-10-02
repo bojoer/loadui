@@ -2,23 +2,28 @@ package com.eviware.loadui.ui.fx.views.canvas;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
-import javafx.scene.layout.VBox;
 
-public class ScenarioCounterDisplay extends VBox
+import javax.annotation.Nonnull;
+
+public class ScenarioCounterDisplay extends CounterDisplay
 {
-	private final Label numberDisplay;
-
-	public ScenarioCounterDisplay( String name )
+	public ScenarioCounterDisplay( @Nonnull String name, @Nonnull Formatting format )
 	{
-		numberDisplay = CounterDisplay.numberDisplay();
+		numberDisplay = numberDisplay();
 
-		Label label = CounterDisplay.label( name );
+		Label label = label( name );
 
 		getChildren().setAll( numberDisplay, label );
 		setAlignment( Pos.CENTER );
 		setMinWidth( 45 );
 	}
 
+	public ScenarioCounterDisplay( String name )
+	{
+		this( name, Formatting.NONE );
+	}
+
+	@Override
 	public void setValue( long value )
 	{
 		numberDisplay.setText( Long.toString( value ) );

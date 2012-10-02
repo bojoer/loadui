@@ -24,7 +24,6 @@ import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.Properties;
 import com.eviware.loadui.ui.fx.util.UIUtils;
 import com.eviware.loadui.ui.fx.views.canvas.CanvasView;
-import com.eviware.loadui.ui.fx.views.canvas.ProjectPlaybackPanel;
 import com.eviware.loadui.ui.fx.views.rename.RenameDialog;
 import com.eviware.loadui.ui.fx.views.scenario.CreateScenarioDialog;
 import com.eviware.loadui.ui.fx.views.scenario.ScenarioToolbar;

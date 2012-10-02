@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.eviware.loadui.ui.fx.control.DetachableTab?>
-<?import com.eviware.loadui.ui.fx.views.canvas.ProjectPlaybackPanel?>
+<?import com.eviware.loadui.ui.fx.views.project.ProjectPlaybackPanel?>
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>

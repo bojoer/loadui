@@ -1,42 +1,20 @@
 package com.eviware.loadui.ui.fx.views.canvas;
 
-import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.LabelBuilder;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.control.ProgressBarBuilder;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.HBoxBuilder;
 import javafx.scene.layout.VBox;
 
-public class CounterDisplay extends VBox
+public abstract class CounterDisplay extends VBox
 {
-	private final Label numberDisplay;
+	protected Label numberDisplay;
+	protected Formatting formatting;
 
-	public CounterDisplay( String name )
+	public enum Formatting
 	{
-		numberDisplay = LabelBuilder.create().maxWidth( Double.MAX_VALUE )
-				.style( "-fx-background-color: black; -fx-text-fill: #f2f2f2; -fx-font-size: 9px; -fx-label-padding: 1 3;" )
-				.build();
-
-		ProgressBar progress = progressBar();
-		Label label = LabelBuilder.create().text( name ).style( "-fx-font-size: 8px;" ).build();
-		HBox labelAndProgress = HBoxBuilder.create().children( label, progress ).spacing( 6 ).alignment( Pos.BOTTOM_LEFT )
-				.build();
-
-		getChildren().setAll( numberDisplay, labelAndProgress );
-		setAlignment( Pos.CENTER );
+		NONE, TIME
 	}
 
-	public void setValue( long value )
-	{
-		numberDisplay.setText( Long.toString( value ) );
-	}
-
-	public void setLimit( long value )
-	{
-		throw new RuntimeException( "Method not yet implemented." );
-	}
+	public abstract void setValue( long value );
 
 	public static Label label( String name )
 	{
@@ -48,10 +26,5 @@ public class CounterDisplay extends VBox
 		return LabelBuilder.create().maxWidth( Double.MAX_VALUE )
 				.style( "-fx-background-color: black; -fx-text-fill: #f2f2f2; -fx-font-size: 9px; -fx-label-padding: 1 3;" )
 				.build();
-	}
-
-	private static ProgressBar progressBar()
-	{
-		return ProgressBarBuilder.create().maxWidth( 60 ).style( "-fx-scale-y: 0.3;" ).progress( 0.42F ).build();
 	}
 }
