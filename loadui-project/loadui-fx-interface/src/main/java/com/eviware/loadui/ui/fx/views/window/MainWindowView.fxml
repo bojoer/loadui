@@ -10,6 +10,7 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.geometry.Insets?>
 <?import java.net.URL?>
 
 <fx:root type="javafx.scene.layout.StackPane" xmlns:fx="http://javafx.com/fxml">
@@ -17,7 +18,11 @@
 		<URL value="@MainWindowView.css" />
 	</stylesheets>
 	<StackPane fx:id="container" />
-	<InspectorView StackPane.alignment="bottom_center" />
+	<InspectorView StackPane.alignment="bottom_center">
+		<StackPane.margin>
+			<Insets top="100" />
+		</StackPane.margin>
+	</InspectorView>
 	<MenuButton id="mainButton" fx:id="mainButton" styleClass="main-button" StackPane.alignment="top_left">
 		<items>
 			<MenuItem id="settings" text="Settings" onAction="#settings" />

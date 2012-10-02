@@ -24,11 +24,8 @@ import com.eviware.loadui.ui.fx.util.FXMLUtils;
 
 public class InspectorView extends TabPane
 {
-	private final BooleanProperty minimizedProperty = new SimpleBooleanProperty( this, "minimized", true );
 
-	private boolean dragging = false;
-	private double startY = 0;
-	private double lastHeight = 250;
+	private final BooleanProperty minimizedProperty = new SimpleBooleanProperty( this, "minimized", true );
 
 	private Region tabHeaderArea;
 
@@ -47,26 +44,11 @@ public class InspectorView extends TabPane
 		} );
 	}
 
-	private double boundHeight( double desiredHeight )
-	{
-		Tab selectedTab = getSelectionModel().getSelectedItem();
-		if( selectedTab != null )
-		{
-			Node selectedNode = selectedTab.getContent();
-			if( selectedNode != null )
-			{
-				desiredHeight = Math.min( desiredHeight, selectedNode.maxHeight( -1 ) );
-			}
-		}
-		return Math.max( tabHeaderArea.prefHeight( -1 ), desiredHeight );
-	}
-
 	private void init()
 	{
 		tabHeaderArea = ( Region )lookup( ".tab-header-area" );
-		setMaxHeight( boundHeight( 0 ) );
-
 		tabHeaderArea.setCursor( Cursor.V_RESIZE );
+		tabHeaderArea.addEventHandler( MouseEvent.ANY, new DragBehavior() );
 
 		getSelectionModel().selectedItemProperty().addListener( new InvalidationListener()
 		{
@@ -90,38 +72,60 @@ public class InspectorView extends TabPane
 			}
 		} );
 
-		tabHeaderArea.addEventHandler( MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>()
+		setMaxHeight( boundHeight( 0 ) );
+	}
+
+	private double boundHeight( double desiredHeight )
+	{
+		double headerHeight = tabHeaderArea.prefHeight( -1 );
+		Tab selectedTab = getSelectionModel().getSelectedItem();
+		if( selectedTab != null )
+		{
+			Node selectedNode = selectedTab.getContent();
+			if( selectedNode != null )
+			{
+				desiredHeight = Math.min( desiredHeight, headerHeight + selectedNode.maxHeight( -1 ) );
+			}
+		}
+
+		return Math.max( headerHeight, desiredHeight );
+	}
+
+	private final class DragBehavior implements EventHandler<MouseEvent>
+	{
+		private boolean dragging = false;
+		private double startY = 0;
+		private double lastHeight = 250;
+
+		private final EventHandler<ActionEvent> eventHandler = new EventHandler<ActionEvent>()
 		{
 			@Override
-			public void handle( MouseEvent event )
+			public void handle( ActionEvent event )
+			{
+				minimizedProperty.set( !minimizedProperty.get() );
+			}
+		};
+
+		@Override
+		public void handle( MouseEvent event )
+		{
+			if( event.getEventType() == MouseEvent.MOUSE_PRESSED )
 			{
 				startY = event.getScreenY() + getHeight();
 			}
-		} );
-		tabHeaderArea.addEventHandler( MouseEvent.DRAG_DETECTED, new EventHandler<MouseEvent>()
-		{
-			@Override
-			public void handle( MouseEvent event )
+			else if( event.getEventType() == MouseEvent.DRAG_DETECTED )
 			{
 				dragging = true;
 				minimizedProperty.set( false );
 			}
-		} );
-		tabHeaderArea.addEventHandler( MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>()
-		{
-			@Override
-			public void handle( MouseEvent event )
+			else if( event.getEventType() == MouseEvent.MOUSE_DRAGGED )
 			{
 				if( dragging )
 				{
 					setMaxHeight( boundHeight( startY - event.getScreenY() ) );
 				}
 			}
-		} );
-		tabHeaderArea.addEventHandler( MouseEvent.MOUSE_RELEASED, new EventHandler<MouseEvent>()
-		{
-			@Override
-			public void handle( MouseEvent event )
+			else if( event.getEventType() == MouseEvent.MOUSE_RELEASED )
 			{
 				dragging = false;
 				if( getHeight() > getMaxHeight() )
@@ -129,12 +133,7 @@ public class InspectorView extends TabPane
 					minimizedProperty.set( true );
 				}
 			}
-		} );
-
-		tabHeaderArea.addEventHandler( MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>()
-		{
-			@Override
-			public void handle( MouseEvent event )
+			else if( event.getEventType() == MouseEvent.MOUSE_CLICKED )
 			{
 				if( event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2 )
 				{
@@ -152,16 +151,9 @@ public class InspectorView extends TabPane
 							.create()
 							.keyFrames(
 									new KeyFrame( Duration.seconds( 0.2 ), new KeyValue( maxHeightProperty(), target,
-											Interpolator.EASE_BOTH ) ) ).onFinished( new EventHandler<ActionEvent>()
-							{
-								@Override
-								public void handle( ActionEvent arg0 )
-								{
-									minimizedProperty.set( !minimizedProperty.get() );
-								}
-							} ).build().playFromStart();
+											Interpolator.EASE_BOTH ) ) ).onFinished( eventHandler ).build().playFromStart();
 				}
 			}
-		} );
+		}
 	}
 }
