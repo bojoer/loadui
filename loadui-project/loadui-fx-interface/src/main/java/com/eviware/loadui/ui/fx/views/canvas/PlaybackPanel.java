@@ -2,41 +2,34 @@ package com.eviware.loadui.ui.fx.views.canvas;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBuilder;
-import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.Separator;
-import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.StackPaneBuilder;
 import javafx.util.Duration;
 
 import javax.annotation.Nonnull;
 
 import com.eviware.loadui.api.counter.CounterHolder;
 import com.eviware.loadui.api.model.CanvasItem;
-import com.eviware.loadui.ui.fx.util.TestExecutionUtils;
 
-public abstract class PlaybackPanel extends HBox
+public abstract class PlaybackPanel<T extends CounterDisplay> extends HBox
 {
 	protected CanvasItem canvas;
 
-	public final static String TIME = "Time";
-	public final static String REQUESTS = "Requests";
-	public final static String FAILURES = "Failures";
+	public final static String TIME_LABEL = "Time";
+	public final static String REQUESTS_LABEL = "Requests";
+	public final static String FAILURES_LABEL = "Failures";
 
-	protected final CounterDisplay time;
-	protected final CounterDisplay requests;
-	protected final CounterDisplay failures;
+	protected final T time;
+	protected final T requests;
+	protected final T failures;
+
+	protected PlayButton playButton = new PlayButton();
 
 	public PlaybackPanel()
 	{
@@ -45,37 +38,11 @@ public abstract class PlaybackPanel extends HBox
 		failures = timeFailures();
 	}
 
-	private ToggleButton playButton;
+	protected abstract T timeCounter();
 
-	protected abstract CounterDisplay timeCounter();
+	protected abstract T timeRequests();
 
-	protected abstract CounterDisplay timeRequests();
-
-	protected abstract CounterDisplay timeFailures();
-
-	protected final ChangeListener<Boolean> playCanvas = new ChangeListener<Boolean>()
-	{
-		@Override
-		public void changed( ObservableValue<? extends Boolean> observable, Boolean wasSelected, Boolean isSelected )
-		{
-			if( isSelected )
-			{
-				if( TestExecutionUtils.startCanvas( canvas ) == null )
-					Platform.runLater( new Runnable()
-					{
-						@Override
-						public void run()
-						{
-							playButton.setSelected( false );
-						}
-					} );
-			}
-			else
-			{
-				TestExecutionUtils.stopCanvas( canvas );
-			}
-		}
-	};
+	protected abstract T timeFailures();
 
 	protected final EventHandler<ActionEvent> resetCounters = new EventHandler<ActionEvent>()
 	{
@@ -91,13 +58,14 @@ public abstract class PlaybackPanel extends HBox
 		@Override
 		public void handle( ActionEvent e )
 		{
-			LimitsDialog.instanceOf( PlaybackPanel.this ).show();
+			new LimitsDialog( PlaybackPanel.this, canvas ).show();
 		}
 	};
 
 	public void setCanvas( @Nonnull final CanvasItem canvas )
 	{
 		this.canvas = canvas;
+		playButton.setCanvas( canvas );
 		Timeline updateDisplays = new Timeline( new KeyFrame( Duration.millis( 500 ), new EventHandler<ActionEvent>()
 		{
 			@Override
@@ -117,12 +85,6 @@ public abstract class PlaybackPanel extends HBox
 		return ButtonBuilder.create().text( "Reset" ).style( "-fx-font-size: 10px;" ).onAction( resetCounters ).build();
 	}
 
-	protected Button limitsButton()
-	{
-		return ButtonBuilder.create().text( "Set Limits\u2026" ).style( "-fx-font-size: 10px;" )
-				.onAction( openLimitsDialog ).build();
-	}
-
 	protected static Separator separator()
 	{
 		return new Separator( Orientation.VERTICAL );
@@ -131,16 +93,5 @@ public abstract class PlaybackPanel extends HBox
 	protected Image image( String name )
 	{
 		return new Image( getClass().getResourceAsStream( name ) );
-	}
-
-	protected StackPane playStack()
-	{
-		playButton = new ToggleButton();
-		playButton.selectedProperty().addListener( playCanvas );
-		ProgressIndicator playSpinner = new ProgressIndicator();
-		playSpinner.visibleProperty().bind( playButton.selectedProperty() );
-		playButton.textProperty().bind(
-				Bindings.when( playButton.selectedProperty() ).then( "\u25FC" ).otherwise( "\u25B6" ) );
-		return StackPaneBuilder.create().children( playSpinner, playButton ).build();
 	}
 }

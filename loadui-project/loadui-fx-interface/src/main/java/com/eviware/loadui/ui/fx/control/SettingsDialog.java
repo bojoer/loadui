@@ -17,6 +17,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TextFieldBuilder;
 import javafx.scene.layout.VBox;
 
+import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 
 import com.eviware.loadui.api.property.Property;
@@ -24,6 +25,8 @@ import com.google.common.base.Objects;
 
 public class SettingsDialog extends ConfirmationDialog
 {
+	public static final double VERTICAL_SPACING = 12;
+	public static final String INVALID_CLASS = "invalid";
 	@Nonnull
 	private final TabPane tabPane = new TabPane();
 	@Nonnull
@@ -44,11 +47,13 @@ public class SettingsDialog extends ConfirmationDialog
 		@Override
 		public void handle( ActionEvent event )
 		{
+			boolean savingSucceeded = true;
 			for( SettingsTab tab : tabs )
 			{
-				tab.save();
+				savingSucceeded = savingSucceeded && tab.save();
 			}
-			close();
+			if( savingSucceeded )
+				close();
 		}
 	}
 
@@ -87,11 +92,10 @@ public class SettingsDialog extends ConfirmationDialog
 
 	public static class SettingsTab extends Tab
 	{
-		@Nonnull
 		private final Map<TextField, Property<String>> textFieldToStringProperty = new HashMap<>();
 		private final Map<TextField, Property<Long>> textFieldToLongProperty = new HashMap<>();
 		private final Map<CheckBox, Property<Boolean>> checkBoxToProperty = new HashMap<>();
-		private final VBox vBox = new VBox( 12 );
+		private final VBox vBox = new VBox( VERTICAL_SPACING );
 
 		private SettingsTab( String label )
 		{
@@ -128,8 +132,9 @@ public class SettingsDialog extends ConfirmationDialog
 			return label.toLowerCase().replace( " ", "-" );
 		}
 
-		private void save()
+		private boolean save()
 		{
+			boolean wasValid = true;
 			for( Entry<TextField, Property<String>> entry : textFieldToStringProperty.entrySet() )
 			{
 				TextField textField = entry.getKey();
@@ -138,16 +143,38 @@ public class SettingsDialog extends ConfirmationDialog
 			for( Entry<TextField, Property<Long>> entry : textFieldToLongProperty.entrySet() )
 			{
 				TextField textField = entry.getKey();
-				Long newValue = null;
-				if( !textField.getText().isEmpty() )
-					newValue = Long.parseLong( textField.getText() );
-				entry.getValue().setValue( newValue );
+				Long newValue = getLong( textField );
+				if( newValue == null )
+					wasValid = false;
+				else
+					entry.getValue().setValue( newValue );
 			}
 			for( Entry<CheckBox, Property<Boolean>> entry : checkBoxToProperty.entrySet() )
 			{
 				CheckBox checkBox = entry.getKey();
 				entry.getValue().setValue( checkBox.isSelected() );
 			}
+			return wasValid;
+		}
+
+		@CheckForNull
+		public static Long getLong( final TextField textField )
+		{
+			Long newValue = null;
+			if( !textField.getText().isEmpty() )
+			{
+				try
+				{
+					newValue = Long.parseLong( textField.getText() );
+					textField.getStyleClass().remove( INVALID_CLASS );
+				}
+				catch( NumberFormatException e )
+				{
+					textField.getStyleClass().add( INVALID_CLASS );
+					return null;
+				}
+			}
+			return newValue;
 		}
 	}
 }

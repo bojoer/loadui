@@ -131,3 +131,12 @@
 	-fx-spacing: 12;
 	-fx-padding: 24;
 }
+
+/**
+ * Controls
+ */
+ 
+.invalid {
+	-fx-background: #f26f6f;
+	-fx-control-inner-background: #fbecec;
+}

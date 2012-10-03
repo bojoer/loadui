@@ -16,6 +16,7 @@ import javafx.scene.control.ButtonBuilder;
 import javafx.scene.control.SplitPaneBuilder;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextAreaBuilder;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -41,7 +42,7 @@ public class StyleTester extends Application
 				new Rectangle( 50, 50, Color.YELLOW ) );
 		//		return carousel;
 
-		return new MiniScenarioPlaybackPanel();
+		return new TextField( "asdasdasd" );
 	}
 
 	@Override

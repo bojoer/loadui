@@ -37,7 +37,7 @@ import com.google.common.collect.Lists;
 public class CreateNewAgentDialog extends ConfirmationDialog
 {
 	private static final Pattern URL_PATTERN = Pattern
-			.compile( "^(?<trimmed>(?<protocol>https?://)?(?<host>([A-Za-z0-9\\.-]{3,})|(([0-9]{1,3}\\.){3}[0-9]{1,3}))(?<port>:[0-9]{1,5})?)/?$" );
+			.compile( "^(?<trimmed>(?<protocol>https?://)?(?<host>([A-Za-z0-9\\.-]+))(?<port>:[0-9]{1,5})?)/?$" );
 
 	private final ObservableSet<AgentReference> selectedAgentRefs = FXCollections.observableSet();
 	private final TextField agentNameField = new TextField();

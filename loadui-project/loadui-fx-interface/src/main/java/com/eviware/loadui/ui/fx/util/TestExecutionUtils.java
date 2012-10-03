@@ -7,11 +7,12 @@ import com.eviware.loadui.api.execution.TestRunner;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.util.BeanInjector;
+import com.google.common.collect.Lists;
 
 public final class TestExecutionUtils
 {
 	public static final String WARN_STOPPING_TEST = "gui.warn_stopping_test";
-	private static final TestRunner testRunner = BeanInjector.getBean( TestRunner.class );
+	public static final TestRunner testRunner = BeanInjector.getBean( TestRunner.class );
 
 	public static TestExecution startCanvas( CanvasItem canvas )
 	{
@@ -73,7 +74,7 @@ public final class TestExecutionUtils
 
 	private static TestExecution popCurrentExecution()
 	{
-		List<TestExecution> queuedExecutions = testRunner.getExecutionQueue();
+		List<TestExecution> queuedExecutions = Lists.newArrayList( testRunner.getExecutionQueue() );
 		if( !queuedExecutions.isEmpty() )
 		{
 			return queuedExecutions.remove( 0 );

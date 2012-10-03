@@ -43,7 +43,7 @@ public class BlockingTask
 
 	private static class BlockingTaskBehavior
 	{
-		private GaussianBlur blur = GaussianBlurBuilder.create().radius( 0 ).build();
+		private final GaussianBlur blur = GaussianBlurBuilder.create().radius( 0 ).build();
 
 		private final LoadingCache<Scene, EventHandler<IntentEvent<? extends Runnable>>> handlers = CacheBuilder
 				.newBuilder().weakKeys().build( new CacheLoader<Scene, EventHandler<IntentEvent<? extends Runnable>>>()

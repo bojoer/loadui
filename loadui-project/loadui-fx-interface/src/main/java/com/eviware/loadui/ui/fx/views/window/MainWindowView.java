@@ -181,7 +181,7 @@ public class MainWindowView extends StackPane
 
 	public void settings()
 	{
-		new GlobalSettingsDialog( mainButton, workspaceProperty.getValue() ).show();
+		GlobalSettingsDialog.newInstance( mainButton, workspaceProperty.getValue() ).show();
 	}
 
 	public void systemProperties()

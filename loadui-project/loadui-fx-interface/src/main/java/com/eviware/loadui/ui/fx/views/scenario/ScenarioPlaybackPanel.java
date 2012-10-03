@@ -1,13 +1,11 @@
 package com.eviware.loadui.ui.fx.views.scenario;
 
-import com.eviware.loadui.ui.fx.views.canvas.CounterDisplay;
-import com.eviware.loadui.ui.fx.views.canvas.CounterDisplay.Formatting;
-import com.eviware.loadui.ui.fx.views.canvas.PlaybackPanel;
-import com.eviware.loadui.ui.fx.views.canvas.ToolbarCounterDisplay;
-
 import javafx.geometry.Pos;
 
-public class ScenarioPlaybackPanel extends PlaybackPanel
+import com.eviware.loadui.ui.fx.views.canvas.PlayButton;
+import com.eviware.loadui.ui.fx.views.canvas.ToolbarPlaybackPanel;
+
+final public class ScenarioPlaybackPanel extends ToolbarPlaybackPanel
 {
 	public ScenarioPlaybackPanel()
 	{
@@ -16,25 +14,7 @@ public class ScenarioPlaybackPanel extends PlaybackPanel
 		setMaxWidth( 550 );
 		setAlignment( Pos.CENTER );
 
-		getChildren().setAll( playStack(), separator(), time, separator(), requests, separator(), failures, separator(),
+		getChildren().setAll( playButton, separator(), time, separator(), requests, separator(), failures, separator(),
 				resetButton(), limitsButton() );
-	}
-
-	@Override
-	protected CounterDisplay timeCounter()
-	{
-		return new ToolbarCounterDisplay( TIME, Formatting.TIME );
-	}
-
-	@Override
-	protected CounterDisplay timeRequests()
-	{
-		return new ToolbarCounterDisplay( REQUESTS );
-	}
-
-	@Override
-	protected CounterDisplay timeFailures()
-	{
-		return new ToolbarCounterDisplay( FAILURES );
 	}
 }

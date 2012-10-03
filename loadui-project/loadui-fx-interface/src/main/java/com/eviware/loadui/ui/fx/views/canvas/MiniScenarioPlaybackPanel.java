@@ -1,10 +1,10 @@
 package com.eviware.loadui.ui.fx.views.canvas;
 
-import com.eviware.loadui.ui.fx.views.canvas.CounterDisplay.Formatting;
-
 import javafx.geometry.Pos;
 
-public class MiniScenarioPlaybackPanel extends PlaybackPanel
+import com.eviware.loadui.ui.fx.views.canvas.CounterDisplay.Formatting;
+
+public class MiniScenarioPlaybackPanel extends PlaybackPanel<CounterDisplay>
 {
 	public MiniScenarioPlaybackPanel()
 	{
@@ -13,24 +13,24 @@ public class MiniScenarioPlaybackPanel extends PlaybackPanel
 		setMaxWidth( 245 );
 		setAlignment( Pos.CENTER );
 
-		getChildren().setAll( playStack(), separator(), time, separator(), requests, separator(), failures );
+		getChildren().setAll( playButton, separator(), time, separator(), requests, separator(), failures );
 	}
 
 	@Override
 	protected CounterDisplay timeCounter()
 	{
-		return new ScenarioCounterDisplay( TIME, Formatting.TIME );
+		return new ScenarioCounterDisplay( TIME_LABEL, Formatting.TIME );
 	}
 
 	@Override
 	protected CounterDisplay timeRequests()
 	{
-		return new ScenarioCounterDisplay( TIME );
+		return new ScenarioCounterDisplay( TIME_LABEL );
 	}
 
 	@Override
 	protected CounterDisplay timeFailures()
 	{
-		return new ScenarioCounterDisplay( TIME );
+		return new ScenarioCounterDisplay( TIME_LABEL );
 	}
 }

@@ -9,15 +9,13 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.util.Callback;
 
-import com.eviware.loadui.ui.fx.views.canvas.CounterDisplay;
-import com.eviware.loadui.ui.fx.views.canvas.CounterDisplay.Formatting;
-import com.eviware.loadui.ui.fx.views.canvas.PlaybackPanel;
-import com.eviware.loadui.ui.fx.views.canvas.ToolbarCounterDisplay;
+import com.eviware.loadui.ui.fx.views.canvas.ToolbarPlaybackPanel;
 
-public class ProjectPlaybackPanel extends PlaybackPanel
+final public class ProjectPlaybackPanel extends ToolbarPlaybackPanel
 {
 	public ProjectPlaybackPanel()
 	{
+		setStyle( "-fx-spacing: 8; -fx-background-color: #8b8c8f; -fx-background-radius: 7;" );
 		setMaxHeight( 28 );
 		setMaxWidth( 550 );
 		setAlignment( Pos.CENTER );
@@ -55,25 +53,7 @@ public class ProjectPlaybackPanel extends PlaybackPanel
 		distibutionMode.setButtonCell( cellFactory.call( null ) );
 		distibutionMode.getSelectionModel().selectFirst();
 
-		getChildren().setAll( playStack(), separator(), distibutionMode, separator(), time, separator(), requests,
+		getChildren().setAll( playButton, separator(), distibutionMode, separator(), time, separator(), requests,
 				separator(), failures, separator(), resetButton(), limitsButton() );
-	}
-
-	@Override
-	protected CounterDisplay timeCounter()
-	{
-		return new ToolbarCounterDisplay( TIME, Formatting.TIME );
-	}
-
-	@Override
-	protected CounterDisplay timeRequests()
-	{
-		return new ToolbarCounterDisplay( REQUESTS );
-	}
-
-	@Override
-	protected CounterDisplay timeFailures()
-	{
-		return new ToolbarCounterDisplay( FAILURES );
 	}
 }
