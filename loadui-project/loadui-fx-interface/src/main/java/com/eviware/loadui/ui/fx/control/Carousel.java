@@ -76,7 +76,10 @@ public class Carousel<E extends Node> extends Control
 						public void run()
 						{
 							setSelected( null );
-							setSelected( selected );
+							if( items.contains( selected ) )
+							{
+								setSelected( selected );
+							}
 						}
 					} );
 				}

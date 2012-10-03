@@ -15,6 +15,8 @@
  */
 package com.eviware.loadui;
 
+import java.io.File;
+
 public class LoadUI
 {
 	/**
@@ -38,6 +40,7 @@ public class LoadUI
 	public static final String BUILD_DATE = "loadui.build.date";
 
 	public static final String LOADUI_HOME = "loadui.home";
+	public static final String WORKING_DIR = "loadui.working";
 
 	public static final String HTTPS_PORT = "loadui.https.port";
 
@@ -52,5 +55,20 @@ public class LoadUI
 	public static boolean isController()
 	{
 		return CONTROLLER.equals( System.getProperty( INSTANCE ) );
+	}
+
+	/**
+	 * Gets the directory from where all relative paths should be resolved.
+	 * 
+	 * @return
+	 */
+	public static File getWorkingDir()
+	{
+		return new File( System.getProperty( WORKING_DIR, "." ) ).getAbsoluteFile();
+	}
+
+	public static File relativeFile( String path )
+	{
+		return new File( getWorkingDir(), path );
 	}
 }

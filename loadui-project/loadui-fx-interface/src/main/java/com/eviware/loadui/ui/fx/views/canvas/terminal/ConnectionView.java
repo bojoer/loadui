@@ -26,6 +26,8 @@ public class ConnectionView extends Wire implements Deletable
 	{
 		super();
 
+		getStyleClass().add( "connection-view" );
+
 		this.connection = connection;
 
 		final OutputTerminal outputTerminal = connection.getOutputTerminal();

@@ -7,7 +7,7 @@ import javafx.stage.Stage;
 
 import org.osgi.framework.BundleContext;
 
-import com.eviware.loadui.ui.fx.util.test.ControllerApi;
+import com.eviware.loadui.ui.fx.util.test.TestFX;
 import com.eviware.loadui.ui.fx.util.test.FXScreenController;
 import com.eviware.loadui.ui.fx.util.test.FXTestUtils;
 import com.eviware.loadui.util.BeanInjector;
@@ -15,7 +15,7 @@ import com.eviware.loadui.util.test.TestUtils;
 
 public class GUI
 {
-	public static ControllerApi getController()
+	public static TestFX getController()
 	{
 		return getInstance().robot.target( getStage() );
 	}
@@ -44,7 +44,7 @@ public class GUI
 	{
 		private final ControllerFXWrapper controller;
 		private final Stage stage;
-		private final ControllerApi robot;
+		private final TestFX robot;
 		private final Exception error;
 
 		private static final Holder instance = new Holder();
@@ -53,7 +53,7 @@ public class GUI
 		{
 			ControllerFXWrapper localController = null;
 			Stage localStage = null;
-			ControllerApi localRobot = null;
+			TestFX localRobot = null;
 			Exception localError = null;
 
 			try
@@ -77,8 +77,8 @@ public class GUI
 				Thread.sleep( 1000 );
 
 				FXTestUtils.bringToFront( localStage );
-				localRobot = ControllerApi.wrap( new FXScreenController() );
-				ControllerApi.targetWindow( localStage );
+				localRobot = TestFX.wrap( new FXScreenController() );
+				TestFX.targetWindow( localStage );
 			}
 			catch( Exception e )
 			{

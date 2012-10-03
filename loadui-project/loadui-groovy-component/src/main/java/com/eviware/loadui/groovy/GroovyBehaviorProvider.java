@@ -36,6 +36,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.codec.digest.DigestUtils;
 
+import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.component.BehaviorProvider;
 import com.eviware.loadui.api.component.ComponentBehavior;
 import com.eviware.loadui.api.component.ComponentContext;
@@ -86,6 +87,10 @@ public class GroovyBehaviorProvider implements BehaviorProvider, EventFirer, Rel
 	public GroovyBehaviorProvider( ComponentRegistry registry, ScheduledExecutorService scheduler, File scriptDir,
 			ClassLoaderRegistry clr )
 	{
+		if( !scriptDir.isAbsolute() )
+		{
+			scriptDir = LoadUI.relativeFile( scriptDir.getPath() );
+		}
 		this.scriptDir = scriptDir;
 		this.registry = registry;
 		this.clr = clr;

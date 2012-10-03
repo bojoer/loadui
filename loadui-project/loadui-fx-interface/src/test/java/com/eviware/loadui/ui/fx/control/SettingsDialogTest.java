@@ -27,7 +27,7 @@ import com.eviware.loadui.test.categories.GUITest;
 import com.eviware.loadui.ui.fx.control.SettingsDialog.SettingsTab;
 import com.eviware.loadui.ui.fx.control.SettingsDialog.SettingsTabBuilder;
 import com.eviware.loadui.ui.fx.util.TestingProperty;
-import com.eviware.loadui.ui.fx.util.test.ControllerApi;
+import com.eviware.loadui.ui.fx.util.test.TestFX;
 import com.eviware.loadui.ui.fx.util.test.FXScreenController;
 import com.eviware.loadui.ui.fx.util.test.FXTestUtils;
 import com.google.common.collect.Lists;
@@ -41,7 +41,7 @@ public class SettingsDialogTest
 	private static final String INIT_STRING = "Old value";
 	private static final SettableFuture<Stage> stageFuture = SettableFuture.create();
 	private static Stage stage;
-	private static ControllerApi controller;
+	private static TestFX controller;
 	private static SettingsDialog settingsDialog;
 	private static Button openDialogButton;
 	private static final Property<String> stringProperty = new TestingProperty<>( String.class,
@@ -60,10 +60,10 @@ public class SettingsDialogTest
 	@BeforeClass
 	public static void createWindow() throws Throwable
 	{
-		controller = ControllerApi.wrap( new FXScreenController() );
+		controller = TestFX.wrap( new FXScreenController() );
 		FXTestUtils.launchApp( SettingsDialogTestApp.class );
 		stage = stageFuture.get( 5, TimeUnit.SECONDS );
-		ControllerApi.targetWindow( stage );
+		TestFX.targetWindow( stage );
 		FXTestUtils.bringToFront( stage );
 	}
 

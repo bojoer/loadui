@@ -12,6 +12,8 @@ public class OutputTerminalView extends TerminalView
 	public OutputTerminalView( OutputTerminal terminal )
 	{
 		super( terminal );
+
+		getStyleClass().add( "output-terminal" );
 	}
 
 	@FXML

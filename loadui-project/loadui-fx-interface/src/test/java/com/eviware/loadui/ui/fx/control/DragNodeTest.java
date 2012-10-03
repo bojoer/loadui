@@ -23,8 +23,8 @@ import org.junit.experimental.categories.Category;
 
 import com.eviware.loadui.test.categories.GUITest;
 import com.eviware.loadui.ui.fx.api.input.DraggableEvent;
-import com.eviware.loadui.ui.fx.util.test.ControllerApi;
-import com.eviware.loadui.ui.fx.util.test.ControllerApi.MouseMotion;
+import com.eviware.loadui.ui.fx.util.test.TestFX;
+import com.eviware.loadui.ui.fx.util.test.TestFX.MouseMotion;
 import com.eviware.loadui.ui.fx.util.test.FXScreenController;
 import com.eviware.loadui.ui.fx.util.test.FXTestUtils;
 import com.google.common.util.concurrent.SettableFuture;
@@ -35,7 +35,7 @@ public class DragNodeTest
 	private static final SettableFuture<Stage> stageFuture = SettableFuture.create();
 	private static DragNode dragNode;
 	private static Stage stage;
-	private static ControllerApi controller;
+	private static TestFX controller;
 
 	public static class DragNodeTestApp extends Application
 	{
@@ -66,10 +66,10 @@ public class DragNodeTest
 	@BeforeClass
 	public static void createWindow() throws Throwable
 	{
-		controller = ControllerApi.wrap( new FXScreenController() );
+		controller = TestFX.wrap( new FXScreenController() );
 		FXTestUtils.launchApp( DragNodeTestApp.class );
 		stage = stageFuture.get( 5, TimeUnit.SECONDS );
-		ControllerApi.targetWindow( stage );
+		TestFX.targetWindow( stage );
 		FXTestUtils.bringToFront( stage );
 	}
 

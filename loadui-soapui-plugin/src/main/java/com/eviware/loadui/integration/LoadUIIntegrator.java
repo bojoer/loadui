@@ -26,6 +26,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.component.ComponentContext;
 import com.eviware.loadui.api.component.ComponentCreationException;
 import com.eviware.loadui.api.component.ComponentDescriptor;
@@ -114,8 +115,7 @@ public class LoadUIIntegrator
 		else
 			ext = "sh";
 
-		File pathFile = new File( "" );
-		String path = pathFile.getAbsolutePath();
+		String path = LoadUI.getWorkingDir().getAbsolutePath();
 		path += File.separator + "loadUI." + ext;
 
 		File f = new File( path );

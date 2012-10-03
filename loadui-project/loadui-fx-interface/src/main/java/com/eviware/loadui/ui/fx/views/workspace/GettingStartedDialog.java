@@ -15,6 +15,7 @@ import javafx.scene.layout.VBoxBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
@@ -57,7 +58,8 @@ public class GettingStartedDialog extends ButtonDialog
 									@Override
 									public void handle( ActionEvent event )
 									{
-										UIUtils.openInExternalBrowser( "http://www.loadui.org/Getting-Started-with-loadUI/videos.html" );
+										UIUtils
+												.openInExternalBrowser( "http://www.loadui.org/Getting-Started-with-loadUI/videos.html" );
 									}
 								} ).build(),
 								ButtonBuilder.create().text( "Read the Getting Started tutorial" )
@@ -77,7 +79,7 @@ public class GettingStartedDialog extends ButtonDialog
 											public void handle( ActionEvent event )
 											{
 												close();
-												File sampleDirectory = new File( "samples" );
+												File sampleDirectory = LoadUI.relativeFile( "samples" );
 												for( String filename : Arrays.asList( "sample1.xml", "sample2.xml", "sample3.xml" ) )
 												{
 													fireEvent( IntentEvent.create( IntentEvent.INTENT_RUN_BLOCKING,

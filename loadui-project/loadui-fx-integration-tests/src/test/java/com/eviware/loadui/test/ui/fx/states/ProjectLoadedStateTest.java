@@ -6,7 +6,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import com.eviware.loadui.test.categories.IntegrationTest;
-import com.eviware.loadui.ui.fx.util.test.ControllerApi;
+import com.eviware.loadui.ui.fx.util.test.TestFX;
 
 @Category( IntegrationTest.class )
 public class ProjectLoadedStateTest
@@ -26,6 +26,6 @@ public class ProjectLoadedStateTest
 	@Test
 	public void shouldHaveProjectView() throws Exception
 	{
-		ControllerApi.find( ".project-view" );
+		TestFX.find( ".project-view" );
 	}
 }

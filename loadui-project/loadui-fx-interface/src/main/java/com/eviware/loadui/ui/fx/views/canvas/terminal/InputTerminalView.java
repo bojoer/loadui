@@ -12,6 +12,8 @@ public class InputTerminalView extends TerminalView
 	public InputTerminalView( InputTerminal terminal )
 	{
 		super( terminal );
+
+		getStyleClass().add( "input-terminal" );
 	}
 
 	@FXML

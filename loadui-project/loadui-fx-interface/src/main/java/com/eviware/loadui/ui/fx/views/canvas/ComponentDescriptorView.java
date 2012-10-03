@@ -40,6 +40,11 @@ public class ComponentDescriptorView extends Label
 		}
 	}
 
+	public ComponentDescriptor getDescriptor()
+	{
+		return descriptor;
+	}
+
 	@Override
 	public String toString()
 	{

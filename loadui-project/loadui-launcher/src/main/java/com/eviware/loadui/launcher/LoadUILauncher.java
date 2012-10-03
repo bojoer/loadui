@@ -73,6 +73,8 @@ public class LoadUILauncher
 
 	protected final static Logger log = Logger.getLogger( LauncherWatchdog.class.getName() );
 
+	protected final static File WORKING_DIR = new File( System.getProperty( "loadui.working", "." ) ).getAbsoluteFile();
+
 	public static void main( String[] args )
 	{
 		System.setSecurityManager( null );
@@ -119,7 +121,7 @@ public class LoadUILauncher
 		System.setProperty( "user.name.original", username );
 		System.setProperty( "user.name", username.toLowerCase() );
 
-		File externalFile = new File( "res/buildinfo.txt" );
+		File externalFile = new File( WORKING_DIR, "res/buildinfo.txt" );
 
 		//Workaround for some versions of Java 6 which have a known SSL issue
 		String versionString = System.getProperty( "java.version", "0.0.0_00" );
@@ -309,7 +311,7 @@ public class LoadUILauncher
 
 	private void loadExternalJarsAsBundles()
 	{
-		File source = new File( "." + File.separator + "ext" );
+		File source = new File( WORKING_DIR, "ext" );
 		if( source.isDirectory() )
 		{
 			for( File ext : source.listFiles( new FilenameFilter()

@@ -1,6 +1,6 @@
 package com.eviware.loadui.ui.fx.util.test;
 
-import static com.eviware.loadui.ui.fx.util.test.ControllerApi.find;
+import static com.eviware.loadui.ui.fx.util.test.TestFX.find;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -28,7 +28,7 @@ import com.google.common.util.concurrent.SettableFuture;
 @Category( GUITest.class )
 public class ControllerApiTest
 {
-	private static final ControllerApi controller = ControllerApi.wrap( new FXScreenController() );
+	private static final TestFX controller = TestFX.wrap( new FXScreenController() );
 	private static final SettableFuture<Stage> stageFuture = SettableFuture.create();
 	private static Stage stage;
 
@@ -57,7 +57,7 @@ public class ControllerApiTest
 		FXTestUtils.launchApp( ControllerApiTestApp.class );
 		stage = stageFuture.get( 5, TimeUnit.SECONDS );
 		FXTestUtils.bringToFront( stage );
-		ControllerApi.targetWindow( stage );
+		TestFX.targetWindow( stage );
 	}
 
 	@Test

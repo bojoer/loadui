@@ -28,8 +28,8 @@ import org.junit.experimental.categories.Category;
 import com.eviware.loadui.test.categories.GUITest;
 import com.eviware.loadui.ui.fx.api.input.DraggableEvent;
 import com.eviware.loadui.ui.fx.api.input.Movable;
-import com.eviware.loadui.ui.fx.util.test.ControllerApi;
-import com.eviware.loadui.ui.fx.util.test.ControllerApi.MouseMotion;
+import com.eviware.loadui.ui.fx.util.test.TestFX;
+import com.eviware.loadui.ui.fx.util.test.TestFX.MouseMotion;
 import com.eviware.loadui.ui.fx.util.test.FXScreenController;
 import com.eviware.loadui.ui.fx.util.test.FXTestUtils;
 import com.google.common.util.concurrent.SettableFuture;
@@ -40,7 +40,7 @@ public class MovableTest
 	private static final SettableFuture<Stage> stageFuture = SettableFuture.create();
 	private static Movable movable;
 	private static Stage stage;
-	private static ControllerApi controller;
+	private static TestFX controller;
 
 	public static class MovableTestApp extends Application
 	{
@@ -68,10 +68,10 @@ public class MovableTest
 	@BeforeClass
 	public static void createWindow() throws Throwable
 	{
-		controller = ControllerApi.wrap( new FXScreenController() );
+		controller = TestFX.wrap( new FXScreenController() );
 		FXTestUtils.launchApp( MovableTestApp.class );
 		stage = stageFuture.get( 5, TimeUnit.SECONDS );
-		ControllerApi.targetWindow( stage );
+		TestFX.targetWindow( stage );
 		FXTestUtils.bringToFront( stage );
 	}
 

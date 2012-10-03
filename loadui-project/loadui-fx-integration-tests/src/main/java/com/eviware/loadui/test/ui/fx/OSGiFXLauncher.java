@@ -77,9 +77,12 @@ public class OSGiFXLauncher extends LoadUIFXLauncher
 		config.setProperty( "felix.cache.rootdir", baseDir.getAbsolutePath() );
 
 		File bundleDir = new File( baseDir, "bundle" );
+
 		try
 		{
-			IntegrationTestUtils.copyDirectory( new File( "../loadui-controller-deps/target/bundle" ), bundleDir );
+			IntegrationTestUtils.copyDirectory( new File(
+					"../../loadui-installers/loadui-controller-installer/target/main" ), baseDir );
+			//IntegrationTestUtils.copyDirectory( new File( "../loadui-controller-deps/target/bundle" ), bundleDir );
 			IntegrationTestUtils.copyDirectory( new File( "target/bundle" ), bundleDir );
 		}
 		catch( IOException e1 )
