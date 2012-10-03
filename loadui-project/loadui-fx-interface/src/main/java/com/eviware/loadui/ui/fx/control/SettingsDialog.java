@@ -26,7 +26,6 @@ import com.google.common.base.Objects;
 public class SettingsDialog extends ConfirmationDialog
 {
 	public static final double VERTICAL_SPACING = 12;
-	public static final String INVALID_CLASS = "invalid";
 	@Nonnull
 	private final TabPane tabPane = new TabPane();
 	@Nonnull
@@ -157,24 +156,5 @@ public class SettingsDialog extends ConfirmationDialog
 			return wasValid;
 		}
 
-		@CheckForNull
-		public static Long getLong( final TextField textField )
-		{
-			Long newValue = null;
-			if( !textField.getText().isEmpty() )
-			{
-				try
-				{
-					newValue = Long.parseLong( textField.getText() );
-					textField.getStyleClass().remove( INVALID_CLASS );
-				}
-				catch( NumberFormatException e )
-				{
-					textField.getStyleClass().add( INVALID_CLASS );
-					return null;
-				}
-			}
-			return newValue;
-		}
 	}
 }

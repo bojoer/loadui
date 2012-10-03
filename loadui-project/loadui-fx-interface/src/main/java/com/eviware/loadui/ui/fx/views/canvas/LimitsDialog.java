@@ -11,6 +11,7 @@ import javax.annotation.Nonnull;
 
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.ui.fx.control.ConfirmationDialog;
+import com.eviware.loadui.ui.fx.control.Dialog;
 import com.eviware.loadui.ui.fx.control.SettingsDialog;
 
 public class LimitsDialog extends ConfirmationDialog
@@ -54,6 +55,6 @@ public class LimitsDialog extends ConfirmationDialog
 	{
 		if( textField.getText().isEmpty() )
 			return -1;
-		return SettingsDialog.SettingsTab.getLong( textField );
+		return Dialog.getLong( textField );
 	}
 }

@@ -6,6 +6,7 @@ import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.TextField;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.effect.GaussianBlurBuilder;
 import javafx.scene.layout.Pane;
@@ -16,6 +17,7 @@ import javafx.stage.StageStyle;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 
+import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 
 import org.slf4j.Logger;
@@ -25,6 +27,8 @@ import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 
 public class Dialog extends Stage
 {
+	public static final String INVALID_CLASS = "invalid";
+
 	private static final GaussianBlur BLUR = GaussianBlurBuilder.create().radius( 8 ).build();
 	private final Node owner;
 	private final Pane rootPane;
@@ -110,5 +114,41 @@ public class Dialog extends Stage
 				}
 			} );
 		}
+	}
+
+	@CheckForNull
+	public static Long getLong( @Nonnull final TextField textField )
+	{
+		Long newValue = null;
+		if( !textField.getText().isEmpty() )
+		{
+			try
+			{
+				newValue = Long.parseLong( textField.getText() );
+				textField.getStyleClass().remove( INVALID_CLASS );
+			}
+			catch( NumberFormatException e )
+			{
+				textField.getStyleClass().add( INVALID_CLASS );
+				return null;
+			}
+		}
+		return newValue;
+	}
+
+	@CheckForNull
+	public static String getNonEmptyString( @Nonnull final TextField textField )
+	{
+		String newValue = null;
+		if( textField.getText().isEmpty() )
+		{
+			textField.getStyleClass().add( INVALID_CLASS );
+		}
+		else
+		{
+			newValue = textField.getText();
+			textField.getStyleClass().remove( INVALID_CLASS );
+		}
+		return newValue;
 	}
 }

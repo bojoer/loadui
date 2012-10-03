@@ -9,6 +9,7 @@ import javafx.scene.control.TextFieldBuilder;
 
 import com.eviware.loadui.api.traits.Labeled;
 import com.eviware.loadui.ui.fx.control.ConfirmationDialog;
+import com.eviware.loadui.ui.fx.control.Dialog;
 
 public class RenameDialog extends ConfirmationDialog
 {
@@ -26,8 +27,12 @@ public class RenameDialog extends ConfirmationDialog
 			@Override
 			public void handle( ActionEvent event )
 			{
-				close();
-				labeled.setLabel( newNameField.getText() );
+				String newName = Dialog.getNonEmptyString( newNameField );
+				if( newName != null )
+				{
+					close();
+					labeled.setLabel( newName );
+				}
 			}
 		} );
 	}
