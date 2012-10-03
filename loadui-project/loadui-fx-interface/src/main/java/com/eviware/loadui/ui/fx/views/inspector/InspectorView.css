@@ -1,0 +1,9 @@
+.tab-header-area {
+	/* This seems to be a bug in the implementation (JavaFX 2.2). The spec says to use v-resize, but the implementation fails unless v_resize is used! */
+	-fx-cursor: v_resize;
+	-fx-padding: 0 5 0 5;
+}
+
+.tab {
+	-fx-cursor: default;
+}

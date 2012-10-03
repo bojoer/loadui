@@ -57,5 +57,25 @@ public class JavaFXActivator implements BundleActivator
 	public void stop( BundleContext context ) throws Exception
 	{
 		System.out.println( "JavaFX2 bundle stopped!" );
+		Thread thread = new Thread( new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				try
+				{
+					Thread.sleep( 6000 );
+				}
+				catch( InterruptedException e )
+				{
+					e.printStackTrace();
+				}
+
+				System.out.println( "Shutdown timed out, forcing close..." );
+				System.exit( 0 );
+			}
+		} );
+		thread.setDaemon( true );
+		thread.start();
 	}
 }

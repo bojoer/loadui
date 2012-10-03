@@ -207,7 +207,7 @@ public class MainWindowView extends StackPane
 
 	public void feedback()
 	{
-		UIUtils.openInExternalBrowser( "http://www.eviware.com/forum/viewforum.php?f=9" );
+		UIUtils.openInExternalBrowser( "http://www.soapui.org/forum/viewforum.php?f=9" );
 	}
 
 	public void about()
