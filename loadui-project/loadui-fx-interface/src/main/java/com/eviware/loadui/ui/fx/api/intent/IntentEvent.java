@@ -49,4 +49,10 @@ public class IntentEvent<T> extends Event
 	{
 		return arg;
 	}
+
+	@Override
+	public String toString()
+	{
+		return getEventType() + "[arg=" + arg + "]";
+	}
 }

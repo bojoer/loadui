@@ -4,7 +4,7 @@ import javafx.stage.Stage;
 
 import com.eviware.loadui.test.TestState;
 import com.eviware.loadui.test.ui.fx.GUI;
-import com.eviware.loadui.ui.fx.util.test.ControllerApi;
+import com.eviware.loadui.ui.fx.util.test.TestFX;
 import com.eviware.loadui.ui.fx.util.test.FXTestUtils;
 
 public class FXAppLoadedState extends TestState
@@ -20,7 +20,7 @@ public class FXAppLoadedState extends TestState
 	protected void enterFromParent() throws Exception
 	{
 		GUI.getBundleContext();
-		final Stage dialog = ControllerApi.findStageByTitle( "Welcome to loadUI" );
+		final Stage dialog = TestFX.findStageByTitle( "Welcome to loadUI" );
 		FXTestUtils.invokeAndWait( new Runnable()
 		{
 			@Override

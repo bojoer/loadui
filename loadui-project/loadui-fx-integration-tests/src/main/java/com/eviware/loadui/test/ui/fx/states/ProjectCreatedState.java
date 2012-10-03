@@ -1,6 +1,6 @@
 package com.eviware.loadui.test.ui.fx.states;
 
-import static com.eviware.loadui.ui.fx.util.test.ControllerApi.find;
+import static com.eviware.loadui.ui.fx.util.test.TestFX.find;
 
 import java.util.concurrent.Callable;
 

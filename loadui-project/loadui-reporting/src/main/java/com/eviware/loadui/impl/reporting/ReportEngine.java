@@ -52,6 +52,8 @@ import net.sf.jasperreports.view.JasperViewer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.eviware.loadui.LoadUI;
+
 public class ReportEngine
 {
 	public enum ReportFormats
@@ -61,7 +63,7 @@ public class ReportEngine
 
 	private static final Logger log = LoggerFactory.getLogger( ReportEngine.class );
 
-	private static final File reportDirectory = new File( "reports" );
+	private static final File reportDirectory = LoadUI.relativeFile( "reports" );
 
 	private static JasperReport compileReport( LReportTemplate report )
 	{

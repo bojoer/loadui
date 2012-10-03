@@ -1,6 +1,6 @@
 package com.eviware.loadui.ui.fx.control;
 
-import static com.eviware.loadui.ui.fx.util.test.ControllerApi.find;
+import static com.eviware.loadui.ui.fx.util.test.TestFX.find;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertNotNull;
@@ -23,7 +23,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import com.eviware.loadui.test.categories.GUITest;
-import com.eviware.loadui.ui.fx.util.test.ControllerApi;
+import com.eviware.loadui.ui.fx.util.test.TestFX;
 import com.eviware.loadui.ui.fx.util.test.FXScreenController;
 import com.eviware.loadui.ui.fx.util.test.FXTestUtils;
 import com.google.common.collect.Iterables;
@@ -61,7 +61,7 @@ public class DetachableTabTest
 	{
 		FXTestUtils.launchApp( DetachableTabTestApp.class );
 		stage = stageFuture.get( 5, TimeUnit.SECONDS );
-		ControllerApi.targetWindow( stage );
+		TestFX.targetWindow( stage );
 		FXTestUtils.bringToFront( stage );
 	}
 
@@ -120,7 +120,7 @@ public class DetachableTabTest
 		assertThat( ( Stage )tab.getDetachableContent().getScene().getWindow(), is( stage ) );
 		assertThat( tab.getContent(), is( tab.getDetachableContent() ) );
 
-		ControllerApi controller = ControllerApi.wrap( new FXScreenController() ).click( detachButton );
+		TestFX controller = TestFX.wrap( new FXScreenController() ).click( detachButton );
 
 		FXTestUtils.invokeAndWait( new Runnable()
 		{

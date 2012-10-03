@@ -1,8 +1,8 @@
 package com.eviware.loadui.ui.fx.control;
 
-import static com.eviware.loadui.ui.fx.util.test.ControllerApi.find;
-import static com.eviware.loadui.ui.fx.util.test.ControllerApi.targetWindow;
-import static com.eviware.loadui.ui.fx.util.test.ControllerApi.wrap;
+import static com.eviware.loadui.ui.fx.util.test.TestFX.find;
+import static com.eviware.loadui.ui.fx.util.test.TestFX.targetWindow;
+import static com.eviware.loadui.ui.fx.util.test.TestFX.wrap;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -30,7 +30,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import com.eviware.loadui.test.categories.GUITest;
-import com.eviware.loadui.ui.fx.util.test.ControllerApi;
+import com.eviware.loadui.ui.fx.util.test.TestFX;
 import com.eviware.loadui.ui.fx.util.test.FXScreenController;
 import com.eviware.loadui.ui.fx.util.test.FXTestUtils;
 import com.google.common.collect.Iterables;
@@ -47,7 +47,7 @@ public class ToolBoxTest
 	private static final Multimap<Color, Rectangle> rectangles = LinkedListMultimap.create();
 	private static final List<Rectangle> clicked = new ArrayList<>();
 	private static Stage stage;
-	private static ControllerApi controller;
+	private static TestFX controller;
 
 	public static class ToolboxTestApp extends Application
 	{

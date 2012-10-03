@@ -35,6 +35,8 @@ public class SplashController
 	{
 		if( window == null )
 		{
+			File workingDir = new File( System.getProperty( "loadui.working", "." ) ).getAbsoluteFile();
+
 			window = new JWindow();
 			Container contentPane = window.getContentPane();
 
@@ -46,14 +48,14 @@ public class SplashController
 				Method mSetWindowOpaque = awtUtilitiesClass.getMethod( "setWindowOpaque", Window.class, boolean.class );
 				mSetWindowOpaque.invoke( null, window, false );
 
-				image = new ImageIcon( new File( "res/loadui-splash.png" ).toURI().toURL() );
+				image = new ImageIcon( new File( workingDir, "res/loadui-splash.png" ).toURI().toURL() );
 			}
 			catch( Exception e )
 			{
 				System.out.println( "Unable to create transparent window, using non-transparent splash: " + e.getMessage() );
 				try
 				{
-					image = new ImageIcon( new File( "res/loadui-splash-no-transparency.png" ).toURI().toURL() );
+					image = new ImageIcon( new File( workingDir, "res/loadui-splash-no-transparency.png" ).toURI().toURL() );
 				}
 				catch( MalformedURLException e1 )
 				{

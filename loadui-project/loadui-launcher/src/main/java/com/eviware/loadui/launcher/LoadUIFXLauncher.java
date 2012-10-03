@@ -66,10 +66,16 @@ public class LoadUIFXLauncher extends LoadUILauncher
 		@Override
 		public void start( final Stage stage ) throws Exception
 		{
+			File workingDir = new File( System.getProperty( "loadui.working", "." ) ).getAbsoluteFile();
+			System.out.println();
+			System.out.println();
+			System.out.println();
+			System.out.println();
+			System.out.println( "!!!!!!!!!!!!WORKING DIR: " + workingDir.getAbsolutePath() );
 			Scene splashScene;
 			try
 			{
-				splashScene = FXMLLoader.load( new File( "res/loadui-splash.fxml" ).toURI().toURL() );
+				splashScene = FXMLLoader.load( new File( workingDir, "res/loadui-splash.fxml" ).toURI().toURL() );
 			}
 			catch( IOException e )
 			{
@@ -80,8 +86,8 @@ public class LoadUIFXLauncher extends LoadUILauncher
 			Image[] icons = new Image[0];
 			try
 			{
-				icons = new Image[] { new Image( new File( "res/icon_64x64.png" ).toURI().toURL().toString() ),
-						new Image( new File( "res/icon_32x32.png" ).toURI().toURL().toString() ) };
+				icons = new Image[] { new Image( new File( workingDir, "res/icon_64x64.png" ).toURI().toURL().toString() ),
+						new Image( new File( workingDir, "res/icon_32x32.png" ).toURI().toURL().toString() ) };
 			}
 			catch( Exception e )
 			{

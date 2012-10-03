@@ -162,6 +162,11 @@ public class MainWindowView extends StackPane
 					//Handled by BlockingTask.
 					return;
 				}
+				else if( event.getEventType() == IntentEvent.INTENT_DELETE )
+				{
+					//Handled by DeleteTask.
+					return;
+				}
 				else
 				{
 					System.out.println( "Unhandled intent: " + event );

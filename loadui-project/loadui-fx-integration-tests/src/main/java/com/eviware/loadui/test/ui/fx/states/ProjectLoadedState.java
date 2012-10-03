@@ -1,13 +1,12 @@
 package com.eviware.loadui.test.ui.fx.states;
 
-import static com.eviware.loadui.ui.fx.util.test.ControllerApi.findAll;
+import static com.eviware.loadui.ui.fx.util.test.TestFX.findAll;
 
 import java.util.concurrent.Callable;
 
-import javafx.scene.input.KeyCode;
-
 import com.eviware.loadui.test.TestState;
 import com.eviware.loadui.test.ui.fx.GUI;
+import com.eviware.loadui.ui.fx.util.test.TestFX;
 import com.eviware.loadui.util.test.TestUtils;
 
 public class ProjectLoadedState extends TestState
@@ -23,7 +22,7 @@ public class ProjectLoadedState extends TestState
 	protected void enterFromParent() throws Exception
 	{
 		log.debug( "Opening project." );
-		GUI.getController().click( ".project-ref-view #menuButton" ).press( KeyCode.DOWN ).press( KeyCode.ENTER );
+		GUI.getController().click( ".project-ref-view #menuButton" ).click( "#open" );
 
 		TestUtils.awaitCondition( new Callable<Boolean>()
 		{
@@ -40,6 +39,15 @@ public class ProjectLoadedState extends TestState
 	{
 		log.debug( "Closing project." );
 		GUI.getController().click( "#closeProjectButton" );
+		//If there is a save dialog, do not save:
+		try
+		{
+			GUI.getController().click( "#no" ).target( TestFX.getWindowByIndex( 0 ) );
+		}
+		catch( Exception e )
+		{
+			//Ignore
+		}
 
 		TestUtils.awaitCondition( new Callable<Boolean>()
 		{

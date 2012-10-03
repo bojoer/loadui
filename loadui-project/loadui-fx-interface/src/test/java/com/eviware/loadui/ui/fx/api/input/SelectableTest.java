@@ -1,6 +1,6 @@
 package com.eviware.loadui.ui.fx.api.input;
 
-import static com.eviware.loadui.ui.fx.util.test.ControllerApi.offset;
+import static com.eviware.loadui.ui.fx.util.test.TestFX.offset;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -24,7 +24,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import com.eviware.loadui.test.categories.GUITest;
-import com.eviware.loadui.ui.fx.util.test.ControllerApi;
+import com.eviware.loadui.ui.fx.util.test.TestFX;
 import com.eviware.loadui.ui.fx.util.test.FXScreenController;
 import com.eviware.loadui.ui.fx.util.test.FXTestUtils;
 import com.google.common.util.concurrent.SettableFuture;
@@ -37,7 +37,7 @@ public class SelectableTest
 	private static Selectable selectable1;
 	private static Selectable selectable2;
 	private static Stage stage;
-	private static ControllerApi controller;
+	private static TestFX controller;
 	private static Pane background;
 
 	public static class SelectableTestApp extends Application
@@ -73,10 +73,10 @@ public class SelectableTest
 	@BeforeClass
 	public static void createWindow() throws Throwable
 	{
-		controller = ControllerApi.wrap( new FXScreenController() );
+		controller = TestFX.wrap( new FXScreenController() );
 		FXTestUtils.launchApp( SelectableTestApp.class );
 		stage = stageFuture.get( 5, TimeUnit.SECONDS );
-		ControllerApi.targetWindow( stage );
+		TestFX.targetWindow( stage );
 		FXTestUtils.bringToFront( stage );
 	}
 

@@ -26,10 +26,10 @@
 					<Label fx:id="canvasObjectLabel" text="CanvasObject Label" />
 				</left>
 				<right>
-					<Button onAction="#delete">X</Button>
+					<Button id="delete" onAction="#delete">X</Button>
 				</right>
 				<bottom>
-					<MenuButton fx:id="menuButton" text="Menu">
+					<MenuButton fx:id="menuButton" id="menu" text="Menu">
 						<items>
 							<MenuItem fx:id="rename" id="rename" text="Rename" onAction="#rename" />
 							<MenuItem fx:id="settings" id="settings" text="Settings" onAction="#settings" />
