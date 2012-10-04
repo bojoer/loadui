@@ -26,7 +26,9 @@
 					<Label fx:id="canvasObjectLabel" text="CanvasObject Label" />
 				</left>
 				<right>
-					<Button id="delete" onAction="#delete">X</Button>
+					<HBox fx:id="buttonBar">
+						<Button id="delete" onAction="#delete">X</Button>
+					</HBox>
 				</right>
 				<bottom>
 					<MenuButton fx:id="menuButton" id="menu" text="Menu">
@@ -36,7 +38,7 @@
 					</MenuButton>
 				</bottom>
 			</BorderPane>
-			<StackPane fx:id="content" id="content" minWidth="200" minHeight="80">
+			<StackPane fx:id="content" id="content" minWidth="80" minHeight="50">
 				<VBox.margin>
 					<Insets top="3" bottom="3" />
 				</VBox.margin>

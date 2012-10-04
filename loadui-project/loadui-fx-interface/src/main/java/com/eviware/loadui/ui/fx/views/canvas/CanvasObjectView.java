@@ -82,6 +82,8 @@ public abstract class CanvasObjectView extends StackPane implements Deletable
 	@FXML
 	protected MenuButton menuButton;
 	@FXML
+	protected HBox buttonBar;
+	@FXML
 	protected StackPane content;
 
 	public CanvasObjectView( CanvasObjectItem canvasObject )

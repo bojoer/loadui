@@ -6,6 +6,8 @@ import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.MenuItemBuilder;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleButtonBuilder;
 
 import com.eviware.loadui.api.layout.LayoutComponent;
 import com.eviware.loadui.api.layout.LayoutContainer;
@@ -20,7 +22,7 @@ import com.eviware.loadui.ui.fx.views.canvas.CanvasObjectView;
 
 public class ComponentView extends CanvasObjectView
 {
-	public ComponentView( ComponentItem component )
+	public ComponentView( final ComponentItem component )
 	{
 		super( component );
 		FXMLUtils.load( this, null, ComponentView.class.getResource( ComponentView.class.getSimpleName() + ".fxml" ) );
@@ -35,8 +37,26 @@ public class ComponentView extends CanvasObjectView
 					}
 				} ).build() );
 
+		buttonBar.getChildren().add( 0,
+				ToggleButtonBuilder.create().id( "compact" ).text( "C" ).onAction( new EventHandler<ActionEvent>()
+				{
+					@Override
+					public void handle( ActionEvent event )
+					{
+						if( ( ( ToggleButton )event.getSource() ).isSelected() )
+						{
+							content.getChildren().setAll(
+									ComponentLayoutUtils.instantiateLayout( component.getCompactLayout() ) );
+						}
+						else
+						{
+							content.getChildren().setAll( ComponentLayoutUtils.instantiateLayout( component.getLayout() ) );
+						}
+					}
+				} ).build() );
+
 		LayoutComponent layoutComponent = component.getLayout();
-		content.getChildren().add( ComponentLayoutUtils.instantiateLayout( layoutComponent ) );
+		content.getChildren().setAll( ComponentLayoutUtils.instantiateLayout( layoutComponent ) );
 	}
 
 	public ComponentItem getComponent()

@@ -2,10 +2,14 @@ package com.eviware.loadui.ui.fx.views.canvas.component;
 
 import java.util.Observable;
 import java.util.Observer;
+import java.util.concurrent.ExecutorService;
 
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBuilder;
 import javafx.scene.control.Label;
 import javafx.scene.control.LabelBuilder;
@@ -23,6 +27,8 @@ import com.eviware.loadui.api.layout.LayoutContainer;
 import com.eviware.loadui.api.layout.PropertyLayoutComponent;
 import com.eviware.loadui.api.layout.SeparatorLayoutComponent;
 import com.eviware.loadui.api.layout.TableLayoutComponent;
+import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
+import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.layout.FormattedString;
 
 public class ComponentLayoutUtils
@@ -83,9 +89,34 @@ public class ComponentLayoutUtils
 		}
 		else if( component instanceof ActionLayoutComponent )
 		{
-			ActionLayoutComponent action = ( ActionLayoutComponent )component;
-			//TODO: Add enabled listener, fire action, etc.
-			return ButtonBuilder.create().text( action.getLabel() ).build();
+			final ActionLayoutComponent action = ( ActionLayoutComponent )component;
+			final Button button = ButtonBuilder.create().text( action.getLabel() ).disable( !action.isEnabled() ).build();
+			button.setOnAction( new EventHandler<ActionEvent>()
+			{
+				@Override
+				public void handle( ActionEvent arg0 )
+				{
+					System.out.println( "CLICK: " + action );
+					if( action.isAsynchronous() )
+					{
+						BeanInjector.getBean( ExecutorService.class ).submit( action.getAction() );
+					}
+					else
+					{
+						button.fireEvent( IntentEvent.create( IntentEvent.INTENT_RUN_BLOCKING, action.getAction() ) );
+					}
+				}
+			} );
+			action.registerListener( new ActionLayoutComponent.ActionEnabledListener()
+			{
+				@Override
+				public void stateChanged( ActionLayoutComponent source )
+				{
+					button.setDisable( !source.isEnabled() );
+				}
+			} );
+
+			return button;
 		}
 		else if( component instanceof LabelLayoutComponent )
 		{
