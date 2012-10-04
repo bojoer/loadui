@@ -19,6 +19,7 @@ import java.util.Map;
 
 import com.eviware.loadui.api.layout.LayoutComponent;
 import com.eviware.loadui.util.MapUtils;
+import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableMap;
 
 public class LayoutComponentImpl implements LayoutComponent
@@ -53,5 +54,11 @@ public class LayoutComponentImpl implements LayoutComponent
 	public boolean has( String key )
 	{
 		return properties.containsKey( key );
+	}
+
+	@Override
+	public String toString()
+	{
+		return Objects.toStringHelper( this ).addValue( properties ).toString();
 	}
 }

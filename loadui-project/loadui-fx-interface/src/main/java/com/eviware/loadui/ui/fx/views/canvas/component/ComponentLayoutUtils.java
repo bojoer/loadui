@@ -1,11 +1,18 @@
 package com.eviware.loadui.ui.fx.views.canvas.component;
 
+import java.util.Observable;
+import java.util.Observer;
+
+import javafx.application.Platform;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.ButtonBuilder;
 import javafx.scene.control.Label;
+import javafx.scene.control.LabelBuilder;
 import javafx.scene.control.Separator;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TooltipBuilder;
+import javafx.scene.layout.VBoxBuilder;
 
 import org.tbee.javafx.scene.layout.MigPane;
 
@@ -16,11 +23,53 @@ import com.eviware.loadui.api.layout.LayoutContainer;
 import com.eviware.loadui.api.layout.PropertyLayoutComponent;
 import com.eviware.loadui.api.layout.SeparatorLayoutComponent;
 import com.eviware.loadui.api.layout.TableLayoutComponent;
+import com.eviware.loadui.util.layout.FormattedString;
 
 public class ComponentLayoutUtils
 {
 	public static Node instantiateLayout( LayoutComponent component )
 	{
+		//Legacy rules that we need, that pre-emp anything else
+		if( component.has( "widget" ) )
+		{
+			//TODO: Add all the stuff from the old WidgetRegistry
+			if( "display".equals( component.get( "widget" ) ) )
+			{
+				LayoutContainer container = ( LayoutContainer )component;
+				MigPane pane = new MigPane( container.getLayoutConstraints(), container.getColumnConstraints(),
+						container.getRowConstraints() );
+				pane.getStyleClass().add( "display" );
+				for( LayoutComponent child : container )
+				{
+					pane.add( instantiateLayout( child ), child.getConstraints() );
+				}
+				return pane;
+			}
+		}
+		else if( component.has( "fString" ) )
+		{
+			final FormattedString fString = ( FormattedString )component.get( "fString" );
+			final Label label = new Label( fString.getCurrentValue() );
+			fString.addObserver( new Observer()
+			{
+				@Override
+				public void update( Observable o, Object arg )
+				{
+					Platform.runLater( new Runnable()
+					{
+						@Override
+						public void run()
+						{
+							label.setText( fString.getCurrentValue() );
+						}
+					} );
+				}
+			} );
+
+			return VBoxBuilder.create()
+					.children( LabelBuilder.create().text( ( String )component.get( "label" ) ).build(), label ).build();
+		}
+
 		if( component instanceof LayoutContainer )
 		{
 			LayoutContainer container = ( LayoutContainer )component;
@@ -57,9 +106,9 @@ public class ComponentLayoutUtils
 			//TODO: Table stuff
 			return new TableView<>();
 		}
-		else
-		{
-			return new Label( "Unhandled: " + component );
-		}
+
+		return LabelBuilder.create().text( "Unhandled: " + component )
+				.tooltip( TooltipBuilder.create().text( component.toString() ).build() )
+				.style( "-fx-background-color: red;" ).maxWidth( 80 ).build();
 	}
 }

@@ -15,6 +15,7 @@ import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.ui.fx.control.SettingsDialog;
 import com.eviware.loadui.ui.fx.control.SettingsDialog.SettingsTab;
 import com.eviware.loadui.ui.fx.control.SettingsDialog.SettingsTabBuilder;
+import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.views.canvas.CanvasObjectView;
 
 public class ComponentView extends CanvasObjectView
@@ -22,7 +23,7 @@ public class ComponentView extends CanvasObjectView
 	public ComponentView( ComponentItem component )
 	{
 		super( component );
-		//FXMLUtils.load( content, null, ComponentView.class.getResource( ComponentView.class.getSimpleName() + ".fxml" ) );
+		FXMLUtils.load( this, null, ComponentView.class.getResource( ComponentView.class.getSimpleName() + ".fxml" ) );
 
 		menuButton.getItems().add(
 				MenuItemBuilder.create().id( "settings" ).text( "Settings" ).onAction( new EventHandler<ActionEvent>()

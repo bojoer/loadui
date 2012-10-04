@@ -11,5 +11,7 @@
 <?import java.net.URL?>
 
 <fx:root type="javafx.scene.layout.StackPane" xmlns:fx="http://javafx.com/fxml">
-	<Region style="-fx-background-color: blue;" minHeight="100" />
+	<stylesheets>
+		<URL value="@ComponentView.css" />
+	</stylesheets>
 </fx:root>
