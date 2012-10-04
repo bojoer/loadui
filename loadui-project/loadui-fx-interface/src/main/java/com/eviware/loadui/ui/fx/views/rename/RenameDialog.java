@@ -4,12 +4,10 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TextFieldBuilder;
 
 import com.eviware.loadui.api.traits.Labeled;
 import com.eviware.loadui.ui.fx.control.ConfirmationDialog;
-import com.eviware.loadui.ui.fx.control.Dialog;
+import com.eviware.loadui.ui.fx.control.fields.ValidatableStringField;
 
 public class RenameDialog extends ConfirmationDialog
 {
@@ -18,7 +16,7 @@ public class RenameDialog extends ConfirmationDialog
 		super( owner, "Rename: " + labeled.getLabel(), "Rename" );
 
 		Label newName = new Label( "New name" );
-		final TextField newNameField = TextFieldBuilder.create().text( labeled.getLabel() ).build();
+		final ValidatableStringField newNameField = new ValidatableStringField( ValidatableStringField.NOT_EMPTY );
 
 		getItems().setAll( newName, newNameField );
 
@@ -27,11 +25,10 @@ public class RenameDialog extends ConfirmationDialog
 			@Override
 			public void handle( ActionEvent event )
 			{
-				String newName = Dialog.getNonEmptyString( newNameField );
-				if( newName != null )
+				if( newNameField.validate() )
 				{
 					close();
-					labeled.setLabel( newName );
+					labeled.setLabel( newNameField.getValue() );
 				}
 			}
 		} );

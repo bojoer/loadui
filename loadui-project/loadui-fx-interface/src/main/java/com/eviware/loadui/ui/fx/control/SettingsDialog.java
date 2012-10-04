@@ -8,19 +8,20 @@ import java.util.Map.Entry;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.CheckBoxBuilder;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TextFieldBuilder;
 import javafx.scene.layout.VBox;
 
-import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 
 import com.eviware.loadui.api.property.Property;
+import com.eviware.loadui.ui.fx.control.fields.Field;
+import com.eviware.loadui.ui.fx.control.fields.Field.Validatable;
+import com.eviware.loadui.ui.fx.control.fields.ValidatableCheckBox;
+import com.eviware.loadui.ui.fx.control.fields.ValidatableLongField;
+import com.eviware.loadui.ui.fx.control.fields.ValidatableStringField;
+import com.eviware.loadui.ui.fx.control.fields.ValidatableTextField;
 import com.google.common.base.Objects;
 
 public class SettingsDialog extends ConfirmationDialog
@@ -46,13 +47,19 @@ public class SettingsDialog extends ConfirmationDialog
 		@Override
 		public void handle( ActionEvent event )
 		{
-			boolean savingSucceeded = true;
+			boolean wasValid = true;
 			for( SettingsTab tab : tabs )
 			{
-				savingSucceeded = savingSucceeded && tab.save();
+				wasValid = wasValid && tab.validate();
 			}
-			if( savingSucceeded )
+			if( wasValid )
+			{
+				for( SettingsTab tab : tabs )
+				{
+					tab.save();
+				}
 				close();
+			}
 		}
 	}
 
@@ -70,15 +77,9 @@ public class SettingsDialog extends ConfirmationDialog
 			tab = new SettingsTab( label );
 		}
 
-		@SuppressWarnings( "unchecked" )
-		public SettingsTabBuilder field( @Nonnull String label, @Nonnull Property<?> property )
+		public <T> SettingsTabBuilder field( @Nonnull String label, @Nonnull Property<T> property )
 		{
-			if( property.getType().equals( String.class ) )
-				tab.addStringField( label, ( Property<String> )property );
-			else if( property.getType().equals( Long.class ) )
-				tab.addLongField( label, ( Property<Long> )property );
-			else if( property.getType().equals( Boolean.class ) )
-				tab.addBooleanField( label, ( Property<Boolean> )property );
+			tab.addField( label, property );
 			return this;
 		}
 
@@ -91,9 +92,7 @@ public class SettingsDialog extends ConfirmationDialog
 
 	public static class SettingsTab extends Tab
 	{
-		private final Map<TextField, Property<String>> textFieldToStringProperty = new HashMap<>();
-		private final Map<TextField, Property<Long>> textFieldToLongProperty = new HashMap<>();
-		private final Map<CheckBox, Property<Boolean>> checkBoxToProperty = new HashMap<>();
+		private final Map<Field.Validatable<?>, Property<?>> fieldToProperty = new HashMap<>();
 		private final VBox vBox = new VBox( VERTICAL_SPACING );
 
 		private SettingsTab( String label )
@@ -103,27 +102,33 @@ public class SettingsDialog extends ConfirmationDialog
 			setContent( vBox );
 		}
 
-		private void addStringField( String label, Property<String> property )
+		private void addField( String label, Property<?> property )
 		{
-			TextField field = TextFieldBuilder.create().id( toCssId( label ) ).text( property.getValue() ).build();
-			vBox.getChildren().addAll( new Label( label + ":" ), field );
-			textFieldToStringProperty.put( field, property );
-		}
-
-		private void addLongField( String label, Property<Long> property )
-		{
-			TextField field = TextFieldBuilder.create().id( toCssId( label ) )
-					.text( Objects.firstNonNull( property.getValue(), "" ).toString() ).build();
-			vBox.getChildren().addAll( new Label( label + ":" ), field );
-			textFieldToLongProperty.put( field, property );
-		}
-
-		private void addBooleanField( String label, Property<Boolean> property )
-		{
-			CheckBox field = CheckBoxBuilder.create().id( toCssId( label ) ).text( label ).selected( property.getValue() )
-					.build();
-			vBox.getChildren().add( field );
-			checkBoxToProperty.put( field, property );
+			if( property.getType().equals( Boolean.class ) )
+			{
+				ValidatableCheckBox checkBox = new ValidatableCheckBox( label );
+				checkBox.setSelected( ( Boolean )property.getValue() );
+				checkBox.setId( toCssId( label ) );
+				vBox.getChildren().add( checkBox );
+				fieldToProperty.put( checkBox, property );
+			}
+			else
+			{
+				ValidatableTextField<?> textField;
+				if( property.getType().equals( Long.class ) )
+				{
+					textField = new ValidatableLongField();
+					textField.setText( Objects.firstNonNull( property.getValue(), "" ).toString() );
+				}
+				else
+				{
+					textField = new ValidatableStringField();
+					textField.setText( property.getValue().toString() );
+				}
+				textField.setId( toCssId( label ) );
+				vBox.getChildren().addAll( new Label( label + ":" ), textField );
+				fieldToProperty.put( textField, property );
+			}
 		}
 
 		private static String toCssId( String label )
@@ -131,29 +136,25 @@ public class SettingsDialog extends ConfirmationDialog
 			return label.toLowerCase().replace( " ", "-" );
 		}
 
-		private boolean save()
+		private boolean validate()
 		{
 			boolean wasValid = true;
-			for( Entry<TextField, Property<String>> entry : textFieldToStringProperty.entrySet() )
+			for( Entry<Field.Validatable<?>, Property<?>> entry : fieldToProperty.entrySet() )
 			{
-				TextField textField = entry.getKey();
-				entry.getValue().setValue( textField.getText() );
-			}
-			for( Entry<TextField, Property<Long>> entry : textFieldToLongProperty.entrySet() )
-			{
-				TextField textField = entry.getKey();
-				Long newValue = getLong( textField );
-				if( newValue == null )
-					wasValid = false;
-				else
-					entry.getValue().setValue( newValue );
-			}
-			for( Entry<CheckBox, Property<Boolean>> entry : checkBoxToProperty.entrySet() )
-			{
-				CheckBox checkBox = entry.getKey();
-				entry.getValue().setValue( checkBox.isSelected() );
+				Field.Validatable<?> field = entry.getKey();
+				wasValid = wasValid && field.validate();
+				System.out.println( ( ( Node )field ).getStyleClass().toString() );
 			}
 			return wasValid;
+		}
+
+		private void save()
+		{
+			for( Entry<Validatable<?>, Property<?>> entry : fieldToProperty.entrySet() )
+			{
+				Field<?> field = entry.getKey();
+				entry.getValue().setValue( field.getValue() );
+			}
 		}
 
 	}

@@ -87,6 +87,7 @@ public class SettingsDialogTest
 			}
 		} );
 		controller.click( openDialogButton );
+		generalTab.getTabPane().getSelectionModel().select( generalTab );
 	}
 
 	@Test
