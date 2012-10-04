@@ -14,6 +14,7 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -26,6 +27,7 @@ import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.control.SliderBuilder;
 import javafx.scene.effect.Effect;
@@ -65,9 +67,11 @@ import com.eviware.loadui.ui.fx.util.ObservableLists;
 import com.eviware.loadui.ui.fx.views.canvas.terminal.ConnectionView;
 import com.eviware.loadui.ui.fx.views.canvas.terminal.TerminalView;
 import com.eviware.loadui.ui.fx.views.canvas.terminal.Wire;
+import com.eviware.loadui.ui.fx.views.scenario.NewScenarioIcon;
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
 public class CanvasView extends StackPane
@@ -154,7 +158,6 @@ public class CanvasView extends StackPane
 			ComponentDescriptorView view = new ComponentDescriptorView( input );
 			String category = input.getCategory();
 			ToolBox.setCategory( view, category.substring( 0, 1 ).toUpperCase() + category.substring( 1 ).toLowerCase() );
-
 			return view;
 		}
 	};
@@ -167,6 +170,7 @@ public class CanvasView extends StackPane
 			return !input.isDeprecated();
 		}
 	};
+	private static final NewScenarioIcon SCENARIO_ICON = new NewScenarioIcon();
 
 	private final CanvasItem canvas;
 	private final ObservableList<ComponentView> components;
@@ -202,13 +206,23 @@ public class CanvasView extends StackPane
 		bindContentUnordered( componentLayer.getChildren(), ObservableLists.concatUnordered( components, scenarios ) );
 		bindContentUnordered( connectionLayer.getChildren(), connections );
 
-		ToolBox<ComponentDescriptorView> descriptors = new ToolBox<>( "Components" );
+		ToolBox<Label> descriptors = new ToolBox<>( "Components" );
 		descriptors.setMaxWidth( 100 );
 		StackPane.setAlignment( descriptors, Pos.CENTER_LEFT );
 		StackPane.setMargin( descriptors, new Insets( 10, 0, 10, 0 ) );
 
-		Bindings.bindContent( descriptors.getItems(),
-				fx( transform( filter( ofServices( ComponentDescriptor.class ), NOT_DEPRECATED ), DESCRIPTOR_TO_VIEW ) ) );
+		ObservableList<ComponentDescriptorView> componentDescriptors = transform(
+				fx( filter( ofServices( ComponentDescriptor.class ), NOT_DEPRECATED ) ), DESCRIPTOR_TO_VIEW );
+		if( canvas instanceof SceneItem )
+		{
+			Bindings.bindContent( descriptors.getItems(), componentDescriptors );
+		}
+		else
+		{
+			ObservableList<NewScenarioIcon> scenario = FXCollections.observableList( ImmutableList.of( SCENARIO_ICON ) );
+			Bindings
+					.bindContent( descriptors.getItems(), ObservableLists.concatUnordered( scenario, componentDescriptors ) );
+		}
 
 		Pane componentWrapper = new Pane();
 		Rectangle clipRect = new Rectangle();
@@ -224,45 +238,52 @@ public class CanvasView extends StackPane
 			public void handle( final DraggableEvent event )
 			{
 				if( event.getEventType() == DraggableEvent.DRAGGABLE_ENTERED
-						&& event.getData() instanceof ComponentDescriptor )
+						&& ( event.getData() instanceof ComponentDescriptor || event.getData() instanceof NewScenarioIcon ) )
 				{
 					event.accept();
 					event.consume();
 				}
 				else if( event.getEventType() == DraggableEvent.DRAGGABLE_DROPPED )
 				{
-					final ComponentDescriptor descriptor = ( ComponentDescriptor )event.getData();
-
-					final Task<ComponentItem> createComponent = new Task<ComponentItem>()
-					{
-						@Override
-						protected ComponentItem call() throws Exception
-						{
-							updateMessage( "Creating component: " + descriptor.getLabel() );
-
-							ComponentItem component = CanvasView.this.canvas.createComponent( descriptor.getLabel(),
-									descriptor );
-							Point2D position = canvasLayer.sceneToLocal( event.getSceneX(), event.getSceneY() );
-							component.setAttribute( "gui.layoutX", String.valueOf( ( int )position.getX() ) );
-							component.setAttribute( "gui.layoutY", String.valueOf( ( int )position.getY() ) );
-
-							return component;
-						}
-					};
-
-					createComponent.setOnFailed( new EventHandler<WorkerStateEvent>()
-					{
-						@Override
-						public void handle( WorkerStateEvent stateEvent )
-						{
-							createComponent.getException().printStackTrace();
-						}
-					} );
-
-					fireEvent( IntentEvent.create( IntentEvent.INTENT_RUN_BLOCKING, createComponent ) );
+					if( event.getData() instanceof ComponentDescriptor )
+						createComponent( event );
+					else if( event.getData() instanceof NewScenarioIcon )
+						fireEvent( IntentEvent.create( IntentEvent.INTENT_CREATE, canvas ) );
 
 					event.consume();
 				}
+			}
+
+			protected void createComponent( final DraggableEvent event )
+			{
+				final ComponentDescriptor descriptor = ( ComponentDescriptor )event.getData();
+
+				final Task<ComponentItem> createComponent = new Task<ComponentItem>()
+				{
+					@Override
+					protected ComponentItem call() throws Exception
+					{
+						updateMessage( "Creating component: " + descriptor.getLabel() );
+
+						ComponentItem component = CanvasView.this.canvas.createComponent( descriptor.getLabel(), descriptor );
+						Point2D position = canvasLayer.sceneToLocal( event.getSceneX(), event.getSceneY() );
+						component.setAttribute( "gui.layoutX", String.valueOf( ( int )position.getX() ) );
+						component.setAttribute( "gui.layoutY", String.valueOf( ( int )position.getY() ) );
+
+						return component;
+					}
+				};
+
+				createComponent.setOnFailed( new EventHandler<WorkerStateEvent>()
+				{
+					@Override
+					public void handle( WorkerStateEvent stateEvent )
+					{
+						createComponent.getException().printStackTrace();
+					}
+				} );
+
+				fireEvent( IntentEvent.create( IntentEvent.INTENT_RUN_BLOCKING, createComponent ) );
 			}
 		} );
 

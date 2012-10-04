@@ -23,7 +23,7 @@ public class CreateScenarioDialog extends ConfirmationDialog
 
 	public CreateScenarioDialog( final Node owner, final ProjectRef projectRef )
 	{
-		super( owner, "New Scenario in: " + projectRef.getLabel(), "Ok" );
+		super( owner, "New Scenario in: " + projectRef.getLabel(), "Create" );
 
 		this.projectRef = projectRef;
 		this.scenarioNameField = new TextField();
@@ -41,18 +41,17 @@ public class CreateScenarioDialog extends ConfirmationDialog
 		} );
 	}
 
-	//TODO: Create the scenario and return a ref...?
 	public class CreateScenarioTask extends Task<Void>
 	{
 		@Override
 		protected Void call() throws Exception
 		{
+			log.debug( "About to create scenario: " + scenarioNameField.getText() );
+
 			SceneItem scenario = projectRef.getProject().createScene( scenarioNameField.getText() );
 			scenario.setAttribute( "gui.layoutX", "200" );
 			scenario.setAttribute( "gui.layoutY", "200" );
-
-			log.debug( "About to create scenario: " + scenarioNameField.getText() );
-			return Void.TYPE.newInstance();
+			return null;
 		}
 	}
 }
