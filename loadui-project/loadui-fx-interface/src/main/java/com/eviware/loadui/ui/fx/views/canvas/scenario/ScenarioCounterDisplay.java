@@ -1,10 +1,12 @@
-package com.eviware.loadui.ui.fx.views.canvas;
+package com.eviware.loadui.ui.fx.views.canvas.scenario;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 
 import javax.annotation.Nonnull;
 
+import com.eviware.loadui.ui.fx.views.canvas.CounterDisplay;
+import com.eviware.loadui.ui.fx.views.canvas.CounterDisplay.Formatting;
 import com.eviware.loadui.util.StringUtils;
 
 public class ScenarioCounterDisplay extends CounterDisplay

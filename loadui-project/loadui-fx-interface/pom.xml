@@ -49,7 +49,8 @@
 						<phase>compile</phase>
 						<configuration>
 							<target xmlns:fx="javafx:com.sun.javafx.tools.ant">
-								<taskdef resource="com/sun/javafx/tools/ant/antlib.xml" uri="javafx:com.sun.javafx.tools.ant">
+								<taskdef resource="com/sun/javafx/tools/ant/antlib.xml"
+									uri="javafx:com.sun.javafx.tools.ant">
 									<classpath>
 										<pathelement location="${env.JAVAFX2_HOME}/lib/ant-javafx.jar" />
 										<pathelement location="${env.JAVAFX2_HOME}/jre/lib/jfxrt.jar" />
@@ -101,8 +102,18 @@
 			<systemPath>${env.JAVAFX2_HOME}/jre/lib/jfxrt.jar</systemPath>
 			<scope>system</scope>
 		</dependency>
-		<!-- <dependency> <groupId>scenic-view</groupId> <artifactId>scenic-view</artifactId> 
-			<version>1.0</version> <scope>provided</scope> </dependency> -->
+		<dependency>
+			<groupId>com.miglayout</groupId>
+			<artifactId>miglayout-core</artifactId>
+			<version>4.2</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.miglayout</groupId>
+			<artifactId>miglayout-javafx</artifactId>
+			<version>4.2</version>
+			<scope>provided</scope>
+		</dependency>
 		<dependency>
 			<groupId>com.eviware.loadui</groupId>
 			<artifactId>loadui-api</artifactId>

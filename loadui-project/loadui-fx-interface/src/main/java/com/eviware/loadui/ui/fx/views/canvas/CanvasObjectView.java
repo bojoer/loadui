@@ -8,6 +8,7 @@ import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -25,7 +26,10 @@ import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.api.terminal.TerminalHolder;
 import com.eviware.loadui.api.traits.Deletable;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
+import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.Properties;
+import com.eviware.loadui.ui.fx.views.canvas.component.ComponentView;
+import com.eviware.loadui.ui.fx.views.canvas.scenario.ScenarioView;
 import com.eviware.loadui.ui.fx.views.canvas.terminal.InputTerminalView;
 import com.eviware.loadui.ui.fx.views.canvas.terminal.OutputTerminalView;
 import com.google.common.base.Function;
@@ -75,6 +79,10 @@ public abstract class CanvasObjectView extends StackPane implements Deletable
 	protected Pane inputTerminalPane;
 	@FXML
 	protected Pane outputTerminalPane;
+	@FXML
+	protected MenuButton menuButton;
+	@FXML
+	protected StackPane content;
 
 	public CanvasObjectView( CanvasObjectItem canvasObject )
 	{
@@ -87,15 +95,8 @@ public abstract class CanvasObjectView extends StackPane implements Deletable
 				fx( ofCollection( canvasObject, TerminalHolder.TERMINALS, OutputTerminal.class,
 						Iterables.filter( canvasObject.getTerminals(), OutputTerminal.class ) ) ), OUTPUT_TERMINAL_TO_VIEW );
 
-		//		FXMLUtils
-		//				.load( this, this, CanvasObjectView.class.getResource( CanvasObjectView.class.getSimpleName() + ".fxml" ) );
-
-		//		getChildren().addAll(
-		//				VBoxBuilder
-		//						.create()
-		//						.children( inputTerminalHBox,
-		//								RectangleBuilder.create().width( 200 ).height( 100 ).fill( Color.BLUEVIOLET ).build(),
-		//								outputTerminalHBox ).build() );
+		FXMLUtils
+				.load( this, this, CanvasObjectView.class.getResource( CanvasObjectView.class.getSimpleName() + ".fxml" ) );
 	}
 
 	@FXML

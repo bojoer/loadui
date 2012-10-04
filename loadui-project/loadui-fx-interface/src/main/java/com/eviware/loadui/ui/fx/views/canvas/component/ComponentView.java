@@ -1,9 +1,11 @@
-package com.eviware.loadui.ui.fx.views.canvas;
+package com.eviware.loadui.ui.fx.views.canvas.component;
 
 import java.util.LinkedList;
 import java.util.List;
 
-import javafx.fxml.FXML;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.MenuItemBuilder;
 
 import com.eviware.loadui.api.layout.LayoutComponent;
 import com.eviware.loadui.api.layout.LayoutContainer;
@@ -13,14 +15,27 @@ import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.ui.fx.control.SettingsDialog;
 import com.eviware.loadui.ui.fx.control.SettingsDialog.SettingsTab;
 import com.eviware.loadui.ui.fx.control.SettingsDialog.SettingsTabBuilder;
-import com.eviware.loadui.ui.fx.util.FXMLUtils;
+import com.eviware.loadui.ui.fx.views.canvas.CanvasObjectView;
 
 public class ComponentView extends CanvasObjectView
 {
 	public ComponentView( ComponentItem component )
 	{
 		super( component );
-		FXMLUtils.load( this, this, ComponentView.class.getResource( ComponentView.class.getSimpleName() + ".fxml" ) );
+		//FXMLUtils.load( content, null, ComponentView.class.getResource( ComponentView.class.getSimpleName() + ".fxml" ) );
+
+		menuButton.getItems().add(
+				MenuItemBuilder.create().id( "settings" ).text( "Settings" ).onAction( new EventHandler<ActionEvent>()
+				{
+					@Override
+					public void handle( ActionEvent arg0 )
+					{
+						settings();
+					}
+				} ).build() );
+
+		LayoutComponent layoutComponent = component.getLayout();
+		content.getChildren().add( ComponentLayoutUtils.instantiateLayout( layoutComponent ) );
 	}
 
 	public ComponentItem getComponent()
@@ -28,7 +43,6 @@ public class ComponentView extends CanvasObjectView
 		return ( ComponentItem )getCanvasObject();
 	}
 
-	@FXML
 	public void settings()
 	{
 		List<SettingsTab> tabs = new LinkedList<>();
@@ -42,7 +56,7 @@ public class ComponentView extends CanvasObjectView
 		settingsDialog.show();
 	}
 
-	public void layoutContainerToField( LayoutContainer container, SettingsTabBuilder tabBuilder )
+	private static void layoutContainerToField( LayoutContainer container, SettingsTabBuilder tabBuilder )
 	{
 		for( LayoutComponent component : container )
 		{

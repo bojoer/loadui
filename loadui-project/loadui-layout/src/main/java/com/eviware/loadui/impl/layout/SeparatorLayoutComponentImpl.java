@@ -40,4 +40,10 @@ public class SeparatorLayoutComponentImpl extends LayoutComponentImpl implements
 	{
 		return MapUtils.getOr( properties, VERTICAL, false );
 	}
+
+	@Override
+	public String getConstraints()
+	{
+		return MapUtils.getOr( properties, CONSTRAINTS, isVertical() ? "growy" : "newline, growx, spanx" );
+	}
 }

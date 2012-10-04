@@ -62,6 +62,8 @@ import com.eviware.loadui.ui.fx.control.DragNode;
 import com.eviware.loadui.ui.fx.control.ToolBox;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.ObservableLists;
+import com.eviware.loadui.ui.fx.views.canvas.component.ComponentView;
+import com.eviware.loadui.ui.fx.views.canvas.scenario.ScenarioView;
 import com.eviware.loadui.ui.fx.views.canvas.terminal.ConnectionView;
 import com.eviware.loadui.ui.fx.views.canvas.terminal.TerminalView;
 import com.eviware.loadui.ui.fx.views.canvas.terminal.Wire;

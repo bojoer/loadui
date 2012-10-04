@@ -3,6 +3,7 @@ package com.eviware.loadui.ui.fx.views.canvas;
 import javafx.geometry.Pos;
 
 import com.eviware.loadui.ui.fx.views.canvas.CounterDisplay.Formatting;
+import com.eviware.loadui.ui.fx.views.canvas.scenario.ScenarioCounterDisplay;
 
 public class MiniScenarioPlaybackPanel extends PlaybackPanel<CounterDisplay>
 {
