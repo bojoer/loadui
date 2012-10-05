@@ -1,6 +1,5 @@
 package com.eviware.loadui.ui.fx.views.canvas.terminal;
 
-import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 
@@ -52,6 +51,18 @@ public class ConnectionView extends Wire implements Deletable
 					}
 				} );
 
+		Runnable redraw = new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				requestLayout();
+			}
+		};
+
+		outputTerminalView.setOnLayout( redraw );
+		inputTerminalView.setOnLayout( redraw );
+
 		final EventHandler<DraggableEvent> eventHandler = new EventHandler<DraggableEvent>()
 		{
 			@Override
@@ -79,15 +90,6 @@ public class ConnectionView extends Wire implements Deletable
 						}
 					}
 				} );
-
-		Platform.runLater( new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				updateWire();
-			}
-		} );
 	}
 
 	private void updateWire()
@@ -101,6 +103,13 @@ public class ConnectionView extends Wire implements Deletable
 		double endY = ( endBounds.getMaxY() + endBounds.getMinY() ) / 2;
 
 		updatePosition( startX, startY, endX, endY );
+	}
+
+	@Override
+	protected void layoutChildren()
+	{
+		updateWire();
+		super.layoutChildren();
 	}
 
 	public Connection getConnection()

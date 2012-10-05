@@ -17,6 +17,7 @@ import com.eviware.loadui.ui.fx.util.Properties;
 public class TerminalView extends StackPane
 {
 	private final Terminal terminal;
+	private Runnable onLayout;
 
 	public TerminalView( Terminal terminal )
 	{
@@ -50,5 +51,25 @@ public class TerminalView extends StackPane
 	public Terminal getTerminal()
 	{
 		return terminal;
+	}
+
+	public Runnable getOnLayout()
+	{
+		return onLayout;
+	}
+
+	public void setOnLayout( Runnable onLayout )
+	{
+		this.onLayout = onLayout;
+	}
+
+	@Override
+	protected void layoutChildren()
+	{
+		super.layoutChildren();
+		if( onLayout != null )
+		{
+			onLayout.run();
+		}
 	}
 }

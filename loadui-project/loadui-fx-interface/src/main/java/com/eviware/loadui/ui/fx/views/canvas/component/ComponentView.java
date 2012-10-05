@@ -9,6 +9,7 @@ import javafx.scene.control.MenuItemBuilder;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleButtonBuilder;
 
+import com.eviware.loadui.api.component.categories.OnOffCategory;
 import com.eviware.loadui.api.layout.LayoutComponent;
 import com.eviware.loadui.api.layout.LayoutContainer;
 import com.eviware.loadui.api.layout.PropertyLayoutComponent;
@@ -22,7 +23,7 @@ import com.eviware.loadui.ui.fx.views.canvas.CanvasObjectView;
 
 public class ComponentView extends CanvasObjectView
 {
-	public ComponentView( final ComponentItem component )
+	protected ComponentView( final ComponentItem component )
 	{
 		super( component );
 		FXMLUtils.load( this, null, ComponentView.class.getResource( ComponentView.class.getSimpleName() + ".fxml" ) );
@@ -91,6 +92,18 @@ public class ComponentView extends CanvasObjectView
 			{
 				layoutContainerToField( ( LayoutContainer )component, tabBuilder );
 			}
+		}
+	}
+
+	public static ComponentView newInstance( ComponentItem component )
+	{
+		if( component.getBehavior() instanceof OnOffCategory )
+		{
+			return new OnOffComponentView( component );
+		}
+		else
+		{
+			return new ComponentView( component );
 		}
 	}
 }

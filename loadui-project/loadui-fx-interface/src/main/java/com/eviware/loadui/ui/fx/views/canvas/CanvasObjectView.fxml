@@ -21,7 +21,7 @@
 					<Insets top="-14" />
 				</VBox.margin>
 			</HBox>
-			<BorderPane>
+			<BorderPane fx:id="topBar">
 				<left>
 					<Label fx:id="canvasObjectLabel" text="CanvasObject Label" />
 				</left>

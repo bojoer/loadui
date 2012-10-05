@@ -10,6 +10,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
@@ -65,8 +66,15 @@ public abstract class CanvasObjectView extends StackPane implements Deletable
 	public static final <T extends CanvasObjectView> T newInstanceUnchecked( Class<T> type, CanvasObjectItem item )
 	{
 		if( item instanceof ComponentItem )
-			return ( T )new ComponentView( ( ComponentItem )item );
-		return ( T )new ScenarioView( ( SceneItem )item );
+		{
+			return ( T )ComponentView.newInstance( ( ComponentItem )item );
+		}
+		if( item instanceof SceneItem )
+		{
+			return ( T )new ScenarioView( ( SceneItem )item );
+		}
+
+		throw new IllegalArgumentException();
 	}
 
 	private final CanvasObjectItem canvasObject;
@@ -81,6 +89,8 @@ public abstract class CanvasObjectView extends StackPane implements Deletable
 	protected Pane outputTerminalPane;
 	@FXML
 	protected MenuButton menuButton;
+	@FXML
+	protected BorderPane topBar;
 	@FXML
 	protected HBox buttonBar;
 	@FXML

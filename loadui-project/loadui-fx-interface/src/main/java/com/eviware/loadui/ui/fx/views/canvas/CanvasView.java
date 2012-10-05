@@ -87,7 +87,7 @@ public class CanvasView extends StackPane
 				@Override
 				public ComponentView apply( ComponentItem input )
 				{
-					return new ComponentView( input );
+					return ComponentView.newInstance( input );
 				}
 			} );
 	private final Function<SceneItem, ScenarioView> SCENARIO_TO_VIEW = Functions.compose(
