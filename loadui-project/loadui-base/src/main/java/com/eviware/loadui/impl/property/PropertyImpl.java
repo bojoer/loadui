@@ -24,6 +24,7 @@ import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.config.PropertyConfig;
 import com.eviware.loadui.impl.serialization.MutableValueImpl;
 import com.eviware.loadui.util.StringUtils;
+import com.google.common.base.Objects;
 
 public class PropertyImpl<T> extends MutableValueImpl<T> implements Property<T>
 {
@@ -59,9 +60,8 @@ public class PropertyImpl<T> extends MutableValueImpl<T> implements Property<T>
 		T oldVal = getValue();
 		super.setValue( value );
 		T newVal = getValue();
-		if( ( oldVal == null && newVal == null ) || ( newVal != null && newVal.equals( oldVal ) ) )
+		if( Objects.equal( oldVal, newVal ) )
 			return;
-
 		config.setStringValue( getStringValue() );
 		owner.fireEvent( new PropertyEvent( owner, this, PropertyEvent.Event.VALUE, oldVal ) );
 	}

@@ -5,18 +5,23 @@ import java.util.Observer;
 import java.util.concurrent.ExecutorService;
 
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBuilder;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.LabelBuilder;
 import javafx.scene.control.Separator;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.TooltipBuilder;
 import javafx.scene.layout.VBoxBuilder;
+import javafx.util.converter.NumberStringConverter;
 
 import org.tbee.javafx.scene.layout.MigPane;
 
@@ -27,7 +32,9 @@ import com.eviware.loadui.api.layout.LayoutContainer;
 import com.eviware.loadui.api.layout.PropertyLayoutComponent;
 import com.eviware.loadui.api.layout.SeparatorLayoutComponent;
 import com.eviware.loadui.api.layout.TableLayoutComponent;
+import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
+import com.eviware.loadui.ui.fx.util.Properties;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.layout.FormattedString;
 
@@ -124,8 +131,7 @@ public class ComponentLayoutUtils
 		}
 		else if( component instanceof PropertyLayoutComponent )
 		{
-			//TODO: Make editable Property
-			return new Label( ( ( PropertyLayoutComponent<?> )component ).getLabel() );
+			return createPropertyNode( ( PropertyLayoutComponent<?> )component );
 		}
 		else if( component instanceof SeparatorLayoutComponent )
 		{
@@ -140,6 +146,48 @@ public class ComponentLayoutUtils
 
 		return LabelBuilder.create().text( "Unhandled: " + component )
 				.tooltip( TooltipBuilder.create().text( component.toString() ).build() )
+				.style( "-fx-background-color: red;" ).maxWidth( 80 ).build();
+	}
+
+	public static Node createPropertyNode( PropertyLayoutComponent<?> property )
+	{
+		Class<?> type = property.getProperty().getType();
+		Label propertyLabel = LabelBuilder.create().text( property.getLabel() ).build();
+		if( property.isReadOnly() )
+		{
+			Label label = new Label();
+			label.textProperty().bind( Bindings.convert( Properties.convert( property.getProperty() ) ) );
+			return VBoxBuilder.create().children( propertyLabel, label ).build();
+		}
+		else if( property.has( "options" ) )
+		{
+			ComboBox<Object> comboBox = new ComboBox<>();
+		}
+		else if( type == String.class )
+		{
+			TextField textField = new TextField();
+			textField.textProperty().bindBidirectional( Properties.convert( ( Property<String> )property.getProperty() ) );
+			return VBoxBuilder.create().children( propertyLabel, textField ).build();
+
+		}
+		else if( Number.class.isAssignableFrom( type ) )
+		{
+			TextField textField = new TextField();
+			textField.textProperty().bindBidirectional( Properties.convert( ( Property<Number> )property.getProperty() ),
+					new NumberStringConverter() );
+			textField.setMaxWidth( 50 );
+			return VBoxBuilder.create().children( propertyLabel, textField ).build();
+		}
+		else if( type == Boolean.class )
+		{
+			CheckBox checkBox = new CheckBox( property.getLabel() );
+			checkBox.selectedProperty().bindBidirectional(
+					Properties.convert( ( Property<Boolean> )property.getProperty() ) );
+			return checkBox;
+		}
+
+		return LabelBuilder.create().text( "Unhandled: " + property )
+				.tooltip( TooltipBuilder.create().text( property.toString() ).build() )
 				.style( "-fx-background-color: red;" ).maxWidth( 80 ).build();
 	}
 }

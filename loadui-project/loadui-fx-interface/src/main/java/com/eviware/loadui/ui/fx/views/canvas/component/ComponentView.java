@@ -3,6 +3,8 @@ package com.eviware.loadui.ui.fx.views.canvas.component;
 import java.util.LinkedList;
 import java.util.List;
 
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.MenuItemBuilder;
@@ -19,13 +21,18 @@ import com.eviware.loadui.ui.fx.control.SettingsDialog;
 import com.eviware.loadui.ui.fx.control.SettingsDialog.SettingsTab;
 import com.eviware.loadui.ui.fx.control.SettingsDialog.SettingsTabBuilder;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
+import com.eviware.loadui.ui.fx.util.Properties;
 import com.eviware.loadui.ui.fx.views.canvas.CanvasObjectView;
 
 public class ComponentView extends CanvasObjectView
 {
+	private final Observable layoutReloaded;
+
 	protected ComponentView( final ComponentItem component )
 	{
 		super( component );
+		layoutReloaded = Properties.observeEvent( component, ComponentItem.LAYOUT_RELOADED );
+
 		FXMLUtils.load( this, null, ComponentView.class.getResource( ComponentView.class.getSimpleName() + ".fxml" ) );
 
 		menuButton.getItems().add(
@@ -38,8 +45,8 @@ public class ComponentView extends CanvasObjectView
 					}
 				} ).build() );
 
-		buttonBar.getChildren().add( 0,
-				ToggleButtonBuilder.create().id( "compact" ).text( "C" ).onAction( new EventHandler<ActionEvent>()
+		final ToggleButton compactModeButton = ToggleButtonBuilder.create().id( "compact" ).text( "C" )
+				.onAction( new EventHandler<ActionEvent>()
 				{
 					@Override
 					public void handle( ActionEvent event )
@@ -54,10 +61,26 @@ public class ComponentView extends CanvasObjectView
 							content.getChildren().setAll( ComponentLayoutUtils.instantiateLayout( component.getLayout() ) );
 						}
 					}
-				} ).build() );
+				} ).build();
+		buttonBar.getChildren().add( 0, compactModeButton );
 
-		LayoutComponent layoutComponent = component.getLayout();
-		content.getChildren().setAll( ComponentLayoutUtils.instantiateLayout( layoutComponent ) );
+		layoutReloaded.addListener( new InvalidationListener()
+		{
+			@Override
+			public void invalidated( Observable arg0 )
+			{
+				if( compactModeButton.isSelected() )
+				{
+					content.getChildren().setAll( ComponentLayoutUtils.instantiateLayout( component.getCompactLayout() ) );
+				}
+				else
+				{
+					content.getChildren().setAll( ComponentLayoutUtils.instantiateLayout( component.getLayout() ) );
+				}
+			}
+		} );
+
+		content.getChildren().setAll( ComponentLayoutUtils.instantiateLayout( component.getLayout() ) );
 	}
 
 	public ComponentItem getComponent()
