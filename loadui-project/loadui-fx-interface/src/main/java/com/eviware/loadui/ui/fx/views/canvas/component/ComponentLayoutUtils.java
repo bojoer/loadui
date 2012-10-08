@@ -6,6 +6,8 @@ import java.util.concurrent.ExecutorService;
 
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
@@ -16,11 +18,14 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.LabelBuilder;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.control.Separator;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TooltipBuilder;
 import javafx.scene.layout.VBoxBuilder;
+import javafx.util.Callback;
 import javafx.util.converter.NumberStringConverter;
 
 import org.tbee.javafx.scene.layout.MigPane;
@@ -29,14 +34,17 @@ import com.eviware.loadui.api.layout.ActionLayoutComponent;
 import com.eviware.loadui.api.layout.LabelLayoutComponent;
 import com.eviware.loadui.api.layout.LayoutComponent;
 import com.eviware.loadui.api.layout.LayoutContainer;
+import com.eviware.loadui.api.layout.OptionsProvider;
 import com.eviware.loadui.api.layout.PropertyLayoutComponent;
 import com.eviware.loadui.api.layout.SeparatorLayoutComponent;
 import com.eviware.loadui.api.layout.TableLayoutComponent;
 import com.eviware.loadui.api.property.Property;
+import com.eviware.loadui.impl.layout.OptionsProviderImpl;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.util.Properties;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.layout.FormattedString;
+import com.google.common.collect.Lists;
 
 public class ComponentLayoutUtils
 {
@@ -162,6 +170,48 @@ public class ComponentLayoutUtils
 		else if( property.has( "options" ) )
 		{
 			ComboBox<Object> comboBox = new ComboBox<>();
+			Object opts = property.get( "options" );
+			OptionsProvider<Object> options;
+			if( opts instanceof OptionsProvider<?> )
+			{
+				options = ( OptionsProvider<Object> )opts;
+			}
+			else if( opts instanceof Iterable<?> )
+			{
+				options = new OptionsProviderImpl<>( ( Iterable<Object> )opts );
+			}
+			else
+			{
+				options = new OptionsProviderImpl<>( opts );
+			}
+			final OptionsProvider<Object> finalOptions = options;
+
+			ObservableList<Object> observableList = FXCollections.observableArrayList( Lists.newArrayList( options
+					.iterator() ) );
+
+			Callback<ListView<Object>, ListCell<Object>> cellFactory = new Callback<ListView<Object>, ListCell<Object>>()
+			{
+				@Override
+				public ListCell<Object> call( ListView<Object> listView )
+				{
+					return new ListCell<Object>()
+					{
+						@Override
+						protected void updateItem( Object item, boolean empty )
+						{
+							super.updateItem( item, empty );
+							setText( finalOptions.labelFor( item ) );
+						}
+					};
+				}
+			};
+			comboBox.setButtonCell( cellFactory.call( null ) );
+			comboBox.setCellFactory( cellFactory );
+			comboBox.setItems( observableList );
+			comboBox.valueProperty().bindBidirectional(
+					( javafx.beans.property.Property<Object> )Properties.convert( property.getProperty() ) );
+
+			return VBoxBuilder.create().children( propertyLabel, comboBox ).build();
 		}
 		else if( type == String.class )
 		{

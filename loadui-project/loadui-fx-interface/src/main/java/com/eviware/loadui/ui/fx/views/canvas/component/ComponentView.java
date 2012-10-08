@@ -7,6 +7,7 @@ import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.Node;
 import javafx.scene.control.MenuItemBuilder;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleButtonBuilder;
@@ -27,6 +28,7 @@ import com.eviware.loadui.ui.fx.views.canvas.CanvasObjectView;
 public class ComponentView extends CanvasObjectView
 {
 	private final Observable layoutReloaded;
+	private final ToggleButton compactModeButton;
 
 	protected ComponentView( final ComponentItem component )
 	{
@@ -45,21 +47,15 @@ public class ComponentView extends CanvasObjectView
 					}
 				} ).build() );
 
-		final ToggleButton compactModeButton = ToggleButtonBuilder.create().id( "compact" ).text( "C" )
+		compactModeButton = ToggleButtonBuilder.create().id( "compact" ).text( "C" )
+				.selected( Boolean.parseBoolean( component.getAttribute( "gui.compact", "false" ) ) )
 				.onAction( new EventHandler<ActionEvent>()
 				{
 					@Override
 					public void handle( ActionEvent event )
 					{
-						if( ( ( ToggleButton )event.getSource() ).isSelected() )
-						{
-							content.getChildren().setAll(
-									ComponentLayoutUtils.instantiateLayout( component.getCompactLayout() ) );
-						}
-						else
-						{
-							content.getChildren().setAll( ComponentLayoutUtils.instantiateLayout( component.getLayout() ) );
-						}
+						rebuildLayout();
+						component.setAttribute( "gui.compact", String.valueOf( compactModeButton.isSelected() ) );
 					}
 				} ).build();
 		buttonBar.getChildren().add( 0, compactModeButton );
@@ -69,18 +65,11 @@ public class ComponentView extends CanvasObjectView
 			@Override
 			public void invalidated( Observable arg0 )
 			{
-				if( compactModeButton.isSelected() )
-				{
-					content.getChildren().setAll( ComponentLayoutUtils.instantiateLayout( component.getCompactLayout() ) );
-				}
-				else
-				{
-					content.getChildren().setAll( ComponentLayoutUtils.instantiateLayout( component.getLayout() ) );
-				}
+				rebuildLayout();
 			}
 		} );
 
-		content.getChildren().setAll( ComponentLayoutUtils.instantiateLayout( component.getLayout() ) );
+		rebuildLayout();
 	}
 
 	public ComponentItem getComponent()
@@ -99,6 +88,21 @@ public class ComponentView extends CanvasObjectView
 		}
 		SettingsDialog settingsDialog = new SettingsDialog( this, "Component Settings", tabs );
 		settingsDialog.show();
+	}
+
+	private void rebuildLayout()
+	{
+		Node layout = null;
+		boolean compact = compactModeButton.isSelected();
+		if( compact )
+		{
+			layout = ComponentLayoutUtils.instantiateLayout( getComponent().getCompactLayout() );
+		}
+		else
+		{
+			layout = ComponentLayoutUtils.instantiateLayout( getComponent().getLayout() );
+		}
+		content.getChildren().setAll( layout );
 	}
 
 	private static void layoutContainerToField( LayoutContainer container, SettingsTabBuilder tabBuilder )
