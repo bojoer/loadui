@@ -27,6 +27,7 @@ import com.eviware.loadui.ui.fx.views.canvas.CanvasObjectView;
 
 public class ComponentView extends CanvasObjectView
 {
+	private static final String COMPACT_MODE_ATTRIBUTE = "gui.compact";
 	private final Observable layoutReloaded;
 	private final ToggleButton compactModeButton;
 
@@ -48,14 +49,14 @@ public class ComponentView extends CanvasObjectView
 				} ).build() );
 
 		compactModeButton = ToggleButtonBuilder.create().id( "compact" ).text( "C" )
-				.selected( Boolean.parseBoolean( component.getAttribute( "gui.compact", "false" ) ) )
+				.selected( Boolean.parseBoolean( component.getAttribute( COMPACT_MODE_ATTRIBUTE, "false" ) ) )
 				.onAction( new EventHandler<ActionEvent>()
 				{
 					@Override
 					public void handle( ActionEvent event )
 					{
 						rebuildLayout();
-						component.setAttribute( "gui.compact", String.valueOf( compactModeButton.isSelected() ) );
+						component.setAttribute( COMPACT_MODE_ATTRIBUTE, String.valueOf( compactModeButton.isSelected() ) );
 					}
 				} ).build();
 		buttonBar.getChildren().add( 0, compactModeButton );

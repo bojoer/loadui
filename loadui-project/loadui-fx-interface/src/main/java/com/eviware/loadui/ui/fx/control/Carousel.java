@@ -1,6 +1,5 @@
 package com.eviware.loadui.ui.fx.control;
 
-import javafx.application.Platform;
 import javafx.beans.DefaultProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ObjectPropertyBase;
@@ -58,6 +57,26 @@ public class Carousel<E extends Node> extends Control
 		initialize();
 	}
 
+	public String getText()
+	{
+		return getLabel().getText();
+	}
+
+	public void setText( String text )
+	{
+		getLabel().setText( text );
+	}
+
+	public Node getGraphic()
+	{
+		return getLabel().getGraphic();
+	}
+
+	public void setGraphic( Node graphic )
+	{
+		getLabel().setGraphic( graphic );
+	}
+
 	private void initialize()
 	{
 		getStyleClass().setAll( DEFAULT_STYLE_CLASS );
@@ -68,40 +87,23 @@ public class Carousel<E extends Node> extends Control
 			public void onChanged( ListChangeListener.Change<? extends E> change )
 			{
 				final E selected = getSelected();
-				if( items.contains( selected ) )
+				if( selected == null )
 				{
-					Platform.runLater( new Runnable()
-					{
-						@Override
-						public void run()
-						{
-							setSelected( null );
-							if( items.contains( selected ) )
-							{
-								setSelected( selected );
-							}
-						}
-					} );
+					return;
 				}
-				else if( items.isEmpty() )
+
+				if( items.isEmpty() )
 				{
 					setSelected( null );
 				}
-				else
+				else if( !items.contains( selected ) )
 				{
-					if( selected == null )
+					while( change.next() )
 					{
-						setSelected( items.get( 0 ) );
-					}
-					else
-					{
-						while( change.next() )
+						if( change.getRemoved().contains( selected ) )
 						{
-							if( change.getRemoved().contains( selected ) )
-							{
-								setSelected( items.get( Math.max( 0, change.getFrom() - 1 ) ) );
-								return;
-							}
+							setSelected( items.get( Math.max( 0, change.getFrom() - 1 ) ) );
+							return;
 						}
 					}
 				}
