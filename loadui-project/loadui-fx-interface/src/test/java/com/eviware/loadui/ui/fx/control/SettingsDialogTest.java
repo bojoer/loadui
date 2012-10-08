@@ -62,6 +62,7 @@ public class SettingsDialogTest
 	{
 		controller = TestFX.wrap( new FXScreenController() );
 		FXTestUtils.launchApp( SettingsDialogTestApp.class );
+
 		stage = stageFuture.get( 5, TimeUnit.SECONDS );
 		TestFX.targetWindow( stage );
 		FXTestUtils.bringToFront( stage );
@@ -74,20 +75,21 @@ public class SettingsDialogTest
 		booleanProperty.setValue( INIT_BOOLEAN );
 		longProperty.setValue( INIT_LONG );
 		longProperty2.setValue( INIT_LONG );
+		generalTab = SettingsTabBuilder.create( "General" ).field( "My string", stringProperty )
+				.field( "My boolean", booleanProperty ).build();
+		otherTab = SettingsTabBuilder.create( "Other" ).field( "My long", longProperty )
+				.field( "My other long", longProperty2 ).build();
 		Platform.runLater( new Runnable()
 		{
 			@Override
 			public void run()
 			{
-				generalTab = SettingsTabBuilder.create( "General" ).field( "My string", stringProperty )
-						.field( "My boolean", booleanProperty ).build();
-				otherTab = SettingsTabBuilder.create( "Other" ).field( "My long", longProperty )
-						.field( "My other long", longProperty2 ).build();
 				settingsDialog = new SettingsDialog( openDialogButton, "Hej", Lists.newArrayList( generalTab, otherTab ) );
 			}
 		} );
-		controller.click( openDialogButton );
+		controller.sleep( 500 );
 		generalTab.getTabPane().getSelectionModel().select( generalTab );
+		controller.click( openDialogButton );
 	}
 
 	@Test

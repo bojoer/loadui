@@ -2,20 +2,31 @@ package com.eviware.loadui.test.ui.fx.states;
 
 import static com.eviware.loadui.ui.fx.util.test.TestFX.findAll;
 
+import java.util.Collection;
 import java.util.concurrent.Callable;
 
+import com.eviware.loadui.api.model.ProjectItem;
+import com.eviware.loadui.api.model.WorkspaceProvider;
 import com.eviware.loadui.test.TestState;
 import com.eviware.loadui.test.ui.fx.GUI;
 import com.eviware.loadui.ui.fx.util.test.TestFX;
+import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.test.TestUtils;
 
 public class ProjectLoadedState extends TestState
 {
-	public static final TestState STATE = new ProjectLoadedState();
+	public static final ProjectLoadedState STATE = new ProjectLoadedState();
+
+	private ProjectItem project = null;
 
 	private ProjectLoadedState()
 	{
 		super( "Project Loaded", ProjectCreatedState.STATE );
+	}
+
+	public ProjectItem getProject()
+	{
+		return project;
 	}
 
 	@Override
@@ -32,12 +43,17 @@ public class ProjectLoadedState extends TestState
 				return !findAll( ".project-view" ).isEmpty();
 			}
 		} );
+
+		Collection<? extends ProjectItem> projects = BeanInjector.getBean( WorkspaceProvider.class ).getWorkspace()
+				.getProjects();
+		project = projects.iterator().next();
 	}
 
 	@Override
 	protected void exitToParent() throws Exception
 	{
 		log.debug( "Closing project." );
+		project = null;
 		GUI.getController().click( "#closeProjectButton" );
 		//If there is a save dialog, do not save:
 		try

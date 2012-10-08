@@ -13,7 +13,7 @@ import com.eviware.loadui.util.test.TestUtils;
 
 public class ProjectCreatedState extends TestState
 {
-	public static final TestState STATE = new ProjectCreatedState();
+	public static final ProjectCreatedState STATE = new ProjectCreatedState();
 
 	private ProjectCreatedState()
 	{

@@ -42,7 +42,7 @@
 					<Insets left="80" />
 				</HBox.margin>
 				<items>
-					<MenuItem fx:id="open" id="open" text="New Scenario" onAction="#newScenario" />
+					<MenuItem fx:id="newScenario" id="newScenario" text="New Scenario" onAction="#newScenario" />
 					<MenuItem fx:id="newProject" id="newProject" text="New Project Wizard" onAction="#newProjectWizard" />
 					<MenuItem fx:id="clone" id="clone" text="Rename..." onAction="#renameProject" />
 					<MenuItem fx:id="save" id="save" text="Save" onAction="#saveProject" />

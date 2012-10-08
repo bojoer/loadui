@@ -13,7 +13,7 @@ public abstract class ToolbarPlaybackPanel extends PlaybackPanel<ToolbarCounterD
 {
 	protected Button limitsButton()
 	{
-		return ButtonBuilder.create().text( "Set Limits\u2026" ).style( "-fx-font-size: 10px;" )
+		return ButtonBuilder.create().id( "set-limits" ).text( "Set Limits\u2026" ).style( "-fx-font-size: 10px;" )
 				.onAction( openLimitsDialog ).build();
 	}
 

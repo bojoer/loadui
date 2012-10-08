@@ -13,7 +13,7 @@
 <?import java.net.URL?>
 
 <fx:root type="javafx.scene.layout.StackPane" xmlns:fx="http://javafx.com/fxml"
-	styleClass="canvas-object-view" minWidth="250" minHeight="180">
+	styleClass="scenario-view" minWidth="250" minHeight="180">
 	<stylesheets>
 		<URL value="@CanvasObjectView.css" />
 	</stylesheets>
@@ -35,6 +35,7 @@
 						<items>
 							<MenuItem fx:id="open" id="open" text="Open" onAction="#open" />
 							<MenuItem fx:id="rename" id="rename" text="Rename" onAction="#rename" />
+							<MenuItem fx:id="delete" id="delete" text="Delete" onAction="#delete" />
 						</items>
 					</MenuButton>
 				</bottom>

@@ -10,7 +10,7 @@ import javafx.scene.control.TextField;
 public class ValidatableTextField<T> extends TextField implements Field.Validatable<T>
 {
 	private final Predicate<String> contraint;
-	private final Function<String, T> convert;
+	protected final Function<String, T> convert;
 
 	public ValidatableTextField( @Nonnull Predicate<String> contraint, @Nonnull Function<String, T> convert, String text )
 	{

@@ -48,6 +48,7 @@ public class PlayButton extends StackPane
 		playSpinner.visibleProperty().bind( toggleButton.selectedProperty() );
 		toggleButton.textProperty().bind(
 				Bindings.when( toggleButton.selectedProperty() ).then( "\u25FC" ).otherwise( "\u25B6" ) );
+		toggleButton.setId( "play-button" );
 
 		TestExecutionUtils.testRunner.registerTask( new TestExecutionTask()
 		{

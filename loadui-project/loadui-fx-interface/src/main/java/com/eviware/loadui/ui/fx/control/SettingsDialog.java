@@ -117,8 +117,8 @@ public class SettingsDialog extends ConfirmationDialog
 				ValidatableTextField<?> textField;
 				if( property.getType().equals( Long.class ) )
 				{
-					textField = new ValidatableLongField();
-					textField.setText( Objects.firstNonNull( property.getValue(), "" ).toString() );
+					textField = ValidatableLongField.Builder.create()
+							.text( Objects.firstNonNull( property.getValue(), "" ).toString() ).build();
 				}
 				else
 				{

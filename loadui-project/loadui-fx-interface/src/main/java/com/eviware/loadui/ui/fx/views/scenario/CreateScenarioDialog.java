@@ -5,6 +5,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFieldBuilder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +27,7 @@ public class CreateScenarioDialog extends ConfirmationDialog
 		super( owner, "New Scenario in: " + projectRef.getLabel(), "Create" );
 
 		this.projectRef = projectRef;
-		this.scenarioNameField = new TextField();
+		this.scenarioNameField = TextFieldBuilder.create().id( "scenario-name" ).build();
 
 		getItems().add( this.scenarioNameField );
 
