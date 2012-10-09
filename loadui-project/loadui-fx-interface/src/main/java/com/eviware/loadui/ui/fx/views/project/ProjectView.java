@@ -85,9 +85,7 @@ public class ProjectView extends StackPane
 					}
 					else if( event.getArg() instanceof ProjectItem )
 					{
-						ProjectItem projectItem = ( ProjectItem )event.getArg();
-						ProjectRef projectRef = getProjectRef( projectItem.getId() );
-						new CreateScenarioDialog( ProjectView.this, projectRef ).show();
+						new CreateScenarioDialog( ProjectView.this, ( ProjectItem )event.getArg() ).show();
 						event.consume();
 					}
 					else

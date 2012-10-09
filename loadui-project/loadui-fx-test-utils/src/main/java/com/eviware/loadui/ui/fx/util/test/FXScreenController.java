@@ -66,6 +66,13 @@ public class FXScreenController implements ScreenController
 	}
 
 	@Override
+	public void position( double x, double y )
+	{
+		mouseXProperty.set( x );
+		mouseYProperty.set( y );
+	}
+
+	@Override
 	public void move( final double x, final double y )
 	{
 		final CountDownLatch done = new CountDownLatch( 1 );

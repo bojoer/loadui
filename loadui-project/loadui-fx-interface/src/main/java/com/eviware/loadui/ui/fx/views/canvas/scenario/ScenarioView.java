@@ -18,6 +18,8 @@ public class ScenarioView extends CanvasObjectView
 	public ScenarioView( SceneItem scenario )
 	{
 		super( scenario );
+		getStyleClass().add( "scenario-view" );
+
 		FXMLUtils.load( content, new Controller(),
 				ScenarioView.class.getResource( ScenarioView.class.getSimpleName() + ".fxml" ) );
 

@@ -46,7 +46,8 @@ public class WireTest
 
 		controller = GUI.getController();
 
-		controller.drag( CONDITION_COMPONENT ).by( 100, 0 ).drop();
+		System.out.println( "Create Component 1" );
+		controller.click( "#Flow.category .expander-button" ).drag( CONDITION_COMPONENT ).by( 100, -400 ).drop();
 		TestUtils.awaitCondition( new Callable<Boolean>()
 		{
 			@Override
@@ -55,7 +56,13 @@ public class WireTest
 				return TestFX.findAll( ".canvas-object-view" ).size() == 1;
 			}
 		} );
-		controller.drag( CONDITION_COMPONENT ).by( 350, 0 ).drop();
+
+		System.gc();
+		System.gc();
+		System.gc();
+
+		System.out.println( "Create Component 2" );
+		controller.click( "#Flow.category .expander-button" ).drag( CONDITION_COMPONENT ).by( 250, -100 ).drop();
 		TestUtils.awaitCondition( new Callable<Boolean>()
 		{
 			@Override
@@ -69,9 +76,9 @@ public class WireTest
 	@AfterClass
 	public static void cleanState()
 	{
-		while( !TestFX.findAll( ".canvas-object-view #delete" ).isEmpty() )
+		for( int components = 2; components > 0; components-- )
 		{
-			controller.click( ".canvas-object-view #delete" );
+			controller.click( ".component-view #menu" ).click( "#delete" );
 		}
 	}
 

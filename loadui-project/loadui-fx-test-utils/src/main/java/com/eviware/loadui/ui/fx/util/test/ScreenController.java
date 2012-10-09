@@ -8,6 +8,8 @@ public interface ScreenController
 {
 	public Point2D getMouse();
 
+	public void position( double x, double y );
+
 	public void move( double x, double y );
 
 	public void scroll( int amount );

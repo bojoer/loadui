@@ -136,20 +136,20 @@ public class CanvasView extends StackPane
 		public ConnectionView apply( Connection connection )
 		{
 			final OutputTerminal outputTerminal = connection.getOutputTerminal();
-			ComponentView outputComponentView = Iterables.find( components, new Predicate<ComponentView>()
+			CanvasObjectView outputComponentView = Iterables.find( canvasObjects, new Predicate<CanvasObjectView>()
 			{
 				@Override
-				public boolean apply( ComponentView input )
+				public boolean apply( CanvasObjectView input )
 				{
 					return input.getCanvasObject().equals( outputTerminal.getTerminalHolder() );
 				}
 			} );
 
 			final InputTerminal inputTerminal = connection.getInputTerminal();
-			ComponentView inputComponentView = Iterables.find( components, new Predicate<ComponentView>()
+			CanvasObjectView inputComponentView = Iterables.find( canvasObjects, new Predicate<CanvasObjectView>()
 			{
 				@Override
-				public boolean apply( ComponentView input )
+				public boolean apply( CanvasObjectView input )
 				{
 					return input.getCanvasObject().equals( inputTerminal.getTerminalHolder() );
 				}
@@ -202,8 +202,7 @@ public class CanvasView extends StackPane
 	private static final NewScenarioIcon SCENARIO_ICON = new NewScenarioIcon();
 
 	private final CanvasItem canvas;
-	private final ObservableList<ComponentView> components;
-	private final ObservableList<ScenarioView> scenarios;
+	private final ObservableList<CanvasObjectView> canvasObjects;
 	private final ObservableList<ConnectionView> connections;
 
 	private final Group canvasLayer = new Group();
@@ -213,26 +212,29 @@ public class CanvasView extends StackPane
 	public CanvasView( CanvasItem canvas )
 	{
 		this.canvas = canvas;
-		components = transform(
+		ObservableList<ComponentView> components = transform(
 				fx( ofCollection( canvas, CanvasItem.COMPONENTS, ComponentItem.class, canvas.getComponents() ) ),
 				COMPONENT_TO_VIEW );
+
+		ObservableList<ScenarioView> scenarios = transform(
+				fx( ofCollection( canvas, ProjectItem.SCENES, SceneItem.class, canvas.getChildren() ) ), SCENARIO_TO_VIEW );
+
 		connections = transform(
 				fx( ofCollection( canvas, CanvasItem.CONNECTIONS, Connection.class, canvas.getConnections() ) ),
 				CONNECTION_TO_VIEW );
 
-		scenarios = transform( fx( ofCollection( canvas, ProjectItem.SCENES, SceneItem.class, canvas.getChildren() ) ),
-				SCENARIO_TO_VIEW );
-
-		components.addListener( uninstallCanvasObject );
-		scenarios.addListener( uninstallCanvasObject );
+		canvasObjects = ObservableLists.concatUnordered( components, scenarios );
+		canvasObjects.addListener( uninstallCanvasObject );
 
 		FXMLUtils.load( this );
+
+		System.out.println( "Created canvas: " + this );
 	}
 
 	@FXML
 	private void initialize()
 	{
-		bindContentUnordered( componentLayer.getChildren(), ObservableLists.concatUnordered( components, scenarios ) );
+		bindContentUnordered( componentLayer.getChildren(), canvasObjects );
 		bindContentUnordered( connectionLayer.getChildren(), connections );
 
 		ToolBox<Label> descriptors = new ToolBox<>( "Components" );

@@ -10,7 +10,7 @@ import javafx.scene.control.TextFieldBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.eviware.loadui.api.model.ProjectRef;
+import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.control.ConfirmationDialog;
@@ -20,13 +20,13 @@ public class CreateScenarioDialog extends ConfirmationDialog
 	private static final Logger log = LoggerFactory.getLogger( CreateScenarioDialog.class );
 
 	private final TextField scenarioNameField;
-	private final ProjectRef projectRef;
+	private final ProjectItem project;
 
-	public CreateScenarioDialog( final Node owner, final ProjectRef projectRef )
+	public CreateScenarioDialog( final Node owner, final ProjectItem project )
 	{
-		super( owner, "New Scenario in: " + projectRef.getLabel(), "Create" );
+		super( owner, "New Scenario in: " + project.getLabel(), "Create" );
 
-		this.projectRef = projectRef;
+		this.project = project;
 		this.scenarioNameField = TextFieldBuilder.create().id( "scenario-name" ).build();
 
 		getItems().add( this.scenarioNameField );
@@ -49,7 +49,7 @@ public class CreateScenarioDialog extends ConfirmationDialog
 		{
 			log.debug( "About to create scenario: " + scenarioNameField.getText() );
 
-			SceneItem scenario = projectRef.getProject().createScene( scenarioNameField.getText() );
+			SceneItem scenario = project.createScene( scenarioNameField.getText() );
 			scenario.setAttribute( "gui.layoutX", "200" );
 			scenario.setAttribute( "gui.layoutY", "200" );
 			return null;

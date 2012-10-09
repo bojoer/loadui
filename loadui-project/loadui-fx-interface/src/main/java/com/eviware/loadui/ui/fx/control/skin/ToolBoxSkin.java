@@ -353,6 +353,7 @@ public class ToolBoxSkin<E extends Node> extends SkinBase<ToolBox<E>, ToolBoxBeh
 		public ToolBoxCategory( String category )
 		{
 			getStyleClass().setAll( "category" );
+			setId( category );
 			this.category = category;
 
 			expanderButton = ButtonBuilder.create().build();

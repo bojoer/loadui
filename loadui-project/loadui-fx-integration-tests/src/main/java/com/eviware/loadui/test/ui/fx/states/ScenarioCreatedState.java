@@ -51,7 +51,8 @@ public class ScenarioCreatedState extends TestState
 	protected void exitToParent() throws Exception
 	{
 		log.debug( "Deleting scenario." );
-		GUI.getController().click( ".scenario-view #menuButton" ).click( "#delete" );
+
+		GUI.getController().click( ".scenario-view #menu" ).click( "#delete" );
 
 		TestUtils.awaitCondition( new Callable<Boolean>()
 		{

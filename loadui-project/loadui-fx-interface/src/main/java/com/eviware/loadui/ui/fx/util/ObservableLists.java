@@ -223,8 +223,7 @@ public class ObservableLists
 	@SafeVarargs
 	public static final <T> ObservableList<T> concatUnordered( ObservableList<? extends T>... listsToConcat )
 	{
-		List<ObservableList<? extends T>> myList = Arrays.asList( listsToConcat );
-		ConcatenatedListData<T> data = new ConcatenatedListData<>( myList );
+		ConcatenatedListData<T> data = new ConcatenatedListData<>( Arrays.asList( listsToConcat ) );
 
 		ObservableList<T> readOnlyList = FXCollections.unmodifiableObservableList( data.list );
 		lists.put( readOnlyList, data );

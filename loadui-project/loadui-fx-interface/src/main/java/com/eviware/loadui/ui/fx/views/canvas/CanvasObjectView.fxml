@@ -27,7 +27,6 @@
 				</left>
 				<right>
 					<HBox fx:id="buttonBar">
-						<Button id="delete" onAction="#delete">X</Button>
 					</HBox>
 				</right>
 				<bottom>
