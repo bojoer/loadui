@@ -69,35 +69,49 @@ public class SettingsDialogTest
 	}
 
 	@Before
-	public void setUp()
+	public void setUp() throws Exception
 	{
 		stringProperty.setValue( INIT_STRING );
 		booleanProperty.setValue( INIT_BOOLEAN );
 		longProperty.setValue( INIT_LONG );
 		longProperty2.setValue( INIT_LONG );
-		generalTab = SettingsTabBuilder.create( "General" ).field( "My string", stringProperty )
+		generalTab = SettingsTabBuilder.create( "General" ).id( "general-tab" ).field( "My string", stringProperty )
 				.field( "My boolean", booleanProperty ).build();
 		otherTab = SettingsTabBuilder.create( "Other" ).field( "My long", longProperty )
 				.field( "My other long", longProperty2 ).build();
-		Platform.runLater( new Runnable()
+
+		FXTestUtils.invokeAndWait( new Runnable()
 		{
 			@Override
 			public void run()
 			{
 				settingsDialog = new SettingsDialog( openDialogButton, "Hej", Lists.newArrayList( generalTab, otherTab ) );
 			}
-		} );
-		controller.sleep( 500 );
-		generalTab.getTabPane().getSelectionModel().select( generalTab );
+		}, 1000 );
+
+		FXTestUtils.invokeAndWait( new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				generalTab.getTabPane().getSelectionModel().select( generalTab );
+			}
+		}, 1000 );
+
 		controller.click( openDialogButton );
+		controller.click( "#general-tab" );
 	}
 
 	@Test
 	public void changedFieldsInAllTabs_should_updateProperties_onSave() throws Exception
 	{
+		System.out.println( "generalTab.getTabPane().getSelectionModel().getSelectedItem().getText(): "
+				+ generalTab.getTabPane().getSelectionModel().getSelectedItem().getText() );
+
 		controller.click( "#my-string" ).press( KeyCode.CONTROL, KeyCode.A ).release( KeyCode.CONTROL, KeyCode.A )
 				.sleep( 100 );
 		controller.type( "New value" ).click( "#my-boolean" );
+
 		generalTab.getTabPane().getSelectionModel().select( otherTab );
 		controller.sleep( 100 ).click( "#my-long" ).press( KeyCode.CONTROL, KeyCode.A )
 				.release( KeyCode.CONTROL, KeyCode.A ).sleep( 100 );
@@ -120,12 +134,14 @@ public class SettingsDialogTest
 		assertFalse( Long.valueOf( 4711 ).equals( longProperty.getValue() ) );
 
 		controller.sleep( 100 ).click( "#my-long" ).press( KeyCode.CONTROL, KeyCode.A )
-				.release( KeyCode.CONTROL, KeyCode.A ).sleep( 100 );
-		controller.type( "4711" ).sleep( 100 ).click( "#my-other-long" ).press( KeyCode.CONTROL, KeyCode.A )
-				.release( KeyCode.CONTROL, KeyCode.A ).sleep( 100 );
-		controller.type( "not a number" ).click( "#default" );
-
+				.release( KeyCode.CONTROL, KeyCode.A ).sleep( 100 ).type( "4711" ).sleep( 100 ).click( "#my-other-long" )
+				.press( KeyCode.CONTROL, KeyCode.A ).release( KeyCode.CONTROL, KeyCode.A ).sleep( 100 )
+				.type( "not a number" ).click( "#default" );
 		assertEquals( true, settingsDialog.isShowing() );
+
+		controller.click( "#my-other-long" ).press( KeyCode.CONTROL, KeyCode.A ).release( KeyCode.CONTROL, KeyCode.A )
+				.sleep( 100 ).type( "7" ).click( "#default" );
+		assertEquals( false, settingsDialog.isShowing() );
 	}
 
 	public static class SettingsDialogTestApp extends Application
