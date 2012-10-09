@@ -83,6 +83,12 @@ public class SettingsDialog extends ConfirmationDialog
 			return this;
 		}
 
+		public SettingsTabBuilder id( String id )
+		{
+			tab.setId( id );
+			return this;
+		}
+
 		@Nonnull
 		public SettingsTab build()
 		{
