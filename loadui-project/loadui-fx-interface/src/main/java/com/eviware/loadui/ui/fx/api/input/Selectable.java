@@ -209,7 +209,6 @@ public class Selectable
 
 	private static void deselectAll()
 	{
-		System.out.println( "deselectAll" );
 		for( Iterator<Selectable> i = CURRENTLY_SELECTED.iterator(); i.hasNext(); )
 		{
 			Selectable s = i.next();
@@ -235,7 +234,6 @@ public class Selectable
 				{
 					Node node = ( Node )event.getSource();
 					boolean isMoving = Movable.isMovable( node ) && Movable.getMovable( node ).isDragging();
-					System.out.println( "isMoving: " + isMoving );
 					if( !SELECTION_RECTANGLE.isShowing() && !isMoving && !event.isShortcutDown() && !event.isShiftDown() )
 					{
 						deselectAll();
@@ -267,7 +265,7 @@ public class Selectable
 			}
 			else if( CURRENTLY_SELECTED.contains( selectable ) && CURRENTLY_SELECTED.size() > 1 )
 			{
-				System.out.println( "Waiting for multidrag..." );
+				//System.out.println( "Waiting for multidrag..." );
 			}
 			else if( !isDragging && !event.isShortcutDown() )
 			{
@@ -283,10 +281,8 @@ public class Selectable
 		@Override
 		public void handle( MouseEvent event )
 		{
-			System.out.println( "ClickToDeselectHandler 1" );
 			if( !isDragging && !event.isShortcutDown() )
 			{
-				System.out.println( "ClickToDeselectHandler 2" );
 				deselectAll();
 				event.consume();
 			}

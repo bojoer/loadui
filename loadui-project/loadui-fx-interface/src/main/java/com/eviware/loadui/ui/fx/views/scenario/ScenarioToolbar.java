@@ -12,7 +12,7 @@ import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.Properties;
 import com.eviware.loadui.ui.fx.util.UIUtils;
-import com.eviware.loadui.ui.fx.views.canvas.ScenarioView;
+import com.eviware.loadui.ui.fx.views.canvas.scenario.ScenarioView;
 
 public class ScenarioToolbar extends StackPane
 {

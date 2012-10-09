@@ -9,12 +9,10 @@ public class ValidatableFieldSupport
 	public static void setInvalid( Node parent )
 	{
 		parent.getStyleClass().add( INVALID_CLASS );
-		System.out.println( "INVALID" );
 	}
 
 	public static void setValid( Node parent )
 	{
 		parent.getStyleClass().remove( INVALID_CLASS );
-		System.out.println( "VALID" );
 	}
 }

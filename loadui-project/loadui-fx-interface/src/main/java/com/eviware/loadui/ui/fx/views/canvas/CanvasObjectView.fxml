@@ -11,34 +11,40 @@
 <?import java.net.URL?>
 
 <fx:root type="javafx.scene.layout.StackPane" xmlns:fx="http://javafx.com/fxml"
-	styleClass="canvas-object-view" minWidth="200" minHeight="160">
+	styleClass="canvas-object-view">
 	<stylesheets>
 		<URL value="@CanvasObjectView.css" />
 	</stylesheets>
 		<VBox styleClass="canvas-object-base" id="base">
-			<HBox fx:id="inputTerminalPane">
+			<HBox fx:id="inputTerminalPane" minHeight="14">
 				<VBox.margin>
 					<Insets top="-14" />
 				</VBox.margin>
 			</HBox>
-			<BorderPane>
+			<BorderPane fx:id="topBar">
 				<left>
 					<Label fx:id="canvasObjectLabel" text="CanvasObject Label" />
 				</left>
 				<right>
-					<Button id="delete" onAction="#delete">X</Button>
+					<HBox fx:id="buttonBar">
+						<Button id="delete" onAction="#delete">X</Button>
+					</HBox>
 				</right>
 				<bottom>
 					<MenuButton fx:id="menuButton" id="menu" text="Menu">
 						<items>
 							<MenuItem fx:id="rename" id="rename" text="Rename" onAction="#rename" />
-							<MenuItem fx:id="settings" id="settings" text="Settings" onAction="#settings" />
+							<MenuItem fx:id="delete" id="delete" text="Delete" onAction="#delete" />
 						</items>
 					</MenuButton>
 				</bottom>
 			</BorderPane>
-			<Region style="-fx-background-color: purple;" VBox.vgrow="ALWAYS" />
-			<HBox fx:id="outputTerminalPane">
+			<StackPane fx:id="content" id="content" minWidth="80" minHeight="50">
+				<VBox.margin>
+					<Insets top="3" bottom="3" />
+				</VBox.margin>
+			</StackPane>
+			<HBox fx:id="outputTerminalPane" minHeight="14">
 				<VBox.margin>
 					<Insets bottom="-14" />
 				</VBox.margin>

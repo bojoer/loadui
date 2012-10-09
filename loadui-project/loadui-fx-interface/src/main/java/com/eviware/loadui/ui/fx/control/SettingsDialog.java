@@ -143,7 +143,6 @@ public class SettingsDialog extends ConfirmationDialog
 			{
 				Field.Validatable<?> field = entry.getKey();
 				wasValid = wasValid && field.validate();
-				System.out.println( ( ( Node )field ).getStyleClass().toString() );
 			}
 			return wasValid;
 		}

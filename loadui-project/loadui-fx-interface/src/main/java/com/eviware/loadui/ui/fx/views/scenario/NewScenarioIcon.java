@@ -11,7 +11,6 @@ import javafx.scene.shape.RectangleBuilder;
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.control.DragNode;
-import com.eviware.loadui.ui.fx.views.canvas.CanvasObjectDescriptor;
 
 public class NewScenarioIcon extends Label
 {
@@ -39,7 +38,7 @@ public class NewScenarioIcon extends Label
 
 	private static Node createIcon()
 	{
-		return RectangleBuilder.create().width( 75 ).height( 50 ).fill( Color.DEEPPINK ).build();
+		return RectangleBuilder.create().width( 65 ).height( 40 ).fill( Color.DEEPPINK ).build();
 	}
 
 	@Override

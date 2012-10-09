@@ -67,11 +67,6 @@ public class LoadUIFXLauncher extends LoadUILauncher
 		public void start( final Stage stage ) throws Exception
 		{
 			File workingDir = new File( System.getProperty( "loadui.working", "." ) ).getAbsoluteFile();
-			System.out.println();
-			System.out.println();
-			System.out.println();
-			System.out.println();
-			System.out.println( "!!!!!!!!!!!!WORKING DIR: " + workingDir.getAbsolutePath() );
 			Scene splashScene;
 			try
 			{

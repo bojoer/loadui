@@ -2,7 +2,6 @@ package com.eviware.loadui.ui.fx.views.scenario;
 
 import javafx.geometry.Pos;
 
-import com.eviware.loadui.ui.fx.views.canvas.PlayButton;
 import com.eviware.loadui.ui.fx.views.canvas.ToolbarPlaybackPanel;
 
 final public class ScenarioPlaybackPanel extends ToolbarPlaybackPanel
