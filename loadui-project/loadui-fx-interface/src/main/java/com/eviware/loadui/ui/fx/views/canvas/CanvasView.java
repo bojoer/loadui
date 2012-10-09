@@ -7,6 +7,7 @@ import static com.eviware.loadui.ui.fx.util.ObservableLists.ofCollection;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.ofServices;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.transform;
 
+import java.util.Arrays;
 import java.util.concurrent.Callable;
 
 import javafx.application.Platform;
@@ -44,6 +45,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.component.ComponentDescriptor;
+import com.eviware.loadui.api.component.categories.AnalysisCategory;
+import com.eviware.loadui.api.component.categories.FlowCategory;
+import com.eviware.loadui.api.component.categories.GeneratorCategory;
+import com.eviware.loadui.api.component.categories.MiscCategory;
+import com.eviware.loadui.api.component.categories.OutputCategory;
+import com.eviware.loadui.api.component.categories.RunnerCategory;
+import com.eviware.loadui.api.component.categories.SchedulerCategory;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.CanvasObjectItem;
 import com.eviware.loadui.api.model.ComponentItem;
@@ -67,10 +75,13 @@ import com.eviware.loadui.ui.fx.views.canvas.scenario.ScenarioView;
 import com.eviware.loadui.ui.fx.views.canvas.terminal.ConnectionView;
 import com.eviware.loadui.ui.fx.views.canvas.terminal.TerminalView;
 import com.eviware.loadui.ui.fx.views.canvas.terminal.Wire;
+import com.eviware.loadui.util.collections.SafeExplicitOrdering;
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Ordering;
 
 public class CanvasView extends StackPane
 {
@@ -80,6 +91,30 @@ public class CanvasView extends StackPane
 	private static final int GRID_SIZE = 36;
 	private static final double PADDING = 100;
 	private final UninstallCanvasObjectView uninstallCanvasObject = new UninstallCanvasObjectView();
+
+	private static final Function<String, String> TO_LOWER = new Function<String, String>()
+	{
+		@Override
+		public String apply( String string )
+		{
+			return string.toLowerCase();
+		}
+	};
+
+	private static final Function<ComponentDescriptorView, String> TO_LABEL = new Function<ComponentDescriptorView, String>()
+	{
+		@Override
+		public String apply( ComponentDescriptorView view )
+		{
+			return view.getDescriptor().getLabel();
+		}
+	};
+
+	private static final Ordering<String> CATEGORY_COMPARATOR = Ordering.compound(
+			Arrays.asList( Ordering.explicit( Lists.transform( Arrays.asList( "VU Scenarios", GeneratorCategory.CATEGORY,
+					RunnerCategory.CATEGORY, FlowCategory.CATEGORY, SchedulerCategory.CATEGORY, OutputCategory.CATEGORY,
+					AnalysisCategory.CATEGORY, MiscCategory.CATEGORY ), TO_LOWER ) ), Ordering.<String> natural() ) )
+			.onResultOf( TO_LOWER );
 
 	private final Function<ComponentItem, ComponentView> COMPONENT_TO_VIEW = Functions.compose(
 			new InitializeCanvasObjectView<ComponentView>(), new Function<ComponentItem, ComponentView>()
@@ -205,6 +240,8 @@ public class CanvasView extends StackPane
 		bindContentUnordered( connectionLayer.getChildren(), connections );
 
 		ToolBox<ComponentDescriptorView> descriptors = new ToolBox<>( "Components" );
+		defineComparators( descriptors );
+
 		descriptors.setMaxWidth( 100 );
 		StackPane.setAlignment( descriptors, Pos.CENTER_LEFT );
 		StackPane.setMargin( descriptors, new Insets( 10, 0, 10, 0 ) );
@@ -430,6 +467,26 @@ public class CanvasView extends StackPane
 	public CanvasItem getCanvas()
 	{
 		return canvas;
+	}
+
+	private static Ordering<ComponentDescriptorView> order( String... labels )
+	{
+		return Ordering.compound( Arrays.asList( SafeExplicitOrdering.of( labels ), Ordering.<String> natural() ) )
+				.onResultOf( TO_LABEL );
+	}
+
+	private static void defineComparators( ToolBox<ComponentDescriptorView> descriptors )
+	{
+		descriptors.setCategoryComparator( CATEGORY_COMPARATOR );
+		descriptors.setComparator( GeneratorCategory.CATEGORY,
+				order( "Fixed Rate", "Variance", "Random", "Ramp Sequence", "Ramp", "Usage", "Fixed Load" ) );
+		descriptors.setComparator( RunnerCategory.CATEGORY,
+				order( "soapUI Runner", "Web Page Runner", "Script Runner", "Process Runner" ) );
+		descriptors.setComparator( FlowCategory.CATEGORY, order( "Splitter", "Delay", "Condition", "Loop" ) );
+		descriptors.setComparator( SchedulerCategory.CATEGORY, order( "Interval", "Scheduler" ) );
+		descriptors.setComparator( OutputCategory.CATEGORY, order( "Table Log" ) );
+		descriptors.setComparator( AnalysisCategory.CATEGORY, order( "Assertion", "Statistics" ) );
+		descriptors.setComparator( MiscCategory.CATEGORY, order( "Note", "soapUI Mock Service" ) );
 	}
 
 	private final class UninstallCanvasObjectView implements ListChangeListener<CanvasObjectView>
