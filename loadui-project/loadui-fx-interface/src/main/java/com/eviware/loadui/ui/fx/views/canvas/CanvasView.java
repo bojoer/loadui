@@ -205,7 +205,7 @@ public class CanvasView extends StackPane
 	private final ObservableList<CanvasObjectView> canvasObjects;
 	private final ObservableList<ConnectionView> connections;
 
-	private final Group canvasLayer = new Group();
+	protected final Group canvasLayer = new Group();
 	private final Group componentLayer = new Group();
 	private final Group connectionLayer = new Group();
 
@@ -226,13 +226,68 @@ public class CanvasView extends StackPane
 		canvasObjects = ObservableLists.concatUnordered( components, scenarios );
 		canvasObjects.addListener( uninstallCanvasObject );
 
-		FXMLUtils.load( this );
-
+		FXMLUtils.load( this, this, CanvasView.class.getResource( CanvasView.class.getSimpleName() + ".fxml" ) );
 		System.out.println( "Created canvas: " + this );
 	}
 
+	protected boolean shouldAccept( final Object data )
+	{
+		return data instanceof ComponentDescriptor;
+	}
+
+	protected void handleDrop( final DraggableEvent event )
+	{
+		createComponent( event );
+	}
+
+	private void handleDraggableEvents( final DraggableEvent event )
+	{
+		if( event.getEventType() == DraggableEvent.DRAGGABLE_ENTERED && shouldAccept( event.getData() ) )
+		{
+			event.accept();
+			event.consume();
+		}
+		else if( event.getEventType() == DraggableEvent.DRAGGABLE_DROPPED )
+		{
+			handleDrop( event );
+			event.consume();
+		}
+	}
+
+	protected void createComponent( final DraggableEvent event )
+	{
+		final ComponentDescriptor descriptor = ( ComponentDescriptor )event.getData();
+
+		final Task<ComponentItem> createComponent = new Task<ComponentItem>()
+		{
+			@Override
+			protected ComponentItem call() throws Exception
+			{
+				updateMessage( "Creating component: " + descriptor.getLabel() );
+
+				ComponentItem component = CanvasView.this.canvas.createComponent( descriptor.getLabel(), descriptor );
+				Point2D position = canvasLayer.sceneToLocal( event.getSceneX(), event.getSceneY() );
+				component.setAttribute( "gui.layoutX", String.valueOf( ( int )position.getX() ) );
+				component.setAttribute( "gui.layoutY", String.valueOf( ( int )position.getY() ) );
+
+				return component;
+			}
+		};
+
+		createComponent.setOnFailed( new EventHandler<WorkerStateEvent>()
+		{
+			@Override
+			public void handle( WorkerStateEvent stateEvent )
+			{
+				createComponent.getException().printStackTrace();
+			}
+		} );
+
+		fireEvent( IntentEvent.create( IntentEvent.INTENT_RUN_BLOCKING, createComponent ) );
+	}
+
 	@FXML
-	private void initialize()
+	protected void initialize()
 	{
 		bindContentUnordered( componentLayer.getChildren(), canvasObjects );
 		bindContentUnordered( connectionLayer.getChildren(), connections );
@@ -270,54 +325,9 @@ public class CanvasView extends StackPane
 			@Override
 			public void handle( final DraggableEvent event )
 			{
-				if( event.getEventType() == DraggableEvent.DRAGGABLE_ENTERED
-						&& ( event.getData() instanceof ComponentDescriptor || event.getData() instanceof NewScenarioIcon ) )
-				{
-					event.accept();
-					event.consume();
-				}
-				else if( event.getEventType() == DraggableEvent.DRAGGABLE_DROPPED )
-				{
-					if( event.getData() instanceof ComponentDescriptor )
-						createComponent( event );
-					else if( event.getData() instanceof NewScenarioIcon )
-						fireEvent( IntentEvent.create( IntentEvent.INTENT_CREATE, canvas ) );
-
-					event.consume();
-				}
+				handleDraggableEvents( event );
 			}
 
-			protected void createComponent( final DraggableEvent event )
-			{
-				final ComponentDescriptor descriptor = ( ComponentDescriptor )event.getData();
-
-				final Task<ComponentItem> createComponent = new Task<ComponentItem>()
-				{
-					@Override
-					protected ComponentItem call() throws Exception
-					{
-						updateMessage( "Creating component: " + descriptor.getLabel() );
-
-						ComponentItem component = CanvasView.this.canvas.createComponent( descriptor.getLabel(), descriptor );
-						Point2D position = canvasLayer.sceneToLocal( event.getSceneX(), event.getSceneY() );
-						component.setAttribute( "gui.layoutX", String.valueOf( ( int )position.getX() ) );
-						component.setAttribute( "gui.layoutY", String.valueOf( ( int )position.getY() ) );
-
-						return component;
-					}
-				};
-
-				createComponent.setOnFailed( new EventHandler<WorkerStateEvent>()
-				{
-					@Override
-					public void handle( WorkerStateEvent stateEvent )
-					{
-						createComponent.getException().printStackTrace();
-					}
-				} );
-
-				fireEvent( IntentEvent.create( IntentEvent.INTENT_RUN_BLOCKING, createComponent ) );
-			}
 		} );
 
 		componentLayer.addEventFilter( DraggableEvent.ANY, new ConnectionDraggingFilter() );
