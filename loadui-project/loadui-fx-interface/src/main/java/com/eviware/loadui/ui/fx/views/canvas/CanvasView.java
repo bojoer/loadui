@@ -15,7 +15,6 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -28,7 +27,7 @@ import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
+import javafx.scene.control.Labeled;
 import javafx.scene.control.Slider;
 import javafx.scene.control.SliderBuilder;
 import javafx.scene.effect.Effect;
@@ -57,8 +56,6 @@ import com.eviware.loadui.api.component.categories.SchedulerCategory;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.CanvasObjectItem;
 import com.eviware.loadui.api.model.ComponentItem;
-import com.eviware.loadui.api.model.ProjectItem;
-import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.terminal.Connection;
 import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
@@ -71,18 +68,14 @@ import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.control.DragNode;
 import com.eviware.loadui.ui.fx.control.ToolBox;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
-import com.eviware.loadui.ui.fx.util.ObservableLists;
 import com.eviware.loadui.ui.fx.views.canvas.component.ComponentView;
-import com.eviware.loadui.ui.fx.views.canvas.scenario.ScenarioView;
 import com.eviware.loadui.ui.fx.views.canvas.terminal.ConnectionView;
 import com.eviware.loadui.ui.fx.views.canvas.terminal.TerminalView;
 import com.eviware.loadui.ui.fx.views.canvas.terminal.Wire;
-import com.eviware.loadui.ui.fx.views.scenario.NewScenarioIcon;
 import com.eviware.loadui.util.collections.SafeExplicitOrdering;
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
@@ -118,15 +111,6 @@ public class CanvasView extends StackPane
 				public ComponentView apply( ComponentItem input )
 				{
 					return ComponentView.newInstance( input );
-				}
-			} );
-	private final Function<SceneItem, ScenarioView> SCENARIO_TO_VIEW = Functions.compose(
-			new InitializeCanvasObjectView<ScenarioView>(), new Function<SceneItem, ScenarioView>()
-			{
-				@Override
-				public ScenarioView apply( SceneItem input )
-				{
-					return new ScenarioView( input );
 				}
 			} );
 
@@ -199,10 +183,9 @@ public class CanvasView extends StackPane
 			return !input.isDeprecated();
 		}
 	};
-	private static final NewScenarioIcon SCENARIO_ICON = new NewScenarioIcon();
 
 	private final CanvasItem canvas;
-	private final ObservableList<CanvasObjectView> canvasObjects;
+	private final ObservableList<? extends CanvasObjectView> canvasObjects;
 	private final ObservableList<ConnectionView> connections;
 
 	protected final Group canvasLayer = new Group();
@@ -212,22 +195,28 @@ public class CanvasView extends StackPane
 	public CanvasView( CanvasItem canvas )
 	{
 		this.canvas = canvas;
-		ObservableList<ComponentView> components = transform(
-				fx( ofCollection( canvas, CanvasItem.COMPONENTS, ComponentItem.class, canvas.getComponents() ) ),
-				COMPONENT_TO_VIEW );
 
-		ObservableList<ScenarioView> scenarios = transform(
-				fx( ofCollection( canvas, ProjectItem.SCENES, SceneItem.class, canvas.getChildren() ) ), SCENARIO_TO_VIEW );
+		canvasObjects = createCanvasObjects();
+		canvasObjects.addListener( uninstallCanvasObject );
 
 		connections = transform(
 				fx( ofCollection( canvas, CanvasItem.CONNECTIONS, Connection.class, canvas.getConnections() ) ),
 				CONNECTION_TO_VIEW );
 
-		canvasObjects = ObservableLists.concatUnordered( components, scenarios );
-		canvasObjects.addListener( uninstallCanvasObject );
-
 		FXMLUtils.load( this, this, CanvasView.class.getResource( CanvasView.class.getSimpleName() + ".fxml" ) );
 		System.out.println( "Created canvas: " + this );
+	}
+
+	protected ObservableList<? extends Labeled> createToolBoxContent()
+	{
+		return transform( fx( filter( ofServices( ComponentDescriptor.class ), NOT_DEPRECATED ) ), DESCRIPTOR_TO_VIEW );
+	}
+
+	protected ObservableList<? extends CanvasObjectView> createCanvasObjects()
+	{
+		return transform(
+				fx( ofCollection( canvas, CanvasItem.COMPONENTS, ComponentItem.class, canvas.getComponents() ) ),
+				COMPONENT_TO_VIEW );
 	}
 
 	protected boolean shouldAccept( final Object data )
@@ -292,25 +281,14 @@ public class CanvasView extends StackPane
 		bindContentUnordered( componentLayer.getChildren(), canvasObjects );
 		bindContentUnordered( connectionLayer.getChildren(), connections );
 
-		ToolBox<Label> descriptors = new ToolBox<>( "Components" );
+		ToolBox<Labeled> descriptors = new ToolBox<>( "Components" );
 		defineComparators( descriptors );
 
 		descriptors.setMaxWidth( 100 );
 		StackPane.setAlignment( descriptors, Pos.CENTER_LEFT );
 		StackPane.setMargin( descriptors, new Insets( 10, 0, 10, 0 ) );
 
-		ObservableList<ComponentDescriptorView> componentDescriptors = transform(
-				fx( filter( ofServices( ComponentDescriptor.class ), NOT_DEPRECATED ) ), DESCRIPTOR_TO_VIEW );
-		if( canvas instanceof SceneItem )
-		{
-			Bindings.bindContent( descriptors.getItems(), componentDescriptors );
-		}
-		else
-		{
-			ObservableList<NewScenarioIcon> scenario = FXCollections.observableList( ImmutableList.of( SCENARIO_ICON ) );
-			Bindings
-					.bindContent( descriptors.getItems(), ObservableLists.concatUnordered( scenario, componentDescriptors ) );
-		}
+		Bindings.bindContent( descriptors.getItems(), createToolBoxContent() );
 
 		Pane componentWrapper = new Pane();
 		Rectangle clipRect = new Rectangle();
@@ -327,7 +305,6 @@ public class CanvasView extends StackPane
 			{
 				handleDraggableEvents( event );
 			}
-
 		} );
 
 		componentLayer.addEventFilter( DraggableEvent.ANY, new ConnectionDraggingFilter() );
@@ -494,22 +471,22 @@ public class CanvasView extends StackPane
 		return canvas;
 	}
 
-	private static final Function<Label, String> LABEL_TEXT = new Function<Label, String>()
+	private static final Function<Labeled, String> LABELED_TEXT = new Function<Labeled, String>()
 	{
 		@Override
-		public String apply( Label view )
+		public String apply( Labeled view )
 		{
 			return view.getText();
 		}
 	};
 
-	private static Ordering<Label> order( String... labels )
+	private static Ordering<Labeled> order( String... labels )
 	{
 		return Ordering.compound( Arrays.asList( SafeExplicitOrdering.of( labels ), Ordering.<String> natural() ) )
-				.onResultOf( LABEL_TEXT );
+				.onResultOf( LABELED_TEXT );
 	}
 
-	private static void defineComparators( ToolBox<Label> descriptors )
+	private static void defineComparators( ToolBox<Labeled> descriptors )
 	{
 		descriptors.setCategoryComparator( CATEGORY_COMPARATOR );
 		descriptors.setComparator( GeneratorCategory.CATEGORY,
@@ -543,8 +520,12 @@ public class CanvasView extends StackPane
 		}
 	}
 
-	private final class InitializeCanvasObjectView<T extends CanvasObjectView> implements Function<T, T>
+	protected final class InitializeCanvasObjectView<T extends CanvasObjectView> implements Function<T, T>
 	{
+		public InitializeCanvasObjectView()
+		{
+		}
+
 		@Override
 		public T apply( final T view )
 		{

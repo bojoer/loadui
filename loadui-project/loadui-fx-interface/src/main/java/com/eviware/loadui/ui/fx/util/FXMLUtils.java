@@ -86,8 +86,7 @@ public class FXMLUtils
 		}
 		catch( IOException exception )
 		{
-			throw new RuntimeException( "Unable to load fxml view: " + root.getClass().getSimpleName() + ".fxml",
-					exception );
+			throw new RuntimeException( "Unable to load fxml view: " + resourceName, exception );
 		}
 	}
 }

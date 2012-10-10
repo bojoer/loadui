@@ -31,8 +31,8 @@ public class ScenarioCreatedState extends TestState
 	protected void enterFromParent() throws Exception
 	{
 		log.debug( "Creating scenario." );
-		GUI.getController().click( ".project-view #menuButton" ).click( "#newScenario" ).sleep( 100 )
-				.click( "#scenario-name" ).type( SCENARIO_NAME ).click( "#default" );
+		GUI.getController().drag( "#newScenarioIcon" ).by( 300, 0 ).drop().sleep( 100 ).click( "#scenario-name" )
+				.type( SCENARIO_NAME ).click( "#default" );
 
 		TestUtils.awaitCondition( new Callable<Boolean>()
 		{

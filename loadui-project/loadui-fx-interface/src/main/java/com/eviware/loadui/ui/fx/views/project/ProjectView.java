@@ -124,7 +124,7 @@ public class ProjectView extends AnchorPane
 				}
 				else if( event.getEventType() == IntentEvent.INTENT_CLOSE && event.getArg() instanceof SceneItem )
 				{
-					designTab.setDetachableContent( new CanvasView( project ) );
+					designTab.setDetachableContent( new ProjectCanvasView( project ) );
 					event.consume();
 				}
 				else if( event.getEventType() == IntentEvent.INTENT_CLONE )

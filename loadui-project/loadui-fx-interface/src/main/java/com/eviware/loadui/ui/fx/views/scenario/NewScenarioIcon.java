@@ -21,6 +21,9 @@ public class NewScenarioIcon extends Label
 		setGraphic( createIcon() );
 		setText( "VU Scenario" );
 
+		setMaxHeight( 80 );
+		setMinHeight( 80 );
+
 		addEventFilter( MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>()
 		{
 			@Override
@@ -38,7 +41,7 @@ public class NewScenarioIcon extends Label
 
 	private static Node createIcon()
 	{
-		return RectangleBuilder.create().width( 65 ).height( 40 ).fill( Color.DEEPPINK ).build();
+		return RectangleBuilder.create().width( 56 ).height( 46 ).fill( Color.DEEPPINK ).build();
 	}
 
 	@Override
