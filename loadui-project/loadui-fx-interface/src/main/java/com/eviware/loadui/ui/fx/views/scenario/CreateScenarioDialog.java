@@ -3,6 +3,7 @@ package com.eviware.loadui.ui.fx.views.scenario;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFieldBuilder;
@@ -21,12 +22,13 @@ public class CreateScenarioDialog extends ConfirmationDialog
 
 	private final TextField scenarioNameField;
 	private final ProjectItem project;
+	private final Point2D position;
 
-	public CreateScenarioDialog( final Node owner, final ProjectItem project )
+	public CreateScenarioDialog( final Node owner, final ProjectItem project, final Point2D position )
 	{
 		super( owner, "New Scenario in: " + project.getLabel(), "Create" );
-
 		this.project = project;
+		this.position = position;
 		this.scenarioNameField = TextFieldBuilder.create().id( "scenario-name" ).build();
 
 		getItems().add( this.scenarioNameField );
@@ -48,10 +50,9 @@ public class CreateScenarioDialog extends ConfirmationDialog
 		protected Void call() throws Exception
 		{
 			log.debug( "About to create scenario: " + scenarioNameField.getText() );
-
 			SceneItem scenario = project.createScene( scenarioNameField.getText() );
-			scenario.setAttribute( "gui.layoutX", "200" );
-			scenario.setAttribute( "gui.layoutY", "200" );
+			scenario.setAttribute( "gui.layoutX", String.valueOf( ( int )position.getX() ) );
+			scenario.setAttribute( "gui.layoutY", String.valueOf( ( int )position.getY() ) );
 			return null;
 		}
 	}

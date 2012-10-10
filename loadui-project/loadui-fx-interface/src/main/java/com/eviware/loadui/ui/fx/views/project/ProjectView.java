@@ -26,7 +26,6 @@ import com.eviware.loadui.ui.fx.util.Properties;
 import com.eviware.loadui.ui.fx.util.UIUtils;
 import com.eviware.loadui.ui.fx.views.canvas.CanvasView;
 import com.eviware.loadui.ui.fx.views.rename.RenameDialog;
-import com.eviware.loadui.ui.fx.views.scenario.CreateScenarioDialog;
 import com.eviware.loadui.ui.fx.views.scenario.ScenarioToolbar;
 import com.eviware.loadui.ui.fx.views.statistics.StatisticsView;
 import com.eviware.loadui.ui.fx.views.workspace.CloneProjectDialog;
@@ -67,7 +66,7 @@ public class ProjectView extends AnchorPane
 	private void initialize()
 	{
 		menuButton.textProperty().bind( Properties.forLabel( project ) );
-		designTab.setDetachableContent( new CanvasView( project ) );
+		designTab.setDetachableContent( new ProjectCanvasView( project ) );
 		resultTab.setDetachableContent( new StatisticsView( project ) );
 		playbackPanel.setCanvas( project );
 
@@ -82,11 +81,6 @@ public class ProjectView extends AnchorPane
 					{
 						WorkspaceItem workspaceItem = ( WorkspaceItem )event.getArg();
 						new CreateNewProjectDialog( workspaceItem, ProjectView.this ).show();
-						event.consume();
-					}
-					else if( event.getArg() instanceof ProjectItem )
-					{
-						new CreateScenarioDialog( ProjectView.this, ( ProjectItem )event.getArg() ).show();
 						event.consume();
 					}
 					else
