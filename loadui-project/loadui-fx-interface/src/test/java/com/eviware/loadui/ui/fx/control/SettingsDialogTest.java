@@ -6,7 +6,6 @@ import static org.junit.Assert.assertFalse;
 import java.util.concurrent.TimeUnit;
 
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.GroupBuilder;
@@ -27,9 +26,9 @@ import com.eviware.loadui.test.categories.GUITest;
 import com.eviware.loadui.ui.fx.control.SettingsDialog.SettingsTab;
 import com.eviware.loadui.ui.fx.control.SettingsDialog.SettingsTabBuilder;
 import com.eviware.loadui.ui.fx.util.TestingProperty;
-import com.eviware.loadui.ui.fx.util.test.TestFX;
 import com.eviware.loadui.ui.fx.util.test.FXScreenController;
 import com.eviware.loadui.ui.fx.util.test.FXTestUtils;
+import com.eviware.loadui.ui.fx.util.test.TestFX;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.SettableFuture;
 
