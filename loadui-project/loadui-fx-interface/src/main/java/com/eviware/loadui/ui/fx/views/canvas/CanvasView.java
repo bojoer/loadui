@@ -524,6 +524,7 @@ public class CanvasView extends StackPane
 	{
 		public InitializeCanvasObjectView()
 		{
+			//Needed by ProjectCanvasView
 		}
 
 		@Override

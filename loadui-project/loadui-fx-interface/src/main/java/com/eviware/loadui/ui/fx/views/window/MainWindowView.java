@@ -10,6 +10,7 @@ import javafx.scene.control.MenuButton;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 
+import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.WeakEventHandler;
 import com.eviware.loadui.api.model.ProjectItem;
@@ -65,7 +66,8 @@ public class MainWindowView extends StackPane
 
 		try
 		{
-			mainButton.setGraphic( new ImageView( "res/logo-button.png" ) );
+			mainButton.setGraphic( new ImageView( LoadUI.relativeFile( "res/logo-button.png" ).toURI().toURL()
+					.toExternalForm() ) );
 		}
 		catch( Exception e1 )
 		{
