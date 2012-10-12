@@ -261,6 +261,12 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 	}
 
 	@Override
+	public Property<Boolean> followProjectProperty()
+	{
+		return followProject;
+	}
+
+	@Override
 	public InputTerminal getStateTerminal()
 	{
 		return stateTerminal;
@@ -463,12 +469,23 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 		return agents;
 	}
 
+	public boolean isAffectedByExecutionTask( TestExecution execution )
+	{
+		CanvasItem startedCanvas = execution.getCanvas();
+		log.debug( "startedCanvas==this: " + Boolean.toString( startedCanvas == this ) + " getProject()==startedCanvas: "
+				+ Boolean.toString( getProject() == startedCanvas ) + " isFollowProject(): "
+				+ Boolean.toString( isFollowProject() ) );
+		return startedCanvas == this || ( getProject() == startedCanvas && isFollowProject() );
+	}
+
 	@Override
 	protected void onExecutionTask( TestExecution execution, Phase phase )
 	{
-		CanvasItem startedCanvas = execution.getCanvas();
-		if( startedCanvas == this || ( getProject() == startedCanvas && isFollowProject() ) )
+		if( isAffectedByExecutionTask( execution ) )
+		{
+			log.debug( "STARTING !!!" );
 			super.onExecutionTask( execution, phase );
+		}
 	}
 
 	private class SelfListener implements EventHandler<BaseEvent>

@@ -50,25 +50,25 @@ public class ProjectView extends AnchorPane
 	@FXML
 	private MenuButton menuButton;
 
-	@FXML
-	private ProjectPlaybackPanel playbackPanel;
-
 	private final ProjectItem project;
 
 	public ProjectView( ProjectItem projectIn )
 	{
 		this.project = Preconditions.checkNotNull( projectIn );
-
 		FXMLUtils.load( this );
 	}
 
 	@FXML
 	private void initialize()
 	{
+		ProjectPlaybackPanel playbackPanel = new ProjectPlaybackPanel( project );
+		AnchorPane.setTopAnchor( playbackPanel, 14.0 );
+		AnchorPane.setLeftAnchor( playbackPanel, 440.0 );
+		getChildren().add( playbackPanel );
+
 		menuButton.textProperty().bind( Properties.forLabel( project ) );
 		designTab.setDetachableContent( new ProjectCanvasView( project ) );
 		resultTab.setDetachableContent( new StatisticsView( project ) );
-		playbackPanel.setCanvas( project );
 
 		addEventHandler( IntentEvent.ANY, new EventHandler<IntentEvent<? extends Object>>()
 		{
@@ -114,7 +114,6 @@ public class ProjectView extends AnchorPane
 					Preconditions.checkArgument( arg instanceof SceneItem );
 					SceneItem scenario = ( SceneItem )arg;
 					ScenarioToolbar toolbar = new ScenarioToolbar( scenario );
-					toolbar.setAlignment( Pos.TOP_CENTER );
 					StackPane.setAlignment( toolbar, Pos.TOP_CENTER );
 					CanvasView canvas = new CanvasView( scenario );
 					StackPane.setMargin( canvas, new Insets( 60, 0, 0, 0 ) );

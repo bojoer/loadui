@@ -572,6 +572,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 
 	protected void setRunning( boolean running )
 	{
+		log.debug( "setRunning canvas: " + this.getClass().toString() );
 		if( this.running != running )
 		{
 			this.running = running;

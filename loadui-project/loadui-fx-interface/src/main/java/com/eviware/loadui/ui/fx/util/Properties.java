@@ -63,18 +63,15 @@ public class Properties
 			return labeled instanceof Labeled.Mutable ? stringProperty( eventFirer, "label", Labeled.LABEL )
 					: readOnlyStringProperty( eventFirer, "label", Labeled.LABEL );
 		}
-		else
+		try
 		{
-			try
-			{
-				return labeled instanceof Labeled.Mutable ? JavaBeanStringPropertyBuilder.create().bean( labeled )
-						.name( "label" ).build() : ReadOnlyJavaBeanStringPropertyBuilder.create().bean( labeled )
-						.name( "label" ).build();
-			}
-			catch( NoSuchMethodException e )
-			{
-				throw new IllegalArgumentException( e );
-			}
+			return labeled instanceof Labeled.Mutable ? JavaBeanStringPropertyBuilder.create().bean( labeled )
+					.name( "label" ).build() : ReadOnlyJavaBeanStringPropertyBuilder.create().bean( labeled ).name( "label" )
+					.build();
+		}
+		catch( NoSuchMethodException e )
+		{
+			throw new IllegalArgumentException( e );
 		}
 	}
 
@@ -93,18 +90,15 @@ public class Properties
 			return describable instanceof Describable.Mutable ? stringProperty( eventFirer, "description",
 					Describable.DESCRIPTION ) : readOnlyStringProperty( eventFirer, "description", Describable.DESCRIPTION );
 		}
-		else
+		try
 		{
-			try
-			{
-				return describable instanceof Describable.Mutable ? JavaBeanStringPropertyBuilder.create()
-						.bean( describable ).name( "description" ).build() : ReadOnlyJavaBeanStringPropertyBuilder.create()
-						.bean( describable ).name( "description" ).build();
-			}
-			catch( NoSuchMethodException e )
-			{
-				throw new IllegalArgumentException( e );
-			}
+			return describable instanceof Describable.Mutable ? JavaBeanStringPropertyBuilder.create().bean( describable )
+					.name( "description" ).build() : ReadOnlyJavaBeanStringPropertyBuilder.create().bean( describable )
+					.name( "description" ).build();
+		}
+		catch( NoSuchMethodException e )
+		{
+			throw new IllegalArgumentException( e );
 		}
 	}
 

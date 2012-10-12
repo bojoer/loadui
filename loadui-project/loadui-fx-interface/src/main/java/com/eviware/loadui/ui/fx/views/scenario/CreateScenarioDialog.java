@@ -15,12 +15,14 @@ import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.control.ConfirmationDialog;
+import com.eviware.loadui.ui.fx.control.fields.ValidatableStringField;
+import com.eviware.loadui.ui.fx.control.fields.ValidatableTextField;
 
 public class CreateScenarioDialog extends ConfirmationDialog
 {
 	private static final Logger log = LoggerFactory.getLogger( CreateScenarioDialog.class );
 
-	private final TextField scenarioNameField;
+	private final ValidatableStringField scenarioNameField;
 	private final ProjectItem project;
 	private final Point2D position;
 
@@ -29,7 +31,8 @@ public class CreateScenarioDialog extends ConfirmationDialog
 		super( owner, "New Scenario in: " + project.getLabel(), "Create" );
 		this.project = project;
 		this.position = position;
-		this.scenarioNameField = TextFieldBuilder.create().id( "scenario-name" ).build();
+		this.scenarioNameField = ValidatableStringField.Builder.create()
+				.stringConstraint( ValidatableStringField.NOT_EMPTY ).id( "scenario-name" ).build();
 
 		getItems().add( this.scenarioNameField );
 
@@ -38,8 +41,11 @@ public class CreateScenarioDialog extends ConfirmationDialog
 			@Override
 			public void handle( ActionEvent event )
 			{
-				close();
-				fireEvent( IntentEvent.create( IntentEvent.INTENT_RUN_BLOCKING, new CreateScenarioTask() ) );
+				if( scenarioNameField.validate() )
+				{
+					close();
+					fireEvent( IntentEvent.create( IntentEvent.INTENT_RUN_BLOCKING, new CreateScenarioTask() ) );
+				}
 			}
 		} );
 	}
