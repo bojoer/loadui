@@ -129,7 +129,6 @@ public class ProjectView extends AnchorPane
 				}
 				else if( event.getEventType() == IntentEvent.INTENT_CLONE )
 				{
-
 					ProjectRef projectRef = getProjectRef( project.getId() );
 					new CloneProjectDialog( project.getWorkspace(), projectRef, ProjectView.this ).show();
 					event.consume();
@@ -211,7 +210,6 @@ public class ProjectView extends AnchorPane
 			{
 				return Objects.equal( input.getProjectId(), project.getId() );
 			}
-
 		} );
 	}
 
@@ -236,6 +234,5 @@ public class ProjectView extends AnchorPane
 			} );
 			return getProjectRef( project.getId() );
 		}
-
 	}
 }

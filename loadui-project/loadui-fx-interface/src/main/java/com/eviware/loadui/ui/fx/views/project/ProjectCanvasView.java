@@ -27,6 +27,7 @@ public class ProjectCanvasView extends CanvasView
 	public ProjectCanvasView( CanvasItem canvas )
 	{
 		super( canvas );
+		getStyleClass().add( "project-canvas-view" );
 	}
 
 	@Override

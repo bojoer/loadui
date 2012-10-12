@@ -16,6 +16,8 @@ public class OnOffComponentView extends ComponentView
 	{
 		super( component );
 
+		getStyleClass().add( "on-off" );
+
 		topBar.setLeft( HBoxBuilder.create().spacing( 3 ).children( onOffButton, topBar.getLeft() ).build() );
 
 		onOffButton.selectedProperty().bindBidirectional(

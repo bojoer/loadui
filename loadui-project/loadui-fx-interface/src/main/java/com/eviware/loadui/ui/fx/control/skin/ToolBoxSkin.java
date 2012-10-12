@@ -356,6 +356,25 @@ public class ToolBoxSkin<E extends Node> extends SkinBase<ToolBox<E>, ToolBoxBeh
 			setId( category );
 			this.category = category;
 
+			itemHolder = new ItemHolder( category );
+			shownElement.addListener( new ChangeListener<E>()
+			{
+				@Override
+				public void changed( ObservableValue<? extends E> arg0, E oldVal, E newVal )
+				{
+					if( newVal != null )
+					{
+						itemHolder.items.setAll( Collections.singleton( newVal ) );
+					}
+					else
+					{
+						itemHolder.items.clear();
+					}
+				}
+			} );
+
+			setLeft( itemHolder );
+
 			expanderButton = ButtonBuilder.create().build();
 			expanderButton.getStyleClass().add( "expander-button" );
 			expanderButton.disableProperty().bind( Bindings.size( categoryItems ).lessThan( 2 ) );
@@ -377,26 +396,8 @@ public class ToolBoxSkin<E extends Node> extends SkinBase<ToolBox<E>, ToolBoxBeh
 			} );
 
 			setAlignment( expanderButton, Pos.CENTER_RIGHT );
+
 			setRight( expanderButton );
-
-			itemHolder = new ItemHolder( category );
-			shownElement.addListener( new ChangeListener<E>()
-			{
-				@Override
-				public void changed( ObservableValue<? extends E> arg0, E oldVal, E newVal )
-				{
-					if( newVal != null )
-					{
-						itemHolder.items.setAll( Collections.singleton( newVal ) );
-					}
-					else
-					{
-						itemHolder.items.clear();
-					}
-				}
-			} );
-
-			setLeft( itemHolder );
 		}
 	}
 

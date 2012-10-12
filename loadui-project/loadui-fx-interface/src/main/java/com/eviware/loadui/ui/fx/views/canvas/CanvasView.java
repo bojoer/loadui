@@ -26,6 +26,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
+import javafx.scene.GroupBuilder;
 import javafx.scene.Node;
 import javafx.scene.control.Labeled;
 import javafx.scene.control.Slider;
@@ -188,9 +189,9 @@ public class CanvasView extends StackPane
 	private final ObservableList<? extends CanvasObjectView> canvasObjects;
 	private final ObservableList<ConnectionView> connections;
 
-	protected final Group canvasLayer = new Group();
-	private final Group componentLayer = new Group();
-	private final Group connectionLayer = new Group();
+	protected final Group canvasLayer = GroupBuilder.create().styleClass( "canvas-layer" ).build();
+	private final Group componentLayer = GroupBuilder.create().styleClass( "component-layer" ).build();
+	private final Group connectionLayer = GroupBuilder.create().styleClass( "connection-layer" ).build();
 
 	public CanvasView( CanvasItem canvas )
 	{
@@ -323,7 +324,7 @@ public class CanvasView extends StackPane
 
 	private Node createGrid()
 	{
-		Region gridRegion = RegionBuilder.create().styleClass( "canvas-view" ).build();
+		Region gridRegion = RegionBuilder.create().styleClass( "grid" ).build();
 		//Hack for setting CSS resources within an OSGi framework
 		String gridUrl = CanvasView.class.getResource( "grid-box.png" ).toExternalForm();
 		gridRegion.setStyle( "-fx-background-image: url('" + gridUrl + "');" );
