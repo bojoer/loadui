@@ -39,6 +39,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
@@ -525,9 +526,23 @@ public class ObservableLists
 		@Override
 		public void onChanged( final ListChangeListener.Change<? extends E> change )
 		{
+			final ImmutableList.Builder<E> added = ImmutableList.builder();
+			final ImmutableList.Builder<E> removed = ImmutableList.builder();
+			while( change.next() )
+			{
+				if( change.wasAdded() )
+				{
+					added.addAll( change.getAddedSubList() );
+				}
+				if( change.wasRemoved() )
+				{
+					removed.addAll( change.getRemoved() );
+				}
+			}
+
 			if( Platform.isFxApplicationThread() )
 			{
-				handleChange( change );
+				handleChange( added.build(), removed.build() );
 			}
 			else
 			{
@@ -536,7 +551,7 @@ public class ObservableLists
 					@Override
 					public void run()
 					{
-						handleChange( change );
+						handleChange( added.build(), removed.build() );
 					}
 				} );
 			}
@@ -548,19 +563,10 @@ public class ObservableLists
 			originalList.removeListener( this );
 		}
 
-		private void handleChange( final ListChangeListener.Change<? extends E> change )
+		private void handleChange( List<? extends E> added, List<? extends E> removed )
 		{
-			while( change.next() )
-			{
-				if( change.wasAdded() )
-				{
-					list.addAll( change.getAddedSubList() );
-				}
-				if( change.wasRemoved() )
-				{
-					list.removeAll( change.getRemoved() );
-				}
-			}
+			list.addAll( added );
+			list.removeAll( removed );
 		}
 	}
 
