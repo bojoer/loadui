@@ -536,6 +536,10 @@ public class TestFX
 		{
 			return pointFor( find( ( Predicate<Node> )target ) );
 		}
+		else if( target instanceof Iterable<?> )
+		{
+			return pointFor( Iterables.get( ( Iterable<?> )target, 0 ) );
+		}
 		else if( target instanceof OffsetTarget )
 		{
 			OffsetTarget offset = ( OffsetTarget )target;
