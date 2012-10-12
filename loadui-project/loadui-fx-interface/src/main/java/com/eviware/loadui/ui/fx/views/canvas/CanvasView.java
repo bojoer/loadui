@@ -204,7 +204,6 @@ public class CanvasView extends StackPane
 				CONNECTION_TO_VIEW );
 
 		FXMLUtils.load( this, this, CanvasView.class.getResource( CanvasView.class.getSimpleName() + ".fxml" ) );
-		System.out.println( "Created canvas: " + this );
 	}
 
 	protected ObservableList<? extends Labeled> createToolBoxContent()
