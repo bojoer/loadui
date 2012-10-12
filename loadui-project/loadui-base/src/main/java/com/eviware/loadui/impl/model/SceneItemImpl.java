@@ -42,6 +42,8 @@ import com.eviware.loadui.api.events.PropertyEvent;
 import com.eviware.loadui.api.events.RemoteActionEvent;
 import com.eviware.loadui.api.events.TerminalEvent;
 import com.eviware.loadui.api.events.TerminalMessageEvent;
+import com.eviware.loadui.api.execution.Phase;
+import com.eviware.loadui.api.execution.TestExecution;
 import com.eviware.loadui.api.messaging.MessageEndpoint;
 import com.eviware.loadui.api.messaging.SceneCommunication;
 import com.eviware.loadui.api.model.AgentItem;
@@ -459,6 +461,14 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 			if( agent.isReady() )
 				agents.add( agent );
 		return agents;
+	}
+
+	@Override
+	protected void onExecutionTask( TestExecution execution, Phase phase )
+	{
+		CanvasItem startedCanvas = execution.getCanvas();
+		if( startedCanvas == this || ( getProject() == startedCanvas && isFollowProject() ) )
+			super.onExecutionTask( execution, phase );
 	}
 
 	private class SelfListener implements EventHandler<BaseEvent>
