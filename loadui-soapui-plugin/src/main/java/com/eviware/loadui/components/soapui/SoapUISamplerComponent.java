@@ -141,7 +141,7 @@ public class SoapUISamplerComponent extends RunnerBase
 	public static final String PROJECT_RELATIVE_PATH = "projectRelativePath";
 
 	public static final String SOAPUI_CONTEXT_PARAM = "soapui_context";
-	
+
 	public static final String PROPERTIES = SoapUISamplerComponent.class.getSimpleName() + "_properties";
 	private static final String DISABLED_TESTSTEPS = "disabledTestSteps";
 	public static final String TYPE = SoapUISamplerComponent.class.getName();
@@ -273,7 +273,7 @@ public class SoapUISamplerComponent extends RunnerBase
 		box.add( projectSelector.buildLayout() );
 
 		layout.add( box );
-		layout.add( new SeparatorLayoutComponentImpl( false, "" ) );
+		layout.add( new SeparatorLayoutComponentImpl( false, "newline, growx, spanx" ) );
 
 		box = new LayoutContainerImpl( "wrap 3, ins 0", "", "align top", "" );
 
@@ -321,7 +321,7 @@ public class SoapUISamplerComponent extends RunnerBase
 		box.add( abortRunningAction );
 
 		layout.add( box );
-		layout.add( new SeparatorLayoutComponentImpl( true, "" ) );
+		layout.add( new SeparatorLayoutComponentImpl( true, "growy" ) );
 
 		LayoutContainer wrapperBox = new LayoutContainerImpl( "wrap, ins 0", "", "align top", "" );
 

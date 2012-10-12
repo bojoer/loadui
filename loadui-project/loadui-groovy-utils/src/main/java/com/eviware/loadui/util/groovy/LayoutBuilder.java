@@ -35,6 +35,7 @@ import com.eviware.loadui.impl.layout.SeparatorLayoutComponentImpl;
 import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.layout.DelayedFormattedString;
 import com.eviware.loadui.util.layout.FormattedString;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
 /**
@@ -171,7 +172,7 @@ public class LayoutBuilder
 	@Deprecated
 	public void separator()
 	{
-		separator( false, "" );
+		separator( ImmutableMap.<String, Object> of() );
 	}
 
 	@Deprecated
