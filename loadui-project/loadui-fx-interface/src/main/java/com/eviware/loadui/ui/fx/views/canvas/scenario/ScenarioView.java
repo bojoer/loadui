@@ -4,6 +4,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.MenuItemBuilder;
+import javafx.scene.layout.VBox;
 
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
@@ -47,12 +48,12 @@ public class ScenarioView extends CanvasObjectView
 	private final class Controller
 	{
 		@FXML
-		private MiniScenarioPlaybackPanel playbackPanel;
+		private VBox vBox;
 
 		@FXML
-		private void initialize()
+		void initialize()
 		{
-			playbackPanel.setCanvas( getScenario() );
+			vBox.getChildren().add( 0, new MiniScenarioPlaybackPanel( getScenario() ) );
 		}
 	}
 }

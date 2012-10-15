@@ -3,13 +3,11 @@ package com.eviware.loadui.ui.fx.views.canvas;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBuilder;
 
-import javax.annotation.Nonnull;
-
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.ui.fx.views.canvas.CounterDisplay.Formatting;
 
-public abstract class ToolbarPlaybackPanel extends PlaybackPanel<ToolbarCounterDisplay>
+public abstract class ToolbarPlaybackPanel<C extends CanvasItem> extends PlaybackPanel<ToolbarCounterDisplay, C>
 {
 	protected Button limitsButton()
 	{
@@ -17,10 +15,9 @@ public abstract class ToolbarPlaybackPanel extends PlaybackPanel<ToolbarCounterD
 				.onAction( openLimitsDialog ).build();
 	}
 
-	@Override
-	public void setCanvas( @Nonnull final CanvasItem canvas )
+	public ToolbarPlaybackPanel( final C canvas )
 	{
-		super.setCanvas( canvas );
+		super( canvas );
 		time.setLimit( canvas.getLimit( CanvasItem.TIMER_COUNTER ) );
 		requests.setLimit( canvas.getLimit( CanvasItem.REQUEST_COUNTER ) );
 		failures.setLimit( canvas.getLimit( CanvasItem.FAILURE_COUNTER ) );

@@ -9,7 +9,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBuilder;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.HBoxBuilder;
 import javafx.scene.layout.Priority;
@@ -21,6 +20,7 @@ import com.eviware.loadui.api.model.ProjectRef;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.control.ConfirmationDialog;
+import com.eviware.loadui.ui.fx.control.fields.ValidatableStringField;
 import com.eviware.loadui.ui.fx.util.UIUtils;
 
 public class CreateNewProjectDialog extends ConfirmationDialog
@@ -32,9 +32,11 @@ public class CreateNewProjectDialog extends ConfirmationDialog
 		int projectNumber = getNextProjectNumber();
 
 		Label projectName = new Label( "Project name" );
-		final TextField projectNameField = new TextField( "Project " + projectNumber );
+		final ValidatableStringField projectNameField = ValidatableStringField.Builder.create()
+				.stringConstraint( ValidatableStringField.NOT_EMPTY ).text( "Project " + projectNumber ).build();
 		Label fileName = new Label( "File name" );
-		final TextField fileNameField = new TextField( "project-" + projectNumber + ".xml" );
+		final ValidatableStringField fileNameField = ValidatableStringField.Builder.create()
+				.stringConstraint( ValidatableStringField.NOT_EMPTY ).text( "project-" + projectNumber + ".xml" ).build();
 		HBox.setHgrow( fileNameField, Priority.ALWAYS );
 		Button browseButton = ButtonBuilder.create().text( "Browse..." ).onAction( new EventHandler<ActionEvent>()
 		{

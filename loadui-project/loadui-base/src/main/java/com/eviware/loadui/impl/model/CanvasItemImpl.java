@@ -572,6 +572,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 
 	protected void setRunning( boolean running )
 	{
+		log.debug( "setRunning canvas: " + this.getClass().toString() );
 		if( this.running != running )
 		{
 			this.running = running;
@@ -756,6 +757,69 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 		}
 	}
 
+	private static final Function<ComponentItem, Future<BaseEvent>> busyFuture = new Function<ComponentItem, Future<BaseEvent>>()
+	{
+		@Override
+		public Future<BaseEvent> apply( ComponentItem component )
+		{
+			return component.isBusy() ? EventFuture.forKey( component, ComponentItem.BUSY ) : Futures
+					.<BaseEvent> immediateFuture( null );
+		}
+	};
+
+	protected void onExecutionTask( TestExecution execution, Phase phase )
+	{
+		if( execution.contains( CanvasItemImpl.this ) )
+		{
+			switch( phase )
+			{
+			case START :
+				setRunning( true );
+				setTime( 0 );
+				startTime = new Date();
+				timerFuture = scheduler.scheduleAtFixedRate( new TimeUpdateTask(), 250, 250, TimeUnit.MILLISECONDS );
+				fixTimeLimit();
+				hasStarted = true;
+				setCompleted( false );
+				break;
+			case PRE_STOP :
+				hasStarted = false;
+				if( timeLimitFuture != null )
+					timeLimitFuture.cancel( true );
+
+				if( isAbortOnFinish() )
+				{
+					cancelComponents();
+				}
+				else
+				{
+					for( Future<BaseEvent> future : Iterables.transform( getComponents(), busyFuture ) )
+					{
+						try
+						{
+							future.get();
+						}
+						catch( InterruptedException e )
+						{
+							log.error( "Failed waiting for a Component", e );
+						}
+						catch( ExecutionException e )
+						{
+							log.error( "Failed waiting for a Component", e );
+						}
+					}
+				}
+				onComplete( execution.getCanvas() );
+				break;
+			case STOP :
+				if( timerFuture != null )
+					timerFuture.cancel( true );
+				setRunning( false );
+				break;
+			}
+		}
+	}
+
 	private class TimeLimitTask implements Runnable
 	{
 		@Override
@@ -810,68 +874,10 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 
 	private class CanvasTestExecutionTask implements TestExecutionTask
 	{
-		private final Function<ComponentItem, Future<BaseEvent>> busyFuture = new Function<ComponentItem, Future<BaseEvent>>()
-		{
-			@Override
-			public Future<BaseEvent> apply( ComponentItem component )
-			{
-				return component.isBusy() ? EventFuture.forKey( component, ComponentItem.BUSY ) : Futures
-						.<BaseEvent> immediateFuture( null );
-			}
-		};
-
 		@Override
 		public void invoke( TestExecution execution, Phase phase )
 		{
-			if( execution.contains( CanvasItemImpl.this ) )
-			{
-				switch( phase )
-				{
-				case START :
-					setRunning( true );
-					setTime( 0 );
-					startTime = new Date();
-					timerFuture = scheduler.scheduleAtFixedRate( new TimeUpdateTask(), 250, 250, TimeUnit.MILLISECONDS );
-					fixTimeLimit();
-					hasStarted = true;
-					setCompleted( false );
-					break;
-				case PRE_STOP :
-					hasStarted = false;
-					if( timeLimitFuture != null )
-						timeLimitFuture.cancel( true );
-
-					if( isAbortOnFinish() )
-					{
-						cancelComponents();
-					}
-					else
-					{
-						for( Future<BaseEvent> future : Iterables.transform( getComponents(), busyFuture ) )
-						{
-							try
-							{
-								future.get();
-							}
-							catch( InterruptedException e )
-							{
-								log.error( "Failed waiting for a Component", e );
-							}
-							catch( ExecutionException e )
-							{
-								log.error( "Failed waiting for a Component", e );
-							}
-						}
-					}
-					onComplete( execution.getCanvas() );
-					break;
-				case STOP :
-					if( timerFuture != null )
-						timerFuture.cancel( true );
-					setRunning( false );
-					break;
-				}
-			}
+			onExecutionTask( execution, phase );
 		}
 	}
 }

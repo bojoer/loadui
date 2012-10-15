@@ -53,10 +53,7 @@
 			<MenuItem fx:id="close" id="close" text="Close" onAction="#closeProject" />
 		</items>
 	</MenuButton>
-	<ProjectPlaybackPanel fx:id="playbackPanel" AnchorPane.topAnchor="14" AnchorPane.leftAnchor="440"
-		StackPane.alignment="TOP_CENTER" />
-	<HBox maxWidth="200" maxHeight="60" alignment="CENTER_RIGHT" AnchorPane.topAnchor="18" AnchorPane.rightAnchor="10"
-		StackPane.alignment="TOP_RIGHT">
+	<HBox maxWidth="200" maxHeight="60" alignment="CENTER_RIGHT" AnchorPane.topAnchor="18" AnchorPane.rightAnchor="10">
 		<Button fx:id="settingsButton" text="Settings" onAction="#openSettings" />
 		<Button fx:id="openHelpPageButton" text="Help" onAction="#openHelpPage" />
 		<Button fx:id="closeProjectButton" text="Close" onAction="#closeProject" />

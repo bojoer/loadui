@@ -9,12 +9,15 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.util.Callback;
 
+import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.ui.fx.views.canvas.ToolbarPlaybackPanel;
 
-final public class ProjectPlaybackPanel extends ToolbarPlaybackPanel
+final public class ProjectPlaybackPanel extends ToolbarPlaybackPanel<ProjectItem>
 {
-	public ProjectPlaybackPanel()
+	public ProjectPlaybackPanel( ProjectItem canvas )
 	{
+		super( canvas );
+
 		getStyleClass().add( "project-playback-panel" );
 		setStyle( "-fx-spacing: 8; -fx-background-color: #8b8c8f; -fx-background-radius: 7;" );
 		setMaxHeight( 28 );
