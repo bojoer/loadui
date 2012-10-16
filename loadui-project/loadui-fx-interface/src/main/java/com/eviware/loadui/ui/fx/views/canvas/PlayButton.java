@@ -1,6 +1,7 @@
 package com.eviware.loadui.ui.fx.views.canvas;
 
 import javax.annotation.Nonnull;
+import javax.swing.plaf.basic.BasicBorders.ToggleButtonBorder;
 
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -10,6 +11,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleButtonBuilder;
 import javafx.scene.layout.StackPane;
 
 import com.eviware.loadui.api.execution.Phase;
@@ -21,7 +23,7 @@ import com.eviware.loadui.ui.fx.util.TestExecutionUtils;
 
 public class PlayButton extends StackPane
 {
-	private final ToggleButton toggleButton = new ToggleButton();
+	private final ToggleButton toggleButton = ToggleButtonBuilder.create().build();
 	private final CanvasItem canvas;
 	private final BooleanProperty playingProperty = new SimpleBooleanProperty();
 

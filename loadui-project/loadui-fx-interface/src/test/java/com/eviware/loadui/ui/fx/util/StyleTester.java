@@ -10,6 +10,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.SceneBuilder;
 import javafx.scene.control.ButtonBuilder;
@@ -36,8 +37,10 @@ public class StyleTester extends Application
 		//				new Rectangle( 50, 50, Color.YELLOW ) );
 		//		return carousel;
 
+		Group g = new Group();
 		TextOptionsSlider slider = new TextOptionsSlider( ImmutableList.of( "Sec", "Min", "Hour" ) );
-		return slider;
+		g.getChildren().setAll( slider );
+		return g;
 
 	}
 

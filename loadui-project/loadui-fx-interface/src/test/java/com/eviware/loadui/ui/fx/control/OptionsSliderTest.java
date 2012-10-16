@@ -1,5 +1,8 @@
 package com.eviware.loadui.ui.fx.control;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertTrue;
+
 import java.util.concurrent.TimeUnit;
 
 import javafx.application.Application;
@@ -36,7 +39,7 @@ public class OptionsSliderTest
 			primaryStage.titleProperty().bind( optionsSlider.selectedProperty() );
 
 			primaryStage.setScene( SceneBuilder.create().stylesheets( "/com/eviware/loadui/ui/fx/loadui-style.css" )
-					.width( 400 ).height( 300 ).root( optionsSlider ).build() );
+					.width( 300 ).height( 200 ).root( optionsSlider ).build() );
 
 			primaryStage.show();
 
@@ -54,9 +57,16 @@ public class OptionsSliderTest
 	}
 
 	@Test
-	public void shouldOpen()
+	public void property_should_updateOnClick()
 	{
+		assertTrue( stage.getTitle().equals( "one" ) );
+		controller.click( "#two" );
+		assertTrue( stage.getTitle().equals( "two" ) );
+		controller.click( "#three" );
+		assertTrue( stage.getTitle().equals( "three" ) );
+		controller.click( "#two" );
+		assertTrue( stage.getTitle().equals( "two" ) );
 		controller.click( "#one" );
-		controller.sleep( 2000 );
+		assertTrue( stage.getTitle().equals( "one" ) );
 	}
 }

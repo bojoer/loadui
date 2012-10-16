@@ -6,6 +6,10 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.RadioButtonBuilder;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.RegionBuilder;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.VBoxBuilder;
 
@@ -61,6 +65,22 @@ public class OptionsSliderSkin<T> extends SkinBase<OptionsSlider<T>, BehaviorBas
 			vBox.getChildren().add( radio );
 		}
 
-		getChildren().add( vBox );
+		AnchorPane a = new AnchorPane();
+		a.setStyle( "fx-background-color: blue;" );
+
+		Region r = RegionBuilder.create().styleClass( "sliding-area" ).build();
+
+		AnchorPane.setTopAnchor( r, 0.0 );
+		AnchorPane.setLeftAnchor( r, 0.0 );
+		AnchorPane.setBottomAnchor( r, 0.0 );
+
+		AnchorPane.setTopAnchor( vBox, 0.0 );
+		AnchorPane.setRightAnchor( vBox, 0.0 );
+		AnchorPane.setBottomAnchor( vBox, 0.0 );
+		AnchorPane.setLeftAnchor( vBox, 0.0 );
+
+		a.getChildren().setAll( r, vBox );
+
+		getChildren().add( a );
 	}
 }

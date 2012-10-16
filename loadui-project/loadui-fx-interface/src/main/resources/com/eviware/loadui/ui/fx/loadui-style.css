@@ -161,9 +161,8 @@
     -fx-background-insets: 0;
 }
 
-.options-slider .container  {
-   -fx-background-color: yellow;
-   -fx-background-radius: 2;
+.options-slider .sliding-area  {
+   -fx-background-color: lightgrey;
    -fx-padding: 5;
 }
 
