@@ -8,6 +8,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.VPos;
 import javafx.scene.control.Label;
 import javafx.scene.control.LabelBuilder;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.RegionBuilder;
@@ -36,6 +37,7 @@ public class KnobSkin extends SkinBase<Knob, KnobBehavior>
 		handle = RegionBuilder.create().styleClass( "handle" ).build();
 
 		base = StackPaneBuilder.create().styleClass( "base" ).build();
+		addEventHandler( MouseEvent.ANY, new DragBehavior() );
 		setOnScroll( new EventHandler<ScrollEvent>()
 		{
 			@Override
@@ -93,5 +95,34 @@ public class KnobSkin extends SkinBase<Knob, KnobBehavior>
 		double y = Math.sin( angle ) * radius;
 		layoutInArea( handle, left + width / 2 + ( x - handleRadius ), top + remainingHeight / 2 + ( y - handleRadius ),
 				handleRadius * 2, handleRadius * 2, handle.getBaselineOffset(), HPos.CENTER, VPos.CENTER );
+	}
+
+	private class DragBehavior implements EventHandler<MouseEvent>
+	{
+		private boolean dragging = false;
+		private double lastY;
+
+		@Override
+		public void handle( MouseEvent event )
+		{
+			if( event.getEventType() == MouseEvent.DRAG_DETECTED )
+			{
+				dragging = true;
+				lastY = event.getY();
+			}
+			else if( event.getEventType() == MouseEvent.MOUSE_DRAGGED )
+			{
+				if( dragging )
+				{
+					double nextY = event.getY();
+					getSkinnable().setValue( getSkinnable().getValue() + getSkinnable().getStep() * ( lastY - nextY ) );
+					lastY = nextY;
+				}
+			}
+			else if( event.getEventType() == MouseEvent.MOUSE_RELEASED )
+			{
+				dragging = false;
+			}
+		}
 	}
 }
