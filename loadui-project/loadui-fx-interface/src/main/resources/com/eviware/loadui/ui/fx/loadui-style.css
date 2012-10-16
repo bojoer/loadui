@@ -119,6 +119,30 @@
 }
 
 /**
+ * Knob styles
+ */
+.knob {
+	-fx-skin: "com.eviware.loadui.ui.fx.control.skin.KnobSkin";
+	-fx-background-color: gray;
+	-fx-background-radius: 4;
+	-fx-padding: 5;
+}
+
+.knob .base {
+	-fx-background-color: black, red;
+	-fx-background-insets: 2 -2 -2 2, 0;
+	-fx-background-radius: 50;
+	-fx-padding: 16;
+}
+
+.knob .handle {
+	-fx-background-color: transparent, black;
+	-fx-padding: 6;
+	-fx-background-radius: 50;
+	-fx-background-insets: 0, 2;
+}
+ 
+ /**
  * Dialog styles
  */
  

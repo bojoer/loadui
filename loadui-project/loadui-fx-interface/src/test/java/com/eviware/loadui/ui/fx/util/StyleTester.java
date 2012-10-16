@@ -10,26 +10,20 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.GroupBuilder;
 import javafx.scene.Node;
 import javafx.scene.SceneBuilder;
 import javafx.scene.control.ButtonBuilder;
 import javafx.scene.control.SplitPaneBuilder;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextAreaBuilder;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.VBoxBuilder;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
-import com.eviware.loadui.ui.fx.control.Carousel;
-import com.eviware.loadui.ui.fx.control.ConfirmationDialog;
-import com.eviware.loadui.ui.fx.control.Dialog;
-import com.eviware.loadui.ui.fx.views.canvas.MiniScenarioPlaybackPanel;
-import com.eviware.loadui.ui.fx.views.scenario.ScenarioPlaybackPanel;
+import com.eviware.loadui.ui.fx.control.Knob;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
@@ -37,12 +31,9 @@ public class StyleTester extends Application
 {
 	private Node createTestNode()
 	{
-		Carousel<Rectangle> carousel = new Carousel<>( "Hello world" );
-		carousel.getItems().setAll( new Rectangle( 50, 50, Color.RED ), new Rectangle( 50, 50, Color.BLUE ),
-				new Rectangle( 50, 50, Color.YELLOW ) );
-		//		return carousel;
+		Knob knob = new Knob( "Knob with a long label", 0, 100, 20 );
 
-		return new TextField( "asdasdasd" );
+		return GroupBuilder.create().children( knob ).build();
 	}
 
 	@Override
