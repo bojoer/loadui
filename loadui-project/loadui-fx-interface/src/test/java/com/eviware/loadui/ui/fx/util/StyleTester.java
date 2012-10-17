@@ -31,7 +31,7 @@ public class StyleTester extends Application
 {
 	private Node createTestNode()
 	{
-		Knob knob = new Knob( "Knob with a long label", 0, 100, 20 );
+		Knob knob = new Knob( "Knob", 0, 100, 20 );
 
 		return GroupBuilder.create().children( knob ).build();
 	}

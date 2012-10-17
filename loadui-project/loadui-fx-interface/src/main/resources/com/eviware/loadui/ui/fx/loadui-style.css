@@ -141,6 +141,10 @@
 	-fx-background-radius: 50;
 	-fx-background-insets: 0, 2;
 }
+
+.knob.bounded .base {
+	-fx-background-color: black, blue;
+}
  
  /**
  * Dialog styles

@@ -2,27 +2,35 @@ package com.eviware.loadui.ui.fx.control.skin;
 
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
+import javafx.geometry.Point2D;
 import javafx.geometry.VPos;
 import javafx.scene.control.Label;
 import javafx.scene.control.LabelBuilder;
+import javafx.scene.control.PopupControl;
+import javafx.scene.control.TextField;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.RegionBuilder;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.StackPaneBuilder;
+import javafx.util.converter.NumberStringConverter;
 
 import com.eviware.loadui.ui.fx.control.Knob;
 import com.eviware.loadui.ui.fx.control.behavior.KnobBehavior;
+import com.sun.javafx.Utils;
 import com.sun.javafx.scene.control.skin.SkinBase;
 
 public class KnobSkin extends SkinBase<Knob, KnobBehavior>
 {
 	private static final double START_ANGLE = Math.PI / 2;
 
+	private final ValueDisplay valueDisplay;
 	private final Label label;
 	private final StackPane base;
 	private final Region handle;
@@ -44,6 +52,7 @@ public class KnobSkin extends SkinBase<Knob, KnobBehavior>
 			public void handle( ScrollEvent event )
 			{
 				getBehavior().increment( ( int )event.getTextDeltaY() );
+				event.consume();
 			}
 		} );
 
@@ -57,6 +66,8 @@ public class KnobSkin extends SkinBase<Knob, KnobBehavior>
 		};
 		control.valueProperty().addListener( invalidationListener );
 		control.spanProperty().addListener( invalidationListener );
+
+		valueDisplay = new ValueDisplay();
 
 		getChildren().setAll( base, handle, label );
 	}
@@ -108,6 +119,8 @@ public class KnobSkin extends SkinBase<Knob, KnobBehavior>
 			if( event.getEventType() == MouseEvent.DRAG_DETECTED )
 			{
 				dragging = true;
+				valueDisplay.setEditable( false );
+				valueDisplay.display();
 				lastY = event.getY();
 			}
 			else if( event.getEventType() == MouseEvent.MOUSE_DRAGGED )
@@ -122,7 +135,50 @@ public class KnobSkin extends SkinBase<Knob, KnobBehavior>
 			else if( event.getEventType() == MouseEvent.MOUSE_RELEASED )
 			{
 				dragging = false;
+				valueDisplay.setEditable( true );
+				valueDisplay.hide();
 			}
+			else if( event.getEventType() == MouseEvent.MOUSE_CLICKED )
+			{
+				if( event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2 )
+				{
+					valueDisplay.display();
+				}
+			}
+		}
+	}
+
+	private class ValueDisplay extends PopupControl
+	{
+		private final TextField valueField = new TextField();
+
+		private ValueDisplay()
+		{
+			setAutoHide( true );
+
+			valueField.prefWidthProperty().bind( getSkinnable().widthProperty() );
+			valueField.textProperty().bindBidirectional( getSkinnable().valueProperty(), new NumberStringConverter() );
+			valueField.setOnAction( new EventHandler<ActionEvent>()
+			{
+				@Override
+				public void handle( ActionEvent event )
+				{
+					hide();
+				}
+			} );
+
+			bridge.getChildren().setAll( StackPaneBuilder.create().children( valueField ).build() );
+		}
+
+		public void display()
+		{
+			Point2D point = Utils.pointRelativeTo( getSkinnable(), valueField.getWidth(), 0, HPos.CENTER, VPos.TOP, false );
+			show( getSkinnable(), point.getX(), point.getY() - 20 );
+		}
+
+		public void setEditable( boolean value )
+		{
+			valueField.setEditable( value );
 		}
 	}
 }

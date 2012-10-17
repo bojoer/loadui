@@ -225,6 +225,5 @@ public class Knob extends Control
 		{
 			setValue( Utils.clamp( getMin(), getValue(), getMax() ) );
 		}
-		System.out.println( "Value: " + getValue() );
 	}
 }
