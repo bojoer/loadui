@@ -67,6 +67,14 @@ public class ComponentLayoutUtils
 				return pane;
 			}
 		}
+		else if( component.has( "component" ) )
+		{
+			Object c = component.get( "component" );
+			if( c instanceof Node )
+			{
+				return ( Node )c;
+			}
+		}
 		else if( component.has( "fString" ) )
 		{
 			final FormattedString fString = ( FormattedString )component.get( "fString" );

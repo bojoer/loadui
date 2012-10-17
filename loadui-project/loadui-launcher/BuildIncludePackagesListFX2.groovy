@@ -18,7 +18,7 @@ import java.util.zip.ZipFile
 blacklist = []
 packages = []
 
-def lib = new File('C:\\Program Files\\Oracle\\JavaFX 2.1 Runtime\\lib')
+def lib = new File('C:\\Program Files\\Java\\jdk1.7.0_06\\jre\\lib')
 scanFile( new File(lib, 'jfxrt.jar') )
 
 def void scanFile(file) {

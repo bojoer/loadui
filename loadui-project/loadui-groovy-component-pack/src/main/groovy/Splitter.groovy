@@ -23,6 +23,9 @@
  * @nonBlocking true
  */
 
+import com.eviware.loadui.ui.fx.util.Properties
+import javafx.scene.control.Slider
+
 //Here to support Splitters created in loadUI 1.0, remove in the future:
 try { renameProperty( 'outputs', 'numOutputs' ) } catch( e ) {}
 
@@ -158,7 +161,11 @@ refreshLayout = {
 	layout ( layout:'gap 10 5' ) {
 		node( widget: 'selectorWidget', label: "Type", labels: [ "Round-Robin", "Random" ], default: type.value, selected: type )
 		separator( vertical: true )
-		node( widget: 'sliderWidget', property: numOutputs, constraints: 'center, w 270!' )
+		//node( widget: 'sliderWidget', property: numOutputs, constraints: 'center, w 270!' )
+		def slider = new Slider(min: 1, max: 10, value: numOutputs.value, majorTickUnit:1, minorTickCount:0, showTickLabels: true, snapToTicks: true, showTickMarks: true)
+		slider.valueProperty().bindBidirectionally( Properties.convert( numOutputs ) )
+		node( component: slider, constraints: 'center, w 270!' )
+		
 		separator( vertical: true )
 		box( layout: 'wrap, ins 0' ) {
 			box( widget: 'display',  constraints: 'w 100!' ) {
