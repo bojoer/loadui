@@ -25,6 +25,7 @@
 
 import com.eviware.loadui.ui.fx.util.Properties
 import javafx.scene.control.Slider
+import javafx.beans.InvalidationListener
 
 //Here to support Splitters created in loadUI 1.0, remove in the future:
 try { renameProperty( 'outputs', 'numOutputs' ) } catch( e ) {}
@@ -110,7 +111,13 @@ def compensateProbabilities( changedProperty, diff ) {
 createProperty( 'type', String, "Round-Robin" ) {
 	refreshLayout()
 }
-createProperty( 'numOutputs', Integer, 1 ) { outputCount ->
+
+slider = new Slider(min: 2, max: 10, majorTickUnit:1, minorTickCount:0, showTickLabels: true, snapToTicks: true, showTickMarks: true)
+invalidator = { if(!slider.valueChanging) numOutputs.value = slider.value } as InvalidationListener
+slider.valueChangingProperty().addListener( invalidator )
+slider.valueProperty().addListener( invalidator )
+
+createProperty( 'numOutputs', Integer, 2 ) { outputCount ->
 	while( outgoingTerminalList.size() < outputCount ) {
 		createOutgoing()
 		def i = outgoingTerminalList.size() - 1
@@ -135,6 +142,7 @@ createProperty( 'numOutputs', Integer, 1 ) { outputCount ->
 		deleteProperty( terminalProbabilities.remove( i )?.key )
 	}
 	
+	slider.value = outputCount
 	refreshLayout()
 }
 
@@ -157,14 +165,16 @@ onAction( "RESET" ) {
 	totalReset = 0
 }
 
+//slider.valueProperty().bindBidirectional( Properties.convert( numOutputs ) )
+
 refreshLayout = {
 	layout ( layout:'gap 10 5' ) {
 		node( widget: 'selectorWidget', label: "Type", labels: [ "Round-Robin", "Random" ], default: type.value, selected: type )
 		separator( vertical: true )
-		//node( widget: 'sliderWidget', property: numOutputs, constraints: 'center, w 270!' )
-		def slider = new Slider(min: 1, max: 10, value: numOutputs.value, majorTickUnit:1, minorTickCount:0, showTickLabels: true, snapToTicks: true, showTickMarks: true)
-		slider.valueProperty().bindBidirectionally( Properties.convert( numOutputs ) )
-		node( component: slider, constraints: 'center, w 270!' )
+		box( layout: 'wrap, ins 0' ) {
+			label( 'Number of Outputs' )
+			node( component: slider, constraints: 'center, w 270!' )
+		}
 		
 		separator( vertical: true )
 		box( layout: 'wrap, ins 0' ) {
