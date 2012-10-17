@@ -26,9 +26,11 @@ public class TerminalView extends StackPane
 	}
 
 	@FXML
+	Node terminalNode;
+
+	@FXML
 	protected void initialize()
 	{
-		Node terminalNode = lookup( ".terminal-view" );
 		final DragNode dragNode = DragNode.install( terminalNode, CircleBuilder.create().radius( 10 ).fill( Color.GREEN )
 				.build() );
 		dragNode.setRevert( false );
