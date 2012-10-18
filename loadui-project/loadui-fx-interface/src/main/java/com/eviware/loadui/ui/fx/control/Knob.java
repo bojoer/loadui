@@ -30,18 +30,18 @@ public class Knob extends Control
 
 	public Knob( String text )
 	{
-		setText( text );
 		initialize();
+		setText( text );
 	}
 
 	public Knob( String text, double min, double max, double value )
 	{
+		initialize();
 		setText( text );
 		setMax( max );
 		setMin( min );
 		setValue( value );
 		adjustValues();
-		initialize();
 	}
 
 	private void initialize()
@@ -183,9 +183,15 @@ public class Knob extends Control
 		return span;
 	}
 
+	private double getSpanImpl()
+	{
+		return span == null ? Double.NaN : span.get();
+	}
+
 	public double getSpan()
 	{
-		return span == null ? 100 : span.get();
+		double spanValue = getSpanImpl();
+		return Double.isNaN( spanValue ) ? ( isBounded() ? getMax() - getMin() : 100 ) : spanValue;
 	}
 
 	public void setSpan( double value )

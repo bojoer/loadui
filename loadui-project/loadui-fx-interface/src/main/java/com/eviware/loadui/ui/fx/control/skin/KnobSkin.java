@@ -51,7 +51,7 @@ public class KnobSkin extends SkinBase<Knob, KnobBehavior>
 			@Override
 			public void handle( ScrollEvent event )
 			{
-				getBehavior().increment( ( int )event.getTextDeltaY() );
+				getBehavior().increment( ( int )Math.signum( event.getDeltaY() ) );
 				event.consume();
 			}
 		} );
