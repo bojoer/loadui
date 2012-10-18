@@ -126,6 +126,7 @@
 	-fx-background-color: gray;
 	-fx-background-radius: 4;
 	-fx-padding: 5;
+	-fx-cursor: v_resize;
 }
 
 .knob .base {
