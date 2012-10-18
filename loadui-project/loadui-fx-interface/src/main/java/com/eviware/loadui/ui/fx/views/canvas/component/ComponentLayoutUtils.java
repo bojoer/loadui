@@ -1,6 +1,5 @@
 package com.eviware.loadui.ui.fx.views.canvas.component;
 
-import java.io.File;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -24,7 +23,6 @@ import javafx.scene.control.TooltipBuilder;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBoxBuilder;
-import javafx.util.converter.NumberStringConverter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +39,7 @@ import com.eviware.loadui.api.layout.TableLayoutComponent;
 import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.impl.layout.OptionsProviderImpl;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
+import com.eviware.loadui.ui.fx.control.Knob;
 import com.eviware.loadui.ui.fx.control.OptionsSlider;
 import com.eviware.loadui.ui.fx.util.Properties;
 import com.eviware.loadui.util.BeanInjector;
@@ -97,6 +96,14 @@ public class ComponentLayoutUtils
 				Label propertyLabel = LabelBuilder.create().text( ( String )component.get( "label" ) ).build();
 
 				return VBoxBuilder.create().children( propertyLabel, slider ).build();
+			}
+		}
+		else if( component.has( "component" ) )
+		{
+			Object c = component.get( "component" );
+			if( c instanceof Node )
+			{
+				return ( Node )c;
 			}
 		}
 		else if( component.has( "fString" ) )
@@ -239,11 +246,26 @@ public class ComponentLayoutUtils
 		}
 		else if( Number.class.isAssignableFrom( type ) )
 		{
-			TextField textField = new TextField();
-			textField.textProperty().bindBidirectional( Properties.convert( ( Property<Number> )property.getProperty() ),
-					new NumberStringConverter() );
-			textField.setMaxWidth( 50 );
-			return VBoxBuilder.create().children( propertyLabel, textField ).build();
+			Knob knob = new Knob( property.getLabel() );
+			knob.valueProperty().bindBidirectional( Properties.convert( ( Property<Number> )property.getProperty() ) );
+			if( property.has( "min" ) )
+			{
+				knob.setMin( ( ( Number )property.get( "min" ) ).doubleValue() );
+			}
+			if( property.has( "max" ) )
+			{
+				knob.setMax( ( ( Number )property.get( "max" ) ).doubleValue() );
+			}
+			if( property.has( "step" ) )
+			{
+				knob.setStep( ( ( Number )property.get( "step" ) ).doubleValue() );
+			}
+			if( property.has( "span" ) )
+			{
+				knob.setSpan( ( ( Number )property.get( "span" ) ).doubleValue() );
+			}
+
+			return knob;
 		}
 		else if( type == Boolean.class )
 		{

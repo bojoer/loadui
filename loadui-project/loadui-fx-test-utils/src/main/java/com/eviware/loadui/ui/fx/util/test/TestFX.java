@@ -286,7 +286,11 @@ public class TestFX
 	public TestFX move( Object target )
 	{
 		Point2D point = pointFor( target );
-		move( point.getX(), point.getY() );
+		//Since moving takes time, only do it if we're not already at the desired point.
+		if( !controller.getMouse().equals( point ) )
+		{
+			move( point.getX(), point.getY() );
+		}
 		//If the target has moved while we were moving the mouse, update to the new position:
 		point = pointFor( target );
 		controller.position( point.getX(), point.getY() );
