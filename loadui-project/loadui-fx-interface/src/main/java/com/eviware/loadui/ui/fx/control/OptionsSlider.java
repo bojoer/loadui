@@ -5,17 +5,25 @@ import java.util.List;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ObjectPropertyBase;
 import javafx.scene.control.Control;
-import javafx.scene.control.RadioButton;
+import javafx.scene.image.ImageView;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 
-abstract public class OptionsSlider<T> extends Control
+public class OptionsSlider extends Control
 {
+	protected static final Logger log = LoggerFactory.getLogger( OptionsSlider.class );
+
 	private static final String DEFAULT_STYLE_CLASS = "options-slider";
 
-	protected final List<T> options;
+	private final Iterable<String> options;
+	private final Iterable<ImageView> images;
+	private final boolean showLabels;
 
-	private final ObjectProperty<T> selectedProperty = new ObjectPropertyBase<T>()
+	private final ObjectProperty<String> selectedProperty = new ObjectPropertyBase<String>()
 	{
 		@Override
 		public Object getBean()
@@ -30,31 +38,52 @@ abstract public class OptionsSlider<T> extends Control
 		}
 	};
 
-	public OptionsSlider( List<T> options )
+	public OptionsSlider( Iterable<String> options )
+	{
+		this( options, Iterables.cycle( ( ImageView )null ) );
+	}
+
+	public OptionsSlider( Iterable<String> options, Iterable<ImageView> images )
+	{
+		this( options, images, true );
+	}
+
+	public OptionsSlider( Iterable<String> options, Iterable<ImageView> images, boolean showLabels )
 	{
 		this.options = options;
+		this.images = images;
+		this.showLabels = showLabels;
 		getStyleClass().setAll( DEFAULT_STYLE_CLASS );
 	}
 
-	public List<T> getOptions()
+	public boolean showLabels()
+	{
+		return showLabels;
+	}
+
+	public List<String> getOptions()
 	{
 		return ImmutableList.copyOf( options );
 	}
 
-	public ObjectProperty<T> selectedProperty()
+	public Iterable<ImageView> getImages()
+	{
+		return images;
+	}
+
+	public ObjectProperty<String> selectedProperty()
 	{
 		return selectedProperty;
 	}
 
-	public void setSelected( T value )
+	public void setSelected( String value )
 	{
+		log.debug( "newValue test 1: " + value );
 		selectedProperty.setValue( value );
 	}
 
-	public T getSelected()
+	public String getSelected()
 	{
 		return selectedProperty.getValue();
 	}
-
-	public abstract void labelRadioButton( RadioButton radio, int index );
 }

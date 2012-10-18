@@ -23,7 +23,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.layout.VBoxBuilder;
 import javafx.stage.Stage;
 
-import com.eviware.loadui.ui.fx.control.TextOptionsSlider;
+import com.eviware.loadui.ui.fx.control.OptionsSlider;
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
 import com.google.common.io.Files;
@@ -38,7 +38,7 @@ public class StyleTester extends Application
 		//		return carousel;
 
 		Group g = new Group();
-		TextOptionsSlider slider = new TextOptionsSlider( ImmutableList.of( "Sec", "Min", "Hour" ) );
+		OptionsSlider slider = new OptionsSlider( ImmutableList.of( "Sec", "Min", "Hour" ) );
 		g.getChildren().setAll( slider );
 		return g;
 

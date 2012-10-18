@@ -1,72 +1,91 @@
 package com.eviware.loadui.ui.fx.control.skin;
 
+import java.util.Iterator;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.scene.Node;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.RadioButtonBuilder;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.RegionBuilder;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.VBoxBuilder;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.eviware.loadui.ui.fx.control.OptionsSlider;
+import com.eviware.loadui.ui.fx.util.UIUtils;
 import com.sun.javafx.scene.control.behavior.BehaviorBase;
 import com.sun.javafx.scene.control.skin.SkinBase;
 
-public class OptionsSliderSkin<T> extends SkinBase<OptionsSlider<T>, BehaviorBase<OptionsSlider<T>>>
+public class OptionsSliderSkin extends SkinBase<OptionsSlider, BehaviorBase<OptionsSlider>>
 {
-	public OptionsSliderSkin( final OptionsSlider<T> slider )
+	protected static final Logger log = LoggerFactory.getLogger( OptionsSliderSkin.class );
+
+	public OptionsSliderSkin( final OptionsSlider slider )
 	{
 		super( slider, new BehaviorBase<>( slider ) );
 
 		final ToggleGroup toggleGroup = new ToggleGroup();
 
-		slider.selectedProperty().addListener( new ChangeListener<T>()
+		VBox vBox = VBoxBuilder.create().styleClass( "container" ).build();
+
+		Iterator<ImageView> it = slider.getImages().iterator();
+		for( String option : slider.getOptions() )
+		{
+			RadioButton radio = RadioButtonBuilder.create().toggleGroup( toggleGroup ).build();
+			radio.setUserData( option );
+			//			if( i == 0 )
+			//			{
+			//				System.out.println( "select! " );
+			//								slider.setSelected( slider.getOptions().get( 0 ) );
+			//								radio.setSelected( true );
+			//			}
+
+			if( slider.showLabels() )
+				radio.setText( option );
+			radio.setGraphic( it.next() );
+			radio.setId( UIUtils.toCssId( option ) );
+
+			vBox.getChildren().add( radio );
+		}
+
+		System.out.println( "selected " + slider.getSelected() );
+
+		if( slider.getSelected() != null )
+			selectToggle( toggleGroup, slider.getSelected() );
+
+		slider.selectedProperty().addListener( new ChangeListener<String>()
 		{
 			@Override
-			public void changed( ObservableValue<? extends T> arg0, T oldValue, T newValue )
+			public void changed( ObservableValue<? extends String> arg0, String oldValue, String newValue )
 			{
-				for( Toggle toggle : toggleGroup.getToggles() )
-				{
-					if( newValue.equals( toggle.getUserData() ) )
-					{
-						toggle.setSelected( true );
-						break;
-					}
-				}
+				selectToggle( toggleGroup, newValue );
 			}
 		} );
 
 		toggleGroup.selectedToggleProperty().addListener( new ChangeListener<Toggle>()
 		{
-			@SuppressWarnings( "unchecked" )
 			@Override
 			public void changed( ObservableValue<? extends Toggle> arg0, Toggle oldValue, Toggle newValue )
 			{
-				slider.setSelected( ( T )newValue.getUserData() );
+				slider.setSelected( ( String )newValue.getUserData() );
 			}
 		} );
 
-		VBox vBox = VBoxBuilder.create().styleClass( "container" ).build();
+		getChildren().add( createLayout( vBox ) );
 
-		for( int i = 0; i < slider.getOptions().size(); i++ )
-		{
-			RadioButton radio = RadioButtonBuilder.create().toggleGroup( toggleGroup ).build();
-			radio.setUserData( slider.getOptions().get( i ) );
-			if( i == 0 )
-			{
-				radio.setSelected( true );
-			}
-			slider.labelRadioButton( radio, i );
-			vBox.getChildren().add( radio );
-		}
+	}
 
-		AnchorPane a = new AnchorPane();
-		a.setStyle( "fx-background-color: blue;" );
+	protected Node createLayout( VBox vBox )
+	{
+		AnchorPane anchorPane = new AnchorPane();
 
 		Region r = RegionBuilder.create().styleClass( "sliding-area" ).build();
 
@@ -79,8 +98,23 @@ public class OptionsSliderSkin<T> extends SkinBase<OptionsSlider<T>, BehaviorBas
 		AnchorPane.setBottomAnchor( vBox, 0.0 );
 		AnchorPane.setLeftAnchor( vBox, 0.0 );
 
-		a.getChildren().setAll( r, vBox );
+		anchorPane.getChildren().setAll( r, vBox );
+		return anchorPane;
+	}
 
-		getChildren().add( a );
+	private static void selectToggle( final ToggleGroup toggleGroup, String newValue )
+	{
+		boolean foundToggle = false;
+		for( Toggle toggle : toggleGroup.getToggles() )
+		{
+			if( newValue.equals( toggle.getUserData() ) )
+			{
+				toggle.setSelected( true );
+				foundToggle = true;
+				break;
+			}
+		}
+		if( !foundToggle )
+			throw new IllegalArgumentException( "No toggle found having the user data: " + newValue );
 	}
 }

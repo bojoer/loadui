@@ -1,12 +1,15 @@
 package com.eviware.loadui.ui.fx.control;
 
-import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertTrue;
 
 import java.util.concurrent.TimeUnit;
 
 import javafx.application.Application;
 import javafx.scene.SceneBuilder;
+import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBoxBuilder;
 import javafx.stage.Stage;
 
 import org.junit.BeforeClass;
@@ -17,6 +20,7 @@ import com.eviware.loadui.test.categories.GUITest;
 import com.eviware.loadui.ui.fx.util.test.FXScreenController;
 import com.eviware.loadui.ui.fx.util.test.FXTestUtils;
 import com.eviware.loadui.ui.fx.util.test.TestFX;
+import com.eviware.loadui.ui.fx.views.canvas.component.ComponentLayoutUtils;
 import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.SettableFuture;
 
@@ -26,20 +30,30 @@ public class OptionsSliderTest
 	private static final SettableFuture<Stage> stageFuture = SettableFuture.create();
 
 	private static OptionsSlider optionsSlider;
+	private static OptionsSlider imageOptionsSlider;
 	private static Stage stage;
 	private static TestFX controller;
+	private static Label label;
 
 	public static class OptionsSliderTestApp extends Application
 	{
 		@Override
 		public void start( Stage primaryStage ) throws Exception
 		{
-			optionsSlider = new TextOptionsSlider( ImmutableList.of( "one", "two", "three" ) );
+			optionsSlider = new OptionsSlider( ImmutableList.of( "one", "two", "three" ) );
+
+			imageOptionsSlider = new OptionsSlider( ImmutableList.of( "gauss", "sine" ), ImmutableList.of(
+					createImage( "gauss_shape.png" ), createImage( "variance2_shape.png" ) ) );
 
 			primaryStage.titleProperty().bind( optionsSlider.selectedProperty() );
 
+			label = new Label( "not set" );
+			label.textProperty().bind( imageOptionsSlider.selectedProperty() );
+
 			primaryStage.setScene( SceneBuilder.create().stylesheets( "/com/eviware/loadui/ui/fx/loadui-style.css" )
-					.width( 300 ).height( 200 ).root( optionsSlider ).build() );
+					.width( 300 ).height( 200 )
+					.root( HBoxBuilder.create().spacing( 25 ).children( optionsSlider, imageOptionsSlider, label ).build() )
+					.build() );
 
 			primaryStage.show();
 
@@ -59,14 +73,28 @@ public class OptionsSliderTest
 	@Test
 	public void property_should_updateOnClick()
 	{
-		assertTrue( stage.getTitle().equals( "one" ) );
 		controller.click( "#two" );
-		assertTrue( stage.getTitle().equals( "two" ) );
+		assertTrue( "two".equals( stage.getTitle() ) );
 		controller.click( "#three" );
-		assertTrue( stage.getTitle().equals( "three" ) );
+		assertTrue( "three".equals( stage.getTitle() ) );
 		controller.click( "#two" );
-		assertTrue( stage.getTitle().equals( "two" ) );
+		assertTrue( "two".equals( stage.getTitle() ) );
 		controller.click( "#one" );
-		assertTrue( stage.getTitle().equals( "one" ) );
+		assertTrue( "one".equals( stage.getTitle() ) );
+	}
+
+	@Test
+	public void images_should_work()
+	{
+		controller.click( "#gauss" );
+		assertTrue( "gauss".equals( label.getText() ) );
+		controller.click( "#sine" );
+		assertTrue( "sine".equals( label.getText() ) );
+	}
+
+	private static ImageView createImage( String imageName )
+	{
+		return new ImageView( new Image( ComponentLayoutUtils.class.getClassLoader()
+				.getResource( "images/options/" + imageName ).toExternalForm() ) );
 	}
 }
