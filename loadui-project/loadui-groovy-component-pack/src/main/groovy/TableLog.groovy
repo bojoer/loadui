@@ -38,6 +38,7 @@ import javafx.scene.control.TableView
 import javafx.scene.control.TableColumn
 import javafx.util.Callback
 import javafx.beans.value.ObservableValue
+import javafx.beans.value.ChangeListener
 
 inputTerminal.description = 'Messages sent here will be displayed in the table.'
 likes( inputTerminal ) { true }
@@ -54,8 +55,7 @@ createProperty( 'addHeaders', Boolean, false )
 
 table = null
 cellFactory = { val -> { it -> val.value[val.tableColumn.text] } as ObservableValue } as Callback
-rebuildTable = { table = new TableView(prefHeight: 200, minWidth: 500) }
-if(controller) rebuildTable()
+rebuildTable = { table = new TableView( prefHeight: 200, minWidth: 500 ) }
 tableColumns = [] as CopyOnWriteArraySet
 def latestHeader
 String saveFileName = null
@@ -89,16 +89,22 @@ output = { message ->
 		
 		if( controller ) {
 			Platform.runLater {
-				addedColumns.each { table.columns.add( new TableColumn(cellValueFactory: cellFactory, text: it, sortable: false) ) }
+				addedColumns.each {
+					def column = new TableColumn( cellValueFactory: cellFactory, text: it, sortable: false )
+					column.widthProperty().addListener( { obs, oldVal, width -> setAttribute( "width_$it", "$width" ) } as ChangeListener )
+					try {
+						column.width = Double.parseDouble( getAttribute( "width_$it", null ) )
+					} catch( e ) {
+					}
+					table.columns.add( column )
+				}
 				table.items.add( message )
 				while( table.items.size() > maxRows.value ) table.items.remove(0)
 			}
 		}
 		
 		if( writeLog ) {
-			if( !writer ) {
-				writer = new CSVWriter( new FileWriter( saveFileName, appendSaveFile.value ), (char) ',' );
-			}
+			if( !writer ) writer = new CSVWriter( new FileWriter( saveFileName, appendSaveFile.value ), (char) ',' )
 			try {
 				def header = tableColumns as String[]
 				if( addHeaders.value && !Arrays.equals( latestHeader, header ) ) {
@@ -156,7 +162,7 @@ buildFileName = {
 	saveFileName = filePath
 }
 
-getBaseLogDir = { System.getProperty('loadui.home') ?: '.' }
+getBaseLogDir = { System.getProperty( 'loadui.home', '.' ) }
 getDefaultLogFileName = { getLabel().replaceAll( ' ','' ) }
 				
 validateLogFilePath = { filePath ->
@@ -176,7 +182,7 @@ validateLogFilePath = { filePath ->
 			fis.close()
 		}
 		return true
-	} catch( Exception e ) {
+	} catch( e ) {
 		return false
 	}	
 }
@@ -184,11 +190,11 @@ validateLogFilePath = { filePath ->
 addTimestampToFileName = { it.replaceAll('^(.*?)(\\.\\w+)?$', '$1-'+System.currentTimeMillis()+'$2') }
 
 refreshLayout = {
+	rebuildTable()
 	layout(layout: 'wrap 4') {
 		node( component: table, constraints: 'span' )
 		action( label: 'Reset', action: { table.items.clear() } )
 		action( label: 'Clear', action: {
-			rebuildTable()
 			tableColumns.clear()
 			refreshLayout()
 		} )
@@ -210,7 +216,7 @@ refreshLayout = {
 		property( property: enabledInDistMode, label: 'Enabled in distributed mode', constraints: 'aligny center, alignx right' )
 	}
 }
-refreshLayout()
+if( controller ) refreshLayout()
 
 compactLayout {
 	box( widget: 'display' ) {
