@@ -4,7 +4,12 @@ import java.io.File;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
+import javafx.geometry.HPos;
+import javafx.geometry.Point2D;
+import javafx.geometry.VPos;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ChoiceBoxBuilder;
 import javafx.scene.control.ComboBox;
@@ -12,15 +17,24 @@ import javafx.scene.control.ComboBoxBuilder;
 import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.CustomMenuItemBuilder;
 import javafx.scene.control.Label;
+import javafx.scene.control.LabelBuilder;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuButtonBuilder;
+import javafx.scene.control.PopupControl;
+import javafx.scene.control.PopupControlBuilder;
+import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.GridPaneBuilder;
+import javafx.scene.layout.HBoxBuilder;
 import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.StackPaneBuilder;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.VBoxBuilder;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
+import javafx.util.converter.NumberStringConverter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +52,7 @@ import com.eviware.loadui.ui.fx.util.Properties;
 import com.eviware.loadui.ui.fx.util.SelectionModelUtils;
 import com.eviware.loadui.util.BeanInjector;
 import com.google.common.collect.ImmutableMap;
+import com.sun.javafx.Utils;
 
 public class SoapUiProjectSelector
 {
@@ -78,30 +93,23 @@ public class SoapUiProjectSelector
 
 	public Node buildNode()
 	{
-		Stage stage = BeanInjector.getBean( Stage.class );
-		FilePicker picker = new FilePicker( stage, "Select SoapUI project", new ExtensionFilter( "SoapUI Project Files",
-				"*.xml" ) );
-
-		picker.selectedProperty().bindBidirectional( Properties.convert( projectFile ) );
-
 		SelectionModelUtils.writableSelectedItemProperty( testSuiteCombo.getSelectionModel() ).bindBidirectional(
 				Properties.convert( testSuite ) );
 		SelectionModelUtils.writableSelectedItemProperty( testCaseCombo.getSelectionModel() ).bindBidirectional(
 				Properties.convert( testCase ) );
 
-		VBox vBox = VBoxBuilder
-				.create()
-				.fillWidth( true )
-				.prefHeight( 325 )
-				.prefHeight( 160 )
-				.children( new Label( "SoapUI Project" ), picker, new Label( "TestSuite" ), testSuiteCombo,
-						new Label( "TestCase" ), testCaseCombo ).build();
-		final CustomMenuItem popup = CustomMenuItemBuilder.create().styleClass( "project-selector" ).hideOnClick( false )
-				.content( vBox ).build();
+		GridPane grid = GridPaneBuilder.create().rowConstraints( new RowConstraints( 18 ) )
+				.columnConstraints( new ColumnConstraints( 70, 70, 70 ) ).hgap( 28 ).build();
 
-		GridPane grid = GridPaneBuilder.create().rowConstraints( new RowConstraints( 18 ) ).hgap( 28 ).build();
-
-		MenuButton menuButton = MenuButtonBuilder.create().text( "Project" ).items( popup ).build();
+		final MenuButton menuButton = MenuButtonBuilder.create().text( "Project" ).build();
+		menuButton.setOnMouseClicked( new javafx.event.EventHandler<MouseEvent>()
+		{
+			@Override
+			public void handle( MouseEvent arg0 )
+			{
+				new ProjectSelector( menuButton ).display();
+			}
+		} );
 		BeanInjector.getBean( Stage.class ).getScene().getStylesheets()
 				.add( SoapUiProjectSelector.class.getResource( "loadui-soapui-plugin-style.css" ).toExternalForm() );
 
@@ -126,16 +134,21 @@ public class SoapUiProjectSelector
 				} );
 			}
 		} );
-		final Label testSuiteLabel = new Label();
+		final Label testSuiteLabel = LabelBuilder.create().build();
+
 		testSuiteLabel.textProperty().bind( Properties.convert( testSuite ) );
 		final Label testCaseLabel = new Label();
 		testCaseLabel.textProperty().bind( Properties.convert( testCase ) );
 
-		grid.add( projectLabel, 0, 1 );
-		grid.add( testSuiteLabel, 1, 1 );
-		grid.add( testCaseLabel, 2, 1 );
+		VBox projectVBox = VBoxBuilder.create().minWidth( 130 ).minHeight( 18 ).children( menuButton, projectLabel )
+				.build();
+		VBox testSuiteVBox = VBoxBuilder.create().minWidth( 130 ).minHeight( 18 )
+				.children( new Label( "TestSuite" ), testSuiteLabel ).build();
+		VBox testCaseVBox = VBoxBuilder.create().minWidth( 130 ).minHeight( 18 )
+				.children( new Label( "TestCase" ), testCaseLabel ).build();
 
-		return grid;
+		return HBoxBuilder.create().spacing( 28 ).minWidth( 320 ).children( projectVBox, testSuiteVBox, testCaseVBox )
+				.build();
 	}
 
 	public File getProjectFile()
@@ -204,6 +217,41 @@ public class SoapUiProjectSelector
 				testCaseCombo.setItems( FXCollections.observableArrayList( testCases ) );
 			}
 		} );
+	}
+
+	private class ProjectSelector extends PopupControl
+	{
+		private final Parent parent;
+
+		private ProjectSelector( Parent parent )
+		{
+			this.parent = parent;
+
+			setAutoHide( true );
+
+			Stage stage = BeanInjector.getBean( Stage.class );
+			FilePicker picker = new FilePicker( stage, "Select SoapUI project", new ExtensionFilter(
+					"SoapUI Project Files", "*.xml" ) );
+			picker.selectedProperty().bindBidirectional( Properties.convert( projectFile ) );
+
+			VBox vBox = VBoxBuilder
+					.create()
+					.styleClass( "project-selector" )
+					.fillWidth( true )
+					.prefHeight( 325 )
+					.prefHeight( 160 )
+					.style( "-fx-background-color: #f4f4f4;" )
+					.children( new Label( "SoapUI Project" ), picker, new Label( "TestSuite" ), testSuiteCombo,
+							new Label( "TestCase" ), testCaseCombo ).build();
+
+			bridge.getChildren().setAll( StackPaneBuilder.create().children( vBox ).build() );
+		}
+
+		public void display()
+		{
+			Point2D point = Utils.pointRelativeTo( parent, 0, 0, HPos.LEFT, VPos.TOP, false );
+			show( parent, point.getX(), point.getY() );
+		}
 	}
 
 	private final class PropertyChangedListener implements EventHandler<PropertyEvent>
