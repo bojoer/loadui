@@ -168,6 +168,9 @@ public class Movable implements Draggable
 
 	private static class MovableBehavior
 	{
+		private double lastDraggedX = Double.NaN;
+		private double lastDraggedY = Double.NaN;
+
 		private final EventHandler<MouseEvent> PRESSED_HANDLER = new EventHandler<MouseEvent>()
 		{
 			@Override
@@ -190,7 +193,7 @@ public class Movable implements Draggable
 			{
 				Node source = ( Node )event.getSource();
 				final Movable movable = ( Movable )source.getProperties().get( MOVABLE_PROP_KEY );
-				if( movable != null )
+				if( movable != null && movable.isDragging() )
 				{
 					Node node = movable.getNode();
 					Point2D scenePoint = new Point2D( event.getSceneX(), event.getSceneY() );
@@ -223,9 +226,15 @@ public class Movable implements Draggable
 						}
 
 						movable.currentlyHovered = currentNode;
+						lastDraggedX = Double.NaN;
 					}
-					node.fireEvent( new DraggableEvent( null, node, node, DraggableEvent.DRAGGABLE_DRAGGED, movable, event
-							.getSceneX(), event.getSceneY() ) );
+					if( event.getSceneX() != lastDraggedX || event.getSceneY() != lastDraggedY )
+					{
+						lastDraggedX = event.getSceneX();
+						lastDraggedY = event.getSceneY();
+						node.fireEvent( new DraggableEvent( null, node, node, DraggableEvent.DRAGGABLE_DRAGGED, movable,
+								lastDraggedX, lastDraggedY ) );
+					}
 				}
 				event.consume();
 			}
@@ -238,7 +247,7 @@ public class Movable implements Draggable
 			{
 				Node source = ( Node )event.getSource();
 				Movable movable = ( Movable )source.getProperties().get( MOVABLE_PROP_KEY );
-				if( movable != null )
+				if( movable != null && movable.isDragging() )
 				{
 					Node node = movable.getNode();
 					node.setLayoutX( node.getLayoutX() + node.getTranslateX() );
