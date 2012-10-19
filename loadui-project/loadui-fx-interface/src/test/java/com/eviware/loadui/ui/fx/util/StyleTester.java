@@ -10,11 +10,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-<<<<<<< HEAD
-import javafx.scene.Group;
-=======
 import javafx.scene.GroupBuilder;
->>>>>>> 09b36c7523c5e2d3a89070dc9112696d4632ad8d
 import javafx.scene.Node;
 import javafx.scene.SceneBuilder;
 import javafx.scene.control.ButtonBuilder;
@@ -27,29 +23,14 @@ import javafx.scene.layout.VBox;
 import javafx.scene.layout.VBoxBuilder;
 import javafx.stage.Stage;
 
-<<<<<<< HEAD
-import com.eviware.loadui.ui.fx.control.OptionsSlider;
-=======
 import com.eviware.loadui.ui.fx.control.Knob;
->>>>>>> 09b36c7523c5e2d3a89070dc9112696d4632ad8d
 import com.google.common.base.Charsets;
-import com.google.common.collect.ImmutableList;
 import com.google.common.io.Files;
 
 public class StyleTester extends Application
 {
 	private Node createTestNode()
 	{
-		//		Carousel<Rectangle> carousel = new Carousel<>( "Hello world" );
-		//		carousel.getItems().setAll( new Rectangle( 50, 50, Color.RED ), new Rectangle( 50, 50, Color.BLUE ),
-		//				new Rectangle( 50, 50, Color.YELLOW ) );
-		//		return carousel;
-
-		Group g = new Group();
-		OptionsSlider slider = new OptionsSlider( ImmutableList.of( "Sec", "Min", "Hour" ) );
-		g.getChildren().setAll( slider );
-		return g;
-
 		Knob knob = new Knob( "Knob", 0, 100, 20 );
 
 		return GroupBuilder.create().children( knob ).build();

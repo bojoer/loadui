@@ -127,7 +127,6 @@ validateUrl = {
 	updateAuth()
 	
 	try {
-		log.info "cleanUrl: $cleanUrl"
 		new URI( cleanUrl )
 		setInvalid( !url.value || url.value == dummyUrl )
 	} catch( e ) {
