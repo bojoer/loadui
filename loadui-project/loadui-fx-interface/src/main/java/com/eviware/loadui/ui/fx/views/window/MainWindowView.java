@@ -1,6 +1,7 @@
 package com.eviware.loadui.ui.fx.views.window;
 
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.concurrent.Task;
@@ -18,11 +19,14 @@ import com.eviware.loadui.api.model.ProjectRef;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.model.WorkspaceProvider;
 import com.eviware.loadui.api.traits.Labeled;
+import com.eviware.loadui.api.ui.inspector.Inspector;
 import com.eviware.loadui.ui.fx.api.input.Selectable;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
+import com.eviware.loadui.ui.fx.util.ObservableLists;
 import com.eviware.loadui.ui.fx.util.UIUtils;
 import com.eviware.loadui.ui.fx.views.about.AboutDialog;
+import com.eviware.loadui.ui.fx.views.inspector.InspectorView;
 import com.eviware.loadui.ui.fx.views.project.ProjectView;
 import com.eviware.loadui.ui.fx.views.project.SaveProjectDialog;
 import com.eviware.loadui.ui.fx.views.rename.RenameDialog;
@@ -38,6 +42,9 @@ public class MainWindowView extends StackPane
 
 	@FXML
 	private StackPane container;
+
+	@FXML
+	private InspectorView inspectorView;
 
 	private final WorkspaceProvider workspaceProvider;
 	private final Property<WorkspaceItem> workspaceProperty = new SimpleObjectProperty<>();
@@ -76,6 +83,13 @@ public class MainWindowView extends StackPane
 
 		Selectable.installDeleteKeyHandler( this );
 
+		initIntentEventHanding();
+		initInspectorView( inspectorView );
+		showWorkspace();
+	}
+
+	private void initIntentEventHanding()
+	{
 		addEventHandler( IntentEvent.ANY, new EventHandler<IntentEvent<? extends Object>>()
 		{
 			@Override
@@ -177,8 +191,6 @@ public class MainWindowView extends StackPane
 				event.consume();
 			}
 		} );
-		showWorkspace();
-
 	}
 
 	public void showWorkspace()
@@ -220,6 +232,11 @@ public class MainWindowView extends StackPane
 	public void about()
 	{
 		new AboutDialog( mainButton ).show( getScene().getWindow() );
+	}
+
+	private static void initInspectorView( InspectorView inspectorView )
+	{
+		Bindings.bindContent( inspectorView.getInspectors(), ObservableLists.ofServices( Inspector.class ) );
 	}
 
 	private class WorkspaceListener implements WeakEventHandler<BaseEvent>

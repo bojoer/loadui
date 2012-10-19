@@ -7,13 +7,19 @@ import javafx.animation.TimelineBuilder;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
+import javafx.scene.control.TabBuilder;
 import javafx.scene.control.TabPane;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -22,11 +28,17 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 
+import com.eviware.loadui.api.ui.inspector.Inspector;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
+import com.eviware.loadui.ui.fx.util.ObservableLists;
+import com.eviware.loadui.ui.fx.util.UIUtils;
+import com.google.common.base.Function;
 
 public class InspectorView extends AnchorPane
 {
 	private final BooleanProperty minimizedProperty = new SimpleBooleanProperty( this, "minimized", true );
+
+	private final ObservableList<Inspector> inspectors = FXCollections.observableArrayList();
 
 	private StackPane tabHeaderArea;
 
@@ -35,6 +47,9 @@ public class InspectorView extends AnchorPane
 
 	@FXML
 	private HBox buttonBar;
+
+	@FXML
+	private Button helpButton;
 
 	public InspectorView()
 	{
@@ -50,12 +65,45 @@ public class InspectorView extends AnchorPane
 		} );
 	}
 
+	public ObservableList<Inspector> getInspectors()
+	{
+		return inspectors;
+	}
+
 	private void init()
 	{
 		tabHeaderArea = ( StackPane )tabPane.lookup( ".tab-header-area" );
 		tabHeaderArea.addEventHandler( MouseEvent.ANY, new DragBehavior() );
 
 		buttonBar.setPrefHeight( tabHeaderArea.prefHeight( -1 ) );
+
+		helpButton.setOnAction( new EventHandler<ActionEvent>()
+		{
+			@Override
+			public void handle( ActionEvent event )
+			{
+				String helpUrl = ( ( Inspector )tabPane.getSelectionModel().getSelectedItem().getUserData() ).getHelpUrl();
+				if( helpUrl != null )
+				{
+					UIUtils.openInExternalBrowser( helpUrl );
+				}
+			}
+		} );
+
+		Bindings.bindContent( tabPane.getTabs(), ObservableLists.transform( inspectors, new Function<Inspector, Tab>()
+		{
+			@Override
+			public Tab apply( Inspector inspector )
+			{
+				Object panel = inspector.getPanel();
+				if( !( panel instanceof Node ) )
+				{
+					panel = new Label( "Unsupported inspector panel." );
+				}
+				return TabBuilder.create().userData( inspector ).text( inspector.getName() ).content( ( Node )panel )
+						.build();
+			}
+		} ) );
 
 		tabPane.getSelectionModel().selectedItemProperty().addListener( new InvalidationListener()
 		{

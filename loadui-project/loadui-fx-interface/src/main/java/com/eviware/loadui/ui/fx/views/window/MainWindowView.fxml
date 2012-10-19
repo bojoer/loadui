@@ -18,7 +18,7 @@
 		<URL value="@MainWindowView.css" />
 	</stylesheets>
 	<StackPane fx:id="container" />
-	<InspectorView StackPane.alignment="bottom_center">
+	<InspectorView fx:id="inspectorView" StackPane.alignment="bottom_center">
 		<StackPane.margin>
 			<Insets top="100" />
 		</StackPane.margin>
