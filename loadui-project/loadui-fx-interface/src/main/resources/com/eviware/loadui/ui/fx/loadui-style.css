@@ -119,6 +119,54 @@
 }
 
 /**
+ * OptionsSlider styles
+ */
+ 
+.options-slider {
+	-fx-skin: "com.eviware.loadui.ui.fx.control.skin.OptionsSliderSkin";
+	-fx-padding: 0;
+	-fx-font-size: 9;
+}
+
+.options-slider .radio-button .radio  {
+   -fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, -fx-body-color;
+   -fx-background-insets: 0;
+   -fx-background-radius: 0;
+   -fx-padding: 0; /* padding from outside edge to the inner black dot */
+}
+
+.options-slider .radio-button .dot {
+   -fx-background-color: transparent;
+   -fx-background-insets: 0;
+   -fx-background-radius: 0;
+   -fx-padding: 5;
+}
+
+.options-slider .radio-button:selected .dot {
+	-fx-background-color: -fx-mark-highlight-color, -fx-mark-color;
+	-fx-background-radius: 0;
+	-fx-padding: 5;
+}
+
+.options-slider .radio-button .radio  {
+   -fx-background-color: transparent;
+   -fx-background-insets: 0;
+   -fx-background-radius: 0;
+   -fx-padding: 0;
+}
+
+.options-slider .radio-button:focused .radio {
+    -fx-background-color: -fx-focus-color, -fx-outer-border, -fx-inner-border, -fx-body-color;
+    -fx-background-radius: 0;
+    -fx-background-insets: 0;
+}
+
+.options-slider .sliding-area  {
+   -fx-background-color: lightgrey;
+   -fx-padding: 5;
+}
+
+/**
  * Knob styles
  */
 .knob {
@@ -147,7 +195,7 @@
 	-fx-background-color: black, blue;
 }
  
- /**
+/**
  * Dialog styles
  */
  

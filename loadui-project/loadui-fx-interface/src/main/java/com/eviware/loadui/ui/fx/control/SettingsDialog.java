@@ -22,6 +22,7 @@ import com.eviware.loadui.ui.fx.control.fields.ValidatableCheckBox;
 import com.eviware.loadui.ui.fx.control.fields.ValidatableLongField;
 import com.eviware.loadui.ui.fx.control.fields.ValidatableStringField;
 import com.eviware.loadui.ui.fx.control.fields.ValidatableTextField;
+import com.eviware.loadui.ui.fx.util.UIUtils;
 import com.google.common.base.Objects;
 
 public class SettingsDialog extends ConfirmationDialog
@@ -114,7 +115,7 @@ public class SettingsDialog extends ConfirmationDialog
 			{
 				ValidatableCheckBox checkBox = new ValidatableCheckBox( label );
 				checkBox.setSelected( ( Boolean )property.getValue() );
-				checkBox.setId( toCssId( label ) );
+				checkBox.setId( UIUtils.toCssId( label ) );
 				vBox.getChildren().add( checkBox );
 				fieldToProperty.put( checkBox, property );
 			}
@@ -131,15 +132,10 @@ public class SettingsDialog extends ConfirmationDialog
 					textField = new ValidatableStringField();
 					textField.setText( property.getValue().toString() );
 				}
-				textField.setId( toCssId( label ) );
+				textField.setId( UIUtils.toCssId( label ) );
 				vBox.getChildren().addAll( new Label( label + ":" ), textField );
 				fieldToProperty.put( textField, property );
 			}
-		}
-
-		private static String toCssId( String label )
-		{
-			return label.toLowerCase().replace( " ", "-" );
 		}
 
 		private boolean validate()

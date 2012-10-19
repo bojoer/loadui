@@ -16,6 +16,11 @@ public class UIUtils
 {
 	public static final Logger LOG = LoggerFactory.getLogger( UIUtils.class );
 
+	public static String toCssId( String label )
+	{
+		return label.toLowerCase().replace( " ", "-" );
+	}
+
 	public static void openInExternalBrowser( final String url )
 	{
 		if( !PlatformUtil.isMac() )

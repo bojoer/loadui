@@ -1,14 +1,17 @@
 package com.eviware.loadui.test.ui.fx;
 
 import static org.junit.Assert.assertTrue;
+import javafx.scene.input.KeyCode;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.test.categories.IntegrationTest;
+import com.eviware.loadui.test.ui.fx.states.ProjectLoadedState;
 import com.eviware.loadui.test.ui.fx.states.ScenarioCreatedState;
 import com.eviware.loadui.ui.fx.util.test.TestFX;
 
@@ -61,6 +64,20 @@ public class ScenarioLinkedPlaybackTest
 			clickPlayStopButton();
 			assertTrue( !scenario.isRunning() );
 		}
+	}
+
+	@Test
+	public void shouldStopOnLimit_when_isLinked() throws Exception
+	{
+		ProjectItem project = ProjectLoadedState.STATE.getProject();
+
+		controller.click( "#set-limits" ).click( "#time-limit" ).press( KeyCode.CONTROL, KeyCode.A )
+				.release( KeyCode.CONTROL, KeyCode.A ).sleep( 100 ).type( "6" ).sleep( 100 ).click( "#default" )
+				.sleep( 1000 ).click( ".project-playback-panel #play-button" ).sleep( 4000 );
+		assertTrue( project.isRunning() );
+
+		controller.sleep( 9000 );
+		assertTrue( !project.isRunning() );
 	}
 
 	protected void clickPlayStopButton()
