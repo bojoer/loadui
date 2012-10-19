@@ -14,6 +14,7 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleButtonBuilder;
 import javafx.scene.layout.StackPane;
 
+import com.eviware.loadui.api.counter.CounterHolder;
 import com.eviware.loadui.api.execution.Phase;
 import com.eviware.loadui.api.execution.TestExecution;
 import com.eviware.loadui.api.execution.TestExecutionTask;
@@ -34,10 +35,12 @@ public class PlayButton extends StackPane
 		{
 			if( isPlaying && !canvas.isRunning() )
 			{
+				canvas.triggerAction( CanvasItem.START_ACTION );
 				TestExecutionUtils.startCanvas( canvas );
 			}
 			else if( canvas.isRunning() )
 			{
+				canvas.triggerAction( CanvasItem.STOP_ACTION );
 				TestExecutionUtils.stopCanvas( canvas );
 			}
 		}

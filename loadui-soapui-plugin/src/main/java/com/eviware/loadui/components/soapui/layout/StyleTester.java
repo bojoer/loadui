@@ -1,4 +1,4 @@
-package com.eviware.loadui.ui.fx.util;
+package com.eviware.loadui.components.soapui.layout;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,15 +10,11 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.Group;
 import javafx.scene.GroupBuilder;
 import javafx.scene.Node;
 import javafx.scene.SceneBuilder;
 import javafx.scene.control.ButtonBuilder;
-import javafx.scene.control.CustomMenuItem;
-import javafx.scene.control.CustomMenuItemBuilder;
 import javafx.scene.control.Label;
-import javafx.scene.control.MenuButtonBuilder;
 import javafx.scene.control.SplitPaneBuilder;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextAreaBuilder;
@@ -26,37 +22,27 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.VBoxBuilder;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
-import com.eviware.loadui.ui.fx.control.Carousel;
-import com.eviware.loadui.ui.fx.control.OptionsSlider;
-import com.eviware.loadui.ui.fx.control.Knob;
 import com.google.common.base.Charsets;
-import com.google.common.collect.ImmutableList;
 import com.google.common.io.Files;
 
 public class StyleTester extends Application
 {
-	private Node createTestNode()
+	private Node createTestNode( Stage stage )
 	{
-		//		Carousel<Rectangle> carousel = new Carousel<>( "Hello world" );
-		//		carousel.getItems().setAll( new Rectangle( 50, 50, Color.RED ), new Rectangle( 50, 50, Color.BLUE ),
-		//				new Rectangle( 50, 50, Color.YELLOW ) );
-		//		return carousel;
+		//		Node n =  SoapUiProjectSelector.buildNode();
+		//
+		//		return GroupBuilder.create().children( n ).build();
 
-		final CustomMenuItem popup = CustomMenuItemBuilder.create().styleClass( "" ).hideOnClick( false )
-				.content( VBoxBuilder.create().prefHeight( 50 ).prefWidth( 50 ).build() ).build();
-
-		return MenuButtonBuilder.create().text( "Project" ).items( popup ).build();
+		return new Label( "sdaasd" );
 	}
 
 	@Override
 	public void start( final Stage primaryStage ) throws Exception
 	{
 		final StackPane panel = new StackPane();
-		panel.getChildren().setAll( createTestNode() );
+		panel.getChildren().setAll( createTestNode( primaryStage ) );
 
 		final TextArea styleArea = TextAreaBuilder.create().build();
 
@@ -119,7 +105,7 @@ public class StyleTester extends Application
 																	@Override
 																	public void handle( ActionEvent arg0 )
 																	{
-																		panel.getChildren().setAll( createTestNode() );
+																		panel.getChildren().setAll( createTestNode( primaryStage ) );
 																	}
 																} ).build() ).build() ).build() ).build() );
 
