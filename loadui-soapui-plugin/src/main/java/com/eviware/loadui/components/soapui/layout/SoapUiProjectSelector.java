@@ -4,25 +4,18 @@ import java.io.File;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
-import javafx.event.ActionEvent;
 import javafx.geometry.HPos;
 import javafx.geometry.Point2D;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.ChoiceBoxBuilder;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ComboBoxBuilder;
-import javafx.scene.control.CustomMenuItem;
-import javafx.scene.control.CustomMenuItemBuilder;
 import javafx.scene.control.Label;
 import javafx.scene.control.LabelBuilder;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuButtonBuilder;
 import javafx.scene.control.PopupControl;
-import javafx.scene.control.PopupControlBuilder;
-import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -34,7 +27,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.layout.VBoxBuilder;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
-import javafx.util.converter.NumberStringConverter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -118,20 +110,14 @@ public class SoapUiProjectSelector
 		grid.add( new Label( "TestCase" ), 2, 0 );
 
 		final Label projectLabel = new Label();
+		updateProjectLabel( projectLabel );
 		projectFile.getOwner().addEventListener( PropertyEvent.class, new EventHandler<PropertyEvent>()
 		{
 			@Override
 			public void handleEvent( final PropertyEvent event )
 			{
-				Platform.runLater( new Runnable()
-				{
-					@Override
-					public void run()
-					{
-						if( event.getProperty() == projectFile )
-							projectLabel.setText( projectFile == null ? "" : projectFile.getValue().getName() );
-					}
-				} );
+				if( event.getProperty() == projectFile )
+					updateProjectLabel( projectLabel );
 			}
 		} );
 		final Label testSuiteLabel = LabelBuilder.create().build();
@@ -140,15 +126,27 @@ public class SoapUiProjectSelector
 		final Label testCaseLabel = new Label();
 		testCaseLabel.textProperty().bind( Properties.convert( testCase ) );
 
-		VBox projectVBox = VBoxBuilder.create().minWidth( 130 ).minHeight( 18 ).children( menuButton, projectLabel )
+		VBox projectVBox = VBoxBuilder.create().minWidth( 140 ).minHeight( 18 ).children( menuButton, projectLabel )
 				.build();
-		VBox testSuiteVBox = VBoxBuilder.create().minWidth( 130 ).minHeight( 18 )
+		VBox testSuiteVBox = VBoxBuilder.create().minWidth( 140 ).minHeight( 18 )
 				.children( new Label( "TestSuite" ), testSuiteLabel ).build();
-		VBox testCaseVBox = VBoxBuilder.create().minWidth( 130 ).minHeight( 18 )
+		VBox testCaseVBox = VBoxBuilder.create().minWidth( 140 ).minHeight( 18 )
 				.children( new Label( "TestCase" ), testCaseLabel ).build();
 
 		return HBoxBuilder.create().spacing( 28 ).minWidth( 320 ).children( projectVBox, testSuiteVBox, testCaseVBox )
 				.build();
+	}
+
+	protected void updateProjectLabel( final Label projectLabel )
+	{
+		Platform.runLater( new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				projectLabel.setText( projectFile == null ? "" : projectFile.getValue().getName() );
+			}
+		} );
 	}
 
 	public File getProjectFile()
