@@ -1,5 +1,9 @@
 package com.eviware.loadui.ui.fx.views.inspector;
 
+import java.util.HashSet;
+import java.util.Set;
+import java.util.regex.Pattern;
+
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -7,13 +11,15 @@ import javafx.animation.TimelineBuilder;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.Property;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -28,17 +34,23 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 
-import com.eviware.loadui.api.ui.inspector.Inspector;
+import com.eviware.loadui.ui.fx.api.Inspector;
+import com.eviware.loadui.ui.fx.api.perspective.PerspectiveEvent;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.ObservableLists;
 import com.eviware.loadui.ui.fx.util.UIUtils;
 import com.google.common.base.Function;
+import com.google.common.base.Objects;
+import com.google.common.collect.Ordering;
 
 public class InspectorView extends AnchorPane
 {
 	private final BooleanProperty minimizedProperty = new SimpleBooleanProperty( this, "minimized", true );
 
 	private final ObservableList<Inspector> inspectors = FXCollections.observableArrayList();
+
+	private final Property<EventType<? extends PerspectiveEvent>> perspective = new SimpleObjectProperty<EventType<? extends PerspectiveEvent>>(
+			this, "perspective", PerspectiveEvent.ANY );
 
 	private StackPane tabHeaderArea;
 
@@ -50,6 +62,8 @@ public class InspectorView extends AnchorPane
 
 	@FXML
 	private Button helpButton;
+
+	private ObservableList<Tab> inspectorTabs;
 
 	public InspectorView()
 	{
@@ -68,6 +82,21 @@ public class InspectorView extends AnchorPane
 	public ObservableList<Inspector> getInspectors()
 	{
 		return inspectors;
+	}
+
+	public Property<EventType<? extends PerspectiveEvent>> perspectiveProperty()
+	{
+		return perspective;
+	}
+
+	public void setPerspective( EventType<? extends PerspectiveEvent> type )
+	{
+		perspective.setValue( type );
+	}
+
+	public EventType<? extends PerspectiveEvent> getPerspective()
+	{
+		return perspective.getValue();
 	}
 
 	private void init()
@@ -90,7 +119,7 @@ public class InspectorView extends AnchorPane
 			}
 		} );
 
-		Bindings.bindContent( tabPane.getTabs(), ObservableLists.transform( inspectors, new Function<Inspector, Tab>()
+		inspectorTabs = ObservableLists.transform( inspectors, new Function<Inspector, Tab>()
 		{
 			@Override
 			public Tab apply( Inspector inspector )
@@ -103,7 +132,18 @@ public class InspectorView extends AnchorPane
 				return TabBuilder.create().userData( inspector ).text( inspector.getName() ).content( ( Node )panel )
 						.build();
 			}
-		} ) );
+		} );
+
+		InvalidationListener invalidationListener = new InvalidationListener()
+		{
+			@Override
+			public void invalidated( Observable arg0 )
+			{
+				refreshTabs();
+			}
+		};
+		inspectorTabs.addListener( invalidationListener );
+		perspective.addListener( invalidationListener );
 
 		tabPane.getSelectionModel().selectedItemProperty().addListener( new InvalidationListener()
 		{
@@ -128,6 +168,32 @@ public class InspectorView extends AnchorPane
 		} );
 
 		setMaxHeight( boundHeight( 0 ) );
+		refreshTabs();
+	}
+
+	private void refreshTabs()
+	{
+		Set<Tab> added = new HashSet<>();
+		Set<Tab> removed = new HashSet<>();
+		for( Tab tab : inspectorTabs )
+		{
+			Inspector inspector = ( Inspector )tab.getUserData();
+			String regex = Objects.firstNonNull( inspector.getPerspectiveRegex(), ".*" );
+			if( Pattern.matches( regex, PerspectiveEvent.getPath( perspective.getValue() ) ) )
+			{
+				if( !tabPane.getTabs().contains( tab ) )
+				{
+					added.add( tab );
+				}
+			}
+			else if( tabPane.getTabs().contains( tab ) )
+			{
+				removed.add( tab );
+			}
+		}
+		tabPane.getTabs().addAll( added );
+		tabPane.getTabs().removeAll( removed );
+		FXCollections.sort( tabPane.getTabs(), Ordering.usingToString() );
 	}
 
 	private double boundHeight( double desiredHeight )

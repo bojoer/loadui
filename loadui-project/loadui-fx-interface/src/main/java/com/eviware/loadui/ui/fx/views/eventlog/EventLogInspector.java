@@ -1,9 +1,14 @@
 package com.eviware.loadui.ui.fx.views.eventlog;
 
-import com.eviware.loadui.api.ui.inspector.Inspector;
+import javafx.scene.Node;
+
+import com.eviware.loadui.ui.fx.api.Inspector;
+import com.eviware.loadui.ui.fx.api.perspective.PerspectiveEvent;
 
 public class EventLogInspector implements Inspector
 {
+	private static final String FILTER = PerspectiveEvent.getPath( PerspectiveEvent.PERSPECTIVE_PROJECT ) + ".*";
+
 	private final EventLogView panel = new EventLogView();
 
 	@Override
@@ -13,7 +18,7 @@ public class EventLogInspector implements Inspector
 	}
 
 	@Override
-	public Object getPanel()
+	public Node getPanel()
 	{
 		return panel;
 	}
@@ -36,4 +41,9 @@ public class EventLogInspector implements Inspector
 		return null;
 	}
 
+	@Override
+	public String getPerspectiveRegex()
+	{
+		return FILTER;
+	}
 }
