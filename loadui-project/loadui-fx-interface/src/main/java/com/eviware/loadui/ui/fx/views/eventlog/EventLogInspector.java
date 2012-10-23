@@ -115,6 +115,7 @@ public class EventLogInspector implements Inspector
 					@Override
 					public void run()
 					{
+						//We need to get it from the Execution for it to have the adjusted timestamp.
 						panel.getItems()
 								.add( Iterables.getFirst( execution.getValue().getTestEvents( panel.getItems().size(), false ),
 										null ) );

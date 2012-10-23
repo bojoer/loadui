@@ -1,6 +1,8 @@
 package com.eviware.loadui.ui.fx.views.eventlog;
 
-import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.beans.InvalidationListener;
+import javafx.beans.binding.StringExpression;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
@@ -24,8 +26,8 @@ public class EventLogView extends TableView<TestEvent.Entry>
 					@Override
 					public ObservableValue<String> call( CellDataFeatures<Entry, String> features )
 					{
-						return new ReadOnlyStringWrapper( FormattingUtils.formatTimeMillis( features.getValue()
-								.getTestEvent().getTimestamp() ) );
+						return readOnlyString( FormattingUtils.formatTimeMillis( features.getValue().getTestEvent()
+								.getTimestamp() ) );
 					}
 				} ).build();
 
@@ -36,7 +38,7 @@ public class EventLogView extends TableView<TestEvent.Entry>
 					@Override
 					public ObservableValue<String> call( CellDataFeatures<Entry, String> features )
 					{
-						return new ReadOnlyStringWrapper( features.getValue().getTypeLabel() );
+						return readOnlyString( features.getValue().getTypeLabel() );
 					}
 				} ).build();
 
@@ -47,7 +49,7 @@ public class EventLogView extends TableView<TestEvent.Entry>
 					@Override
 					public ObservableValue<String> call( CellDataFeatures<Entry, String> features )
 					{
-						return new ReadOnlyStringWrapper( features.getValue().getSourceLabel() );
+						return readOnlyString( features.getValue().getSourceLabel() );
 					}
 				} ).build();
 
@@ -58,10 +60,51 @@ public class EventLogView extends TableView<TestEvent.Entry>
 					@Override
 					public ObservableValue<String> call( CellDataFeatures<Entry, String> features )
 					{
-						return new ReadOnlyStringWrapper( features.getValue().getTestEvent().toString() );
+						return readOnlyString( features.getValue().getTestEvent().toString() );
 					}
 				} ).build();
 
 		getColumns().setAll( timeColumn, eventTypeColumn, eventSourceColumn, descriptionColumn );
+	}
+
+	private static ObservableValue<String> readOnlyString( String value )
+	{
+		return new StaticString( value );
+	}
+
+	private static class StaticString extends StringExpression
+	{
+		private final String value;
+
+		private StaticString( String value )
+		{
+			this.value = value;
+		}
+
+		@Override
+		public String get()
+		{
+			return value;
+		}
+
+		@Override
+		public void addListener( ChangeListener<? super String> arg0 )
+		{
+		}
+
+		@Override
+		public void removeListener( ChangeListener<? super String> arg0 )
+		{
+		}
+
+		@Override
+		public void addListener( InvalidationListener arg0 )
+		{
+		}
+
+		@Override
+		public void removeListener( InvalidationListener arg0 )
+		{
+		}
 	}
 }
