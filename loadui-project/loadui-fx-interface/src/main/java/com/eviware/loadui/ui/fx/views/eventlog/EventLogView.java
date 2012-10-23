@@ -1,6 +1,6 @@
 package com.eviware.loadui.ui.fx.views.eventlog;
 
-import javafx.beans.binding.Bindings;
+import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
@@ -23,8 +23,8 @@ public class EventLogView extends TableView<TestEvent.Entry>
 					@Override
 					public ObservableValue<String> call( CellDataFeatures<Entry, String> features )
 					{
-						return Bindings.format( FormattingUtils.formatTimeMillis( features.getValue().getTestEvent()
-								.getTimestamp() ) );
+						return new ReadOnlyStringWrapper( FormattingUtils.formatTimeMillis( features.getValue()
+								.getTestEvent().getTimestamp() ) );
 					}
 				} );
 
@@ -35,7 +35,7 @@ public class EventLogView extends TableView<TestEvent.Entry>
 					@Override
 					public ObservableValue<String> call( CellDataFeatures<Entry, String> features )
 					{
-						return Bindings.format( features.getValue().getTypeLabel() );
+						return new ReadOnlyStringWrapper( features.getValue().getTypeLabel() );
 					}
 				} );
 
@@ -46,7 +46,7 @@ public class EventLogView extends TableView<TestEvent.Entry>
 					@Override
 					public ObservableValue<String> call( CellDataFeatures<Entry, String> features )
 					{
-						return Bindings.format( features.getValue().getSourceLabel() );
+						return new ReadOnlyStringWrapper( features.getValue().getSourceLabel() );
 					}
 				} );
 
@@ -57,7 +57,7 @@ public class EventLogView extends TableView<TestEvent.Entry>
 					@Override
 					public ObservableValue<String> call( CellDataFeatures<Entry, String> features )
 					{
-						return Bindings.format( features.getValue().getTestEvent().toString() );
+						return new ReadOnlyStringWrapper( features.getValue().getTestEvent().toString() );
 					}
 				} );
 
