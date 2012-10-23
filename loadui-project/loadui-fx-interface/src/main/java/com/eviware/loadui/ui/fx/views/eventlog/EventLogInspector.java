@@ -4,6 +4,8 @@ import javafx.application.Platform;
 import javafx.beans.property.Property;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 
 import com.eviware.loadui.api.statistics.store.Execution;
@@ -13,6 +15,8 @@ import com.eviware.loadui.api.testevents.TestEventManager;
 import com.eviware.loadui.ui.fx.api.Inspector;
 import com.eviware.loadui.ui.fx.api.perspective.PerspectiveEvent;
 import com.eviware.loadui.util.statistics.ExecutionListenerAdapter;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
 public class EventLogInspector implements Inspector
 {
@@ -30,6 +34,23 @@ public class EventLogInspector implements Inspector
 		this.testEventManager = testEventManager;
 
 		executionManager.addExecutionListener( new CurrentExecutionListener() );
+		execution.addListener( new ChangeListener<Execution>()
+		{
+			@Override
+			public void changed( ObservableValue<? extends Execution> arg0, Execution oldExecution, Execution newExecution )
+			{
+				if( newExecution == null )
+				{
+					System.out.println( "No new execution, clear." );
+					panel.getItems().clear();
+				}
+				else
+				{
+					System.out.println( "New execution, replace." );
+					panel.getItems().setAll( Lists.newArrayList( newExecution.getTestEventRange( 0, Long.MAX_VALUE ) ) );
+				}
+			}
+		} );
 	}
 
 	@Override
@@ -96,7 +117,10 @@ public class EventLogInspector implements Inspector
 					@Override
 					public void run()
 					{
-						panel.getItems().add( eventEntry );
+						//We need to get it from the Execution for it to have the adjusted timestamp.
+						panel.getItems()
+								.add( Iterables.getFirst( execution.getValue().getTestEvents( panel.getItems().size(), false ),
+										null ) );
 					}
 				} );
 			}

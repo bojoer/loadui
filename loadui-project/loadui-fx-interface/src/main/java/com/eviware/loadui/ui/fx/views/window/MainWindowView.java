@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -238,6 +239,8 @@ public class MainWindowView extends StackPane
 		new AboutDialog( mainButton ).show( getScene().getWindow() );
 	}
 
+	private ObservableList<Inspector> inspectors;
+
 	private void initInspectorView()
 	{
 		inspectorView.setPerspective( PerspectiveEvent.PERSPECTIVE_WORKSPACE );
@@ -251,7 +254,8 @@ public class MainWindowView extends StackPane
 			}
 		} );
 
-		Bindings.bindContent( inspectorView.getInspectors(), ObservableLists.ofServices( Inspector.class ) );
+		inspectors = ObservableLists.fx( ObservableLists.ofServices( Inspector.class ) );
+		Bindings.bindContent( inspectorView.getInspectors(), inspectors );
 	}
 
 	private class WorkspaceListener implements WeakEventHandler<BaseEvent>
