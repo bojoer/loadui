@@ -852,6 +852,7 @@ public class SoapUISamplerComponent extends RunnerBase
 
 		private void reloadProject( File projectFile2 )
 		{
+			log.debug( "reloadProject()" );
 			final SoapUIClassLoaderState state = SoapUIExtensionClassLoader.ensure();
 			try
 			{
@@ -1163,6 +1164,7 @@ public class SoapUISamplerComponent extends RunnerBase
 
 		private void initProject()
 		{
+			log.debug( "initProject()" );
 			String[] testSuites = ModelSupport.getNames( project.getTestSuiteList() );
 			if( testSuites.length == 0 )
 			{
@@ -1172,6 +1174,7 @@ public class SoapUISamplerComponent extends RunnerBase
 			}
 			else
 			{
+				log.debug( "setTestSuites()" );
 				projectSelector.setTestSuites( testSuites );
 			}
 			String current = projectSelector.getTestSuite();

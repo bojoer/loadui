@@ -150,6 +150,13 @@
 			<version>4.3.0</version>
 		</dependency>
 		<dependency>
+			<groupId>com.oracle</groupId>
+			<artifactId>javafx-runtime</artifactId>
+			<version>2.2</version>
+			<systemPath>${env.JAVAFX2_HOME}/jre/lib/jfxrt.jar</systemPath>
+			<scope>system</scope>
+		</dependency>
+		<dependency>
 			<groupId>com.eviware.loadui</groupId>
 			<artifactId>loadui-component</artifactId>
 			<version>${loadUIVersion}</version>
@@ -172,6 +179,11 @@
 			<artifactId>loadui-base</artifactId>
 			<version>${loadUIVersion}</version>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.eviware.loadui</groupId>
+			<artifactId>loadui-fx-interface</artifactId>
+			<version>${loadUIVersion}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.eviware.loadui</groupId>
