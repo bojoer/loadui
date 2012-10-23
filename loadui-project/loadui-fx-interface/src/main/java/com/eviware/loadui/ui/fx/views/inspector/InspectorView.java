@@ -15,6 +15,8 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -65,6 +67,8 @@ public class InspectorView extends AnchorPane
 
 	private ObservableList<Tab> inspectorTabs;
 
+	private final DragBehavior dragBehavior = new DragBehavior();
+
 	public InspectorView()
 	{
 		FXMLUtils.load( this );
@@ -102,7 +106,7 @@ public class InspectorView extends AnchorPane
 	private void init()
 	{
 		tabHeaderArea = ( StackPane )tabPane.lookup( ".tab-header-area" );
-		tabHeaderArea.addEventHandler( MouseEvent.ANY, new DragBehavior() );
+		tabHeaderArea.addEventHandler( MouseEvent.ANY, dragBehavior );
 
 		buttonBar.setPrefHeight( tabHeaderArea.prefHeight( -1 ) );
 
@@ -145,30 +149,47 @@ public class InspectorView extends AnchorPane
 		inspectorTabs.addListener( invalidationListener );
 		perspective.addListener( invalidationListener );
 
-		tabPane.getSelectionModel().selectedItemProperty().addListener( new InvalidationListener()
+		refreshTabs();
+
+		tabPane.getSelectionModel().selectedItemProperty().addListener( new ChangeListener<Tab>()
 		{
 			@Override
-			public void invalidated( Observable arg0 )
+			public void changed( ObservableValue<? extends Tab> arg0, Tab oldTab, Tab newTab )
 			{
-				double oldHeight = getMaxHeight();
-				double newHeight = boundHeight( oldHeight );
-				if( newHeight < oldHeight - 5.0 )
+				if( oldTab != null )
 				{
-					TimelineBuilder
-							.create()
-							.keyFrames(
-									new KeyFrame( Duration.seconds( 0.1 ), new KeyValue( maxHeightProperty(), newHeight,
-											Interpolator.EASE_BOTH ) ) ).build().playFromStart();
+					( ( Inspector )oldTab.getUserData() ).onHide();
+				}
+				if( newTab != null )
+				{
+					( ( Inspector )newTab.getUserData() ).onShow();
+				}
+
+				if( minimizedProperty.get() )
+				{
+					dragBehavior.toggleMinimized();
 				}
 				else
 				{
-					setMaxHeight( newHeight );
+					double oldHeight = getMaxHeight();
+					double newHeight = boundHeight( oldHeight );
+					if( newHeight < oldHeight - 5.0 )
+					{
+						TimelineBuilder
+								.create()
+								.keyFrames(
+										new KeyFrame( Duration.seconds( 0.1 ), new KeyValue( maxHeightProperty(), newHeight,
+												Interpolator.EASE_BOTH ) ) ).build().playFromStart();
+					}
+					else
+					{
+						setMaxHeight( newHeight );
+					}
 				}
 			}
 		} );
 
 		setMaxHeight( boundHeight( 0 ) );
-		refreshTabs();
 	}
 
 	private void refreshTabs()
@@ -216,7 +237,7 @@ public class InspectorView extends AnchorPane
 	{
 		private boolean dragging = false;
 		private double startY = 0;
-		private double lastHeight = 250;
+		private double lastHeight = 0;
 
 		private final EventHandler<ActionEvent> eventHandler = new EventHandler<ActionEvent>()
 		{
@@ -249,7 +270,7 @@ public class InspectorView extends AnchorPane
 			else if( event.getEventType() == MouseEvent.MOUSE_RELEASED )
 			{
 				dragging = false;
-				if( getHeight() > getMaxHeight() )
+				if( getMaxHeight() <= boundHeight( 0 ) )
 				{
 					minimizedProperty.set( true );
 				}
@@ -258,23 +279,33 @@ public class InspectorView extends AnchorPane
 			{
 				if( event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2 )
 				{
-					double target = boundHeight( 0 );
-					if( minimizedProperty.get() )
-					{
-						target = boundHeight( lastHeight );
-					}
-					else
-					{
-						lastHeight = getHeight();
-					}
-
-					TimelineBuilder
-							.create()
-							.keyFrames(
-									new KeyFrame( Duration.seconds( 0.2 ), new KeyValue( maxHeightProperty(), target,
-											Interpolator.EASE_BOTH ) ) ).onFinished( eventHandler ).build().playFromStart();
+					toggleMinimized();
 				}
 			}
+		}
+
+		public void toggleMinimized()
+		{
+			double target = boundHeight( 0 );
+			if( minimizedProperty.get() )
+			{
+				target = boundHeight( lastHeight );
+				if( target <= boundHeight( 0 ) )
+				{
+					target = boundHeight( target
+							+ tabPane.getSelectionModel().getSelectedItem().getContent().prefHeight( -1 ) );
+				}
+			}
+			else
+			{
+				lastHeight = getHeight();
+			}
+
+			TimelineBuilder
+					.create()
+					.keyFrames(
+							new KeyFrame( Duration.seconds( 0.2 ), new KeyValue( maxHeightProperty(), target,
+									Interpolator.EASE_BOTH ) ) ).onFinished( eventHandler ).build().playFromStart();
 		}
 	}
 }

@@ -27,12 +27,14 @@ public class EventLogInspector implements Inspector
 	public void onShow()
 	{
 		// TODO Auto-generated method stub
+		System.out.println( "SHOW!!!" );
 	}
 
 	@Override
 	public void onHide()
 	{
 		// TODO Auto-generated method stub
+		System.out.println( "HIDE!!!" );
 	}
 
 	@Override
