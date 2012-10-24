@@ -1,12 +1,21 @@
 package com.eviware.loadui.ui.fx.views.syslog;
 
+import javafx.beans.property.ReadOnlyProperty;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.layout.RegionBuilder;
 
 import com.eviware.loadui.ui.fx.api.Inspector;
 
 public class SystemLogInspector implements Inspector
 {
+	@Override
+	public void initialize( ReadOnlyProperty<Scene> sceneProperty )
+	{
+		// TODO Auto-generated method stub
+
+	}
+
 	@Override
 	public String getName()
 	{
@@ -45,5 +54,4 @@ public class SystemLogInspector implements Inspector
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 }

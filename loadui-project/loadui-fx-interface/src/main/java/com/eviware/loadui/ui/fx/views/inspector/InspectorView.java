@@ -128,6 +128,7 @@ public class InspectorView extends AnchorPane
 			@Override
 			public Tab apply( Inspector inspector )
 			{
+				inspector.initialize( sceneProperty() );
 				Object panel = inspector.getPanel();
 				if( !( panel instanceof Node ) )
 				{

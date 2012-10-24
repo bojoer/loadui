@@ -3,16 +3,20 @@ package com.eviware.loadui.ui.fx.views.eventlog;
 import javafx.application.Platform;
 import javafx.beans.property.Property;
 import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.ReadOnlyProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.api.testevents.TestEvent;
 import com.eviware.loadui.api.testevents.TestEventManager;
 import com.eviware.loadui.ui.fx.api.Inspector;
+import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.api.perspective.PerspectiveEvent;
 import com.eviware.loadui.util.statistics.ExecutionListenerAdapter;
 import com.google.common.collect.Iterables;
@@ -49,6 +53,38 @@ public class EventLogInspector implements Inspector
 				}
 			}
 		} );
+	}
+
+	@Override
+	public void initialize( ReadOnlyProperty<Scene> sceneProperty )
+	{
+		sceneProperty.addListener( new ChangeListener<Scene>()
+		{
+			@Override
+			public void changed( ObservableValue<? extends Scene> arg0, Scene oldScene, Scene newScene )
+			{
+				initSceneListener( newScene );
+			}
+		} );
+		initSceneListener( sceneProperty.getValue() );
+	}
+
+	private void initSceneListener( Scene scene )
+	{
+		if( scene != null )
+		{
+			scene.addEventFilter( IntentEvent.INTENT_OPEN, new EventHandler<IntentEvent<?>>()
+			{
+				@Override
+				public void handle( IntentEvent<?> event )
+				{
+					if( event.getArg() instanceof Execution && !execution.isBound() )
+					{
+						execution.setValue( ( Execution )event.getArg() );
+					}
+				}
+			} );
+		}
 	}
 
 	@Override

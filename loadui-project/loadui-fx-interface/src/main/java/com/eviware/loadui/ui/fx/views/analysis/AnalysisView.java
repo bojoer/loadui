@@ -87,5 +87,4 @@ public class AnalysisView extends StackPane
 	{
 		AnalysisView.this.fireEvent( IntentEvent.create( IntentEvent.INTENT_CLOSE, getCurrentExecution() ) );
 	}
-
 }

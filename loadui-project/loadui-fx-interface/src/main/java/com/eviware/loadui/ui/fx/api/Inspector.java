@@ -15,7 +15,9 @@
  */
 package com.eviware.loadui.ui.fx.api;
 
+import javafx.beans.property.ReadOnlyProperty;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 
 /**
  * A content panel which is displayed on the bottom InspectorPanel.
@@ -24,6 +26,14 @@ import javafx.scene.Node;
  */
 public interface Inspector
 {
+	/**
+	 * Called when the Inspector has been added to an InspectorView, with the
+	 * InspectorViews SceneProperty.
+	 * 
+	 * @param sceneProperty
+	 */
+	public void initialize( ReadOnlyProperty<Scene> sceneProperty );
+
 	/**
 	 * Each Inspector needs to have a short unique name which is used to identify
 	 * the Inspector.
