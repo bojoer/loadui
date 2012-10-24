@@ -199,29 +199,29 @@ public class SoapUISamplerComponentTest
 		assertThat( message.get( "Status" ), is( ( Object )Boolean.TRUE ) );
 	}
 
-	@Test
-	public void disablingTestSteps_should_work() throws InterruptedException, URISyntaxException, ExecutionException,
-			TimeoutException
-	{
-		setTestCase( "soapUI-loadUI-plugin-project.xml", "TestSuite 1", "TestCase 4" );
-		BlockingQueue<TerminalMessage> results = ComponentTestUtils.getMessagesFrom( resultsTerminal );
-
-		sendSimpleTrigger();
-
-		TerminalMessage message = results.poll( 5, TimeUnit.SECONDS );
-
-		assertThat( message.get( "changedLastBy" ), is( ( Object )"Step1" ) );
-
-		runner.setTestStepIsDisabled( 0, true );
-		TestUtils.awaitEvents( component );
-
-		sendSimpleTrigger();
-
-		message = results.poll( 5, TimeUnit.SECONDS );
-
-		assertThat( message.get( "changedLastBy" ), is( ( Object )"never" ) );
-
-	}
+	//	@Test
+	//	public void disablingTestSteps_should_work() throws InterruptedException, URISyntaxException, ExecutionException,
+	//			TimeoutException
+	//	{
+	//		setTestCase( "soapUI-loadUI-plugin-project.xml", "TestSuite 1", "TestCase 4" );
+	//		BlockingQueue<TerminalMessage> results = ComponentTestUtils.getMessagesFrom( resultsTerminal );
+	//
+	//		sendSimpleTrigger();
+	//
+	//		TerminalMessage message = results.poll( 5, TimeUnit.SECONDS );
+	//
+	//		assertThat( message.get( "changedLastBy" ), is( ( Object )"Step1" ) );
+	//
+	//		runner.setTestStepIsDisabled( 0, true );
+	//		TestUtils.awaitEvents( component );
+	//
+	//		sendSimpleTrigger();
+	//
+	//		message = results.poll( 5, TimeUnit.SECONDS );
+	//
+	//		assertThat( message.get( "changedLastBy" ), is( ( Object )"never" ) );
+	//
+	//	}
 
 	@Test
 	public void propertiesInSettings_shouldOverride_testCaseProperties() throws InterruptedException,

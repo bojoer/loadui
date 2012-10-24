@@ -1,6 +1,7 @@
 package com.eviware.loadui.components.soapui.layout;
 
 import java.io.File;
+import java.util.concurrent.CountDownLatch;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -56,6 +57,8 @@ public class SoapUiProjectSelector
 	private final Property<String> testSuite;
 	private final Property<String> testCase;
 
+	private CountDownLatch testCaseLatch = new CountDownLatch( 0 );
+
 	private final ComboBox<String> testSuiteCombo = ComboBoxBuilder.<String> create().maxHeight( Double.MAX_VALUE )
 			.maxWidth( Double.MAX_VALUE ).build();
 	private final ComboBox<String> testCaseCombo = ComboBoxBuilder.<String> create().maxHeight( Double.MAX_VALUE )
@@ -85,9 +88,9 @@ public class SoapUiProjectSelector
 
 	public Node buildNode()
 	{
-		SelectionModelUtils.writableSelectedItemProperty( testSuiteCombo.getSelectionModel() ).bindBidirectional(
+		SelectionModelUtils.writableSelectedItemProperty( testSuiteCombo.getSelectionModel(), true ).bindBidirectional(
 				Properties.convert( testSuite ) );
-		SelectionModelUtils.writableSelectedItemProperty( testCaseCombo.getSelectionModel() ).bindBidirectional(
+		SelectionModelUtils.writableSelectedItemProperty( testCaseCombo.getSelectionModel(), true ).bindBidirectional(
 				Properties.convert( testCase ) );
 
 		GridPane grid = GridPaneBuilder.create().rowConstraints( new RowConstraints( 18 ) )
@@ -144,7 +147,8 @@ public class SoapUiProjectSelector
 			@Override
 			public void run()
 			{
-				projectLabel.setText( projectFile == null ? "" : projectFile.getValue().getName() );
+				projectLabel.setText( projectFile.getValue() == null ? "" : projectFile.getValue().getName()
+						.replaceFirst( ".xml$", "" ) );
 			}
 		} );
 	}
@@ -169,17 +173,25 @@ public class SoapUiProjectSelector
 		return testSuite.getValue();
 	}
 
-	public void setTestSuite( String name )
+	public void setTestSuite( final String name )
 	{
 		testSuite.setValue( name );
 	}
 
 	public String getTestCase()
 	{
+		try
+		{
+			testCaseLatch.await();
+		}
+		catch( InterruptedException e )
+		{
+			e.printStackTrace();
+		}
 		return testCase.getValue();
 	}
 
-	public void setTestCase( String name )
+	public void setTestCase( final String name )
 	{
 		testCase.setValue( name );
 	}
@@ -193,7 +205,6 @@ public class SoapUiProjectSelector
 
 	public void setTestSuites( final String... testSuites )
 	{
-		log.debug( "Updates TestSuites" );
 		Platform.runLater( new Runnable()
 		{
 			@Override
@@ -206,13 +217,20 @@ public class SoapUiProjectSelector
 
 	public void setTestCases( final String... testCases )
 	{
-		log.debug( "Updates TestCases" );
+		log.debug( "setTestCases:\n" );
+		for( String tc : testCases )
+			log.debug( tc );
+
+		testCaseLatch = new CountDownLatch( 1 );
+
 		Platform.runLater( new Runnable()
 		{
 			@Override
 			public void run()
 			{
 				testCaseCombo.setItems( FXCollections.observableArrayList( testCases ) );
+				testCase.setValue( testCases[0] );
+				testCaseLatch.countDown();
 			}
 		} );
 	}
@@ -274,10 +292,13 @@ public class SoapUiProjectSelector
 					component.onProjectUpdated( projectFile.getValue() );
 				}
 				else if( property == testSuite )
+				{
+					log.debug( "Reload TestSuite because testSuite changed to " + testSuite.getValue() );
 					testCaseRunner.setTestSuite( testSuite.getValue() );
+				}
 				else if( property == testCase )
 				{
-					log.debug( "Reload TestCase because testCase changed." );
+					log.debug( "Reload TestCase because testCase changed to " + testCase.getValue() );
 					testCaseRunner.setNewTestCase( testCase.getValue() );
 				}
 			}
