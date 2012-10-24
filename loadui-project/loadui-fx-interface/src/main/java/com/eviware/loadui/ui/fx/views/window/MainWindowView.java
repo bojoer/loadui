@@ -1,8 +1,10 @@
 package com.eviware.loadui.ui.fx.views.window;
 
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -18,11 +20,15 @@ import com.eviware.loadui.api.model.ProjectRef;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.model.WorkspaceProvider;
 import com.eviware.loadui.api.traits.Labeled;
+import com.eviware.loadui.ui.fx.api.Inspector;
 import com.eviware.loadui.ui.fx.api.input.Selectable;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
+import com.eviware.loadui.ui.fx.api.perspective.PerspectiveEvent;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
+import com.eviware.loadui.ui.fx.util.ObservableLists;
 import com.eviware.loadui.ui.fx.util.UIUtils;
 import com.eviware.loadui.ui.fx.views.about.AboutDialog;
+import com.eviware.loadui.ui.fx.views.inspector.InspectorView;
 import com.eviware.loadui.ui.fx.views.project.ProjectView;
 import com.eviware.loadui.ui.fx.views.project.SaveProjectDialog;
 import com.eviware.loadui.ui.fx.views.rename.RenameDialog;
@@ -38,6 +44,9 @@ public class MainWindowView extends StackPane
 
 	@FXML
 	private StackPane container;
+
+	@FXML
+	private InspectorView inspectorView;
 
 	private final WorkspaceProvider workspaceProvider;
 	private final Property<WorkspaceItem> workspaceProperty = new SimpleObjectProperty<>();
@@ -76,6 +85,13 @@ public class MainWindowView extends StackPane
 
 		Selectable.installDeleteKeyHandler( this );
 
+		initIntentEventHanding();
+		initInspectorView();
+		showWorkspace();
+	}
+
+	private void initIntentEventHanding()
+	{
 		addEventHandler( IntentEvent.ANY, new EventHandler<IntentEvent<? extends Object>>()
 		{
 			@Override
@@ -107,6 +123,8 @@ public class MainWindowView extends StackPane
 										public void run()
 										{
 											container.getChildren().setAll( new ProjectView( project ) );
+											MainWindowView.this.fireEvent( new PerspectiveEvent(
+													PerspectiveEvent.PERSPECTIVE_PROJECT ) );
 										}
 									} );
 								}
@@ -177,13 +195,12 @@ public class MainWindowView extends StackPane
 				event.consume();
 			}
 		} );
-		showWorkspace();
-
 	}
 
 	public void showWorkspace()
 	{
 		container.getChildren().setAll( new WorkspaceView( workspaceProvider.getWorkspace() ) );
+		fireEvent( new PerspectiveEvent( PerspectiveEvent.PERSPECTIVE_WORKSPACE ) );
 	}
 
 	public void settings()
@@ -220,6 +237,25 @@ public class MainWindowView extends StackPane
 	public void about()
 	{
 		new AboutDialog( mainButton ).show( getScene().getWindow() );
+	}
+
+	private ObservableList<Inspector> inspectors;
+
+	private void initInspectorView()
+	{
+		inspectorView.setPerspective( PerspectiveEvent.PERSPECTIVE_WORKSPACE );
+
+		addEventHandler( PerspectiveEvent.ANY, new EventHandler<PerspectiveEvent>()
+		{
+			@Override
+			public void handle( PerspectiveEvent event )
+			{
+				inspectorView.setPerspective( event.getEventType() );
+			}
+		} );
+
+		inspectors = ObservableLists.fx( ObservableLists.ofServices( Inspector.class ) );
+		Bindings.bindContent( inspectorView.getInspectors(), inspectors );
 	}
 
 	private class WorkspaceListener implements WeakEventHandler<BaseEvent>

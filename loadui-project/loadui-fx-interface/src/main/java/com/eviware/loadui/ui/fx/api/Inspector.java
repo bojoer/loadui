@@ -13,7 +13,9 @@
  * express or implied. See the Licence for the specific language governing permissions and limitations
  * under the Licence.
  */
-package com.eviware.loadui.api.ui.inspector;
+package com.eviware.loadui.ui.fx.api;
+
+import javafx.scene.Node;
 
 /**
  * A content panel which is displayed on the bottom InspectorPanel.
@@ -31,13 +33,19 @@ public interface Inspector
 	public String getName();
 
 	/**
-	 * The content for the Inspector which is shown on screen. Should be a
-	 * javafx.scene.layout.Node, preferable implementing
-	 * javafx.scene.layout.Resizable.
+	 * Each Inspector can have a filter defining for which Perspectives it should
+	 * be shown.
+	 * 
+	 * @return
+	 */
+	public String getPerspectiveRegex();
+
+	/**
+	 * The content for the Inspector which is shown on screen.
 	 * 
 	 * @return A Content Panel
 	 */
-	public Object getPanel();
+	public Node getPanel();
 
 	/**
 	 * This method is called to notify the Inspector that its content panel is

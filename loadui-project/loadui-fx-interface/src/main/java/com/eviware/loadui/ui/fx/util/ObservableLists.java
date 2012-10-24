@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.Callable;
@@ -40,6 +42,7 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
@@ -316,6 +319,27 @@ public class ObservableLists
 				}
 			} ).build();
 
+	private static final Cache<Object, Map<String, Object>> osgiProperties = CacheBuilder.newBuilder().weakKeys()
+			.build();
+
+	/**
+	 * Gets the OSGi properties of an OSGi service that has been imported using
+	 * the ofServices() method.
+	 * 
+	 * @param service
+	 * @return
+	 */
+	public static Map<String, Object> getOsgiProperties( Object service )
+	{
+		Map<String, Object> properties = osgiProperties.getIfPresent( service );
+		if( properties == null )
+		{
+			throw new NoSuchElementException();
+		}
+
+		return properties;
+	}
+
 	private static class ServiceListData<E> implements ServiceListener, Releasable
 	{
 		private final ObservableList<E> list = FXCollections.observableArrayList();
@@ -336,9 +360,22 @@ public class ObservableLists
 				E service = type.cast( context.getService( ref ) );
 				if( !list.contains( service ) )
 				{
-					list.add( service );
+					addService( ref );
 				}
 			}
+		}
+
+		private void addService( ServiceReference/* <E> */ref )
+		{
+			E service = type.cast( context.getService( ref ) );
+
+			ImmutableMap.Builder<String, Object> properties = ImmutableMap.builder();
+			for( String key : ref.getPropertyKeys() )
+			{
+				properties.put( key, ref.getProperty( key ) );
+			}
+			osgiProperties.put( service, properties.build() );
+			list.add( service );
 		}
 
 		@Override
@@ -346,11 +383,7 @@ public class ObservableLists
 		{
 			if( event.getType() == ServiceEvent.REGISTERED )
 			{
-				Object service = context.getService( event.getServiceReference() );
-				if( type.isInstance( service ) )
-				{
-					list.add( type.cast( service ) );
-				}
+				addService( event.getServiceReference() );
 			}
 			else if( event.getType() == ServiceEvent.UNREGISTERING )
 			{
