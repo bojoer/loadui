@@ -10,7 +10,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.GroupBuilder;
 import javafx.scene.Node;
 import javafx.scene.SceneBuilder;
 import javafx.scene.control.ButtonBuilder;
@@ -21,9 +20,11 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.VBoxBuilder;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.RectangleBuilder;
 import javafx.stage.Stage;
 
-import com.eviware.loadui.ui.fx.control.Knob;
+import com.eviware.loadui.ui.fx.control.PageList;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
@@ -31,9 +32,16 @@ public class StyleTester extends Application
 {
 	private Node createTestNode()
 	{
-		Knob knob = new Knob( "Knob", 0, 100, 20 );
+		PageList<Node> list = new PageList<>( "PageList" );
+		list.getItems().setAll( RectangleBuilder.create().width( 100 ).height( 100 ).fill( Color.RED ).build(),
+				RectangleBuilder.create().width( 100 ).height( 100 ).fill( Color.BLUE ).build(),
+				RectangleBuilder.create().width( 100 ).height( 100 ).fill( Color.GREEN ).build(),
+				RectangleBuilder.create().width( 100 ).height( 100 ).fill( Color.YELLOW ).build(),
+				RectangleBuilder.create().width( 100 ).height( 100 ).fill( Color.PINK ).build(),
+				RectangleBuilder.create().width( 100 ).height( 100 ).fill( Color.ORANGE ).build(),
+				RectangleBuilder.create().width( 100 ).height( 100 ).fill( Color.BROWN ).build() );
 
-		return GroupBuilder.create().children( knob ).build();
+		return list;
 	}
 
 	@Override

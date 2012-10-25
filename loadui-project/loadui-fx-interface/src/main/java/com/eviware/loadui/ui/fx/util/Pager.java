@@ -65,7 +65,7 @@ public class Pager<T>
 
 	public void setPage( int page )
 	{
-		Preconditions.checkPositionIndex( page, getNumPages() );
+		Preconditions.checkPositionIndex( page, getNumPages() - 1 );
 		this.page.set( page );
 	}
 

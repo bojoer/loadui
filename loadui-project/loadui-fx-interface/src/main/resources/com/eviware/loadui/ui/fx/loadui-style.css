@@ -119,6 +119,21 @@
 }
 
 /**
+ * PageList styles
+ */
+ 
+.page-list {
+	-fx-skin: "com.eviware.loadui.ui.fx.control.skin.PageListSkin";
+	-fx-background-color: darkgray;
+	-fx-background-radius: 8;
+	-fx-padding: 10;
+}
+
+.page-list .item-box {
+	-fx-spacing: 5;
+}
+
+/**
  * OptionsSlider styles
  */
  
