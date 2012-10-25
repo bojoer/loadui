@@ -1,12 +1,15 @@
 package com.eviware.loadui.ui.fx.control;
 
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.Property;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.Control;
 import javafx.scene.control.Label;
+import javafx.util.Callback;
 
 import com.google.common.base.Preconditions;
 
@@ -86,5 +89,23 @@ public class PageList<E extends Node> extends Control
 	{
 		Preconditions.checkArgument( widthPerItem > 0, "widthPerItem must be >0, was %d", widthPerItem );
 		this.widthPerItem.set( widthPerItem );
+	}
+
+	private final Property<Callback<? super E, ? extends Label>> labelFactory = new SimpleObjectProperty<>( this,
+			"labelFactory" );
+
+	public Property<Callback<? super E, ? extends Label>> labelFactoryProperty()
+	{
+		return labelFactory;
+	}
+
+	public void setLabelFactory( Callback<? super E, ? extends Label> value )
+	{
+		labelFactory.setValue( value );
+	}
+
+	public Callback<? super E, ? extends Label> getLabelFactory()
+	{
+		return labelFactory.getValue();
 	}
 }

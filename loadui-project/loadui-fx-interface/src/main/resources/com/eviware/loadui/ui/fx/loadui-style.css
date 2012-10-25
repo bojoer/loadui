@@ -129,8 +129,12 @@
 	-fx-padding: 10;
 }
 
+.page-list .separator {
+	-fx-padding: 10 0 5 0;
+}
+
 .page-list .item-box {
-	-fx-spacing: 5;
+	-fx-spacing: 6;
 }
 
 /**

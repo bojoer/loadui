@@ -13,6 +13,7 @@ import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.SceneBuilder;
 import javafx.scene.control.ButtonBuilder;
+import javafx.scene.control.Label;
 import javafx.scene.control.SplitPaneBuilder;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextAreaBuilder;
@@ -21,8 +22,10 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.VBoxBuilder;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.RectangleBuilder;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 import com.eviware.loadui.ui.fx.control.PageList;
 import com.google.common.base.Charsets;
@@ -32,7 +35,16 @@ public class StyleTester extends Application
 {
 	private Node createTestNode()
 	{
-		PageList<Node> list = new PageList<>( "PageList" );
+		PageList<Rectangle> list = new PageList<>( "PageList" );
+		list.setWidthPerItem( 110 );
+		list.setLabelFactory( new Callback<Rectangle, Label>()
+		{
+			@Override
+			public Label call( Rectangle rect )
+			{
+				return new Label( rect.getFill().toString() );
+			}
+		} );
 		list.getItems().setAll( RectangleBuilder.create().width( 100 ).height( 100 ).fill( Color.RED ).build(),
 				RectangleBuilder.create().width( 100 ).height( 100 ).fill( Color.BLUE ).build(),
 				RectangleBuilder.create().width( 100 ).height( 100 ).fill( Color.GREEN ).build(),
@@ -41,7 +53,7 @@ public class StyleTester extends Application
 				RectangleBuilder.create().width( 100 ).height( 100 ).fill( Color.ORANGE ).build(),
 				RectangleBuilder.create().width( 100 ).height( 100 ).fill( Color.BROWN ).build() );
 
-		return list;
+		return VBoxBuilder.create().children( list ).build();
 	}
 
 	@Override

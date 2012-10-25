@@ -139,6 +139,18 @@ public class Pager<T>
 		items.addListener( shownItemsListener );
 		offset.addListener( shownItemsListener );
 		itemsPerPage.addListener( shownItemsListener );
+
+		numPages.addListener( new InvalidationListener()
+		{
+			@Override
+			public void invalidated( Observable arg0 )
+			{
+				if( page.get() >= numPages.get() )
+				{
+					page.set( numPages.get() - 1 );
+				}
+			}
+		} );
 	}
 
 	public Pager( ObservableList<T> providedList, int itemsPerPage )
