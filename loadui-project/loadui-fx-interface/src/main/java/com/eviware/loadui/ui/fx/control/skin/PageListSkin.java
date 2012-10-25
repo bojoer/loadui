@@ -56,7 +56,7 @@ public class PageListSkin<E extends Node> extends SkinBase<PageList<E>, Behavior
 				Bindings.format( "Page %d of %d", pager.pageProperty().add( 1 ), pager.numPagesProperty() ) );
 		StackPane.setAlignment( pageNum, Pos.TOP_RIGHT );
 
-		Button prevButton = ButtonBuilder.create().onAction( new EventHandler<ActionEvent>()
+		Button prevButton = ButtonBuilder.create().styleClass( "nav", "left" ).onAction( new EventHandler<ActionEvent>()
 		{
 			@Override
 			public void handle( ActionEvent event )
@@ -66,7 +66,7 @@ public class PageListSkin<E extends Node> extends SkinBase<PageList<E>, Behavior
 		} ).build();
 		prevButton.disableProperty().bind( pager.hasPrevProperty().not() );
 
-		Button nextButton = ButtonBuilder.create().onAction( new EventHandler<ActionEvent>()
+		Button nextButton = ButtonBuilder.create().styleClass( "nav", "right" ).onAction( new EventHandler<ActionEvent>()
 		{
 			@Override
 			public void handle( ActionEvent event )
