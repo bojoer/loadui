@@ -3,6 +3,7 @@ package com.eviware.loadui.ui.fx.util;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanExpression;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ReadOnlyIntegerProperty;
@@ -151,6 +152,42 @@ public class Pager<T>
 				}
 			}
 		} );
+	}
+
+	public BooleanExpression hasPrevProperty()
+	{
+		return page.greaterThan( 0 );
+	}
+
+	public boolean hasPrev()
+	{
+		return hasPrevProperty().getValue();
+	}
+
+	public BooleanExpression hasNextProperty()
+	{
+		return page.lessThan( numPages.subtract( 1 ) );
+	}
+
+	public boolean hasNext()
+	{
+		return hasNextProperty().getValue();
+	}
+
+	public void nextPage()
+	{
+		if( hasNext() )
+		{
+			setPage( getPage() + 1 );
+		}
+	}
+
+	public void prevPage()
+	{
+		if( hasPrev() )
+		{
+			setPage( getPage() - 1 );
+		}
 	}
 
 	public Pager( ObservableList<T> providedList, int itemsPerPage )

@@ -12,12 +12,14 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBuilder;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.HBoxBuilder;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.StackPaneBuilder;
+import javafx.scene.layout.VBox;
 import javafx.scene.layout.VBoxBuilder;
 import javafx.util.Callback;
 
@@ -59,21 +61,21 @@ public class PageListSkin<E extends Node> extends SkinBase<PageList<E>, Behavior
 			@Override
 			public void handle( ActionEvent event )
 			{
-				pager.setPage( pager.getPage() - 1 );
+				pager.prevPage();
 			}
 		} ).build();
-		prevButton.disableProperty().bind( pager.pageProperty().isEqualTo( 0 ) );
+		prevButton.disableProperty().bind( pager.hasPrevProperty().not() );
 
 		Button nextButton = ButtonBuilder.create().onAction( new EventHandler<ActionEvent>()
 		{
 			@Override
 			public void handle( ActionEvent event )
 			{
-				pager.setPage( pager.getPage() + 1 );
+				pager.nextPage();
 			}
+
 		} ).build();
-		nextButton.disableProperty().bind(
-				pager.pageProperty().greaterThanOrEqualTo( pager.numPagesProperty().subtract( 1 ) ) );
+		nextButton.disableProperty().bind( pager.hasNextProperty().not() );
 
 		FixedSpaceBox labelBox = new FixedSpaceBox();
 		HBox.setHgrow( labelBox, Priority.ALWAYS );
@@ -89,13 +91,27 @@ public class PageListSkin<E extends Node> extends SkinBase<PageList<E>, Behavior
 		} );
 		Bindings.bindContent( labelBox.getChildren(), labels );
 
-		getChildren().setAll(
-				VBoxBuilder
-						.create()
-						.children(
-								StackPaneBuilder.create().children( label, pageNum ).build(),
-								HBoxBuilder.create().alignment( Pos.CENTER ).children( prevButton, itemBox, nextButton )
-										.build(), new Separator(), labelBox ).build() );
+		VBox vbox = VBoxBuilder
+				.create()
+				.children( StackPaneBuilder.create().children( label, pageNum ).build(),
+						HBoxBuilder.create().alignment( Pos.CENTER ).children( prevButton, itemBox, nextButton ).build(),
+						new Separator(), labelBox ).build();
+		vbox.setOnScroll( new EventHandler<ScrollEvent>()
+		{
+			@Override
+			public void handle( ScrollEvent event )
+			{
+				if( event.getDeltaY() > 0 || event.getDeltaX() > 0 )
+				{
+					pager.prevPage();
+				}
+				else if( event.getDeltaY() < 0 || event.getDeltaX() < 0 )
+				{
+					pager.nextPage();
+				}
+			}
+		} );
+		getChildren().setAll( vbox );
 	}
 
 	private class FixedSpaceBox extends Pane
