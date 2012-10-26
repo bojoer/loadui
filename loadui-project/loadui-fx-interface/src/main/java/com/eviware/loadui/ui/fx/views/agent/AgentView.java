@@ -4,20 +4,22 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.MenuButton;
-import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.StackPane;
 
 import com.eviware.loadui.api.model.AgentItem;
+import com.eviware.loadui.ui.fx.control.OptionsSlider;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.Properties;
 
 public class AgentView extends StackPane
 {
 	@FXML
-	private ToggleButton onOffSwitch;
+	private OptionsSlider onOffSwitch;
 
 	@FXML
 	private MenuButton menuButton;
@@ -32,7 +34,7 @@ public class AgentView extends StackPane
 	{
 		this.agent = agent;
 
-		labelProperty = ( StringProperty )Properties.forLabel( agent );
+		labelProperty = Properties.forLabel( agent );
 		urlProperty = Properties.stringProperty( agent, "url", AgentItem.URL );
 		enabledProperty = Properties.booleanProperty( agent, "enabled", AgentItem.ENABLED );
 		readyProperty = Properties.readOnlyBooleanProperty( agent, "ready", AgentItem.READY );
@@ -47,19 +49,36 @@ public class AgentView extends StackPane
 		String dotPatternUrl = AgentView.class.getResource( "dot-pattern.png" ).toExternalForm();
 		lookup( ".agent-view" ).setStyle( "-fx-background-image: url('" + dotPatternUrl + "');" );
 
-		onOffSwitch.selectedProperty().bindBidirectional( enabledProperty );
-		onOffSwitch.textProperty().bind(
-				Bindings.when( enabledProperty ).then( Bindings.when( readyProperty ).then( "C" ).otherwise( "D" ) )
-						.otherwise( "O" ) );
 		Tooltip readyTooltip = new Tooltip();
 		readyTooltip.textProperty().bind( Bindings.when( readyProperty ).then( "Connected" ).otherwise( "Disconnected" ) );
 		onOffSwitch.setTooltip( readyTooltip );
+		System.out.println( "!!!!!!!!!!ON OFF: " + onOffSwitch.getStyleClass() );
 
 		menuButton.textProperty().bind( labelProperty );
 
 		Tooltip menuTooltip = new Tooltip();
 		menuTooltip.textProperty().bind( Bindings.format( "%s (%s)", labelProperty, urlProperty ) );
 		menuButton.setTooltip( menuTooltip );
+
+		enabledProperty.addListener( new ChangeListener<Boolean>()
+		{
+			@Override
+			public void changed( ObservableValue<? extends Boolean> arg0, Boolean arg1, Boolean state )
+			{
+				onOffSwitch.setSelected( state.booleanValue() ? "ON" : "OFF" );
+			}
+		} );
+
+		onOffSwitch.setSelected( enabledProperty.getValue().booleanValue() ? "ON" : "OFF" );
+
+		onOffSwitch.selectedProperty().addListener( new ChangeListener<String>()
+		{
+			@Override
+			public void changed( ObservableValue<? extends String> arg0, String arg1, String state )
+			{
+				enabledProperty.setValue( "ON".equals( state ) );
+			}
+		} );
 	}
 
 	@Override

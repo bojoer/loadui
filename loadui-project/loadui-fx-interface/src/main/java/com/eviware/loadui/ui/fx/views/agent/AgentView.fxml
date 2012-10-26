@@ -7,6 +7,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.HBox?>
 <?import java.net.URL?>
+<?import java.lang.String?>
+
+<?import com.eviware.loadui.ui.fx.control.OptionsSlider?>
 
 <fx:root type="javafx.scene.layout.StackPane" xmlns:fx="http://javafx.com/fxml">
 	<VBox xmlns:fx="http://javafx.com/fxml" styleClass="agent-view">
@@ -14,7 +17,10 @@
 			<URL value="@AgentView.css" />
 		</stylesheets>
 		<HBox spacing="3">
-			<ToggleButton fx:id="onOffSwitch" />
+			<OptionsSlider fx:id="onOffSwitch" styleClass="switch">
+				<String fx:value="ON"/>
+				<String fx:value="OFF"/>
+			</OptionsSlider>
 			<MenuButton fx:id="menuButton" HBox.hgrow="SOMETIMES" maxWidth="200" >
 				<items>
 					<MenuItem onAction="#delete" text="Delete" />

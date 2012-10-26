@@ -75,6 +75,11 @@ public class Properties
 		}
 	}
 
+	public static StringProperty forLabel( @Nonnull Labeled.Mutable labeled )
+	{
+		return ( StringProperty )forLabel( ( Labeled )labeled );
+	}
+
 	/**
 	 * Creates an ReadOnlyStringProperty for a Describable. If the Describable is
 	 * mutable, the returned value will also implement StringProperty.
@@ -100,6 +105,11 @@ public class Properties
 		{
 			throw new IllegalArgumentException( e );
 		}
+	}
+
+	public static StringProperty forDescription( @Nonnull Describable.Mutable describable )
+	{
+		return ( StringProperty )forDescription( ( Describable )describable );
 	}
 
 	/**

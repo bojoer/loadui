@@ -1,27 +1,30 @@
 package com.eviware.loadui.ui.fx.control;
 
-import java.util.List;
-
+import javafx.beans.DefaultProperty;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ObjectPropertyBase;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.control.Control;
 import javafx.scene.image.ImageView;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
+@DefaultProperty( "options" )
 public class OptionsSlider extends Control
 {
 	protected static final Logger log = LoggerFactory.getLogger( OptionsSlider.class );
 
 	private static final String DEFAULT_STYLE_CLASS = "options-slider";
 
-	private final Iterable<String> options;
-	private final Iterable<ImageView> images;
-	private final boolean showLabels;
+	private final ObservableList<String> options = FXCollections.observableArrayList();
+	private final ObservableList<ImageView> images = FXCollections.observableArrayList();
+	private final BooleanProperty showLabels = new SimpleBooleanProperty( this, "showLabels", true );
 
 	private final ObjectProperty<String> selectedProperty = new ObjectPropertyBase<String>()
 	{
@@ -38,35 +41,58 @@ public class OptionsSlider extends Control
 		}
 	};
 
+	public OptionsSlider()
+	{
+		initialize();
+	}
+
 	public OptionsSlider( Iterable<String> options )
 	{
-		this( options, Iterables.cycle( ( ImageView )null ) );
+		getOptions().setAll( Lists.newArrayList( options ) );
+		initialize();
 	}
 
 	public OptionsSlider( Iterable<String> options, Iterable<ImageView> images )
 	{
-		this( options, images, true );
+		getOptions().setAll( Lists.newArrayList( options ) );
+		getImages().setAll( Lists.newArrayList( images ) );
+		initialize();
 	}
 
 	public OptionsSlider( Iterable<String> options, Iterable<ImageView> images, boolean showLabels )
 	{
-		this.options = options;
-		this.images = images;
-		this.showLabels = showLabels;
+		getOptions().setAll( Lists.newArrayList( options ) );
+		getImages().setAll( Lists.newArrayList( images ) );
+		this.showLabels.set( showLabels );
+		initialize();
+	}
+
+	private void initialize()
+	{
 		getStyleClass().setAll( DEFAULT_STYLE_CLASS );
 	}
 
-	public boolean showLabels()
+	public BooleanProperty showLabelsProperty()
 	{
 		return showLabels;
 	}
 
-	public List<String> getOptions()
+	public boolean isShowLabels()
 	{
-		return ImmutableList.copyOf( options );
+		return showLabels.get();
 	}
 
-	public Iterable<ImageView> getImages()
+	public void setShowLabels( boolean value )
+	{
+		showLabels.set( value );
+	}
+
+	public ObservableList<String> getOptions()
+	{
+		return options;
+	}
+
+	public ObservableList<ImageView> getImages()
 	{
 		return images;
 	}
