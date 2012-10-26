@@ -20,6 +20,7 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 
 import com.eviware.loadui.api.events.EventFirer;
+import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.statistics.model.Chart;
 
 /**
@@ -60,4 +61,12 @@ public interface StatisticHolder extends EventFirer, Chart.Owner
 	 */
 	@Nonnull
 	public Set<? extends Statistic.Descriptor> getDefaultStatistics();
+
+	/**
+	 * Returns the CanvasItem associated with this StatisticHolder.
+	 * 
+	 * @return
+	 */
+	@Nonnull
+	public CanvasItem getCanvas();
 }
