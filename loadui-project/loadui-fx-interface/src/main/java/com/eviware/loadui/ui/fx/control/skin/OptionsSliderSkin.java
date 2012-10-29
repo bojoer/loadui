@@ -2,8 +2,13 @@ package com.eviware.loadui.ui.fx.control.skin;
 
 import java.util.Iterator;
 
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
+import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.RadioButtonBuilder;
@@ -21,42 +26,38 @@ import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.ui.fx.control.OptionsSlider;
 import com.eviware.loadui.ui.fx.util.UIUtils;
+import com.google.common.collect.ImmutableList;
 import com.sun.javafx.scene.control.behavior.BehaviorBase;
 import com.sun.javafx.scene.control.skin.SkinBase;
 
 public class OptionsSliderSkin extends SkinBase<OptionsSlider, BehaviorBase<OptionsSlider>>
 {
 	protected static final Logger log = LoggerFactory.getLogger( OptionsSliderSkin.class );
+	private final ToggleGroup toggleGroup = new ToggleGroup();
+	private final ObservableList<RadioButton> radioButtons = FXCollections.observableArrayList();
 
 	public OptionsSliderSkin( final OptionsSlider slider )
 	{
 		super( slider, new BehaviorBase<>( slider ) );
 
-		final ToggleGroup toggleGroup = new ToggleGroup();
-
 		VBox vBox = VBoxBuilder.create().styleClass( "container" ).build();
-
-		Iterator<ImageView> it = slider.getImages().iterator();
-		for( String option : slider.getOptions() )
-		{
-			RadioButton radio = RadioButtonBuilder.create().toggleGroup( toggleGroup ).build();
-			radio.setUserData( option );
-			//			if( i == 0 )
-			//			{
-			//				System.out.println( "select! " );
-			//								slider.setSelected( slider.getOptions().get( 0 ) );
-			//								radio.setSelected( true );
-			//			}
-
-			if( slider.showLabels() )
-				radio.setText( option );
-			radio.setGraphic( it.next() );
-			radio.setId( UIUtils.toCssId( option ) );
-
-			vBox.getChildren().add( radio );
-		}
+		Bindings.bindContent( vBox.getChildren(), radioButtons );
 
 		System.out.println( "selected " + slider.getSelected() );
+
+		InvalidationListener recreateRadioButtons = new InvalidationListener()
+		{
+			@Override
+			public void invalidated( Observable arg0 )
+			{
+				createRadioButtons();
+			}
+		};
+
+		slider.getOptions().addListener( recreateRadioButtons );
+		slider.getImages().addListener( recreateRadioButtons );
+		slider.showLabelsProperty().addListener( recreateRadioButtons );
+		createRadioButtons();
 
 		if( slider.getSelected() != null )
 			selectToggle( toggleGroup, slider.getSelected() );
@@ -80,7 +81,31 @@ public class OptionsSliderSkin extends SkinBase<OptionsSlider, BehaviorBase<Opti
 		} );
 
 		getChildren().add( createLayout( vBox ) );
+	}
 
+	private void createRadioButtons()
+	{
+		ImmutableList.Builder<RadioButton> newRadioButtons = ImmutableList.builder();
+		Iterator<ImageView> it = getSkinnable().getImages().iterator();
+		for( String option : getSkinnable().getOptions() )
+		{
+			RadioButton radio = RadioButtonBuilder.create().toggleGroup( toggleGroup ).build();
+			radio.setUserData( option );
+
+			if( getSkinnable().isShowLabels() )
+			{
+				radio.setText( option );
+			}
+			if( it.hasNext() )
+			{
+				radio.setGraphic( it.next() );
+			}
+			radio.setId( UIUtils.toCssId( option ) );
+
+			newRadioButtons.add( radio );
+		}
+
+		radioButtons.setAll( newRadioButtons.build() );
 	}
 
 	protected Node createLayout( VBox vBox )

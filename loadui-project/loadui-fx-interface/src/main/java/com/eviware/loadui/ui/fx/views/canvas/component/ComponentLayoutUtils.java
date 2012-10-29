@@ -73,25 +73,29 @@ public class ComponentLayoutUtils
 			}
 			else if( "selectorWidget".equals( component.get( "widget" ) ) )
 			{
-				boolean showImages = ( boolean )Objects.firstNonNull( component.get( "showLabels" ), true );
-
-				Iterable<String> imageNames = ( Iterable<String> )component.get( "images" );
-
-				List<ImageView> images = Lists.newArrayList();
-				for( String imageName : imageNames )
-				{
-					ImageView image = new ImageView( new Image( ComponentLayoutUtils.class.getClassLoader()
-							.getResource( "images/options/" + imageName ).toExternalForm() ) );
-					images.add( image );
-				}
 
 				Iterable<String> options = ( Iterable<String> )component.get( "labels" );
 
-				Property<String> loadUiProperty = ( Property<String> )component.get( "selected" );
-				javafx.beans.property.Property<String> javaFxProperty = Properties.convert( loadUiProperty );
+				boolean showLabels = ( boolean )Objects.firstNonNull( component.get( "showLabels" ), true );
+				OptionsSlider slider = new OptionsSlider( Iterables.filter( options, String.class ) );
+				slider.setShowLabels( showLabels );
 
-				OptionsSlider slider = new OptionsSlider( Iterables.filter( options, String.class ), images, showImages );
-				slider.selectedProperty().bindBidirectional( javaFxProperty );
+				if( component.has( "images" ) )
+				{
+					List<ImageView> images = Lists.newArrayList();
+					Iterable<String> imageNames = ( Iterable<String> )component.get( "images" );
+
+					for( String imageName : imageNames )
+					{
+						ImageView image = new ImageView( new Image( ComponentLayoutUtils.class.getClassLoader()
+								.getResource( "images/options/" + imageName ).toExternalForm() ) );
+						images.add( image );
+					}
+					slider.getImages().setAll( images );
+				}
+
+				Property<String> loadUiProperty = ( Property<String> )component.get( "selected" );
+				slider.selectedProperty().bindBidirectional( Properties.convert( loadUiProperty ) );
 
 				Label propertyLabel = LabelBuilder.create().text( ( String )component.get( "label" ) ).build();
 
