@@ -1,12 +1,11 @@
 package com.eviware.loadui.ui.fx.views.assertions;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javafx.application.Platform;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.ui.fx.control.DragNode;

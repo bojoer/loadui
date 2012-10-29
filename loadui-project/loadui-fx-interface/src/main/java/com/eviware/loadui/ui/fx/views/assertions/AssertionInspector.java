@@ -4,6 +4,7 @@ import javafx.beans.property.ReadOnlyProperty;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 
+import com.eviware.loadui.api.model.WorkspaceProvider;
 import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.ui.fx.api.Inspector;
 import com.eviware.loadui.ui.fx.api.perspective.PerspectiveEvent;
@@ -13,12 +14,10 @@ public class AssertionInspector implements Inspector
 	private static final String FILTER = PerspectiveEvent.getPath( PerspectiveEvent.PERSPECTIVE_PROJECT ) + ".*";
 
 	private final AssertionInspectorView panel;
-	private final StatisticsManager statisticsManager;
 
-	public AssertionInspector( StatisticsManager statisticsManager )
+	public AssertionInspector( StatisticsManager statisticsManager, WorkspaceProvider workspaceProvider )
 	{
-		this.statisticsManager = statisticsManager;
-		panel = new AssertionInspectorView( statisticsManager );
+		panel = new AssertionInspectorView( statisticsManager, workspaceProvider );
 	}
 
 	@Override

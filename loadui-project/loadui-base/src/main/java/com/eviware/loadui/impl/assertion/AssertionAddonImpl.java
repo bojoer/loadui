@@ -131,6 +131,7 @@ public class AssertionAddonImpl implements AssertionAddon, Releasable
 			assertionItem.start();
 		}
 
+		log.debug( "Assertion created" );
 		return assertionItem;
 	}
 

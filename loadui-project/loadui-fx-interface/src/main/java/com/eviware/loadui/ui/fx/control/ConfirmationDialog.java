@@ -1,5 +1,6 @@
 package com.eviware.loadui.ui.fx.control;
 
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -62,19 +63,18 @@ public class ConfirmationDialog extends ButtonDialog
 		confirmButton.onActionProperty().set( value );
 	}
 
-	//TODO: Not sure if we should add this or not...
-	//	public BooleanProperty confirmDisableProperty()
-	//	{
-	//		return confirmButton.disableProperty();
-	//	}
-	//
-	//	public boolean isConfirmDisable()
-	//	{
-	//		return confirmButton.isDisable();
-	//	}
-	//
-	//	public void setConfirmDisable( boolean disable )
-	//	{
-	//		confirmButton.setDisable( disable );
-	//	}
+	public BooleanProperty confirmDisableProperty()
+	{
+		return confirmButton.disableProperty();
+	}
+
+	public boolean isConfirmDisable()
+	{
+		return confirmButton.isDisable();
+	}
+
+	public void setConfirmDisable( boolean disable )
+	{
+		confirmButton.setDisable( disable );
+	}
 }

@@ -11,6 +11,7 @@
 	<bean id="systemLogInspector" class="com.eviware.loadui.ui.fx.views.syslog.SystemLogInspector" />
 	<bean id="assertionInspector" class="com.eviware.loadui.ui.fx.views.assertions.AssertionInspector" >
 		<constructor-arg ref="statisticsManager" />
+		<constructor-arg ref="workspaceProvider" />
 	</bean>
 	
 	<bean id="coreImageResolver" class="com.eviware.loadui.ui.fx.util.CoreImageResolver" />
