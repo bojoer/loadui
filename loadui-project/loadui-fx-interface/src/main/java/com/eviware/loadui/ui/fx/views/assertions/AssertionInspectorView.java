@@ -3,7 +3,15 @@ package com.eviware.loadui.ui.fx.views.assertions;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.fx;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.ofCollection;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.transform;
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -32,6 +40,7 @@ import com.eviware.loadui.ui.fx.api.input.DraggableEvent;
 import com.eviware.loadui.ui.fx.control.ToolBox;
 import com.eviware.loadui.ui.fx.util.ObservableLists;
 import com.eviware.loadui.util.StringUtils;
+import com.eviware.loadui.util.assertion.RangeConstraint;
 import com.eviware.loadui.util.serialization.StatisticResolver;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -43,11 +52,12 @@ public class AssertionInspectorView extends HBox
 	private final ToolBox<Node> componentToolBox;
 	private final StatisticsManager statisticsManager;
 	private final WorkspaceProvider workspaceProvider;
-	private Statistic<Number> selected;
-
 	private final ObservableList<AssertionToolboxItem> toolBoxContent;
-
 	private final ListView<AssertionItem> assertionList;
+	private final ObjectProperty<ProjectItem> projectProperty = new SimpleObjectProperty<>();
+
+	private ObservableList<AssertionItem> assertions = FXCollections.emptyObservableList();
+	private Statistic<Number> selected;
 
 	public AssertionInspectorView( final StatisticsManager statisticsManager, final WorkspaceProvider workspaceProvider )
 	{
@@ -57,14 +67,27 @@ public class AssertionInspectorView extends HBox
 		toolBoxContent = createToolBoxContent();
 		Bindings.bindContent( componentToolBox.getItems(), toolBoxContent );
 
-		ProjectItem project = Iterables.getFirst( workspaceProvider.getWorkspace().getProjects(), null );
-
-		log.debug( "project.getAddon( AssertionAddon.class ): " + project.getAddon( AssertionAddon.class ) );
-		assertions = ObservableLists.ofCollection( project, AssertionAddon.ASSERTION_ITEMS,
-				AssertionItem.class, project.getAddon( AssertionAddon.class ).getAssertions() );
-
 		assertionList = ListViewBuilder.<AssertionItem> create().build();
-		Bindings.bindContent( assertionList.getItems(), assertions );
+
+		projectProperty.addListener( new ChangeListener<ProjectItem>()
+		{
+			@Override
+			public void changed( ObservableValue<? extends ProjectItem> arg0, ProjectItem oldValue, ProjectItem newValue )
+			{
+				if( oldValue != null )
+				{
+					Bindings.unbindContent( assertionList.getItems(), assertions );
+					assertionList.getItems().clear();
+				}
+				if( newValue != null )
+				{
+					assertions = ObservableLists.ofCollection( projectProperty.get(), AssertionAddon.ASSERTION_ITEMS,
+							AssertionItem.class, projectProperty.get().getAddon( AssertionAddon.class ).getAssertions() );
+
+					Bindings.bindContent( assertionList.getItems(), assertions );
+				}
+			}
+		} );
 
 		HBox.setHgrow( assertionList, Priority.ALWAYS );
 
@@ -108,13 +131,15 @@ public class AssertionInspectorView extends HBox
 		dialog.setOnConfirm( new EventHandler<ActionEvent>()
 		{
 			@Override
-			public void handle( ActionEvent event )
+			public void handle( ActionEvent actionEvent )
 			{
 				selected = dialog.getSelectedValue();
 
 				Resolver resolver = new StatisticResolver( selected );
-				holder.getCanvas().getAddon( AssertionAddon.class )
+				AssertionItem.Mutable<Number> assertion = holder.getCanvas().getAddon( AssertionAddon.class )
 						.createAssertion( holder, ( Resolver<? extends ListenableValue<Number>> )resolver );
+				assertion.setConstraint( new RangeConstraint( 0, 10 ) );
+				assertion.setTolerance( 1, 0 );
 
 				dialog.close();
 			}
@@ -130,13 +155,16 @@ public class AssertionInspectorView extends HBox
 		return transform( fx( statisticHolders ), DESCRIPTOR_TO_LABELED );
 	}
 
+	public ObjectProperty<ProjectItem> projectProperty()
+	{
+		return projectProperty;
+	}
+
 	private final static Function<StatisticHolder, AssertionToolboxItem> DESCRIPTOR_TO_LABELED = new Function<StatisticHolder, AssertionToolboxItem>()
 	{
 		@Override
 		public AssertionToolboxItem apply( StatisticHolder holder )
 		{
-			log.debug( "APPLYING DESCRIPTOR_TO_LABELED" );
-
 			AssertionToolboxItem view = new AssertionToolboxItem( holder );
 
 			String category = "[NO CATEGORY]";
@@ -149,6 +177,4 @@ public class AssertionInspectorView extends HBox
 			return view;
 		}
 	};
-
-	private ObservableList<AssertionItem> assertions;
 }

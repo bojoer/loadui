@@ -8,6 +8,7 @@ import com.eviware.loadui.api.model.WorkspaceProvider;
 import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.ui.fx.api.Inspector;
 import com.eviware.loadui.ui.fx.api.perspective.PerspectiveEvent;
+import com.eviware.loadui.ui.fx.util.InspectorHelpers;
 
 public class AssertionInspector implements Inspector
 {
@@ -23,6 +24,7 @@ public class AssertionInspector implements Inspector
 	@Override
 	public void initialize( ReadOnlyProperty<Scene> sceneProperty )
 	{
+		panel.projectProperty().bind( InspectorHelpers.projectProperty( sceneProperty ) );
 	}
 
 	@Override

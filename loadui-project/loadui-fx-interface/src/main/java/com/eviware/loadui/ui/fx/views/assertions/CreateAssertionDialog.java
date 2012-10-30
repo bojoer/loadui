@@ -12,6 +12,7 @@ import javafx.util.Callback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.eviware.loadui.api.serialization.ListenableValue;
 import com.eviware.loadui.api.statistics.Statistic;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticVariable;
@@ -22,7 +23,7 @@ import com.google.common.base.Preconditions;
 public class CreateAssertionDialog extends ConfirmationDialog
 {
 	protected static final Logger log = LoggerFactory.getLogger( CreateAssertionDialog.class );
-	private TreeView<Labeled> tree;
+	private final TreeView<Labeled> tree;
 
 	public CreateAssertionDialog( Node owner, StatisticHolder holder )
 	{
@@ -31,7 +32,8 @@ public class CreateAssertionDialog extends ConfirmationDialog
 		final TreeItem<Labeled> holderItem = TreeItemBuilder.<Labeled> create().value( holder ).expanded( true ).build();
 		for( String variableName : holder.getStatisticVariableNames() )
 		{
-			final TreeItem<Labeled> variableItem = new TreeItem<Labeled>( holder.getStatisticVariable( variableName ) );
+			StatisticVariable variable = holder.getStatisticVariable( variableName );
+			final TreeItem<Labeled> variableItem = new TreeItem<Labeled>( variable );
 			variableItem.expandedProperty().addListener( new ExpandedTreeItemsLimiter( variableItem, holderItem ) );
 
 			for( String statisticName : holder.getStatisticVariable( variableName ).getStatisticNames() )
@@ -39,6 +41,11 @@ public class CreateAssertionDialog extends ConfirmationDialog
 				variableItem.getChildren().add(
 						new TreeItem<Labeled>( holder.getStatisticVariable( variableName ).getStatistic( statisticName,
 								StatisticVariable.MAIN_SOURCE ) ) );
+			}
+
+			if( variable instanceof ListenableValue<?> )
+			{
+				variableItem.getChildren().add( new TreeItem<Labeled>() );
 			}
 			holderItem.getChildren().add( variableItem );
 		}
