@@ -89,7 +89,7 @@ public class Pager<T>
 		return numPages.getReadOnlyProperty();
 	}
 
-	private final ReadOnlyIntegerWrapper offset = new ReadOnlyIntegerWrapper( this, "offset" )
+	private final ReadOnlyIntegerWrapper offset = new ReadOnlyIntegerWrapper( this, "offset", 0 )
 	{
 		{
 			bind( Bindings.when( fluentMode ).then( page ).otherwise( page.multiply( itemsPerPage ) ) );

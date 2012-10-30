@@ -7,22 +7,33 @@ import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.Tooltip;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.RectangleBuilder;
 
 import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.ui.fx.control.OptionsSlider;
+import com.eviware.loadui.ui.fx.control.ScrollableList;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.Properties;
 
-public class AgentView extends StackPane
+public class AgentView extends VBox
 {
 	@FXML
 	private OptionsSlider onOffSwitch;
 
 	@FXML
+	private Label agentLabel;
+
+	@FXML
 	private MenuButton menuButton;
+
+	@FXML
+	private ScrollableList<Node> scenarioList;
 
 	private final AgentItem agent;
 	private final StringProperty labelProperty;
@@ -47,14 +58,13 @@ public class AgentView extends StackPane
 	{
 		//Hack for setting CSS resources within an OSGi framework
 		String dotPatternUrl = AgentView.class.getResource( "dot-pattern.png" ).toExternalForm();
-		lookup( ".agent-view" ).setStyle( "-fx-background-image: url('" + dotPatternUrl + "');" );
+		lookup( ".dots" ).setStyle( "-fx-background-image: url('" + dotPatternUrl + "');" );
 
 		Tooltip readyTooltip = new Tooltip();
 		readyTooltip.textProperty().bind( Bindings.when( readyProperty ).then( "Connected" ).otherwise( "Disconnected" ) );
 		onOffSwitch.setTooltip( readyTooltip );
-		System.out.println( "!!!!!!!!!!ON OFF: " + onOffSwitch.getStyleClass() );
 
-		menuButton.textProperty().bind( labelProperty );
+		agentLabel.textProperty().bind( labelProperty );
 
 		Tooltip menuTooltip = new Tooltip();
 		menuTooltip.textProperty().bind( Bindings.format( "%s (%s)", labelProperty, urlProperty ) );
@@ -79,6 +89,14 @@ public class AgentView extends StackPane
 				enabledProperty.setValue( "ON".equals( state ) );
 			}
 		} );
+
+		scenarioList.getItems().add( RectangleBuilder.create().width( 80 ).height( 16 ).fill( Color.RED ).build() );
+		scenarioList.getItems().add( RectangleBuilder.create().width( 80 ).height( 16 ).fill( Color.ORANGE ).build() );
+		scenarioList.getItems().add( RectangleBuilder.create().width( 80 ).height( 16 ).fill( Color.YELLOW ).build() );
+		scenarioList.getItems().add( RectangleBuilder.create().width( 80 ).height( 16 ).fill( Color.GREEN ).build() );
+		scenarioList.getItems().add( RectangleBuilder.create().width( 80 ).height( 16 ).fill( Color.BLUE ).build() );
+		scenarioList.getItems().add( RectangleBuilder.create().width( 80 ).height( 16 ).fill( Color.INDIGO ).build() );
+		scenarioList.getItems().add( RectangleBuilder.create().width( 80 ).height( 16 ).fill( Color.VIOLET ).build() );
 	}
 
 	@Override

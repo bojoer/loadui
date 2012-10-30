@@ -129,6 +129,15 @@
 }
 
 /**
+ * ScrollList styles
+ */
+ 
+.scroll-list {
+	-fx-skin: "com.eviware.loadui.ui.fx.control.skin.ScrollListSkin";
+}
+
+
+/**
  * PageList styles
  */
  
@@ -145,6 +154,10 @@
 
 .page-list .item-box {
 	-fx-spacing: 6;
+}
+
+.page-list .label-list .nav {
+	visibility: hidden;
 }
 
 /**
