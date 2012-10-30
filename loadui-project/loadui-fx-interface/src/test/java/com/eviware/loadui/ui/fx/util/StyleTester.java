@@ -10,13 +10,14 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.SceneBuilder;
 import javafx.scene.control.ButtonBuilder;
-import javafx.scene.control.Label;
 import javafx.scene.control.SplitPaneBuilder;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextAreaBuilder;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -25,9 +26,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.RectangleBuilder;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 
 import com.eviware.loadui.ui.fx.control.PageList;
+import com.eviware.loadui.ui.fx.control.ScrollList;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
@@ -35,17 +36,9 @@ public class StyleTester extends Application
 {
 	private Node createTestNode()
 	{
-		PageList<Rectangle> list = new PageList<>( "PageList" );
-		list.setWidthPerItem( 110 );
-		list.setLabelFactory( new Callback<Rectangle, Label>()
-		{
-			@Override
-			public Label call( Rectangle rect )
-			{
-				return new Label( rect.getFill().toString() );
-			}
-		} );
-		list.getItems().setAll( RectangleBuilder.create().width( 100 ).height( 100 ).fill( Color.RED ).build(),
+		final PageList<Rectangle> pagelist = new PageList<>();
+		pagelist.setWidthPerItem( 110 );
+		pagelist.getItems().setAll( RectangleBuilder.create().width( 100 ).height( 100 ).fill( Color.RED ).build(),
 				RectangleBuilder.create().width( 100 ).height( 100 ).fill( Color.BLUE ).build(),
 				RectangleBuilder.create().width( 100 ).height( 100 ).fill( Color.GREEN ).build(),
 				RectangleBuilder.create().width( 100 ).height( 100 ).fill( Color.YELLOW ).build(),
@@ -53,7 +46,27 @@ public class StyleTester extends Application
 				RectangleBuilder.create().width( 100 ).height( 100 ).fill( Color.ORANGE ).build(),
 				RectangleBuilder.create().width( 100 ).height( 100 ).fill( Color.BROWN ).build() );
 
-		return VBoxBuilder.create().children( list ).build();
+		final ScrollList<Rectangle> scrolllist = new ScrollList<>();
+		scrolllist.setSizePerItem( 110 );
+		scrolllist.getItems().setAll( RectangleBuilder.create().width( 100 ).height( 100 ).fill( Color.RED ).build(),
+				RectangleBuilder.create().width( 100 ).height( 100 ).fill( Color.BLUE ).build(),
+				RectangleBuilder.create().width( 100 ).height( 100 ).fill( Color.GREEN ).build(),
+				RectangleBuilder.create().width( 100 ).height( 100 ).fill( Color.YELLOW ).build(),
+				RectangleBuilder.create().width( 100 ).height( 100 ).fill( Color.PINK ).build(),
+				RectangleBuilder.create().width( 100 ).height( 100 ).fill( Color.ORANGE ).build(),
+				RectangleBuilder.create().width( 100 ).height( 100 ).fill( Color.BROWN ).build() );
+
+		scrolllist.getItems().get( 3 ).setOnMouseClicked( new EventHandler<MouseEvent>()
+		{
+			@Override
+			public void handle( MouseEvent event )
+			{
+				scrolllist.setOrientation( scrolllist.getOrientation() == Orientation.VERTICAL ? Orientation.HORIZONTAL
+						: Orientation.VERTICAL );
+			}
+		} );
+
+		return VBoxBuilder.create().children( pagelist, scrolllist ).build();
 	}
 
 	@Override

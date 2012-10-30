@@ -1,32 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.geometry.Insets?>
 <?import java.net.URL?>
 <?import java.lang.String?>
 
 <?import com.eviware.loadui.ui.fx.control.OptionsSlider?>
+<?import com.eviware.loadui.ui.fx.control.ScrollList?>
 
-<fx:root type="javafx.scene.layout.StackPane" xmlns:fx="http://javafx.com/fxml">
-	<VBox xmlns:fx="http://javafx.com/fxml" styleClass="agent-view">
-		<stylesheets>
-			<URL value="@AgentView.css" />
-		</stylesheets>
-		<HBox spacing="3">
-			<OptionsSlider fx:id="onOffSwitch" styleClass="switch">
-				<String fx:value="ON"/>
-				<String fx:value="OFF"/>
-			</OptionsSlider>
-			<MenuButton fx:id="menuButton" HBox.hgrow="SOMETIMES" maxWidth="200" >
-				<items>
-					<MenuItem onAction="#delete" text="Delete" />
-				</items>
-			</MenuButton>
-		</HBox>
-		<Region prefWidth="60" prefHeight="80" style="-fx-background-color: blue;" />
-	</VBox>
+<fx:root type="javafx.scene.layout.VBox" xmlns:fx="http://javafx.com/fxml" styleClass="agent-view" maxHeight="180">
+	<stylesheets>
+		<URL value="@AgentView.css" />
+	</stylesheets>
+	<Label fx:id="agentLabel" id="agentLabel" />
+	<HBox spacing="3">
+		<OptionsSlider fx:id="onOffSwitch" styleClass="switch">
+			<String fx:value="ON" />
+			<String fx:value="OFF" />
+		</OptionsSlider>
+		<MenuButton fx:id="menuButton" HBox.hgrow="SOMETIMES" maxWidth="200" text="Menu">
+			<items>
+				<MenuItem onAction="#delete" text="Delete" />
+			</items>
+		</MenuButton>
+	</HBox>
+	<StackPane prefWidth="60" VBox.vgrow="ALWAYS" styleClass="dots">
+		<padding>
+			<Insets top="6" right="6" bottom="6" left="6" />
+		</padding>
+		<ScrollList fx:id="scenarioList" orientation="VERTICAL" sizePerItem="18" />
+	</StackPane>
 </fx:root>

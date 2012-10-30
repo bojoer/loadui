@@ -7,7 +7,6 @@ import java.lang.reflect.Method;
 
 public class SwingFXUtils2
 {
-	@SuppressWarnings( "null" )
 	public static BufferedImage toBufferedImageUnchecked( Image awtImage )
 	{
 		Method getBufferedImage = null;
@@ -17,7 +16,7 @@ public class SwingFXUtils2
 		}
 		catch( NoSuchMethodException | SecurityException e )
 		{
-			e.printStackTrace();
+			throw new RuntimeException( e );
 		}
 		BufferedImage bufferedImage = null;
 		try
