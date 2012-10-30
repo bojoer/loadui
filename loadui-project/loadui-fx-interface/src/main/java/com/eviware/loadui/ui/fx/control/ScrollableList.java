@@ -22,9 +22,12 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBuilder;
 import javafx.scene.input.ScrollEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.HBoxBuilder;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.layout.VBoxBuilder;
 
 import com.eviware.loadui.ui.fx.util.Pager;
@@ -108,6 +111,9 @@ public class ScrollableList<E extends Node> extends StackPane
 	private void initialize()
 	{
 		getStyleClass().setAll( DEFAULT_STYLE_CLASS );
+
+		VBox.setVgrow( itemBox, Priority.ALWAYS );
+		HBox.setHgrow( itemBox, Priority.ALWAYS );
 
 		pager.setFluentMode( true );
 		Bindings.bindContent( itemBox.getChildren(), pager.getShownItems() );

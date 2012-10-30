@@ -7,6 +7,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.StackPaneBuilder;
 import javafx.scene.layout.VBox;
@@ -39,6 +40,7 @@ public class PageListSkin<E extends Node> extends SkinBase<PageList<E>, Behavior
 		labelList.setOrientation( Orientation.HORIZONTAL );
 		itemList.sizePerItemProperty().bind( pageList.widthPerItemProperty() );
 		labelList.sizePerItemProperty().bind( pageList.widthPerItemProperty() );
+		VBox.setVgrow( itemList, Priority.ALWAYS );
 
 		labelList.pageProperty().bindBidirectional( itemList.pageProperty() );
 
@@ -63,6 +65,7 @@ public class PageListSkin<E extends Node> extends SkinBase<PageList<E>, Behavior
 
 		VBox vbox = VBoxBuilder
 				.create()
+				.fillWidth( true )
 				.children( StackPaneBuilder.create().children( label, pageNum ).build(), itemList, new Separator(),
 						labelList ).build();
 		getChildren().setAll( vbox );
