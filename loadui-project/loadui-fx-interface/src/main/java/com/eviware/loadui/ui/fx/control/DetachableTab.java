@@ -70,6 +70,8 @@ public class DetachableTab extends Tab
 	public DetachableTab( String label )
 	{
 		super( label );
+		
+		getStyleClass().add( "detachable-tab" );
 
 		contentProperty().bind(
 				Bindings
