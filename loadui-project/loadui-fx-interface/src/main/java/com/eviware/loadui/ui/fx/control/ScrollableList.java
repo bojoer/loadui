@@ -1,9 +1,17 @@
-package com.eviware.loadui.ui.fx.control.skin;
+package com.eviware.loadui.ui.fx.control;
 
+import javafx.beans.DefaultProperty;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
-import javafx.beans.value.ObservableObjectValue;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.Property;
+import javafx.beans.property.ReadOnlyIntegerProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
@@ -14,43 +22,31 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBuilder;
 import javafx.scene.input.ScrollEvent;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.HBoxBuilder;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBoxBuilder;
 
-import com.eviware.loadui.ui.fx.control.ScrollList;
 import com.eviware.loadui.ui.fx.util.Pager;
-import com.sun.javafx.scene.control.behavior.BehaviorBase;
-import com.sun.javafx.scene.control.skin.SkinBase;
+import com.google.common.base.Preconditions;
 
-public class ScrollListSkin<E extends Node> extends SkinBase<ScrollList<E>, BehaviorBase<ScrollList<E>>>
+@DefaultProperty( "items" )
+public class ScrollableList<E extends Node> extends StackPane
 {
-	private final Pager<E> pager;
+	private static final String DEFAULT_STYLE_CLASS = "scroll-list";
+
+	private final Pager<E> pager = new Pager<>();
+	private final FixedSpaceBox itemBox = new FixedSpaceBox();
 	private final Button prevButton;
 	private final Button nextButton;
-	private final FixedSpaceBox itemBox;
 
-	public ScrollListSkin( ScrollList<E> scrollList )
+	private final ObjectProperty<Orientation> orientation = new SimpleObjectProperty<>( this, "orientation",
+			Orientation.VERTICAL );
+	private final DoubleProperty sizePerItem = new SimpleDoubleProperty( this, "sizePerItem", 100.0 );
+
+	public ScrollableList()
 	{
-		super( scrollList, new BehaviorBase<>( scrollList ) );
-
-		pager = new Pager<>( scrollList.getItems() );
-		pager.setFluentMode( true );
-
-		itemBox = new FixedSpaceBox();
-		HBox.setHgrow( itemBox, Priority.ALWAYS );
-		Bindings.bindContent( itemBox.getChildren(), pager.getShownItems() );
-
-		pager.itemsPerPageProperty().bind(
-				Bindings
-						.when(
-								Bindings.equal( ( ObservableObjectValue<?> )scrollList.orientationProperty(),
-										Orientation.VERTICAL ) ).then( itemBox.heightProperty() )
-						.otherwise( itemBox.widthProperty() ).divide( scrollList.sizePerItemProperty() ) );
-
-		prevButton = ButtonBuilder.create().styleClass( "nav" ).onAction( new EventHandler<ActionEvent>()
+		prevButton = ButtonBuilder.create().styleClass( "nav", "prev" ).onAction( new EventHandler<ActionEvent>()
 		{
 			@Override
 			public void handle( ActionEvent event )
@@ -58,9 +54,8 @@ public class ScrollListSkin<E extends Node> extends SkinBase<ScrollList<E>, Beha
 				pager.prevPage();
 			}
 		} ).build();
-		prevButton.disableProperty().bind( pager.hasPrevProperty().not() );
 
-		nextButton = ButtonBuilder.create().styleClass( "nav" ).onAction( new EventHandler<ActionEvent>()
+		nextButton = ButtonBuilder.create().styleClass( "nav", "next" ).onAction( new EventHandler<ActionEvent>()
 		{
 			@Override
 			public void handle( ActionEvent event )
@@ -69,18 +64,8 @@ public class ScrollListSkin<E extends Node> extends SkinBase<ScrollList<E>, Beha
 			}
 
 		} ).build();
-		nextButton.disableProperty().bind( pager.hasNextProperty().not() );
 
-		scrollList.orientationProperty().addListener( new InvalidationListener()
-		{
-			@Override
-			public void invalidated( Observable observable )
-			{
-				buildBox();
-			}
-		} );
-
-		buildBox();
+		initialize();
 	}
 
 	private void buildBox()
@@ -120,9 +105,102 @@ public class ScrollListSkin<E extends Node> extends SkinBase<ScrollList<E>, Beha
 		getChildren().setAll( box );
 	}
 
+	private void initialize()
+	{
+		getStyleClass().setAll( DEFAULT_STYLE_CLASS );
+
+		pager.setFluentMode( true );
+		Bindings.bindContent( itemBox.getChildren(), pager.getShownItems() );
+
+		pager.itemsPerPageProperty().bind(
+				Bindings.max( 1,
+						Bindings.when( Bindings.equal( orientation, Orientation.VERTICAL ) ).then( itemBox.heightProperty() )
+								.otherwise( itemBox.widthProperty() ).divide( sizePerItem ) ) );
+
+		prevButton.disableProperty().bind( pager.hasPrevProperty().not() );
+		nextButton.disableProperty().bind( pager.hasNextProperty().not() );
+
+		orientationProperty().addListener( new InvalidationListener()
+		{
+			@Override
+			public void invalidated( Observable observable )
+			{
+				buildBox();
+			}
+		} );
+
+		buildBox();
+	}
+
+	public ObservableList<E> getItems()
+	{
+		return pager.getItems();
+	}
+
+	public DoubleProperty sizePerItemProperty()
+	{
+		return sizePerItem;
+	}
+
+	public double getSizePerItem()
+	{
+		return sizePerItem.get();
+	}
+
+	public void setSizePerItem( double value )
+	{
+		Preconditions.checkArgument( value > 0, "sizePerItem must be >0, was %d", value );
+		this.sizePerItem.set( value );
+	}
+
+	public Property<Orientation> orientationProperty()
+	{
+		return orientation;
+	}
+
+	public Orientation getOrientation()
+	{
+		return orientation.get();
+	}
+
+	public void setOrientation( Orientation value )
+	{
+		orientation.set( value );
+	}
+
+	public IntegerProperty pageProperty()
+	{
+		return pager.pageProperty();
+	}
+
+	public int getPage()
+	{
+		return pager.getPage();
+	}
+
+	public void setPage( int value )
+	{
+		pager.setPage( value );
+	}
+
+	public int getNumPages()
+	{
+		return pager.getNumPages();
+	}
+
+	public ReadOnlyIntegerProperty numPagesProperty()
+	{
+		return pager.numPagesProperty();
+	}
+
+	public ObservableList<E> getShownItems()
+	{
+		return pager.getShownItems();
+	}
+
 	private boolean isVertical()
 	{
-		return getSkinnable().getOrientation() == Orientation.VERTICAL;
+		return getOrientation() == Orientation.VERTICAL;
 	}
 
 	private class FixedSpaceBox extends Pane
@@ -136,30 +214,28 @@ public class ScrollListSkin<E extends Node> extends SkinBase<ScrollList<E>, Beha
 		protected double computePrefWidth( double height )
 		{
 			double insets = getInsets().getLeft() + getInsets().getRight();
-			return insets
-					+ ( isVertical() ? getMaxPrefWidth( height ) : getSkinnable().getSizePerItem() * pager.getItems().size() );
+			return insets + ( isVertical() ? getMaxPrefWidth( height ) : getSizePerItem() * pager.getItems().size() );
 		}
 
 		@Override
 		protected double computePrefHeight( double width )
 		{
 			double insets = getInsets().getTop() + getInsets().getBottom();
-			return insets
-					+ ( isVertical() ? getSkinnable().getSizePerItem() * pager.getItems().size() : getMaxPrefHeight( width ) );
+			return insets + ( isVertical() ? getSizePerItem() * pager.getItems().size() : getMaxPrefHeight( width ) );
 		}
 
 		@Override
 		protected double computeMinWidth( double height )
 		{
 			double insets = getInsets().getLeft() + getInsets().getRight();
-			return insets + ( isVertical() ? getMaxMinWidth( height ) : getSkinnable().getSizePerItem() );
+			return insets + ( isVertical() ? getMaxMinWidth( height ) : getSizePerItem() );
 		}
 
 		@Override
 		protected double computeMinHeight( double width )
 		{
 			double insets = getInsets().getTop() + getInsets().getBottom();
-			return insets + ( isVertical() ? getSkinnable().getSizePerItem() : getMaxMinHeight( width ) );
+			return insets + ( isVertical() ? getSizePerItem() : getMaxMinHeight( width ) );
 		}
 
 		private double getMaxPrefHeight( double width )
@@ -215,7 +291,7 @@ public class ScrollListSkin<E extends Node> extends SkinBase<ScrollList<E>, Beha
 			double left = getInsets().getLeft();
 			double height = getHeight() - top - bottom;
 			double width = getWidth() - left - right;
-			double childSize = getSkinnable().getSizePerItem();
+			double childSize = ScrollableList.this.getSizePerItem();
 
 			boolean vertical = isVertical();
 			double size = vertical ? height : width;

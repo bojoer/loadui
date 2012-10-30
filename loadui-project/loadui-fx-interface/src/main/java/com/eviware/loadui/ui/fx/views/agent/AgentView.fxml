@@ -13,7 +13,7 @@
 <?import java.lang.String?>
 
 <?import com.eviware.loadui.ui.fx.control.OptionsSlider?>
-<?import com.eviware.loadui.ui.fx.control.ScrollList?>
+<?import com.eviware.loadui.ui.fx.control.ScrollableList?>
 
 <fx:root type="javafx.scene.layout.VBox" xmlns:fx="http://javafx.com/fxml" styleClass="agent-view" maxHeight="180">
 	<stylesheets>
@@ -35,6 +35,6 @@
 		<padding>
 			<Insets top="6" right="6" bottom="6" left="6" />
 		</padding>
-		<ScrollList fx:id="scenarioList" orientation="VERTICAL" sizePerItem="18" />
+		<ScrollableList fx:id="scenarioList" orientation="VERTICAL" sizePerItem="18" />
 	</StackPane>
 </fx:root>

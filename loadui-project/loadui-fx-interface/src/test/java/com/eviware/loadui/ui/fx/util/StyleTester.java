@@ -28,7 +28,7 @@ import javafx.scene.shape.RectangleBuilder;
 import javafx.stage.Stage;
 
 import com.eviware.loadui.ui.fx.control.PageList;
-import com.eviware.loadui.ui.fx.control.ScrollList;
+import com.eviware.loadui.ui.fx.control.ScrollableList;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
@@ -46,7 +46,7 @@ public class StyleTester extends Application
 				RectangleBuilder.create().width( 100 ).height( 100 ).fill( Color.ORANGE ).build(),
 				RectangleBuilder.create().width( 100 ).height( 100 ).fill( Color.BROWN ).build() );
 
-		final ScrollList<Rectangle> scrolllist = new ScrollList<>();
+		final ScrollableList<Rectangle> scrolllist = new ScrollableList<>();
 		scrolllist.setSizePerItem( 110 );
 		scrolllist.getItems().setAll( RectangleBuilder.create().width( 100 ).height( 100 ).fill( Color.RED ).build(),
 				RectangleBuilder.create().width( 100 ).height( 100 ).fill( Color.BLUE ).build(),

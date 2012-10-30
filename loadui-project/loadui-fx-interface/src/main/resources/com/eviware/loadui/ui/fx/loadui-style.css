@@ -146,6 +146,10 @@
 	-fx-spacing: 6;
 }
 
+.page-list .label-list .nav {
+	visibility: hidden;
+}
+
 /**
  * OptionsSlider styles
  */

@@ -17,7 +17,7 @@ import javafx.scene.shape.RectangleBuilder;
 
 import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.ui.fx.control.OptionsSlider;
-import com.eviware.loadui.ui.fx.control.ScrollList;
+import com.eviware.loadui.ui.fx.control.ScrollableList;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.Properties;
 
@@ -33,7 +33,7 @@ public class AgentView extends VBox
 	private MenuButton menuButton;
 
 	@FXML
-	private ScrollList<Node> scenarioList;
+	private ScrollableList<Node> scenarioList;
 
 	private final AgentItem agent;
 	private final StringProperty labelProperty;
