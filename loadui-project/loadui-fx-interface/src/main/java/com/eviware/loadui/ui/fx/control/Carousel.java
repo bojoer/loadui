@@ -80,6 +80,8 @@ public class Carousel<E extends Node> extends Control
 	private void initialize()
 	{
 		getStyleClass().setAll( DEFAULT_STYLE_CLASS );
+		
+		label.getStyleClass().add( "list-title" );
 
 		items.addListener( new ListChangeListener<E>()
 		{
