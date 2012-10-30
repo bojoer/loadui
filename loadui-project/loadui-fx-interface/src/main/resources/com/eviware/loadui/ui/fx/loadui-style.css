@@ -27,6 +27,14 @@
 }
 
 /**
+ * TabPane styles
+ */
+
+.detachable-tab .tab-label {
+	-fx-content-display: right;
+}
+
+/**
  * Toolbox styles
  */
  
