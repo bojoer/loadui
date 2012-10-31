@@ -1,9 +1,68 @@
+
+.web-container0{
+	-fx-background-color: #333333;
+}
+
+
 .tab-header-area {
 	/* This seems to be a bug in the implementation (JavaFX 2.2). The spec says to use v-resize, but the implementation fails unless v_resize is used! */
 	-fx-cursor: v_resize;
 	-fx-padding: 0 5 0 5;
 }
 
-.tab {
-	-fx-cursor: default;
+
+.tab-header-background {
+	-fx-background-color:
+	#282828,
+	#9A9A9A,
+	#555555;
+	
+	-fx-background-insets: 
+	0 0 0 0, 
+	0 0 1 0, 
+	1 0 1 0;
+	-fx-border-radius: 0px;
 }
+
+
+.tab {
+	-fx-background-color:
+	#282828,
+	#9A9A9A,
+	#555555;
+	
+	-fx-background-insets:
+	0 0 1 0,
+	0 1 1 0,
+	1 1 1 0;
+	-fx-border-radius: 0px;
+	-fx-background-radius: 0px;
+}
+
+
+.tab:selected {
+	-fx-cursor: default;
+	
+	-fx-background-color:
+	#282828,
+	#C9C9C9,
+	#6f6f6f;
+	
+	-fx-background-insets: 
+	0 0 0 0, 
+	0 1 0 0,
+	1 1 0 0;
+	-fx-border-radius: 0px;
+	-fx-background-radius: 0px;
+}
+
+.tab:hover {
+	-fx-opacity: 0.9;
+	-fx-text-fill: #282828;
+	-fx-cursor: hand;
+}
+
+.tab-content-area {
+	-fx-background-color: #6f6f6f;
+}
+
