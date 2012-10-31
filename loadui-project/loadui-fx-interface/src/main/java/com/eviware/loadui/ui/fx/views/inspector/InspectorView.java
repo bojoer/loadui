@@ -25,7 +25,7 @@ import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabBuilder;
 import javafx.scene.control.TabPane;
@@ -129,13 +129,8 @@ public class InspectorView extends AnchorPane
 			public Tab apply( Inspector inspector )
 			{
 				inspector.initialize( sceneProperty() );
-				Object panel = inspector.getPanel();
-				if( !( panel instanceof Node ) )
-				{
-					panel = new Label( "Unsupported inspector panel." );
-				}
-				return TabBuilder.create().userData( inspector ).text( inspector.getName() ).content( ( Node )panel )
-						.build();
+				return TabBuilder.create().id( inspector.getName() ).userData( inspector ).text( inspector.getName() )
+						.content( inspector.getPanel() ).build();
 			}
 		} );
 
@@ -157,6 +152,8 @@ public class InspectorView extends AnchorPane
 			@Override
 			public void changed( ObservableValue<? extends Tab> arg0, Tab oldTab, Tab newTab )
 			{
+				System.out.println( "Selected changed from: " + ( oldTab == null ? "null" : oldTab.getId() ) + " to: "
+						+ ( newTab == null ? "null" : newTab.getId() ) );
 				if( oldTab != null )
 				{
 					( ( Inspector )oldTab.getUserData() ).onHide();
@@ -164,6 +161,11 @@ public class InspectorView extends AnchorPane
 				if( newTab != null )
 				{
 					( ( Inspector )newTab.getUserData() ).onShow();
+				}
+
+				if( oldTab == null || newTab == null )
+				{
+					return;
 				}
 
 				if( minimizedProperty.get() )
@@ -213,9 +215,32 @@ public class InspectorView extends AnchorPane
 				removed.add( tab );
 			}
 		}
+		final SingleSelectionModel<Tab> selectionModel = tabPane.getSelectionModel();
+		Tab selected = selectionModel.getSelectedItem();
+		selectionModel.clearSelection();
+
 		tabPane.getTabs().addAll( added );
 		tabPane.getTabs().removeAll( removed );
 		FXCollections.sort( tabPane.getTabs(), Ordering.usingToString() );
+
+		if( !tabPane.getTabs().contains( selected ) )
+		{
+			if( tabPane.getTabs().isEmpty() )
+			{
+				if( !minimizedProperty.get() )
+				{
+					dragBehavior.toggleMinimized();
+				}
+			}
+			else
+			{
+				selectionModel.selectFirst();
+			}
+		}
+		else
+		{
+			selectionModel.select( selected );
+		}
 	}
 
 	private double boundHeight( double desiredHeight )
@@ -290,6 +315,10 @@ public class InspectorView extends AnchorPane
 			double target = boundHeight( 0 );
 			if( minimizedProperty.get() )
 			{
+				if( tabPane.getTabs().isEmpty() )
+				{
+					return;
+				}
 				target = boundHeight( lastHeight );
 				if( target <= boundHeight( 0 ) )
 				{
