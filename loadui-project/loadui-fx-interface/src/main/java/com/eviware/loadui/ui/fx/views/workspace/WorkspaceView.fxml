@@ -61,7 +61,9 @@
 				<Carousel fx:id="projectRefCarousel" text="Projects" prefWidth="320" prefHeight="220" />
 				<Carousel fx:id="agentCarousel" text="Agents" prefWidth="320" prefHeight="320" />
 			</VBox>
-			<WebView fx:id="webView" prefWidth="634" prefHeight="562" />
+			<StackPane styleClass="web-container">
+				<WebView fx:id="webView" prefWidth="580" prefHeight="562" />
+			</StackPane>
 		</HBox>
 	</VBox>
 </fx:root>
