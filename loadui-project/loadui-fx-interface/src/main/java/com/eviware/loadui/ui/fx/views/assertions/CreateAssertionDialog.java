@@ -18,7 +18,6 @@ import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.traits.Labeled;
 import com.eviware.loadui.ui.fx.control.ConfirmationDialog;
-import com.google.common.base.Preconditions;
 
 public class CreateAssertionDialog extends ConfirmationDialog
 {
@@ -38,14 +37,14 @@ public class CreateAssertionDialog extends ConfirmationDialog
 
 			for( String statisticName : holder.getStatisticVariable( variableName ).getStatisticNames() )
 			{
-				variableItem.getChildren().add(
-						new TreeItem<Labeled>( holder.getStatisticVariable( variableName ).getStatistic( statisticName,
-								StatisticVariable.MAIN_SOURCE ) ) );
+				Statistic<Number> statistic = ( Statistic<Number> )holder.getStatisticVariable( variableName )
+						.getStatistic( statisticName, StatisticVariable.MAIN_SOURCE );
+				variableItem.getChildren().add( new TreeItem<Labeled>( new StatisticWrapper<Number>( statistic ) ) );
 			}
 
 			if( variable instanceof ListenableValue<?> )
 			{
-				variableItem.getChildren().add( new TreeItem<Labeled>() );
+				variableItem.getChildren().add( new TreeItem<Labeled>( new RealtimeValueWrapper( variable ) ) );
 			}
 			holderItem.getChildren().add( variableItem );
 		}
@@ -58,7 +57,7 @@ public class CreateAssertionDialog extends ConfirmationDialog
 			public void changed( ObservableValue<? extends TreeItem<Labeled>> arg0, TreeItem<Labeled> oldValue,
 					TreeItem<Labeled> newValue )
 			{
-				if( newValue.getValue() instanceof Statistic )
+				if( newValue.getValue() instanceof AssertableWrapper<?> )
 				{
 					setConfirmDisable( false );
 				}
@@ -72,9 +71,9 @@ public class CreateAssertionDialog extends ConfirmationDialog
 		tree.setCellFactory( new Callback<TreeView<Labeled>, TreeCell<Labeled>>()
 		{
 			@Override
-			public TreeCell<Labeled> call( TreeView<Labeled> arg0 )
+			public TreeCell<Labeled> call( TreeView<Labeled> treeView )
 			{
-				return new LabeledTreeCellImpl();
+				return new LabeledTreeCell();
 			}
 		} );
 
@@ -82,10 +81,9 @@ public class CreateAssertionDialog extends ConfirmationDialog
 		getItems().add( tree );
 	}
 
-	public Statistic<Number> getSelectedValue()
+	public AssertableWrapper<ListenableValue<Number>> getSelectedValue()
 	{
 		Labeled selected = tree.getSelectionModel().getSelectedItem().getValue();
-		Preconditions.checkState( selected instanceof Statistic );
-		return ( Statistic<Number> )selected;
+		return ( AssertableWrapper<ListenableValue<Number>> )selected;
 	}
 }

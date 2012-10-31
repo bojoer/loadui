@@ -1,10 +1,5 @@
 package com.eviware.loadui.ui.fx.views.assertions;
 
-import java.util.Objects;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -16,12 +11,15 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.MenuItemBuilder;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.HBoxBuilder;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.VBoxBuilder;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.eviware.loadui.api.assertion.AssertionItem;
 import com.eviware.loadui.api.events.BaseEvent;
-import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.traits.Deletable;
 import com.eviware.loadui.api.traits.Labeled;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
@@ -36,7 +34,7 @@ public class AssertionView<T> extends VBox implements Deletable
 	{
 		this.assertion = assertion;
 
-		//setText( item.getLabel() );
+		getStyleClass().add( "assertion-view" );
 
 		MenuItem rename = MenuItemBuilder.create().text( "Rename" ).onAction( new EventHandler<ActionEvent>()
 		{
@@ -98,13 +96,16 @@ public class AssertionView<T> extends VBox implements Deletable
 		{
 			holderName = ( ( Labeled )assertion.getParent() ).getLabel();
 		}
-		Label holderLabel = new Label( holderName );
+		Label holderLabel = LabelBuilder.create().minWidth( 200.0 ).text( holderName ).build();
 
-		Label assertionLegend = new Label( String.valueOf( assertion.getValue() ) );
+		Label assertionLegend = LabelBuilder.create().text( String.valueOf( assertion.getValue() ) )
+				.maxWidth( Double.MAX_VALUE ).build();
 
-		HBox hBox = HBoxBuilder.create().children( holderLabel, assertionLegend, display ).spacing( 30 ).build();
+		HBox contentPane = HBoxBuilder.create().children( holderLabel, assertionLegend, display )
+				.styleClass( "content-pane" ).spacing( 30 ).build();
+		HBox.setHgrow( assertionLegend, Priority.ALWAYS );
 
-		getChildren().setAll( menu, hBox );
+		getChildren().setAll( menu, contentPane );
 	}
 
 	@Override

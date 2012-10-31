@@ -3,11 +3,8 @@ package com.eviware.loadui.ui.fx.views.assertions;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.fx;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.ofCollection;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.transform;
-import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -30,10 +27,8 @@ import com.eviware.loadui.api.assertion.AssertionAddon;
 import com.eviware.loadui.api.assertion.AssertionItem;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.model.ProjectItem;
-import com.eviware.loadui.api.model.WorkspaceProvider;
 import com.eviware.loadui.api.serialization.ListenableValue;
 import com.eviware.loadui.api.serialization.Resolver;
-import com.eviware.loadui.api.statistics.Statistic;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.ui.fx.api.input.DraggableEvent;
@@ -41,9 +36,7 @@ import com.eviware.loadui.ui.fx.control.ToolBox;
 import com.eviware.loadui.ui.fx.util.ObservableLists;
 import com.eviware.loadui.util.StringUtils;
 import com.eviware.loadui.util.assertion.RangeConstraint;
-import com.eviware.loadui.util.serialization.StatisticResolver;
 import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
 
 public class AssertionInspectorView extends HBox
 {
@@ -51,23 +44,20 @@ public class AssertionInspectorView extends HBox
 
 	private final ToolBox<Node> componentToolBox;
 	private final StatisticsManager statisticsManager;
-	private final WorkspaceProvider workspaceProvider;
 	private final ObservableList<AssertionToolboxItem> toolBoxContent;
 	private final ListView<AssertionItem> assertionList;
 	private final ObjectProperty<ProjectItem> projectProperty = new SimpleObjectProperty<>();
 
 	private ObservableList<AssertionItem> assertions = FXCollections.emptyObservableList();
-	private Statistic<Number> selected;
 
-	public AssertionInspectorView( final StatisticsManager statisticsManager, final WorkspaceProvider workspaceProvider )
+	public AssertionInspectorView( final StatisticsManager statisticsManager )
 	{
 		this.statisticsManager = statisticsManager;
-		this.workspaceProvider = workspaceProvider;
 		componentToolBox = new ToolBox<>( "Assertables" );
 		toolBoxContent = createToolBoxContent();
 		Bindings.bindContent( componentToolBox.getItems(), toolBoxContent );
 
-		assertionList = ListViewBuilder.<AssertionItem> create().build();
+		assertionList = ListViewBuilder.<AssertionItem> create().style( "-fx-padding: 20;" ).build();
 
 		projectProperty.addListener( new ChangeListener<ProjectItem>()
 		{
@@ -122,7 +112,6 @@ public class AssertionInspectorView extends HBox
 		getChildren().setAll( componentToolBox, assertionList );
 	}
 
-	@SuppressWarnings( "unchecked" )
 	private void handleDrop( DraggableEvent event )
 	{
 		final StatisticHolder holder = ( StatisticHolder )event.getData();
@@ -133,11 +122,13 @@ public class AssertionInspectorView extends HBox
 			@Override
 			public void handle( ActionEvent actionEvent )
 			{
-				selected = dialog.getSelectedValue();
+				AssertableWrapper<ListenableValue<Number>> selectedWrapper = dialog.getSelectedValue();
 
-				Resolver resolver = new StatisticResolver( selected );
-				AssertionItem.Mutable<Number> assertion = holder.getCanvas().getAddon( AssertionAddon.class )
-						.createAssertion( holder, ( Resolver<? extends ListenableValue<Number>> )resolver );
+				Resolver<? extends ListenableValue<Number>> resolver = selectedWrapper.getResolver();
+
+				AssertionAddon assertionAddon = holder.getCanvas().getAddon( AssertionAddon.class );
+				AssertionItem.Mutable<Number> assertion = assertionAddon.createAssertion( holder, resolver );
+
 				assertion.setConstraint( new RangeConstraint( 0, 10 ) );
 				assertion.setTolerance( 1, 0 );
 

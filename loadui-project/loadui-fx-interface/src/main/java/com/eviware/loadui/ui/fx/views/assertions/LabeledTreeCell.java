@@ -4,7 +4,7 @@ import com.eviware.loadui.api.traits.Labeled;
 
 import javafx.scene.control.TreeCell;
 
-public class LabeledTreeCellImpl extends TreeCell<Labeled>
+public class LabeledTreeCell extends TreeCell<Labeled>
 {
 	@Override
 	public void updateItem( Labeled item, boolean empty )
