@@ -10,25 +10,20 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Orientation;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.SceneBuilder;
 import javafx.scene.control.ButtonBuilder;
 import javafx.scene.control.SplitPaneBuilder;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextAreaBuilder;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.control.ToolBar;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.VBoxBuilder;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.RectangleBuilder;
 import javafx.stage.Stage;
 
-import com.eviware.loadui.ui.fx.control.PageList;
-import com.eviware.loadui.ui.fx.control.ScrollableList;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
@@ -36,37 +31,18 @@ public class StyleTester extends Application
 {
 	private Node createTestNode()
 	{
-		final PageList<Rectangle> pagelist = new PageList<>();
-		pagelist.setWidthPerItem( 110 );
-		pagelist.getItems().setAll( RectangleBuilder.create().width( 100 ).height( 100 ).fill( Color.RED ).build(),
-				RectangleBuilder.create().width( 100 ).height( 100 ).fill( Color.BLUE ).build(),
-				RectangleBuilder.create().width( 100 ).height( 100 ).fill( Color.GREEN ).build(),
-				RectangleBuilder.create().width( 100 ).height( 100 ).fill( Color.YELLOW ).build(),
-				RectangleBuilder.create().width( 100 ).height( 100 ).fill( Color.PINK ).build(),
-				RectangleBuilder.create().width( 100 ).height( 100 ).fill( Color.ORANGE ).build(),
-				RectangleBuilder.create().width( 100 ).height( 100 ).fill( Color.BROWN ).build() );
 
-		final ScrollableList<Rectangle> scrolllist = new ScrollableList<>();
-		scrolllist.setSizePerItem( 110 );
-		scrolllist.getItems().setAll( RectangleBuilder.create().width( 100 ).height( 100 ).fill( Color.RED ).build(),
-				RectangleBuilder.create().width( 100 ).height( 100 ).fill( Color.BLUE ).build(),
-				RectangleBuilder.create().width( 100 ).height( 100 ).fill( Color.GREEN ).build(),
-				RectangleBuilder.create().width( 100 ).height( 100 ).fill( Color.YELLOW ).build(),
-				RectangleBuilder.create().width( 100 ).height( 100 ).fill( Color.PINK ).build(),
-				RectangleBuilder.create().width( 100 ).height( 100 ).fill( Color.ORANGE ).build(),
-				RectangleBuilder.create().width( 100 ).height( 100 ).fill( Color.BROWN ).build() );
+		StackPane sp0 = new StackPane();
+		ToolBar tb = new ToolBar();
 
-		scrolllist.getItems().get( 3 ).setOnMouseClicked( new EventHandler<MouseEvent>()
-		{
-			@Override
-			public void handle( MouseEvent event )
-			{
-				scrolllist.setOrientation( scrolllist.getOrientation() == Orientation.VERTICAL ? Orientation.HORIZONTAL
-						: Orientation.VERTICAL );
-			}
-		} );
+		tb.setId( "topToolBar" );
+		tb.minHeight( 60d );
+		tb.setMinHeight( 60d );
+		sp0.getChildren().add( tb );
 
-		return VBoxBuilder.create().children( pagelist, scrolllist ).build();
+		sp0.setPadding( new Insets( 40, 40, 40, 40 ) );
+		sp0.getStyleClass().add( "web-container0" );
+		return sp0;
 	}
 
 	@Override
@@ -151,6 +127,8 @@ public class StyleTester extends Application
 
 		//		final Dialog dialog = new ConfirmationDialog( panel, "sdad", "2d" );
 		//		dialog.show();
+
+		//ScenicView.show( primaryStage.getScene() );
 	}
 
 	public static void main( String[] args )
