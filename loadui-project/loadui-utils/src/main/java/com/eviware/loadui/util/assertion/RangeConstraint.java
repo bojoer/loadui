@@ -29,6 +29,7 @@ import com.google.common.base.Preconditions;
  * inclusive.
  * 
  * @author dain.nilsson
+ * @author henrik.olsson
  */
 public class RangeConstraint implements Constraint<Number>
 {
@@ -36,7 +37,8 @@ public class RangeConstraint implements Constraint<Number>
 
 	private final double min;
 	private final double max;
-	private transient String stringRepr;
+	private transient String constraintType;
+	private transient String toStringValue;
 
 	public RangeConstraint( @Nonnull Number min, @Nonnull Number max )
 	{
@@ -82,19 +84,31 @@ public class RangeConstraint implements Constraint<Number>
 	@Override
 	public String toString()
 	{
-		return stringRepr;
+		return constraintType + " " + toStringValue;
 	}
 
 	private void buildToString()
 	{
-		stringRepr = min == max ? String.format( "Equals %s", FormattingUtils.formatNumber( this.min, 2 ) ) : String
-				.format( "Range %s - %s", FormattingUtils.formatNumber( this.min, 2 ),
-						FormattingUtils.formatNumber( this.max, 2 ) );
+		constraintType = min == max ? "Equals" : "Range";
+		toStringValue = min == max ? FormattingUtils.formatNumber( this.min, 2 ) : String.format( "%s \u2013 %s",
+				FormattingUtils.formatNumber( this.min, 2 ), FormattingUtils.formatNumber( this.max, 2 ) );
 	}
 
 	private void readObject( java.io.ObjectInputStream in ) throws IOException, ClassNotFoundException
 	{
 		in.defaultReadObject();
 		buildToString();
+	}
+
+	@Override
+	public String constraintType()
+	{
+		return constraintType;
+	}
+
+	@Override
+	public String value()
+	{
+		return toStringValue;
 	}
 }

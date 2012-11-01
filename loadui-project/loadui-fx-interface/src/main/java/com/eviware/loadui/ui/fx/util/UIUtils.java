@@ -4,17 +4,30 @@ import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
+import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.eviware.loadui.ui.fx.api.ImageResolver;
 import com.sun.javafx.PlatformUtil;
 
 public class UIUtils
 {
 	public static final Logger LOG = LoggerFactory.getLogger( UIUtils.class );
+
+	public static Image getImageFor( Object object )
+	{
+		for( ImageResolver resolver : ObservableLists.ofServices( ImageResolver.class ) )
+		{
+			Image image = resolver.resolveImageFor( object );
+			if( image != null )
+				return image;
+		}
+		return new Image( "{__ROOT__}images/png/default-component-icon.png" );
+	}
 
 	public static String toCssId( String label )
 	{

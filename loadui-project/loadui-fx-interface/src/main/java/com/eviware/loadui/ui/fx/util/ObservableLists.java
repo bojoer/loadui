@@ -24,16 +24,20 @@ import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceEvent;
 import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceReference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.events.EventFirer;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.traits.Releasable;
+import com.eviware.loadui.ui.fx.views.assertions.AssertionInspectorView;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.ReleasableUtils;
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.base.Supplier;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -55,6 +59,8 @@ import com.google.common.collect.Multimaps;
  */
 public class ObservableLists
 {
+	protected static final Logger log = LoggerFactory.getLogger( ObservableLists.class );
+
 	//Used to create references from key to values, preventing the values from being GCd unless the key has.
 	private static final Multimap<Object, Object> references = Multimaps.newSetMultimap(
 			new WeakHashMap<Object, Collection<Object>>(), new Supplier<Set<Object>>()

@@ -647,6 +647,12 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 	}
 
 	@Override
+	public Collection<? extends StatisticVariable> getStatisticVariables()
+	{
+		return statisticHolderSupport.getStatisticVariables();
+	}
+
+	@Override
 	public boolean isAbortOnFinish()
 	{
 		return abortOnFinish.getValue();

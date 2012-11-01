@@ -21,6 +21,8 @@ import java.util.Collections;
 import java.util.EventObject;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+
 import com.eviware.loadui.api.addon.Addon;
 import com.eviware.loadui.api.addressable.AddressableRegistry;
 import com.eviware.loadui.api.addressable.AddressableRegistry.DuplicateAddressException;
@@ -31,6 +33,7 @@ import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.messaging.MessageEndpoint;
 import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.Assignment;
+import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.CanvasObjectItem;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.model.ProjectItem;
@@ -385,6 +388,12 @@ public class AgentProjectItem implements ProjectItem
 	}
 
 	@Override
+	public Collection<? extends StatisticVariable> getStatisticVariables()
+	{
+		return Collections.emptyList();
+	}
+
+	@Override
 	public File getProjectFile()
 	{
 		throw new UnsupportedOperationException();
@@ -533,5 +542,12 @@ public class AgentProjectItem implements ProjectItem
 	public Set<Statistic.Descriptor> getDefaultStatistics()
 	{
 		return ImmutableSet.of();
+	}
+
+	@Override
+	@Nonnull
+	public CanvasItem getCanvas()
+	{
+		return this;
 	}
 }

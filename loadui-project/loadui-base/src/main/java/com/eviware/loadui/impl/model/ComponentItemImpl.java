@@ -410,6 +410,12 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		return statisticHolderSupport.getStatisticVariableNames();
 	}
 
+	@Override
+	public Collection<? extends StatisticVariable> getStatisticVariables()
+	{
+		return statisticHolderSupport.getStatisticVariables();
+	}
+
 	public void sendAgentMessage( AgentItem agent, TerminalMessage message )
 	{
 		if( agent.isReady() )
