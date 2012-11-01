@@ -159,8 +159,8 @@ public class CarouselSkin<E extends Node> extends SkinBase<Carousel<E>, Behavior
 
 	private class CarouselDisplay extends StackPane
 	{
-		private final Button prevButton = ButtonBuilder.create().styleClass( "nav", "left" ).build();
-		private final Button nextButton = ButtonBuilder.create().styleClass( "nav", "right" ).build();
+		private final Button prevButton = ButtonBuilder.create().styleClass( "nav", "prev", "left" ).build();
+		private final Button nextButton = ButtonBuilder.create().styleClass( "nav", "next", "right" ).build();
 
 		private CarouselDisplay()
 		{

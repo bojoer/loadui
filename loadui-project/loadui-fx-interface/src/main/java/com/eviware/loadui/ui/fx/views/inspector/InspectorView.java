@@ -1,7 +1,9 @@
 package com.eviware.loadui.ui.fx.views.inspector;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import javafx.animation.Interpolator;
@@ -41,12 +43,16 @@ import com.eviware.loadui.ui.fx.api.perspective.PerspectiveEvent;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.ObservableLists;
 import com.eviware.loadui.ui.fx.util.UIUtils;
+import com.eviware.loadui.util.collections.SafeExplicitOrdering;
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.collect.Ordering;
 
 public class InspectorView extends AnchorPane
 {
+	private static final Ordering<String> INSPECTOR_ORDERING = SafeExplicitOrdering.of( "System Log", "Event Log",
+			"Monitors" ).compound( Ordering.natural() );
+
 	private final BooleanProperty minimizedProperty = new SimpleBooleanProperty( this, "minimized", true );
 
 	private final ObservableList<Inspector> inspectors = FXCollections.observableArrayList();
@@ -152,12 +158,19 @@ public class InspectorView extends AnchorPane
 			@Override
 			public void changed( ObservableValue<? extends Tab> arg0, Tab oldTab, Tab newTab )
 			{
+				System.out.println( "Selection changed: " + ( oldTab == null ? "null" : oldTab.getText() ) + " to "
+						+ ( newTab == null ? "null" : newTab.getText() ) );
+
 				if( oldTab != null )
 				{
 					( ( Inspector )oldTab.getUserData() ).onHide();
 				}
-				if( newTab != null )
+				else if( newTab != null )
 				{
+					if( !tabPane.getTabs().contains( newTab ) )
+					{
+						tabPane.getSelectionModel().selectFirst();
+					}
 					( ( Inspector )newTab.getUserData() ).onShow();
 				}
 
@@ -190,36 +203,35 @@ public class InspectorView extends AnchorPane
 			}
 		} );
 
-		setMaxHeight( boundHeight( 0 ) );
+		setMaxHeight( boundHeight( 26 ) );
 	}
 
 	private void refreshTabs()
 	{
-		Set<Tab> added = new HashSet<>();
-		Set<Tab> removed = new HashSet<>();
+		List<Tab> shownTabs = new ArrayList<>();
 		for( Tab tab : inspectorTabs )
 		{
 			Inspector inspector = ( Inspector )tab.getUserData();
 			String regex = Objects.firstNonNull( inspector.getPerspectiveRegex(), ".*" );
 			if( Pattern.matches( regex, PerspectiveEvent.getPath( perspective.getValue() ) ) )
 			{
-				if( !tabPane.getTabs().contains( tab ) )
-				{
-					added.add( tab );
-				}
-			}
-			else if( tabPane.getTabs().contains( tab ) )
-			{
-				removed.add( tab );
+				shownTabs.add( tab );
 			}
 		}
 		final SingleSelectionModel<Tab> selectionModel = tabPane.getSelectionModel();
 		Tab selected = selectionModel.getSelectedItem();
 		selectionModel.clearSelection();
 
-		tabPane.getTabs().addAll( added );
-		tabPane.getTabs().removeAll( removed );
-		FXCollections.sort( tabPane.getTabs(), Ordering.usingToString() );
+		Collections.sort( shownTabs, new Comparator<Tab>()
+		{
+			@Override
+			public int compare( Tab o1, Tab o2 )
+			{
+				return INSPECTOR_ORDERING.compare( o1.getText(), o2.getText() );
+			}
+		} );
+		System.out.println( "Ordering: " + shownTabs );
+		tabPane.getTabs().setAll( shownTabs );
 
 		if( !tabPane.getTabs().contains( selected ) )
 		{
