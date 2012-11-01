@@ -1,5 +1,6 @@
 package com.eviware.loadui.ui.fx.views.rename;
 
+import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -20,16 +21,15 @@ public class RenameDialog extends ConfirmationDialog
 
 		getItems().setAll( newName, newNameField );
 
+		confirmDisableProperty().bind( Bindings.not( ( newNameField.isValidProperty() ) ) );
+
 		setOnConfirm( new EventHandler<ActionEvent>()
 		{
 			@Override
 			public void handle( ActionEvent event )
 			{
-				if( newNameField.validate() )
-				{
-					close();
-					labeled.setLabel( newNameField.getValue() );
-				}
+				close();
+				labeled.setLabel( newNameField.getValue() );
 			}
 		} );
 	}

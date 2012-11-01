@@ -24,6 +24,7 @@ import javafx.scene.layout.VBoxBuilder;
 import javafx.stage.Stage;
 
 import com.eviware.loadui.ui.fx.control.ToolBox;
+import com.eviware.loadui.ui.fx.views.assertions.ConstraintPane;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
@@ -31,7 +32,6 @@ public class StyleTester extends Application
 {
 	private Node createTestNode()
 	{
-
 		StackPane sp0 = new StackPane();
 		ToolBox<Node> tb = new ToolBox<>();
 

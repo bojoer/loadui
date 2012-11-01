@@ -134,7 +134,7 @@ public class AssertionInspectorView extends HBox
 			@Override
 			public void handle( ActionEvent actionEvent )
 			{
-				AssertableWrapper<ListenableValue<Number>> selectedWrapper = dialog.getSelectedValue();
+				AssertableWrapper<ListenableValue<Number>> selectedWrapper = dialog.getSelectedAssertable();
 
 				Resolver<? extends ListenableValue<Number>> resolver = selectedWrapper.getResolver();
 
