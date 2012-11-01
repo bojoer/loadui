@@ -8,6 +8,7 @@
 	/* This seems to be a bug in the implementation (JavaFX 2.2). The spec says to use v-resize, but the implementation fails unless v_resize is used! */
 	-fx-cursor: v_resize;
 	-fx-padding: 0 5 0 5;
+	-fx-background-color: #6f6f6f;
 }
 
 
@@ -56,13 +57,13 @@
 	-fx-background-radius: 0px;
 }
 
+.tab:selected .tab-label {
+	-fx-text-fill: #BCBCBC;
+}
+
 .tab:hover {
 	-fx-opacity: 0.9;
-	-fx-text-fill: #282828;
 	-fx-cursor: hand;
 }
 
-.tab-content-area {
-	-fx-background-color: #6f6f6f;
-}
 
