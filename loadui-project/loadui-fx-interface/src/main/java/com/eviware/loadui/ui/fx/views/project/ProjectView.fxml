@@ -25,10 +25,10 @@
 	<VBox spacing="10" fillWidth="true" AnchorPane.topAnchor="0"
 		AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="0"
 		AnchorPane.leftAnchor="0">
-		<ToolBar minHeight="60" />
+		<ToolBar minHeight="60" styleClass="header"/>
 		<StackPane VBox.vgrow="always">
 			<padding>
-				<Insets top="-40" />
+				<Insets top="-37" />
 			</padding>
 			<children>
 				<TabPane tabClosingPolicy="unavailable">
