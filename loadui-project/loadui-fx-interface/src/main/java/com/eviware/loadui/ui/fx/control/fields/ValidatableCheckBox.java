@@ -1,8 +1,11 @@
 package com.eviware.loadui.ui.fx.control.fields;
 
+import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.scene.control.CheckBox;
 
-public class ValidatableCheckBox extends CheckBox implements Field.Validatable<Boolean>
+import com.eviware.loadui.ui.fx.util.Properties;
+
+public class ValidatableCheckBox extends CheckBox implements Field<Boolean>, Validatable
 {
 	public ValidatableCheckBox( String label )
 	{
@@ -16,7 +19,13 @@ public class ValidatableCheckBox extends CheckBox implements Field.Validatable<B
 	}
 
 	@Override
-	public boolean validate()
+	public ReadOnlyBooleanProperty isValidProperty()
+	{
+		return Properties.TRUE;
+	}
+
+	@Override
+	public boolean isValid()
 	{
 		return true;
 	}

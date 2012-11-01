@@ -7,7 +7,11 @@
 /**
  * General reusable styles
  */
- 
+
+.strong {
+	-fx-font-weight: bold;
+} 
+
 .label.icon {
 	-fx-content-display: top;
 	-fx-wrap-text: true;

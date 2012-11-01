@@ -26,6 +26,7 @@ import javafx.scene.shape.RectangleBuilder;
 import javafx.stage.Stage;
 
 import com.eviware.loadui.ui.fx.control.ToolBox;
+import com.eviware.loadui.ui.fx.views.assertions.ConstraintPane;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
@@ -33,15 +34,7 @@ public class StyleTester extends Application
 {
 	private Node createTestNode()
 	{
-		ToolBox<Rectangle> toolBox = new ToolBox<>( "Toolbox" );
-		Rectangle r1 = RectangleBuilder.create().width( 50 ).height( 50 ).fill( Color.RED ).build();
-		ToolBox.setCategory( r1, "Cat 1" );
-		Rectangle r2 = RectangleBuilder.create().width( 50 ).height( 50 ).fill( Color.BLUE ).build();
-		ToolBox.setCategory( r2, "Cat 2" );
-		Rectangle r3 = RectangleBuilder.create().width( 50 ).height( 50 ).fill( Color.BLUE ).build();
-		ToolBox.setCategory( r3, "Cat 2" );
-		toolBox.getItems().addAll( r1, r2, r3 );
-		return toolBox;
+		return new ConstraintPane();
 	}
 
 	@Override

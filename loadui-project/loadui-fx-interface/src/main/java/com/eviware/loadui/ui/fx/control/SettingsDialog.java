@@ -17,7 +17,7 @@ import javax.annotation.Nonnull;
 
 import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.ui.fx.control.fields.Field;
-import com.eviware.loadui.ui.fx.control.fields.Field.Validatable;
+import com.eviware.loadui.ui.fx.control.fields.Validatable;
 import com.eviware.loadui.ui.fx.control.fields.ValidatableCheckBox;
 import com.eviware.loadui.ui.fx.control.fields.ValidatableLongField;
 import com.eviware.loadui.ui.fx.control.fields.ValidatableStringField;
@@ -99,7 +99,7 @@ public class SettingsDialog extends ConfirmationDialog
 
 	public static class SettingsTab extends Tab
 	{
-		private final Map<Field.Validatable<?>, Property<?>> fieldToProperty = new HashMap<>();
+		private final Map<Field<?>, Property<?>> fieldToProperty = new HashMap<>();
 		private final VBox vBox = new VBox( VERTICAL_SPACING );
 
 		private SettingsTab( String label )
@@ -141,17 +141,17 @@ public class SettingsDialog extends ConfirmationDialog
 		private boolean validate()
 		{
 			boolean wasValid = true;
-			for( Entry<Field.Validatable<?>, Property<?>> entry : fieldToProperty.entrySet() )
+			for( Entry<Field<?>, Property<?>> entry : fieldToProperty.entrySet() )
 			{
-				Field.Validatable<?> field = entry.getKey();
-				wasValid = wasValid && field.validate();
+				Validatable field = entry.getKey();
+				wasValid = wasValid && field.isValid();
 			}
 			return wasValid;
 		}
 
 		private void save()
 		{
-			for( Entry<Validatable<?>, Property<?>> entry : fieldToProperty.entrySet() )
+			for( Entry<Field<?>, Property<?>> entry : fieldToProperty.entrySet() )
 			{
 				Field<?> field = entry.getKey();
 				entry.getValue().setValue( field.getValue() );
