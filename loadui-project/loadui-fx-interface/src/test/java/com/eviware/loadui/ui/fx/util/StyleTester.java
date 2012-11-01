@@ -10,6 +10,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.SceneBuilder;
 import javafx.scene.control.ButtonBuilder;
@@ -20,9 +21,6 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.VBoxBuilder;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.RectangleBuilder;
 import javafx.stage.Stage;
 
 import com.eviware.loadui.ui.fx.control.ToolBox;
@@ -33,15 +31,16 @@ public class StyleTester extends Application
 {
 	private Node createTestNode()
 	{
-		ToolBox<Rectangle> toolBox = new ToolBox<>( "Toolbox" );
-		Rectangle r1 = RectangleBuilder.create().width( 50 ).height( 50 ).fill( Color.RED ).build();
-		ToolBox.setCategory( r1, "Cat 1" );
-		Rectangle r2 = RectangleBuilder.create().width( 50 ).height( 50 ).fill( Color.BLUE ).build();
-		ToolBox.setCategory( r2, "Cat 2" );
-		Rectangle r3 = RectangleBuilder.create().width( 50 ).height( 50 ).fill( Color.BLUE ).build();
-		ToolBox.setCategory( r3, "Cat 2" );
-		toolBox.getItems().addAll( r1, r2, r3 );
-		return toolBox;
+
+		StackPane sp0 = new StackPane();
+		ToolBox<Node> tb = new ToolBox<>();
+
+		tb.getItems().addAll( new StackPane(), new StackPane(), new StackPane(), new StackPane() );
+
+		sp0.getChildren().add( tb );
+		sp0.setPadding( new Insets( 40, 40, 40, 40 ) );
+		sp0.getStyleClass().add( "web-container0" );
+		return sp0;
 	}
 
 	@Override
@@ -54,6 +53,8 @@ public class StyleTester extends Application
 
 		final File styleSheet = File.createTempFile( "style", ".css" );
 
+		final String externalForm = new File( "src/main/resources/com/eviware/loadui/ui/fx/loadui-style.css" ).toURI()
+				.toURL().toExternalForm();
 		styleArea.textProperty().addListener( new ChangeListener<String>()
 		{
 			@Override
@@ -69,11 +70,8 @@ public class StyleTester extends Application
 						{
 							try
 							{
-								styleArea
-										.getScene()
-										.getStylesheets()
-										.setAll( "src/main/resources/com/eviware/loadui/ui/fx/loadui-style.css",
-												styleSheet.toURI().toURL().toExternalForm() );
+								styleArea.getScene().getStylesheets()
+										.setAll( externalForm, styleSheet.toURI().toURL().toExternalForm() );
 								System.out.println( "Updated style!" );
 							}
 							catch( MalformedURLException e )
@@ -115,17 +113,14 @@ public class StyleTester extends Application
 																	}
 																} ).build() ).build() ).build() ).build() );
 
-		primaryStage
-				.getScene()
-				.getStylesheets()
-				.setAll(
-						new File( "src/main/resources/com/eviware/loadui/ui/fx/loadui-style.css" ).toURI().toURL()
-								.toExternalForm() );
+		primaryStage.getScene().getStylesheets().setAll( externalForm );
 
 		primaryStage.show();
 
 		//		final Dialog dialog = new ConfirmationDialog( panel, "sdad", "2d" );
 		//		dialog.show();
+
+		//ScenicView.show( primaryStage.getScene() );
 	}
 
 	public static void main( String[] args )

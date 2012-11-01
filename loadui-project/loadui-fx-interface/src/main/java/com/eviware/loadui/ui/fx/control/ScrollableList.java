@@ -81,13 +81,15 @@ public class ScrollableList<E extends Node> extends StackPane
 		{
 			prevButton.getStyleClass().add( "up" );
 			nextButton.getStyleClass().add( "down" );
-			box = VBoxBuilder.create().alignment( Pos.CENTER ).children( prevButton, itemBox, nextButton ).build();
+			box = VBoxBuilder.create().styleClass( "box" ).alignment( Pos.CENTER )
+					.children( prevButton, itemBox, nextButton ).build();
 		}
 		else
 		{
 			prevButton.getStyleClass().add( "left" );
 			nextButton.getStyleClass().add( "right" );
-			box = HBoxBuilder.create().alignment( Pos.CENTER ).children( prevButton, itemBox, nextButton ).build();
+			box = HBoxBuilder.create().styleClass( "box" ).alignment( Pos.CENTER )
+					.children( prevButton, itemBox, nextButton ).build();
 		}
 		box.setOnScroll( new EventHandler<ScrollEvent>()
 		{
