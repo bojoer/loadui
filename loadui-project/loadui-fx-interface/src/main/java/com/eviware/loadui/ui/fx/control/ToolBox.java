@@ -3,7 +3,9 @@ package com.eviware.loadui.ui.fx.control;
 import java.util.Comparator;
 
 import javafx.beans.DefaultProperty;
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -14,6 +16,7 @@ import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Ordering;
 
 @DefaultProperty( "items" )
@@ -82,6 +85,8 @@ public class ToolBox<E extends Node> extends Control
 	public void initialize()
 	{
 		getStyleClass().setAll( DEFAULT_STYLE_CLASS );
+
+		label.getStyleClass().add( "title" );
 
 		itemComparators.put( null, Ordering.usingToString() );
 
@@ -158,5 +163,23 @@ public class ToolBox<E extends Node> extends Control
 			return itemComparators.get( category );
 		}
 		return getComparator();
+	}
+
+	private final DoubleProperty heightPerItem = new SimpleDoubleProperty( this, "heightPerItem", 100.0 );
+
+	public DoubleProperty heightPerItemProperty()
+	{
+		return heightPerItem;
+	}
+
+	public double getHeightPerItem()
+	{
+		return heightPerItem.get();
+	}
+
+	public void setHeightPerItem( double value )
+	{
+		Preconditions.checkArgument( value > 0, "heightPerItem must be >0, was %d", value );
+		heightPerItem.set( value );
 	}
 }

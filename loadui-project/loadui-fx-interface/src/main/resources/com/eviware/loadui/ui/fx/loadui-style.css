@@ -40,12 +40,9 @@
  
 .tool-box {
 	-fx-skin: "com.eviware.loadui.ui.fx.control.skin.ToolBoxSkin";
-}
- 
-.tool-box-region {
-	-fx-background-color: black, #4f4f4f, #565656;
-	-fx-background-insets: 0, 1, 2;
-	-fx-background-radius: 0 3 3 0;
+	-fx-background-color: black, #4f4f4f, #484848, #565656;
+	-fx-background-insets: 0, 1, 2, 20 3 3 2;
+	-fx-background-radius: 0 3 3 0, 0 3 3 0, 0 3 3 0, 0 0 3 0;
 	-fx-padding: 0 0 15 0;
 	-fx-alignment: center;
 }
@@ -57,24 +54,22 @@
 .tool-box .title {
 	-fx-padding: 2;
 	-fx-font-size: 12;
-	-fx-alignment: baseline-left;
-	-fx-background-color: #4f4f4f;
-	-fx-background-insets: 1;
-	-fx-background-radius: 0 3 0 0;
+}
+
+.tool-box .scroll-list {
+	-fx-padding: 4 0 4 0;
+}
+
+.tool-box .item-box {
+	-fx-background-color: #616161, #6d6d6d, #505050, #4b4b4b, #565656;
+	-fx-background-insets: 3 3 2 1, 2 3 3 1, 2 3 4 1, 3 3 4 1, 3 3 4 1;
+	-fx-padding: 4 0 4 0;
 }
 
 .tool-box .category {
 	-fx-padding: 0 5 0 0;
-}
-
-.tool-box .separator .line {
-	-fx-border-style: null;
-	-fx-border-color: transparent;
-}
-
-.tool-box .separator {
-	-fx-padding: 1;
-	-fx-background-color: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.5) 50%, rgba(255,255,255,0.5) 51%, rgba(255,255,255,0) 100%);
+	-fx-background-color: #4b4b4b, #505050, #6d6d6d, #616161, #565656;
+	-fx-background-insets: 0 1 0 1, 1 3 1 1, 0 3 2 1, 1 3 2 1, 2 3 2 1;
 }
 
 .tool-box .expander-button:disabled {

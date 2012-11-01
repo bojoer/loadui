@@ -10,14 +10,12 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.SceneBuilder;
 import javafx.scene.control.ButtonBuilder;
 import javafx.scene.control.SplitPaneBuilder;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextAreaBuilder;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -27,8 +25,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.RectangleBuilder;
 import javafx.stage.Stage;
 
-import com.eviware.loadui.ui.fx.control.PageList;
-import com.eviware.loadui.ui.fx.control.ScrollableList;
+import com.eviware.loadui.ui.fx.control.ToolBox;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
@@ -36,37 +33,15 @@ public class StyleTester extends Application
 {
 	private Node createTestNode()
 	{
-		final PageList<Rectangle> pagelist = new PageList<>();
-		pagelist.setWidthPerItem( 110 );
-		pagelist.getItems().setAll( RectangleBuilder.create().width( 100 ).height( 100 ).fill( Color.RED ).build(),
-				RectangleBuilder.create().width( 100 ).height( 100 ).fill( Color.BLUE ).build(),
-				RectangleBuilder.create().width( 100 ).height( 100 ).fill( Color.GREEN ).build(),
-				RectangleBuilder.create().width( 100 ).height( 100 ).fill( Color.YELLOW ).build(),
-				RectangleBuilder.create().width( 100 ).height( 100 ).fill( Color.PINK ).build(),
-				RectangleBuilder.create().width( 100 ).height( 100 ).fill( Color.ORANGE ).build(),
-				RectangleBuilder.create().width( 100 ).height( 100 ).fill( Color.BROWN ).build() );
-
-		final ScrollableList<Rectangle> scrolllist = new ScrollableList<>();
-		scrolllist.setSizePerItem( 110 );
-		scrolllist.getItems().setAll( RectangleBuilder.create().width( 100 ).height( 100 ).fill( Color.RED ).build(),
-				RectangleBuilder.create().width( 100 ).height( 100 ).fill( Color.BLUE ).build(),
-				RectangleBuilder.create().width( 100 ).height( 100 ).fill( Color.GREEN ).build(),
-				RectangleBuilder.create().width( 100 ).height( 100 ).fill( Color.YELLOW ).build(),
-				RectangleBuilder.create().width( 100 ).height( 100 ).fill( Color.PINK ).build(),
-				RectangleBuilder.create().width( 100 ).height( 100 ).fill( Color.ORANGE ).build(),
-				RectangleBuilder.create().width( 100 ).height( 100 ).fill( Color.BROWN ).build() );
-
-		scrolllist.getItems().get( 3 ).setOnMouseClicked( new EventHandler<MouseEvent>()
-		{
-			@Override
-			public void handle( MouseEvent event )
-			{
-				scrolllist.setOrientation( scrolllist.getOrientation() == Orientation.VERTICAL ? Orientation.HORIZONTAL
-						: Orientation.VERTICAL );
-			}
-		} );
-
-		return VBoxBuilder.create().children( pagelist, scrolllist ).build();
+		ToolBox<Rectangle> toolBox = new ToolBox<>( "Toolbox" );
+		Rectangle r1 = RectangleBuilder.create().width( 50 ).height( 50 ).fill( Color.RED ).build();
+		ToolBox.setCategory( r1, "Cat 1" );
+		Rectangle r2 = RectangleBuilder.create().width( 50 ).height( 50 ).fill( Color.BLUE ).build();
+		ToolBox.setCategory( r2, "Cat 2" );
+		Rectangle r3 = RectangleBuilder.create().width( 50 ).height( 50 ).fill( Color.BLUE ).build();
+		ToolBox.setCategory( r3, "Cat 2" );
+		toolBox.getItems().addAll( r1, r2, r3 );
+		return toolBox;
 	}
 
 	@Override
@@ -97,7 +72,7 @@ public class StyleTester extends Application
 								styleArea
 										.getScene()
 										.getStylesheets()
-										.setAll( "/com/eviware/loadui/ui/fx/loadui-style.css",
+										.setAll( "src/main/resources/com/eviware/loadui/ui/fx/loadui-style.css",
 												styleSheet.toURI().toURL().toExternalForm() );
 								System.out.println( "Updated style!" );
 							}

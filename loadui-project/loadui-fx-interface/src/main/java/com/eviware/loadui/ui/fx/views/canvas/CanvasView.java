@@ -40,6 +40,8 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.RegionBuilder;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.StackPaneBuilder;
+import javafx.scene.layout.VBox;
+import javafx.scene.layout.VBoxBuilder;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
@@ -285,8 +287,11 @@ public class CanvasView extends StackPane
 		defineComparators( descriptors );
 
 		descriptors.setMaxWidth( 100 );
-		StackPane.setAlignment( descriptors, Pos.CENTER_LEFT );
-		StackPane.setMargin( descriptors, new Insets( 10, 0, 10, 0 ) );
+		descriptors.setHeightPerItem( 120 );
+
+		VBox descriptorPane = VBoxBuilder.create().children( descriptors ).build();
+		StackPane.setAlignment( descriptorPane, Pos.CENTER_LEFT );
+		StackPane.setMargin( descriptorPane, new Insets( 10, 0, 30, 0 ) );
 
 		Bindings.bindContent( descriptors.getItems(), createToolBoxContent() );
 
@@ -316,7 +321,7 @@ public class CanvasView extends StackPane
 
 		setAlignment( Pos.TOP_LEFT );
 
-		getChildren().addAll( createGrid(), componentWrapper, zoomSlider, descriptors );
+		getChildren().addAll( createGrid(), componentWrapper, zoomSlider, descriptorPane );
 
 		Selectable.installDragToSelectArea( this );
 		initScrolling();

@@ -46,8 +46,8 @@
 				</right>
 			</BorderPane>
 		</ToolBar>
-		<HBox spacing="15" snapToPixel="true">
-			<ToolBox>
+		<HBox spacing="15" snapToPixel="true" fillHeight="false">
+			<ToolBox heightPerItem="110">
 				<categoryComparator>
 					<ExplicitOrdering>
 						<String fx:value="Projects"/>

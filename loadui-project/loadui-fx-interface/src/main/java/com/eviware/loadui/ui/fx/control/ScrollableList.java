@@ -36,7 +36,7 @@ import com.google.common.base.Preconditions;
 @DefaultProperty( "items" )
 public class ScrollableList<E extends Node> extends StackPane
 {
-	private static final String DEFAULT_STYLE_CLASS = "scroll-list";
+	private static final String DEFAULT_STYLE_CLASS = "scrollable-list";
 
 	private final Pager<E> pager = new Pager<>();
 	private final FixedSpaceBox itemBox = new FixedSpaceBox();
@@ -102,6 +102,7 @@ public class ScrollableList<E extends Node> extends StackPane
 				{
 					pager.nextPage();
 				}
+				event.consume();
 			}
 		} );
 
@@ -118,10 +119,7 @@ public class ScrollableList<E extends Node> extends StackPane
 		pager.setFluentMode( true );
 		Bindings.bindContent( itemBox.getChildren(), pager.getShownItems() );
 
-		pager.itemsPerPageProperty().bind(
-				Bindings.max( 1,
-						Bindings.when( Bindings.equal( orientation, Orientation.VERTICAL ) ).then( itemBox.heightProperty() )
-								.otherwise( itemBox.widthProperty() ).divide( sizePerItem ) ) );
+		pager.itemsPerPageProperty().bind( Bindings.max( 1, itemBox.sizeForItems.divide( sizePerItem ) ) );
 
 		prevButton.disableProperty().bind( pager.hasPrevProperty().not() );
 		nextButton.disableProperty().bind( pager.hasNextProperty().not() );
@@ -211,6 +209,8 @@ public class ScrollableList<E extends Node> extends StackPane
 
 	private class FixedSpaceBox extends Pane
 	{
+		private final DoubleProperty sizeForItems = new SimpleDoubleProperty( getHeight() );
+
 		public FixedSpaceBox()
 		{
 			getStyleClass().setAll( "item-box" );
@@ -300,20 +300,9 @@ public class ScrollableList<E extends Node> extends StackPane
 			double childSize = ScrollableList.this.getSizePerItem();
 
 			boolean vertical = isVertical();
-			double size = vertical ? height : width;
-
-			double padding = size - pager.getItemsPerPage() * childSize;
 			double childWidth = vertical ? width : childSize;
 			double childHeight = vertical ? childSize : height;
-
-			if( vertical )
-			{
-				top += padding / 2;
-			}
-			else
-			{
-				left += padding / 2;
-			}
+			sizeForItems.set( vertical ? height : width );
 
 			for( Node child : getChildren() )
 			{

@@ -152,8 +152,6 @@ public class InspectorView extends AnchorPane
 			@Override
 			public void changed( ObservableValue<? extends Tab> arg0, Tab oldTab, Tab newTab )
 			{
-				System.out.println( "Selected changed from: " + ( oldTab == null ? "null" : oldTab.getId() ) + " to: "
-						+ ( newTab == null ? "null" : newTab.getId() ) );
 				if( oldTab != null )
 				{
 					( ( Inspector )oldTab.getUserData() ).onHide();
