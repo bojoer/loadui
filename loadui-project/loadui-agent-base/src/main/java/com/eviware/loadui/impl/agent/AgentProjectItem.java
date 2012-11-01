@@ -388,6 +388,12 @@ public class AgentProjectItem implements ProjectItem
 	}
 
 	@Override
+	public Collection<? extends StatisticVariable> getStatisticVariables()
+	{
+		return Collections.emptyList();
+	}
+
+	@Override
 	public File getProjectFile()
 	{
 		throw new UnsupportedOperationException();

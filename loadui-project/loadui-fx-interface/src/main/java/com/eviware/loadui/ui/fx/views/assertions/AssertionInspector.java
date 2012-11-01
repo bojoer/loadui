@@ -16,9 +16,9 @@ public class AssertionInspector implements Inspector
 
 	private final AssertionInspectorView panel;
 
-	public AssertionInspector( StatisticsManager statisticsManager, WorkspaceProvider workspaceProvider )
+	public AssertionInspector( StatisticsManager statisticsManager )
 	{
-		panel = new AssertionInspectorView( statisticsManager, workspaceProvider );
+		panel = new AssertionInspectorView( statisticsManager );
 	}
 
 	@Override
