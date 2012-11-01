@@ -29,7 +29,7 @@
 		<URL value="@WorkspaceView.css" />
 	</stylesheets>
 	<VBox alignment="top_left" spacing="10" snapToPixel="true">
-		<ToolBar minHeight="60" id="topToolBar">
+		<ToolBar minHeight="60" id="topToolBar" styleClass="header">
 			<Label minWidth="60" />
 			<MenuButton fx:id="workspaceButton" id="workspaceButton">
 				<items>

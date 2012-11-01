@@ -2,15 +2,6 @@
 	-fx-background-color: #333333;
 }
 
-#topToolBar {
-	-fx-background-color: 
-	rgba(0,0,0,0.1),
-	rgba(0,0,0,0.2), 
-	#505050,    
-	linear-gradient(to bottom, #9EA0A3 0%,#737577 97%,#252525 100%);
-	-fx-background-insets: -3 -3 -4 -3, -1 -1 -2 -1, -1 1 1 1, 0;
-}
-
 .title {
 	-fx-font-size: 20px;
 }
