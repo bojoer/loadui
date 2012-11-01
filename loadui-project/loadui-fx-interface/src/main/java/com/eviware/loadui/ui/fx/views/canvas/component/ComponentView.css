@@ -1,9 +1,0 @@
-.display {
-	-fx-background-color: darkgrey, black;
-	-fx-background-insets: 0, 1;
-	-fx-padding: 5;
-}
-
-.display .label {
-	-fx-text-fill: green;
-}

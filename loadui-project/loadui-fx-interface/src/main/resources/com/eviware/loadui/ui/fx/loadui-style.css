@@ -22,6 +22,16 @@
 	-fx-background-insets: -3 -3 -4 -3, -1 -1 -2 -1, -1 1 1 1, 0;
 }
 
+.display {
+	-fx-background-color: darkgrey, black;
+	-fx-background-insets: 0, 1;
+	-fx-padding: 5;
+}
+
+.display .label {
+	-fx-text-fill: green;
+}
+
 /**
  * MainButton styles
  */
@@ -270,3 +280,13 @@
 	-fx-background: #f26f6f;
 	-fx-control-inner-background: #fbecec;
 }
+
+/**
+ * Assertion bottom panel.
+ */
+ 
+ .assertion-view {
+ 	-fx-background-color: #d6d6d6;
+	-fx-background-radius: 10;
+	-fx-padding: 2 10 10 10;
+ }

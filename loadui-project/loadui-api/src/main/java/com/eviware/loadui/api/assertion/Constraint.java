@@ -34,4 +34,8 @@ public interface Constraint<T> extends Serializable
 	 * @return
 	 */
 	public boolean validate( T value );
+
+	public String constraintType();
+
+	public String value();
 }

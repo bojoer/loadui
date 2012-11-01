@@ -75,6 +75,7 @@ import com.eviware.loadui.ui.fx.views.canvas.component.ComponentView;
 import com.eviware.loadui.ui.fx.views.canvas.terminal.ConnectionView;
 import com.eviware.loadui.ui.fx.views.canvas.terminal.TerminalView;
 import com.eviware.loadui.ui.fx.views.canvas.terminal.Wire;
+import com.eviware.loadui.util.StringUtils;
 import com.eviware.loadui.util.collections.SafeExplicitOrdering;
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
@@ -172,7 +173,7 @@ public class CanvasView extends StackPane
 		{
 			ComponentDescriptorView view = new ComponentDescriptorView( input );
 			String category = input.getCategory();
-			ToolBox.setCategory( view, category.substring( 0, 1 ).toUpperCase() + category.substring( 1 ).toLowerCase() );
+			ToolBox.setCategory( view, StringUtils.capitalize( category ) );
 
 			return view;
 		}
@@ -190,6 +191,7 @@ public class CanvasView extends StackPane
 	private final CanvasItem canvas;
 	private final ObservableList<? extends CanvasObjectView> canvasObjects;
 	private final ObservableList<ConnectionView> connections;
+	ObservableList<? extends Labeled> toolBoxContent;
 
 	protected final Group canvasLayer = GroupBuilder.create().styleClass( "canvas-layer" ).build();
 	private final Group componentLayer = GroupBuilder.create().styleClass( "component-layer" ).build();
@@ -293,7 +295,8 @@ public class CanvasView extends StackPane
 		StackPane.setAlignment( descriptorPane, Pos.CENTER_LEFT );
 		StackPane.setMargin( descriptorPane, new Insets( 10, 0, 30, 0 ) );
 
-		Bindings.bindContent( descriptors.getItems(), createToolBoxContent() );
+		toolBoxContent = createToolBoxContent();
+		Bindings.bindContent( descriptors.getItems(), toolBoxContent );
 
 		Pane componentWrapper = new Pane();
 		Rectangle clipRect = new Rectangle();
