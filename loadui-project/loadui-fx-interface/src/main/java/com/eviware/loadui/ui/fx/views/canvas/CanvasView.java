@@ -144,7 +144,7 @@ public class CanvasView extends StackPane
 
 			ReadOnlyBooleanProperty selectedProperty = Selectable.installSelectable( connectionView ).selectedProperty();
 			connectionView.fillProperty().bind(
-					Bindings.when( selectedProperty ).then( Color.BLUE ).otherwise( Color.LIGHTGRAY ) );
+					Bindings.when( selectedProperty ).then( Color.BLUE ).otherwise( Color.GRAY ) );
 			connectionView.effectProperty().bind(
 					Bindings.when( selectedProperty ).then( selectedEffect ).otherwise( ( Effect )null ) );
 			selectedProperty.addListener( new ChangeListener<Boolean>()
@@ -578,7 +578,7 @@ public class CanvasView extends StackPane
 
 		public ConnectionDraggingFilter()
 		{
-			wire.setFill( Color.LIGHTGRAY );
+			wire.setFill( Color.GRAY );
 			wire.setVisible( false );
 
 			canvasLayer.getChildren().add( 0, wire );
