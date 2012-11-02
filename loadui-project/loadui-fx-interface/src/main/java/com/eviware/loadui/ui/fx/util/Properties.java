@@ -12,6 +12,7 @@ import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.property.ReadOnlyLongProperty;
 import javafx.beans.property.ReadOnlyStringProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.property.adapter.JavaBeanBooleanPropertyBuilder;
@@ -45,6 +46,9 @@ import com.google.common.cache.CacheBuilder;
  */
 public class Properties
 {
+	public final static ReadOnlyBooleanProperty TRUE = new SimpleBooleanProperty( true );
+	public final static ReadOnlyBooleanProperty FALSE = new SimpleBooleanProperty( false );
+
 	//Used to keep weak listeners alive as long as the key object is in use.
 	private static final Cache<Object, EventHandler<?>> listeners = CacheBuilder.newBuilder().weakKeys().build();
 

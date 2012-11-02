@@ -6,12 +6,12 @@ public class ValidatableFieldSupport
 {
 	public static final String INVALID_CLASS = "invalid";
 
-	public static <T extends Node & Field.Validatable<?>> void setInvalid( T parent )
+	public static <T extends Node & Field<?>> void setInvalid( T parent )
 	{
 		parent.getStyleClass().add( INVALID_CLASS );
 	}
 
-	public static <T extends Node & Field.Validatable<?>> void setValid( T parent )
+	public static <T extends Node & Field<?>> void setValid( T parent )
 	{
 		parent.getStyleClass().remove( INVALID_CLASS );
 	}

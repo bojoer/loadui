@@ -1,11 +1,6 @@
 package com.eviware.loadui.ui.fx.control.fields;
 
-public interface Field<T>
+public interface Field<T> extends Validatable
 {
 	T getValue();
-
-	public interface Validatable<T> extends Field<T>
-	{
-		boolean validate();
-	}
 }

@@ -4,6 +4,7 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
@@ -41,6 +42,11 @@ public class PageList<E extends Node> extends Control
 	private void initialize()
 	{
 		getStyleClass().setAll( DEFAULT_STYLE_CLASS );
+	}
+
+	public StringProperty textProperty()
+	{
+		return getLabel().textProperty();
 	}
 
 	public String getText()

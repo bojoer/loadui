@@ -7,6 +7,7 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -114,6 +115,31 @@ public class ToolBox<E extends Node> extends Control
 	public Label getLabel()
 	{
 		return label;
+	}
+
+	public StringProperty textProperty()
+	{
+		return getLabel().textProperty();
+	}
+
+	public String getText()
+	{
+		return getLabel().getText();
+	}
+
+	public void setText( String text )
+	{
+		getLabel().setText( text );
+	}
+
+	public Node getGraphic()
+	{
+		return getLabel().getGraphic();
+	}
+
+	public void setGraphic( Node graphic )
+	{
+		getLabel().setGraphic( graphic );
 	}
 
 	public ObservableList<E> getItems()
