@@ -1,5 +1,8 @@
 package com.eviware.loadui.ui.fx.views.assertions;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -20,6 +23,8 @@ import com.eviware.loadui.ui.fx.control.fields.Validatable;
 
 public class AssertableTree extends TreeView<Labeled> implements Validatable
 {
+	protected static final Logger log = LoggerFactory.getLogger( AssertableTree.class );
+
 	public static BooleanProperty isValidProperty = new SimpleBooleanProperty( false );
 
 	public static AssertableTree forHolder( StatisticHolder holder )
@@ -60,7 +65,25 @@ public class AssertableTree extends TreeView<Labeled> implements Validatable
 			public void changed( ObservableValue<? extends TreeItem<Labeled>> arg0, TreeItem<Labeled> oldValue,
 					TreeItem<Labeled> newValue )
 			{
-				isValidProperty.set( newValue.getValue() instanceof AssertableWrapper<?> );
+				if( newValue == null || newValue.getValue() == null )
+				{
+					log.debug( "selectedItemProperty changed to: null" );
+					isValidProperty.set( false );
+				}
+				else
+				{
+					log.debug( "selectedItemProperty changed to: " + newValue.getValue().getLabel() );
+					if( !newValue.isLeaf() )
+					{
+						newValue.setExpanded( true );
+						getSelectionModel().clearSelection();
+						isValidProperty.set( false );
+					}
+					else
+					{
+						isValidProperty.set( true );
+					}
+				}
 			}
 		} );
 
@@ -84,5 +107,38 @@ public class AssertableTree extends TreeView<Labeled> implements Validatable
 	public boolean isValid()
 	{
 		return isValidProperty.get();
+	}
+
+	private class ExpandedTreeItemsLimiter implements ChangeListener<Boolean>
+	{
+		private final TreeItem<Labeled> variableItem;
+		private final TreeItem<Labeled> holderItem;
+
+		ExpandedTreeItemsLimiter( TreeItem<Labeled> variableItem, TreeItem<Labeled> holderItem )
+		{
+			this.variableItem = variableItem;
+			this.holderItem = holderItem;
+		}
+
+		@Override
+		public void changed( ObservableValue<? extends Boolean> arg0, Boolean oldValue, Boolean newValue )
+		{
+			log.debug( "ExpandedTreeItemsLimiter for " + variableItem.getValue().getLabel() + " "
+					+ ( newValue.booleanValue() ? "expanded" : "not expanded" ) );
+			if( newValue.booleanValue() )
+			{
+				for( TreeItem<Labeled> item : holderItem.getChildren() )
+				{
+					log.debug( "is " + item.getValue().getLabel() + " == " + variableItem.getValue().getLabel() + "? "
+							+ Boolean.toString( item == variableItem ) );
+					if( item != variableItem )
+					{
+						log.debug( "setting " + item.getValue().getLabel() + " to NOT expanded" );
+						item.setExpanded( false );
+						log.debug( "" + item.getValue().getLabel() + " is expanded? " + item.isExpanded() );
+					}
+				}
+			}
+		}
 	}
 }

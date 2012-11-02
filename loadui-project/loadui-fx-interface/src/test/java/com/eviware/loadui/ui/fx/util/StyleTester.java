@@ -3,6 +3,7 @@ package com.eviware.loadui.ui.fx.util;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -10,9 +11,9 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.SceneBuilder;
-import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBuilder;
 import javafx.scene.control.SplitPaneBuilder;
 import javafx.scene.control.TextArea;
@@ -23,6 +24,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.layout.VBoxBuilder;
 import javafx.stage.Stage;
 
+import com.eviware.loadui.ui.fx.control.OptionsSlider;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
@@ -30,7 +32,19 @@ public class StyleTester extends Application
 {
 	private Node createTestNode()
 	{
-		return new Button( "Hello" );
+		StackPane sp0 = new StackPane();
+		javafx.scene.Group g = new javafx.scene.Group();
+		ArrayList<String> a = new ArrayList<>();
+		a.add( "på" );
+		a.add( "av" );
+		a.add( "bajs" );
+		OptionsSlider os = new OptionsSlider( a );
+
+		g.getChildren().add( os );
+		sp0.getChildren().add( g );
+		sp0.setPadding( new Insets( 40, 40, 40, 40 ) );
+		sp0.getStyleClass().add( "web-container0" );
+		return sp0;
 	}
 
 	@Override
