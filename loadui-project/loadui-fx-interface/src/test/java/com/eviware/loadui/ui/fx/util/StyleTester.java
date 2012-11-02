@@ -3,6 +3,7 @@ package com.eviware.loadui.ui.fx.util;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -23,8 +24,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.layout.VBoxBuilder;
 import javafx.stage.Stage;
 
-import com.eviware.loadui.ui.fx.control.ToolBox;
-import com.eviware.loadui.ui.fx.views.assertions.ConstraintPane;
+import com.eviware.loadui.ui.fx.control.OptionsSlider;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
@@ -32,12 +32,17 @@ public class StyleTester extends Application
 {
 	private Node createTestNode()
 	{
+
 		StackPane sp0 = new StackPane();
-		ToolBox<Node> tb = new ToolBox<>();
+		javafx.scene.Group g = new javafx.scene.Group();
+		ArrayList<String> a = new ArrayList<>();
+		a.add( "på" );
+		a.add( "av" );
+		a.add( "bajs" );
+		OptionsSlider os = new OptionsSlider( a );
 
-		tb.getItems().addAll( new StackPane(), new StackPane(), new StackPane(), new StackPane() );
-
-		sp0.getChildren().add( tb );
+		g.getChildren().add( os );
+		sp0.getChildren().add( g );
 		sp0.setPadding( new Insets( 40, 40, 40, 40 ) );
 		sp0.getStyleClass().add( "web-container0" );
 		return sp0;

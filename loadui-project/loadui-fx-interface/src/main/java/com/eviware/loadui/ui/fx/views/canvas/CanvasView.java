@@ -40,8 +40,6 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.RegionBuilder;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.StackPaneBuilder;
-import javafx.scene.layout.VBox;
-import javafx.scene.layout.VBoxBuilder;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
@@ -75,7 +73,6 @@ import com.eviware.loadui.ui.fx.views.canvas.component.ComponentView;
 import com.eviware.loadui.ui.fx.views.canvas.terminal.ConnectionView;
 import com.eviware.loadui.ui.fx.views.canvas.terminal.TerminalView;
 import com.eviware.loadui.ui.fx.views.canvas.terminal.Wire;
-import com.eviware.loadui.util.StringUtils;
 import com.eviware.loadui.util.collections.SafeExplicitOrdering;
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
@@ -173,7 +170,7 @@ public class CanvasView extends StackPane
 		{
 			ComponentDescriptorView view = new ComponentDescriptorView( input );
 			String category = input.getCategory();
-			ToolBox.setCategory( view, StringUtils.capitalize( category ) );
+			ToolBox.setCategory( view, category.substring( 0, 1 ).toUpperCase() + category.substring( 1 ).toLowerCase() );
 
 			return view;
 		}
@@ -191,7 +188,6 @@ public class CanvasView extends StackPane
 	private final CanvasItem canvas;
 	private final ObservableList<? extends CanvasObjectView> canvasObjects;
 	private final ObservableList<ConnectionView> connections;
-	ObservableList<? extends Labeled> toolBoxContent;
 
 	protected final Group canvasLayer = GroupBuilder.create().styleClass( "canvas-layer" ).build();
 	private final Group componentLayer = GroupBuilder.create().styleClass( "component-layer" ).build();
@@ -290,13 +286,11 @@ public class CanvasView extends StackPane
 
 		descriptors.setMaxWidth( 100 );
 		descriptors.setHeightPerItem( 120 );
+		StackPane.setAlignment( descriptors, Pos.CENTER_LEFT );
+		StackPane.setMargin( descriptors, new Insets( 10, 0, 34, 0 ) );
+		descriptors.maxHeightProperty().bind( descriptors.prefHeightProperty() );
 
-		VBox descriptorPane = VBoxBuilder.create().children( descriptors ).build();
-		StackPane.setAlignment( descriptorPane, Pos.CENTER_LEFT );
-		StackPane.setMargin( descriptorPane, new Insets( 10, 0, 30, 0 ) );
-
-		toolBoxContent = createToolBoxContent();
-		Bindings.bindContent( descriptors.getItems(), toolBoxContent );
+		Bindings.bindContent( descriptors.getItems(), createToolBoxContent() );
 
 		Pane componentWrapper = new Pane();
 		Rectangle clipRect = new Rectangle();
@@ -324,7 +318,7 @@ public class CanvasView extends StackPane
 
 		setAlignment( Pos.TOP_LEFT );
 
-		getChildren().addAll( createGrid(), componentWrapper, zoomSlider, descriptorPane );
+		getChildren().addAll( createGrid(), componentWrapper, zoomSlider, descriptors );
 
 		Selectable.installDragToSelectArea( this );
 		initScrolling();
