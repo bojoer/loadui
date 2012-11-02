@@ -144,7 +144,7 @@ public class CanvasView extends StackPane
 
 			ReadOnlyBooleanProperty selectedProperty = Selectable.installSelectable( connectionView ).selectedProperty();
 			connectionView.fillProperty().bind(
-					Bindings.when( selectedProperty ).then( Color.BLUE ).otherwise( Color.GRAY ) );
+					Bindings.when( selectedProperty ).then( Color.web( "#00ADEE" ) ).otherwise( Color.GRAY ) );
 			connectionView.effectProperty().bind(
 					Bindings.when( selectedProperty ).then( selectedEffect ).otherwise( ( Effect )null ) );
 			selectedProperty.addListener( new ChangeListener<Boolean>()
