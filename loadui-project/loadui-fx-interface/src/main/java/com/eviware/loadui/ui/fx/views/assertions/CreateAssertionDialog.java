@@ -9,22 +9,25 @@ import javafx.scene.layout.HBoxBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.eviware.loadui.api.assertion.Constraint;
 import com.eviware.loadui.api.serialization.ListenableValue;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.traits.Labeled;
 import com.eviware.loadui.ui.fx.control.ConfirmationDialog;
+import com.eviware.loadui.util.assertion.RangeConstraint;
 
 public class CreateAssertionDialog extends ConfirmationDialog
 {
 	protected static final Logger log = LoggerFactory.getLogger( CreateAssertionDialog.class );
 	private final AssertableTree tree;
+	private final ConstraintPane constraintPane;
 
 	public CreateAssertionDialog( Node owner, StatisticHolder holder )
 	{
 		super( owner, "Create assertion", "Create" );
 
 		tree = AssertableTree.forHolder( holder );
-		ConstraintPane constraintPane = new ConstraintPane();
+		constraintPane = new ConstraintPane();
 
 		confirmDisableProperty().bind( not( and( tree.isValidProperty(), constraintPane.isValidProperty() ) ) );
 
@@ -36,6 +39,11 @@ public class CreateAssertionDialog extends ConfirmationDialog
 	{
 		Labeled selected = tree.getSelectionModel().getSelectedItem().getValue();
 		return ( AssertableWrapper<ListenableValue<Number>> )selected;
+	}
+
+	public Constraint<Number> getConstraint()
+	{
+		return constraintPane.getConstraint();
 	}
 
 }

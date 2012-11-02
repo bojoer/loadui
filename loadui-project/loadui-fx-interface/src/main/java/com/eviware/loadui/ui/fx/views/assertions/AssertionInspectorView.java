@@ -141,7 +141,7 @@ public class AssertionInspectorView extends HBox
 				AssertionAddon assertionAddon = holder.getCanvas().getAddon( AssertionAddon.class );
 				AssertionItem.Mutable<Number> assertion = assertionAddon.createAssertion( holder, resolver );
 
-				assertion.setConstraint( new RangeConstraint( 0, 10 ) );
+				assertion.setConstraint( dialog.getConstraint() );
 				assertion.setTolerance( 1, 0 );
 
 				dialog.close();

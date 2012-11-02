@@ -11,9 +11,11 @@ import javafx.scene.layout.HBoxBuilder;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.VBoxBuilder;
 
+import com.eviware.loadui.api.assertion.Constraint;
 import com.eviware.loadui.ui.fx.control.SettingsDialog;
 import com.eviware.loadui.ui.fx.control.fields.Validatable;
 import com.eviware.loadui.ui.fx.control.fields.ValidatableLongField;
+import com.eviware.loadui.util.assertion.RangeConstraint;
 
 public class ConstraintPane extends VBox implements Validatable
 {
@@ -50,5 +52,10 @@ public class ConstraintPane extends VBox implements Validatable
 	public boolean isValid()
 	{
 		return isValidProperty.get();
+	}
+
+	public Constraint<Number> getConstraint()
+	{
+		return new RangeConstraint( minField.getValue(), maxField.getValue() );
 	}
 }
