@@ -10,9 +10,9 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.SceneBuilder;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBuilder;
 import javafx.scene.control.SplitPaneBuilder;
 import javafx.scene.control.TextArea;
@@ -23,8 +23,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.layout.VBoxBuilder;
 import javafx.stage.Stage;
 
-import com.eviware.loadui.ui.fx.control.ToolBox;
-import com.eviware.loadui.ui.fx.views.assertions.ConstraintPane;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
@@ -32,15 +30,7 @@ public class StyleTester extends Application
 {
 	private Node createTestNode()
 	{
-		StackPane sp0 = new StackPane();
-		ToolBox<Node> tb = new ToolBox<>();
-
-		tb.getItems().addAll( new StackPane(), new StackPane(), new StackPane(), new StackPane() );
-
-		sp0.getChildren().add( tb );
-		sp0.setPadding( new Insets( 40, 40, 40, 40 ) );
-		sp0.getStyleClass().add( "web-container0" );
-		return sp0;
+		return new Button( "Hello" );
 	}
 
 	@Override
