@@ -66,8 +66,8 @@ public class PageListSkin<E extends Node> extends SkinBase<PageList<E>, Behavior
 		VBox vbox = VBoxBuilder
 				.create()
 				.fillWidth( true )
-				.children( StackPaneBuilder.create().children( label, pageNum ).build(), itemList, new Separator(),
-						labelList ).styleClass( "container" ).build();
+				.children( StackPaneBuilder.create().styleClass( "label-container" ).children( label, pageNum ).build(),
+						itemList, new Separator(), labelList ).build();
 		getChildren().setAll( vbox );
 	}
 }

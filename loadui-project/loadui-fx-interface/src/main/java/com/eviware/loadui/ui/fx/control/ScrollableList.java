@@ -26,6 +26,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.HBoxBuilder;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.RegionBuilder;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.VBoxBuilder;
@@ -40,6 +42,7 @@ public class ScrollableList<E extends Node> extends StackPane
 
 	private final Pager<E> pager = new Pager<>();
 	private final FixedSpaceBox itemBox = new FixedSpaceBox();
+	private final Region placeholder = RegionBuilder.create().styleClass( "placeholder" ).build();
 	private final Button prevButton;
 	private final Button nextButton;
 
@@ -119,7 +122,21 @@ public class ScrollableList<E extends Node> extends StackPane
 		HBox.setHgrow( itemBox, Priority.ALWAYS );
 
 		pager.setFluentMode( true );
-		Bindings.bindContent( itemBox.getChildren(), pager.getShownItems() );
+		pager.getShownItems().addListener( new InvalidationListener()
+		{
+			@Override
+			public void invalidated( Observable arg0 )
+			{
+				if( pager.getShownItems().isEmpty() )
+				{
+					itemBox.getChildren().setAll( placeholder );
+				}
+				else
+				{
+					itemBox.getChildren().setAll( pager.getShownItems() );
+				}
+			}
+		} );
 
 		pager.itemsPerPageProperty().bind( Bindings.max( 1, itemBox.sizeForItems.divide( sizePerItem ) ) );
 
