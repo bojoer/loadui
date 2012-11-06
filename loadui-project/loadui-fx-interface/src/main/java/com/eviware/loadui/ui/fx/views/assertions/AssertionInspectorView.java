@@ -5,6 +5,7 @@ import static com.eviware.loadui.ui.fx.util.ObservableLists.fx;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.ofCollection;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.transform;
 import static com.google.common.base.Predicates.not;
+import static javafx.beans.binding.Bindings.bindContent;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
@@ -160,7 +161,7 @@ public class AssertionInspectorView extends HBox
 		statisticVariables = transform( statisticHolders, GET_VARIABLES );
 
 		variableGroup = Observables.group();
-		Bindings.bindContent( variableGroup.getObservables(), statisticVariables );
+		bindContent( variableGroup.getObservables(), statisticVariables );
 		variableGroup.addListener( new InvalidationListener()
 		{
 			@Override
