@@ -1,11 +1,14 @@
 package com.eviware.loadui.ui.fx.views.project;
 
 import javafx.application.Platform;
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.Button;
 import javafx.scene.control.MenuButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
@@ -14,10 +17,16 @@ import javafx.scene.layout.StackPaneBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.eviware.loadui.api.execution.Phase;
+import com.eviware.loadui.api.execution.TestExecution;
+import com.eviware.loadui.api.execution.TestExecutionTask;
+import com.eviware.loadui.api.execution.TestRunner;
+import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.ProjectRef;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.model.WorkspaceItem;
+import com.eviware.loadui.api.reporting.ReportingManager;
 import com.eviware.loadui.api.traits.Labeled;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.control.DetachableTab;
@@ -30,6 +39,7 @@ import com.eviware.loadui.ui.fx.views.scenario.ScenarioToolbar;
 import com.eviware.loadui.ui.fx.views.statistics.StatisticsView;
 import com.eviware.loadui.ui.fx.views.workspace.CloneProjectDialog;
 import com.eviware.loadui.ui.fx.views.workspace.CreateNewProjectDialog;
+import com.eviware.loadui.util.BeanInjector;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
@@ -50,11 +60,20 @@ public class ProjectView extends AnchorPane
 	@FXML
 	private MenuButton menuButton;
 
+	@FXML
+	private Button summaryButton;
+
+	private CanvasItem lastRunCanvas;
+
 	private final ProjectItem project;
+
+	private final Observable projectReleased;
 
 	public ProjectView( ProjectItem projectIn )
 	{
 		this.project = Preconditions.checkNotNull( projectIn );
+		projectReleased = Properties.observeEvent( project, ProjectItem.RELEASED );
+
 		FXMLUtils.load( this );
 	}
 
@@ -69,6 +88,7 @@ public class ProjectView extends AnchorPane
 		menuButton.textProperty().bind( Properties.forLabel( project ) );
 		designTab.setDetachableContent( new ProjectCanvasView( project ) );
 		resultTab.setDetachableContent( new StatisticsView( project ) );
+		summaryButton.setDisable( true );
 
 		addEventHandler( IntentEvent.ANY, new EventHandler<IntentEvent<? extends Object>>()
 		{
@@ -133,6 +153,45 @@ public class ProjectView extends AnchorPane
 					event.consume();
 					return;
 				}
+			}
+		} );
+
+		final TestExecutionTask testExecutionTask = new TestExecutionTask()
+		{
+			@Override
+			public void invoke( final TestExecution execution, Phase phase )
+			{
+				if( phase == Phase.PRE_START )
+				{
+					Platform.runLater( new Runnable()
+					{
+						public void run()
+						{
+							summaryButton.setDisable( true );
+						}
+					} );
+				}
+				else
+				{
+					Platform.runLater( new Runnable()
+					{
+						public void run()
+						{
+							lastRunCanvas = execution.getCanvas();
+							summaryButton.setDisable( false );
+						}
+					} );
+				}
+			}
+		};
+		BeanInjector.getBean( TestRunner.class ).registerTask( testExecutionTask, Phase.PRE_START, Phase.POST_STOP );
+
+		projectReleased.addListener( new InvalidationListener()
+		{
+			@Override
+			public void invalidated( Observable arg0 )
+			{
+				BeanInjector.getBean( TestRunner.class ).unregisterTask( testExecutionTask, Phase.values() );
 			}
 		} );
 	}
@@ -200,6 +259,14 @@ public class ProjectView extends AnchorPane
 		new ProjectSettingsDialog( this, project ).show();
 	}
 
+	@FXML
+	public void openSummaryPage()
+	{
+		log.info( "Open summary requested" );
+		ReportingManager reportingManager = BeanInjector.getBean( ReportingManager.class );
+		reportingManager.createReport( lastRunCanvas.getSummary() );
+	}
+
 	private ProjectRef getProjectRef( String id )
 	{
 		return Iterables.find( project.getWorkspace().getProjectRefs(), new Predicate<ProjectRef>()
@@ -216,7 +283,7 @@ public class ProjectView extends AnchorPane
 	{
 		public SaveAndCloseTask()
 		{
-			updateMessage( "Saving and closing project: " + project.getLabel() );
+			updateMessage( "Saving and closing project: " + project.getLabel() + "..." );
 		}
 
 		@Override
@@ -234,4 +301,5 @@ public class ProjectView extends AnchorPane
 			return getProjectRef( project.getId() );
 		}
 	}
+
 }
