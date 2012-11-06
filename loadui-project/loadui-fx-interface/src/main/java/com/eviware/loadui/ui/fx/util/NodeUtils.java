@@ -22,7 +22,7 @@ public final class NodeUtils
 
 	public static Node findFrontNodeAtCoordinate( Node root, Point2D point, Node... ignored )
 	{
-		if( !root.contains( root.sceneToLocal( point ) ) )
+		if( !root.contains( root.sceneToLocal( point ) ) || !root.isVisible() )
 		{
 			return null;
 		}

@@ -62,7 +62,7 @@ public class PageListTest
 					buildRect( Color.GREEN ), buildRect( Color.BLUE ), buildRect( Color.INDIGO ), buildRect( Color.VIOLET ) );
 
 			primaryStage.setScene( SceneBuilder.create().stylesheets( "/com/eviware/loadui/ui/fx/loadui-style.css" )
-					.width( 300 ).height( 150 ).root( pageList ).build() );
+					.width( 350 ).height( 150 ).root( pageList ).build() );
 			primaryStage.show();
 
 			stageFuture.set( primaryStage );
@@ -133,7 +133,7 @@ public class PageListTest
 			@Override
 			public void run()
 			{
-				controller.click( find( ".nav.left" ) ).sleep( 300 );
+				controller.click( find( ".nav.prev" ) ).sleep( 300 );
 			}
 		}, new Runnable()
 		{
@@ -141,7 +141,7 @@ public class PageListTest
 			@Override
 			public void run()
 			{
-				controller.click( find( ".nav.right" ) ).sleep( 300 );
+				controller.click( find( ".nav.next" ) ).sleep( 300 );
 			}
 		} );
 	}
@@ -169,8 +169,8 @@ public class PageListTest
 
 	private static void testScrolling( Runnable prev, Runnable next ) throws Exception
 	{
-		Button prevButton = find( ".nav.left" );
-		Button nextButton = find( ".nav.right" );
+		Button prevButton = find( ".nav.prev" );
+		Button nextButton = find( ".nav.next" );
 		assertThat( prevButton.isDisabled(), is( true ) );
 		assertThat( nextButton.isDisabled(), is( false ) );
 

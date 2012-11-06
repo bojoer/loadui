@@ -21,10 +21,7 @@
 	</stylesheets>
 	<Label fx:id="agentLabel" id="agentLabel" />
 	<HBox spacing="3">
-		<OptionsSlider fx:id="onOffSwitch" styleClass="switch">
-			<String fx:value="ON" />
-			<String fx:value="OFF" />
-		</OptionsSlider>
+		<OptionsSlider fx:id="onOffSwitch" styleClass="switch" options="ON, OFF" />
 		<MenuButton fx:id="menuButton" HBox.hgrow="SOMETIMES" maxWidth="200" text="Menu">
 			<items>
 				<MenuItem onAction="#delete" text="Delete" />
