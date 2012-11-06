@@ -35,7 +35,7 @@ public class CoreImageResolver implements ImageResolver
 		{
 			return new Image( root( "project-icon.png" ) );
 		}
-		else if( object instanceof SceneItem )
+		else if( object instanceof SceneItem || SceneItem.class.equals( object ) )
 		{
 			return new Image( root( "testcase-icon.png" ) );
 		}

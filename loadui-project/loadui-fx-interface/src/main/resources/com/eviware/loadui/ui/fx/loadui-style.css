@@ -52,6 +52,10 @@
 	-fx-text-fill: green;
 }
 
+.styleable-graphic.button {
+	-fx-skin: "com.eviware.loadui.ui.fx.control.skin.StyleableGraphicButtonSkin";
+}
+
 /**
  * Navigation button styles
  */

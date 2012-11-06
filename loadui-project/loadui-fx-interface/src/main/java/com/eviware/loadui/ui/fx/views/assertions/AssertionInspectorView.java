@@ -5,6 +5,7 @@ import static com.eviware.loadui.ui.fx.util.ObservableLists.fx;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.ofCollection;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.transform;
 import static com.google.common.base.Predicates.not;
+import static javafx.beans.binding.Bindings.bindContent;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
@@ -23,6 +24,7 @@ import javafx.scene.control.ListViewBuilder;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.util.Callback;
+import javafx.util.Pair;
 
 import javax.annotation.Nullable;
 
@@ -142,7 +144,8 @@ public class AssertionInspectorView extends HBox
 				AssertionItem.Mutable<Number> assertion = assertionAddon.createAssertion( holder, resolver );
 
 				assertion.setConstraint( dialog.getConstraint() );
-				assertion.setTolerance( 1, 0 );
+				Pair<Integer, Integer> tolerance = dialog.getTolerance();
+				assertion.setTolerance( tolerance.getValue(), tolerance.getKey() );
 
 				dialog.close();
 			}
@@ -158,7 +161,7 @@ public class AssertionInspectorView extends HBox
 		statisticVariables = transform( statisticHolders, GET_VARIABLES );
 
 		variableGroup = Observables.group();
-		Bindings.bindContent( variableGroup.getObservables(), statisticVariables );
+		bindContent( variableGroup.getObservables(), statisticVariables );
 		variableGroup.addListener( new InvalidationListener()
 		{
 			@Override

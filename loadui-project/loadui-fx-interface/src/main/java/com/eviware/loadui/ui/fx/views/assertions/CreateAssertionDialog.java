@@ -5,6 +5,7 @@ import static javafx.beans.binding.Bindings.not;
 import javafx.scene.Node;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.HBoxBuilder;
+import javafx.util.Pair;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,4 +47,8 @@ public class CreateAssertionDialog extends ConfirmationDialog
 		return constraintPane.getConstraint();
 	}
 
+	public Pair<Integer, Integer> getTolerance()
+	{
+		return constraintPane.getTolerance();
+	}
 }
