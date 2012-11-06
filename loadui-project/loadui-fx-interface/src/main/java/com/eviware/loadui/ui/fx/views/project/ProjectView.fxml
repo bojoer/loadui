@@ -54,9 +54,9 @@
 		</items>
 	</MenuButton>
 	<HBox maxWidth="200" maxHeight="60" alignment="CENTER_RIGHT" AnchorPane.topAnchor="18" AnchorPane.rightAnchor="10">
-		<Button fx:id="summaryButton" id="summaryButton" styleClass="styleable-graphic" onAction="#openSummaryPage" />
-		<Button fx:id="settingsButton" id="settingsButton" styleClass="styleable-graphic" onAction="#openSettings" />
-		<Button fx:id="openHelpPageButton" id="openHelpPageButton" styleClass="styleable-graphic" onAction="#openHelpPage" />
-		<Button fx:id="closeProjectButton" id="closeProjectButton" styleClass="styleable-graphic" onAction="#closeProject" />
+		<Button fx:id="summaryButton" id="summaryButton" styleClass="styleable-graphic, toolbar-button" onAction="#openSummaryPage" />
+		<Button fx:id="settingsButton" id="settingsButton" styleClass="styleable-graphic, toolbar-button" onAction="#openSettings" />
+		<Button fx:id="openHelpPageButton" id="openHelpPageButton" styleClass="styleable-graphic, toolbar-button" onAction="#openHelpPage" />
+		<Button fx:id="closeProjectButton" id="closeProjectButton" styleClass="styleable-graphic, toolbar-button" onAction="#closeProject" />
 	</HBox>
 </fx:root>
