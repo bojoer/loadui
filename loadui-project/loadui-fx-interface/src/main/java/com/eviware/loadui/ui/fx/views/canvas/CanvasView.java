@@ -87,7 +87,7 @@ public class CanvasView extends StackPane
 
 	private static final Effect selectedEffect = new Glow( 0.5 );
 	private static final int GRID_SIZE = 36;
-	private static final double PADDING = 100;
+	private static final double PADDING = -45;
 	private final UninstallCanvasObjectView uninstallCanvasObject = new UninstallCanvasObjectView();
 
 	private static final Function<String, String> TO_LOWER = new Function<String, String>()
@@ -144,7 +144,7 @@ public class CanvasView extends StackPane
 
 			ReadOnlyBooleanProperty selectedProperty = Selectable.installSelectable( connectionView ).selectedProperty();
 			connectionView.fillProperty().bind(
-					Bindings.when( selectedProperty ).then( Color.BLUE ).otherwise( Color.LIGHTGRAY ) );
+					Bindings.when( selectedProperty ).then( Color.web( "#00ADEE" ) ).otherwise( Color.GRAY ) );
 			connectionView.effectProperty().bind(
 					Bindings.when( selectedProperty ).then( selectedEffect ).otherwise( ( Effect )null ) );
 			selectedProperty.addListener( new ChangeListener<Boolean>()
@@ -578,7 +578,7 @@ public class CanvasView extends StackPane
 
 		public ConnectionDraggingFilter()
 		{
-			wire.setFill( Color.LIGHTGRAY );
+			wire.setFill( Color.GRAY );
 			wire.setVisible( false );
 
 			canvasLayer.getChildren().add( 0, wire );

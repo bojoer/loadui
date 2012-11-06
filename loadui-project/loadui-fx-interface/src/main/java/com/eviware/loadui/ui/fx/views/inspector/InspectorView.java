@@ -50,8 +50,8 @@ import com.google.common.collect.Ordering;
 
 public class InspectorView extends AnchorPane
 {
-	private static final Ordering<String> INSPECTOR_ORDERING = SafeExplicitOrdering.of( "System Log", "Event Log",
-			"Monitors" ).compound( Ordering.natural() );
+	private static final Ordering<String> INSPECTOR_ORDERING = SafeExplicitOrdering.of( "System Log", "Distribution",
+			"Assertions", "Event Log", "Monitors" ).compound( Ordering.natural() );
 
 	private final BooleanProperty minimizedProperty = new SimpleBooleanProperty( this, "minimized", true );
 
@@ -158,9 +158,6 @@ public class InspectorView extends AnchorPane
 			@Override
 			public void changed( ObservableValue<? extends Tab> arg0, Tab oldTab, Tab newTab )
 			{
-				System.out.println( "Selection changed: " + ( oldTab == null ? "null" : oldTab.getText() ) + " to "
-						+ ( newTab == null ? "null" : newTab.getText() ) );
-
 				if( oldTab != null )
 				{
 					( ( Inspector )oldTab.getUserData() ).onHide();

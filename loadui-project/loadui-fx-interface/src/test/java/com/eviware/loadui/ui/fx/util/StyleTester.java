@@ -32,7 +32,6 @@ public class StyleTester extends Application
 {
 	private Node createTestNode()
 	{
-
 		StackPane sp0 = new StackPane();
 		javafx.scene.Group g = new javafx.scene.Group();
 		ArrayList<String> a = new ArrayList<>();
