@@ -1,5 +1,7 @@
 package com.eviware.loadui.ui.fx.views.assertions;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,6 +28,9 @@ public class AssertableTree extends TreeView<Labeled> implements Validatable
 	protected static final Logger log = LoggerFactory.getLogger( AssertableTree.class );
 
 	public static BooleanProperty isValidProperty = new SimpleBooleanProperty( false );
+
+	// Used to prevent unwanted chain reactions when forcing TreeItems to collapse. 
+	public final AtomicBoolean isForceCollapsing = new AtomicBoolean( false );
 
 	public static AssertableTree forHolder( StatisticHolder holder )
 	{
@@ -65,14 +70,14 @@ public class AssertableTree extends TreeView<Labeled> implements Validatable
 			public void changed( ObservableValue<? extends TreeItem<Labeled>> arg0, TreeItem<Labeled> oldValue,
 					TreeItem<Labeled> newValue )
 			{
+				if( isForceCollapsing.get() )
+					return;
 				if( newValue == null || newValue.getValue() == null )
 				{
-					log.debug( "selectedItemProperty changed to: null" );
 					isValidProperty.set( false );
 				}
 				else
 				{
-					log.debug( "selectedItemProperty changed to: " + newValue.getValue().getLabel() );
 					if( !newValue.isLeaf() )
 					{
 						newValue.setExpanded( true );
@@ -123,19 +128,15 @@ public class AssertableTree extends TreeView<Labeled> implements Validatable
 		@Override
 		public void changed( ObservableValue<? extends Boolean> arg0, Boolean oldValue, Boolean newValue )
 		{
-			log.debug( "ExpandedTreeItemsLimiter for " + variableItem.getValue().getLabel() + " "
-					+ ( newValue.booleanValue() ? "expanded" : "not expanded" ) );
 			if( newValue.booleanValue() )
 			{
 				for( TreeItem<Labeled> item : holderItem.getChildren() )
 				{
-					log.debug( "is " + item.getValue().getLabel() + " == " + variableItem.getValue().getLabel() + "? "
-							+ Boolean.toString( item == variableItem ) );
 					if( item != variableItem )
 					{
-						log.debug( "setting " + item.getValue().getLabel() + " to NOT expanded" );
+						isForceCollapsing.set( true );
 						item.setExpanded( false );
-						log.debug( "" + item.getValue().getLabel() + " is expanded? " + item.isExpanded() );
+						isForceCollapsing.set( false );
 					}
 				}
 			}

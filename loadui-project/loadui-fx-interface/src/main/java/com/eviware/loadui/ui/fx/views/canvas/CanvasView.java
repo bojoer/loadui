@@ -83,8 +83,8 @@ import com.google.common.collect.Ordering;
 
 public class CanvasView extends StackPane
 {
-	@SuppressWarnings( "unused" )
-	private static final Logger log = LoggerFactory.getLogger( CanvasView.class );
+	protected static final Logger log = LoggerFactory.getLogger( CanvasView.class );
+
 	private static final Effect selectedEffect = new Glow( 0.5 );
 	private static final int GRID_SIZE = 36;
 	private static final double PADDING = 100;

@@ -23,6 +23,7 @@ import javafx.scene.control.ListViewBuilder;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.util.Callback;
+import javafx.util.Pair;
 
 import javax.annotation.Nullable;
 
@@ -142,7 +143,8 @@ public class AssertionInspectorView extends HBox
 				AssertionItem.Mutable<Number> assertion = assertionAddon.createAssertion( holder, resolver );
 
 				assertion.setConstraint( dialog.getConstraint() );
-				assertion.setTolerance( 1, 0 );
+				Pair<Integer, Integer> tolerance = dialog.getTolerance();
+				assertion.setTolerance( tolerance.getValue(), tolerance.getKey() );
 
 				dialog.close();
 			}

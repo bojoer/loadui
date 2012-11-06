@@ -73,7 +73,7 @@ public class ValidatableLongField extends ValidatableTextField<Long>
 		super( Objects.firstNonNull( stringConstraint, CONVERTABLE_TO_LONG ), Objects.firstNonNull( convertFunction,
 				STRING_TO_LONG ) );
 		this.constraint = Objects.firstNonNull( longConstraint, Predicates.<Long> alwaysTrue() );
-		log.debug( "constraint: " + constraint );
+		setMaxWidth( 55 );
 	}
 
 	@Override
