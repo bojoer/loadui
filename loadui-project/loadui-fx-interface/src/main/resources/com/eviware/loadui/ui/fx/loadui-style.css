@@ -371,24 +371,57 @@
  */
 .knob {
 	-fx-skin: "com.eviware.loadui.ui.fx.control.skin.KnobSkin";
-	-fx-background-color: gray;
-	-fx-background-radius: 4;
+	-fx-background-color: transparent;
+	-fx-background-radius: 0;
 	-fx-padding: 5;
 	-fx-cursor: v_resize;
 }
 
+
 .knob .base {
-	-fx-background-color: black, red;
-	-fx-background-insets: 2 -2 -2 2, 0;
+	-fx-shadowFill: 
+	radial-gradient( center 50% 50%, radius 100%, #666666 30%, transparent 50% );
+	-fx-outlineFill:
+	#808080;
+	-fx-outerCircleFill: 
+	linear-gradient( to right, #ffffff, #8f8f8f );
+	-fx-innerCircleFill:
+	linear-gradient( to right, #a6a6a6 0%, #dbdbdb 75%, #ffffff 100% );
+	-fx-markFill:
+	linear-gradient( to right, #666666, #ffffff );
+	
+
+	-fx-background-color: 
+	-fx-shadowFill,
+	-fx-outlineFill,
+	-fx-outerCircleFill,
+	-fx-innerCircleFill;
+
+	-fx-background-insets: 
+	2 -2 -2 2, 
+	0,
+	1,
+	3;
+
 	-fx-background-radius: 50;
-	-fx-padding: 16;
+
+	-fx-padding: 15;
 }
 
 .knob .handle {
-	-fx-background-color: transparent, black;
-	-fx-padding: 6;
+	-fx-markFill:
+	linear-gradient( to right, #666666, #ffffff );
+	
+	-fx-background-color: 
+	transparent,
+	-fx-markFill;
+
+	-fx-background-insets:
+	0,
+	5;
+
+	-fx-padding: 8;
 	-fx-background-radius: 50;
-	-fx-background-insets: 0, 2;
 }
 
 .knob.bounded .base {

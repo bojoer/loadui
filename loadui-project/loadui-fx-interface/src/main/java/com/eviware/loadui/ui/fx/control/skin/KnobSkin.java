@@ -2,6 +2,8 @@ package com.eviware.loadui.ui.fx.control.skin;
 
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
+import javafx.beans.binding.IntegerBinding;
+import javafx.beans.binding.NumberExpression;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
@@ -151,12 +153,26 @@ public class KnobSkin extends SkinBase<Knob, KnobBehavior>
 	private class ValueDisplay extends PopupControl
 	{
 		private final TextField valueField = new TextField();
+		private final NumberExpression textLength;
 
 		private ValueDisplay()
 		{
 			setAutoHide( true );
 
-			valueField.prefWidthProperty().bind( getSkinnable().widthProperty() );
+			textLength = new IntegerBinding()
+			{
+				{
+					bind( valueField.textProperty() );
+				}
+
+				@Override
+				protected int computeValue()
+				{
+					return valueField.getText().length();
+				}
+			};
+
+			valueField.prefColumnCountProperty().bind( textLength.add( 3 ).divide( 2 ) );
 			valueField.textProperty().bindBidirectional( getSkinnable().valueProperty(), new NumberStringConverter() );
 			valueField.setOnAction( new EventHandler<ActionEvent>()
 			{
