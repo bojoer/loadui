@@ -337,7 +337,7 @@
 
 	-fx-background-color:
  	derive(-color-base, -30%), 
-	-color-base,
+	derive(-color-base, 30%), 
 	linear-gradient(to bottom, 
 	-color-light 0%,
 	-color-dark 20%, 
@@ -347,12 +347,12 @@
 	-color-dark 100%);
 
 	
-	-fx-background-radius: 3;
+	-fx-background-radius: 2;
 
 	-fx-background-insets: 
-	0 0 0 0,
-	1 0 1 1,
-	2 2 2 2;
+	-1 -1 -1 -1,
+	0.2 0.2 0.2 0.2,
+	2 1 2 1;
 
 	-fx-padding: 5;
 	-fx-opacity: 0;
