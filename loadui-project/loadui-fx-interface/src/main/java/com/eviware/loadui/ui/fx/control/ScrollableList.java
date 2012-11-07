@@ -49,6 +49,7 @@ public class ScrollableList<E extends Node> extends StackPane
 	private final ObjectProperty<Orientation> orientation = new SimpleObjectProperty<>( this, "orientation",
 			Orientation.VERTICAL );
 	private final DoubleProperty sizePerItem = new SimpleDoubleProperty( this, "sizePerItem", 100.0 );
+	private final DoubleProperty spacing = new SimpleDoubleProperty( this, "spacing", 0.0 );
 
 	public ScrollableList()
 	{
@@ -176,6 +177,22 @@ public class ScrollableList<E extends Node> extends StackPane
 		this.sizePerItem.set( value );
 	}
 
+	public DoubleProperty spacingProperty()
+	{
+		return spacing;
+	}
+
+	public double getSpacing()
+	{
+		return spacing.get();
+	}
+
+	public void setSpacing( double value )
+	{
+		Preconditions.checkArgument( value >= 0, "spacing must be >=0, was %d", value );
+		this.spacing.set( value );
+	}
+
 	public Property<Orientation> orientationProperty()
 	{
 		return orientation;
@@ -239,14 +256,18 @@ public class ScrollableList<E extends Node> extends StackPane
 		protected double computePrefWidth( double height )
 		{
 			double insets = getInsets().getLeft() + getInsets().getRight();
-			return insets + ( isVertical() ? getMaxPrefWidth( height ) : getSizePerItem() * pager.getItems().size() );
+			return insets
+					+ ( isVertical() ? getMaxPrefWidth( height ) : getSizePerItem() * pager.getItems().size() + getSpacing()
+							* ( pager.getItems().size() - 1 ) );
 		}
 
 		@Override
 		protected double computePrefHeight( double width )
 		{
 			double insets = getInsets().getTop() + getInsets().getBottom();
-			return insets + ( isVertical() ? getSizePerItem() * pager.getItems().size() : getMaxPrefHeight( width ) );
+			return insets
+					+ ( isVertical() ? getSizePerItem() * pager.getItems().size() + getSpacing()
+							* ( pager.getItems().size() - 1 ) : getMaxPrefHeight( width ) );
 		}
 
 		@Override
@@ -328,11 +349,11 @@ public class ScrollableList<E extends Node> extends StackPane
 				layoutInArea( child, left, top, childWidth, childHeight, childHeight, HPos.CENTER, VPos.BOTTOM );
 				if( vertical )
 				{
-					top += childSize;
+					top += childSize + getSpacing();
 				}
 				else
 				{
-					left += childSize;
+					left += childSize + getSpacing();
 				}
 			}
 		}

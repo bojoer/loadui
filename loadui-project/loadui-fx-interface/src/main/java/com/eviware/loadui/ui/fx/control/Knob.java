@@ -191,7 +191,7 @@ public class Knob extends Control
 	public double getSpan()
 	{
 		double spanValue = getSpanImpl();
-		return Double.isNaN( spanValue ) ? ( isBounded() ? getMax() - getMin() : 100 ) : spanValue;
+		return Double.isNaN( spanValue ) ? ( isBounded() ? getMax() - getMin() + 1 : 100 ) : spanValue;
 	}
 
 	public void setSpan( double value )

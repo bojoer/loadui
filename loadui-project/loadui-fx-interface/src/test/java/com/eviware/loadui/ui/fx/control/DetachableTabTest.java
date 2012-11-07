@@ -23,9 +23,9 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import com.eviware.loadui.test.categories.GUITest;
-import com.eviware.loadui.ui.fx.util.test.TestFX;
 import com.eviware.loadui.ui.fx.util.test.FXScreenController;
 import com.eviware.loadui.ui.fx.util.test.FXTestUtils;
+import com.eviware.loadui.ui.fx.util.test.TestFX;
 import com.google.common.collect.Iterables;
 import com.google.common.util.concurrent.SettableFuture;
 
@@ -112,6 +112,7 @@ public class DetachableTabTest
 	public void shouldDetachAndReattachWhenButtonPressed() throws Throwable
 	{
 		final TabPane tabpane = find( "#tabpane" );
+		tabpane.getSelectionModel().select( 1 );
 		Button detachButton = find( ".button", tabpane );
 
 		final DetachableTab tab = Iterables.getOnlyElement( Iterables.filter( tabpane.getTabs(), DetachableTab.class ) );

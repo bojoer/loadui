@@ -25,12 +25,12 @@ import com.eviware.loadui.api.traits.Labeled;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.util.Properties;
 
-public class AssertionView<T> extends VBox implements Deletable
+public class AssertionView extends VBox implements Deletable
 {
 	protected static final Logger log = LoggerFactory.getLogger( AssertionView.class );
-	private final AssertionItem<T> assertion;
+	private final AssertionItem<?> assertion;
 
-	public AssertionView( final AssertionItem<T> assertion )
+	public AssertionView( final AssertionItem<?> assertion )
 	{
 		this.assertion = assertion;
 

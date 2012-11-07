@@ -17,13 +17,9 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.control.ListViewBuilder;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.util.Callback;
 import javafx.util.Pair;
 
 import javax.annotation.Nullable;
@@ -42,37 +38,55 @@ import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.ui.fx.api.input.DraggableEvent;
+import com.eviware.loadui.ui.fx.control.ScrollableList;
 import com.eviware.loadui.ui.fx.control.ToolBox;
+import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.ObservableLists;
 import com.eviware.loadui.ui.fx.util.Observables;
 import com.eviware.loadui.ui.fx.util.Observables.Group;
 import com.eviware.loadui.util.StringUtils;
-import com.eviware.loadui.util.assertion.RangeConstraint;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 
+@SuppressWarnings( "rawtypes" )
 public class AssertionInspectorView extends HBox
 {
-	protected static final Logger log = LoggerFactory.getLogger( AssertionInspectorView.class );
+	@SuppressWarnings( "unused" )
+	private static final Logger log = LoggerFactory.getLogger( AssertionInspectorView.class );
 
-	private final ToolBox<Node> componentToolBox;
+	private static final Function<AssertionItem, AssertionView> ASSERTION_TO_VIEW = new Function<AssertionItem, AssertionView>()
+	{
+		@Override
+		public AssertionView apply( AssertionItem assertion )
+		{
+			return new AssertionView( assertion );
+		}
+	};
+
 	private final StatisticsManager statisticsManager;
 	private final ObservableList<AssertionToolboxItem> toolBoxContent;
-	private final ListView<AssertionItem> assertionList;
 	private final ObjectProperty<ProjectItem> projectProperty = new SimpleObjectProperty<>();
 
-	private ObservableList<AssertionItem> assertions = FXCollections.emptyObservableList();
+	@FXML
+	private ToolBox<Node> componentToolBox;
+
+	@FXML
+	private ScrollableList<AssertionView> assertionList;
+
+	private ObservableList<AssertionView> assertions = FXCollections.emptyObservableList();
 
 	public AssertionInspectorView( final StatisticsManager statisticsManager )
 	{
 		this.statisticsManager = statisticsManager;
-		componentToolBox = new ToolBox<>( "Assertables" );
 		toolBoxContent = createToolBoxContent();
-		Bindings.bindContent( componentToolBox.getItems(), toolBoxContent );
 
-		assertionList = ListViewBuilder.<AssertionItem> create().style( "-fx-padding: 20;" ).build();
+		FXMLUtils.load( this );
+	}
 
+	@FXML
+	private void initialize()
+	{
 		projectProperty.addListener( new ChangeListener<ProjectItem>()
 		{
 			@Override
@@ -85,31 +99,22 @@ public class AssertionInspectorView extends HBox
 				}
 				if( newValue != null )
 				{
-					assertions = ObservableLists.ofCollection( projectProperty.get(), AssertionAddon.ASSERTION_ITEMS,
-							AssertionItem.class, projectProperty.get().getAddon( AssertionAddon.class ).getAssertions() );
+					assertions = ObservableLists.transform( ObservableLists.fx( ObservableLists.ofCollection(
+							projectProperty.get(), AssertionAddon.ASSERTION_ITEMS, AssertionItem.class, projectProperty.get()
+									.getAddon( AssertionAddon.class ).getAssertions() ) ), ASSERTION_TO_VIEW );
 
 					Bindings.bindContent( assertionList.getItems(), assertions );
 				}
 			}
 		} );
 
-		HBox.setHgrow( assertionList, Priority.ALWAYS );
-
-		assertionList.setCellFactory( new Callback<ListView<AssertionItem>, ListCell<AssertionItem>>()
-		{
-			@Override
-			public ListCell<AssertionItem> call( ListView<AssertionItem> arg0 )
-			{
-				return new AssertionItemCell();
-			}
-		} );
+		Bindings.bindContent( componentToolBox.getItems(), toolBoxContent );
 
 		assertionList.addEventHandler( DraggableEvent.ANY, new EventHandler<DraggableEvent>()
 		{
 			@Override
 			public void handle( final DraggableEvent event )
 			{
-				log.debug( "event.getData() " + event.getData() );
 				if( event.getEventType() == DraggableEvent.DRAGGABLE_ENTERED && event.getData() instanceof StatisticHolder )
 				{
 					event.accept();
@@ -122,8 +127,6 @@ public class AssertionInspectorView extends HBox
 				}
 			}
 		} );
-
-		getChildren().setAll( componentToolBox, assertionList );
 	}
 
 	private void handleDrop( DraggableEvent event )
