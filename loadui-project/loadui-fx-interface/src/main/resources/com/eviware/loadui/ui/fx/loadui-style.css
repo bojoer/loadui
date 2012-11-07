@@ -385,7 +385,7 @@
 	-fx-outlineFill:
 	#808080;
 	-fx-outerCircleFill: 
-	linear-gradient( to right, #ffffff, #8f8f8f );
+	linear-gradient( to Bottom right, #ffffff, #8f8f8f );
 	-fx-innerCircleFill:
 	linear-gradient( to right, #a6a6a6 0%, #dbdbdb 75%, #ffffff 100% );
 	-fx-markFill:
@@ -430,18 +430,39 @@
 }
 
 .knob.bounded .ticks {
-	-fx-shape: "M 0,0 L 99,-2 99,2 0,0 M 0,0 L 93,35 91,41 0,0 M 0,0 L 72,68 68,72 0,0 M 0,0 L 41,91 35,93 0,0 M 0,0 L 2,99 -2,99 0,0 M 0,0 L -35,93 -41,91 0,0 M 0,0 L -68,72 -72,68 0,0 M 0,0 L -91,41 -93,35 0,0 M 0,0 L -99,2 -99,-2 0,0 M 0,0 L -93,-35 -91,-41 0,0 M 0,0 L -72,-68 -68,-72 0,0 M 0,0 L -41,-91 -35,-93 0,0 M 0,0 L -2,-99 2,-99 0,0 M 0,0 L 35,-93 41,-91 0,0 M 0,0 L 68,-72 72,-68 0,0 M 0,0 L 91,-41 93,-35 0,0";
-	-fx-background-color: black;
-	-fx-background-insets: -5;
+	-fx-shape:   "M 0,0 L 99,-2 99,2 0,0 93,35 91,41 0,0 72,68 68,72 0,0 38,92 38,92 0,0 0,100 0,100 0,0 -38,92 -38,92 0,0 -68,72 -72,68 0,0 -91,41 -93,35 0,0 -99,2 -99,-2 0,0 -93,-35 -91,-41 0,0 -72,-68 -68,-72 0,0 -41,-91 -35,-93 0,0 -2,-99 2,-99 0,0 35,-93 41,-91 0,0 68,-72 72,-68 0,0 91,-41 93,-35 0,0";
+	-fx-background-color: #999999;
+	-fx-background-insets: -3;
 }
 
 .knob.bounded .base {
-	-fx-background-color: black, blue;
+	-fx-outlineFill:
+	#000000;
+	-fx-outerCircleFill: 
+	linear-gradient( to right, #607cb3, #17253d );
+	-fx-innerCircleFill:
+	#304b7d;
+	-fx-markFill:
+	#ffffff;
+
+	-fx-background-color: 
+	-fx-shadowFill,
+	-fx-outlineFill,
+	-fx-outerCircleFill,
+	-fx-innerCircleFill;
+
+	-fx-background-insets: 
+	4 -4 -4 4, 
+	1.3,
+	2,
+	3.5;
+
+	-fx-padding: 11;
 }
 
 .knob.bounded .handle {
-	-fx-background-color: white;
-	-fx-background-insets: 3 0 3 0;
+	-fx-background-color: #ffffff;
+	-fx-background-insets: 4 2 3 -2;
 	-fx-background-radius: 0;
 	-fx-padding: 4;
 }
