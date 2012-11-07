@@ -18,3 +18,8 @@
 	
 	-fx-padding: 30px;
 }
+
+#openHelpPageButton .graphic {
+	-fx-shape: -fx-shape-icon-help;
+	-fx-scale-x: 0.7;
+}

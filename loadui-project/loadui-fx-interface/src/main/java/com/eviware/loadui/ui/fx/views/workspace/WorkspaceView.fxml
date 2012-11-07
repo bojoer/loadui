@@ -42,7 +42,7 @@
 			</MenuButton>
 			<BorderPane HBox.hgrow="ALWAYS">
 				<right>
-					<Button id="helpButton" text="?" BorderPane.alignment="CENTER_RIGHT" onAction="#openHelpPage" />
+					<Button fx:id="openHelpPageButton" id="openHelpPageButton" styleClass="styleable-graphic, toolbar-button"  BorderPane.alignment="CENTER_RIGHT" onAction="#openHelpPage" />
 				</right>
 			</BorderPane>
 		</ToolBar>
