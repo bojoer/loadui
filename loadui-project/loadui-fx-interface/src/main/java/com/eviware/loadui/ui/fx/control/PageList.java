@@ -97,6 +97,24 @@ public class PageList<E extends Node> extends Control
 		this.widthPerItem.set( widthPerItem );
 	}
 
+	private final DoubleProperty spacing = new SimpleDoubleProperty( this, "spacing", 0.0 );
+
+	public DoubleProperty spacingProperty()
+	{
+		return spacing;
+	}
+
+	public double getSpacing()
+	{
+		return spacing.get();
+	}
+
+	public void setSpacing( double value )
+	{
+		Preconditions.checkArgument( value >= 0, "spacing must be >=0, was %d", value );
+		this.spacing.set( value );
+	}
+
 	private final Property<Callback<? super E, ? extends Label>> labelFactory = new SimpleObjectProperty<>( this,
 			"labelFactory" );
 

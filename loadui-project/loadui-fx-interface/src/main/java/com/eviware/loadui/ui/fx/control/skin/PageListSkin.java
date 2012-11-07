@@ -38,6 +38,8 @@ public class PageListSkin<E extends Node> extends SkinBase<PageList<E>, Behavior
 
 		itemList.setOrientation( Orientation.HORIZONTAL );
 		labelList.setOrientation( Orientation.HORIZONTAL );
+		itemList.spacingProperty().bind( pageList.spacingProperty() );
+		labelList.spacingProperty().bind( pageList.spacingProperty() );
 		itemList.sizePerItemProperty().bind( pageList.widthPerItemProperty() );
 		labelList.sizePerItemProperty().bind( pageList.widthPerItemProperty() );
 		VBox.setVgrow( itemList, Priority.ALWAYS );
