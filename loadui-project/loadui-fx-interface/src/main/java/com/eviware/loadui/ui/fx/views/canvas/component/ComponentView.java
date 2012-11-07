@@ -19,8 +19,8 @@ import com.eviware.loadui.api.layout.PropertyLayoutComponent;
 import com.eviware.loadui.api.layout.SettingsLayoutContainer;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.ui.fx.control.SettingsDialog;
-import com.eviware.loadui.ui.fx.control.SettingsDialog.SettingsTab;
-import com.eviware.loadui.ui.fx.control.SettingsDialog.SettingsTabBuilder;
+import com.eviware.loadui.ui.fx.control.SettingsTab;
+import com.eviware.loadui.ui.fx.control.SettingsTab.Builder;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.Properties;
 import com.eviware.loadui.ui.fx.views.canvas.CanvasObjectView;
@@ -83,7 +83,7 @@ public class ComponentView extends CanvasObjectView
 		List<SettingsTab> tabs = new LinkedList<>();
 		for( SettingsLayoutContainer layoutContainer : getComponent().getSettingsTabs() )
 		{
-			SettingsTabBuilder tabBuilder = SettingsTabBuilder.create( layoutContainer.getLabel() );
+			Builder tabBuilder = Builder.create( layoutContainer.getLabel() );
 			layoutContainerToField( layoutContainer, tabBuilder );
 			tabs.add( tabBuilder.build() );
 		}
@@ -106,7 +106,7 @@ public class ComponentView extends CanvasObjectView
 		content.getChildren().setAll( layout );
 	}
 
-	private static void layoutContainerToField( LayoutContainer container, SettingsTabBuilder tabBuilder )
+	private static void layoutContainerToField( LayoutContainer container, Builder tabBuilder )
 	{
 		for( LayoutComponent component : container )
 		{

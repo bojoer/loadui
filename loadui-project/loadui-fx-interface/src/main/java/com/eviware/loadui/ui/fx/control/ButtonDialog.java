@@ -1,5 +1,6 @@
 package com.eviware.loadui.ui.fx.control;
 
+import static javafx.scene.text.Font.font;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -10,7 +11,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.HBoxBuilder;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBoxBuilder;
-import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
 import javax.annotation.Nonnull;
@@ -26,7 +26,7 @@ public class ButtonDialog extends Dialog
 		super( owner, header );
 
 		//TODO: Replace with CSS.
-		Label headerLabel = LabelBuilder.create().font( Font.font( null, FontWeight.BOLD, 14 ) ).text( header ).build();
+		Label headerLabel = LabelBuilder.create().font( font( null, FontWeight.BOLD, 14 ) ).text( header ).build();
 
 		super.getItems().setAll( headerLabel, itemPane, buttonRow );
 	}

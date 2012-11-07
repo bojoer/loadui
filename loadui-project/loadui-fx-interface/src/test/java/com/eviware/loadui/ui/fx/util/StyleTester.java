@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.List;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -18,33 +19,31 @@ import javafx.scene.control.ButtonBuilder;
 import javafx.scene.control.SplitPaneBuilder;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextAreaBuilder;
+import javafx.scene.layout.HBoxBuilder;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.VBoxBuilder;
 import javafx.stage.Stage;
 
+import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.ui.fx.control.OptionsSlider;
+import com.eviware.loadui.ui.fx.control.SettingsTab;
+import com.eviware.loadui.ui.fx.control.SettingsTab.Builder;
+import com.eviware.loadui.ui.fx.control.Wizard;
 import com.google.common.base.Charsets;
+import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 
 public class StyleTester extends Application
 {
 	private Node createTestNode()
 	{
-		StackPane sp0 = new StackPane();
-		javafx.scene.Group g = new javafx.scene.Group();
-		ArrayList<String> a = new ArrayList<>();
-		a.add( "på" );
-		a.add( "av" );
-		a.add( "bajs" );
-		OptionsSlider os = new OptionsSlider( a );
-
-		g.getChildren().add( os );
-		sp0.getChildren().add( g );
-		sp0.setPadding( new Insets( 40, 40, 40, 40 ) );
-		sp0.getStyleClass().add( "web-container0" );
-		return sp0;
+		//		return HBoxBuilder
+		//				.create()
+		//				.children( new com.eviware.loadui.ui.fx.control.Wizard.StepIndicator( "First" ),
+		//						new com.eviware.loadui.ui.fx.control.Wizard.StepIndicator( "Second" ) ).spacing( 18.0 ).build();
+		return null;
 	}
 
 	@Override
@@ -121,7 +120,7 @@ public class StyleTester extends Application
 
 		primaryStage.show();
 
-		//		final Dialog dialog = new ConfirmationDialog( panel, "sdad", "2d" );
+		//		final Wizard dialog = new Wizard( panel, "sdad", tabs );
 		//		dialog.show();
 
 		//ScenicView.show( primaryStage.getScene() );

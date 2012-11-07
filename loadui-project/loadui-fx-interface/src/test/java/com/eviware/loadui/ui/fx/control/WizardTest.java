@@ -1,9 +1,9 @@
 package com.eviware.loadui.ui.fx.control;
 
-import static javafx.beans.binding.Bindings.when;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
+import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 import javafx.application.Application;
@@ -13,9 +13,9 @@ import javafx.event.EventHandler;
 import javafx.scene.GroupBuilder;
 import javafx.scene.SceneBuilder;
 import javafx.scene.control.Button;
-import javafx.scene.control.Tab;
+import javafx.scene.control.Control;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.Region;
+import javafx.scene.layout.HBoxBuilder;
 import javafx.stage.Stage;
 
 import org.junit.Before;
@@ -40,7 +40,7 @@ import com.google.common.util.concurrent.SettableFuture;
 //import com.javafx.experiments.scenicview.ScenicView;
 
 @Category( GUITest.class )
-public class SettingsDialogTest
+public class WizardTest
 {
 	private static final long INIT_LONG = 123L;
 	private static final boolean INIT_BOOLEAN = false;
@@ -48,20 +48,20 @@ public class SettingsDialogTest
 	private static final SettableFuture<Stage> stageFuture = SettableFuture.create();
 	private static Stage stage;
 	private static TestFX controller;
-	private static SettingsDialog settingsDialog;
+	private static Wizard wizard;
 	private static Button openDialogButton;
 	private static final Property<String> stringProperty = new TestingProperty<>( String.class,
-			SettingsDialogTest.class.getSimpleName() + ".stringProperty", INIT_STRING );
+			WizardTest.class.getSimpleName() + ".stringProperty", INIT_STRING );
 	private static final Property<Boolean> booleanProperty = new TestingProperty<>( Boolean.class,
-			SettingsDialogTest.class.getSimpleName() + ".booleanProperty", INIT_BOOLEAN );
+			WizardTest.class.getSimpleName() + ".booleanProperty", INIT_BOOLEAN );
 	private static final Property<Long> longProperty = new TestingProperty<>( Long.class,
-			SettingsDialogTest.class.getSimpleName() + ".longProperty", INIT_LONG );
+			WizardTest.class.getSimpleName() + ".longProperty", INIT_LONG );
 	private static final Property<Long> longProperty2 = new TestingProperty<>( Long.class,
-			SettingsDialogTest.class.getSimpleName() + ".longProperty2", INIT_LONG );
+			WizardTest.class.getSimpleName() + ".longProperty2", INIT_LONG );
 	private static SettingsTab otherTab;
 	private static SettingsTab generalTab;
 
-	protected static final Logger log = LoggerFactory.getLogger( SettingsDialogTest.class );
+	protected static final Logger log = LoggerFactory.getLogger( WizardTest.class );
 
 	@BeforeClass
 	public static void createWindow() throws Throwable
@@ -91,7 +91,7 @@ public class SettingsDialogTest
 			@Override
 			public void run()
 			{
-				settingsDialog = new SettingsDialog( openDialogButton, "Hej", Lists.newArrayList( generalTab, otherTab ) );
+				wizard = new Wizard( openDialogButton, "Hej", Lists.newArrayList( generalTab, otherTab ) );
 			}
 		}, 1000 );
 
@@ -104,16 +104,27 @@ public class SettingsDialogTest
 			}
 		}, 1000 );
 
-		StylingUtils.applyLoaduiStyling( settingsDialog.getScene() );
-
 		controller.click( openDialogButton );
 
-		controller.click( "#general-tab" );
+		StylingUtils.applyLoaduiStyling( wizard.getScene() );
+
+		//		controller.click( "#general-tab" );
+		controller.sleep( 1000 );
+		//		Platform.runLater( new Runnable()
+		//		{
+		//			@Override
+		//			public void run()
+		//			{
+		//				ScenicView.show( wizard.getScene() );
+		//			}
+		//		} );
 	}
 
 	@Test
 	public void changedFieldsInAllTabs_should_updateProperties_onSave() throws Exception
 	{
+		controller.sleep( 9995000 );
+
 		System.out.println( "generalTab.getTabPane().getSelectionModel().getSelectedItem().getText(): "
 				+ generalTab.getTabPane().getSelectionModel().getSelectedItem().getText() );
 
@@ -131,6 +142,7 @@ public class SettingsDialogTest
 		assertEquals( Long.valueOf( 4711 ), longProperty.getValue() );
 	}
 
+	@Ignore
 	@Test
 	public void invalidNumbers_should_promptError_onSave() throws Exception
 	{
@@ -139,37 +151,18 @@ public class SettingsDialogTest
 				.release( KeyCode.CONTROL, KeyCode.A ).sleep( 100 );
 		controller.type( "not a number" ).click( "#default" );
 
-		assertEquals( true, settingsDialog.isShowing() );
+		assertEquals( true, wizard.isShowing() );
 		assertFalse( Long.valueOf( 4711 ).equals( longProperty.getValue() ) );
 
 		controller.sleep( 100 ).click( "#my-long" ).press( KeyCode.CONTROL, KeyCode.A )
 				.release( KeyCode.CONTROL, KeyCode.A ).sleep( 100 ).type( "4711" ).sleep( 100 ).click( "#my-other-long" )
 				.press( KeyCode.CONTROL, KeyCode.A ).release( KeyCode.CONTROL, KeyCode.A ).sleep( 100 )
 				.type( "not a number" ).click( "#default" );
-		assertEquals( true, settingsDialog.isShowing() );
+		assertEquals( true, wizard.isShowing() );
 
 		controller.click( "#my-other-long" ).press( KeyCode.CONTROL, KeyCode.A ).release( KeyCode.CONTROL, KeyCode.A )
 				.sleep( 100 ).type( "7" ).click( "#default" );
-		assertEquals( false, settingsDialog.isShowing() );
-	}
-
-	@Ignore
-	@Test
-	public void singleTab_should_notDisplayTabPane() throws Exception
-	{
-		final Tab t = generalTab.getTabPane().getTabs().remove( 1 );
-		controller.sleep( 2500 );
-		final Region tabHeader = ( Region )generalTab.getTabPane().lookup( ".tab-header-area" );
-		assertEquals( tabHeader.getHeight(), 0.0, 0.005 );
-		Platform.runLater( new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				generalTab.getTabPane().getTabs().add( t );
-			}
-		} );
-		controller.sleep( 500 );
+		assertEquals( false, wizard.isShowing() );
 	}
 
 	public static class SettingsDialogTestApp extends Application
@@ -183,16 +176,23 @@ public class SettingsDialogTest
 				@Override
 				public void handle( ActionEvent arg0 )
 				{
-					settingsDialog.show();
+					wizard.show();
 				}
 			} );
 
-			primaryStage.setScene( SceneBuilder.create().width( 800 ).height( 600 )
-					.root( GroupBuilder.create().children( openDialogButton ).build() ).build() );
+			primaryStage.setScene( SceneBuilder
+					.create()
+					.width( 800 )
+					.height( 600 )
+					.root(
+							GroupBuilder.create().children( HBoxBuilder.create().children( openDialogButton ).build() )
+									.build() ).build() );
 
 			primaryStage.show();
 
 			stageFuture.set( primaryStage );
+
 		}
+
 	}
 }
