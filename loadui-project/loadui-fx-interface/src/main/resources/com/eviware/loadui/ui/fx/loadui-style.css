@@ -424,8 +424,25 @@
 	-fx-background-radius: 50;
 }
 
+.knob.bounded {
+	-fx-skin: "com.eviware.loadui.ui.fx.control.skin.KnobBoundedSkin";
+}
+
+.knob.bounded .ticks {
+	-fx-shape: "M 0,0 L 99,-2 99,2 0,0 M 0,0 L 93,35 91,41 0,0 M 0,0 L 72,68 68,72 0,0 M 0,0 L 41,91 35,93 0,0 M 0,0 L 2,99 -2,99 0,0 M 0,0 L -35,93 -41,91 0,0 M 0,0 L -68,72 -72,68 0,0 M 0,0 L -91,41 -93,35 0,0 M 0,0 L -99,2 -99,-2 0,0 M 0,0 L -93,-35 -91,-41 0,0 M 0,0 L -72,-68 -68,-72 0,0 M 0,0 L -41,-91 -35,-93 0,0 M 0,0 L -2,-99 2,-99 0,0 M 0,0 L 35,-93 41,-91 0,0 M 0,0 L 68,-72 72,-68 0,0 M 0,0 L 91,-41 93,-35 0,0";
+	-fx-background-color: black;
+	-fx-background-insets: -5;
+}
+
 .knob.bounded .base {
 	-fx-background-color: black, blue;
+}
+
+.knob.bounded .handle {
+	-fx-background-color: white;
+	-fx-background-insets: 3 0 3 0;
+	-fx-background-radius: 0;
+	-fx-padding: 4;
 }
  
 /**

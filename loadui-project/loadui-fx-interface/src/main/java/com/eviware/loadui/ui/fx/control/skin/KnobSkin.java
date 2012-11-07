@@ -2,8 +2,11 @@ package com.eviware.loadui.ui.fx.control.skin;
 
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
+import javafx.beans.binding.DoubleBinding;
 import javafx.beans.binding.IntegerBinding;
 import javafx.beans.binding.NumberExpression;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
@@ -30,23 +33,92 @@ import com.sun.javafx.scene.control.skin.SkinBase;
 
 public class KnobSkin extends SkinBase<Knob, KnobBehavior>
 {
-	private static final double START_ANGLE = Math.PI / 2;
-
 	private final ValueDisplay valueDisplay;
 	private final Label label;
 	private final StackPane base;
 	private final Region handle;
 
-	public KnobSkin( Knob control )
+	private DoubleProperty startAngle;
+
+	public DoubleProperty startAngleProperty()
+	{
+		if( startAngle == null )
+		{
+			startAngle = new SimpleDoubleProperty( this, "startAngle", getStartAngle() );
+		}
+		return startAngle;
+	}
+
+	public double getStartAngle()
+	{
+		return startAngle == null ? Math.PI / 2 : startAngle.get();
+	}
+
+	public void setStartAngle( double value )
+	{
+		startAngleProperty().setValue( value );
+	}
+
+	private DoubleProperty angleSpan;
+
+	public DoubleProperty angleSpanProperty()
+	{
+		if( angleSpan == null )
+		{
+			angleSpan = new SimpleDoubleProperty( this, "angleSpan", getAngleSpan() );
+		}
+		return angleSpan;
+	}
+
+	public double getAngleSpan()
+	{
+		return angleSpan == null ? 2 * Math.PI : angleSpan.get();
+	}
+
+	public void setAngleSpan( double value )
+	{
+		angleSpanProperty().setValue( value );
+	}
+
+	private final NumberExpression angle;
+
+	public NumberExpression angleProperty()
+	{
+		return angle;
+	}
+
+	public Double getAngle()
+	{
+		return angle.doubleValue();
+	}
+
+	public KnobSkin( final Knob control )
 	{
 		super( control, new KnobBehavior( control ) );
+
+		angle = new DoubleBinding()
+		{
+			{
+				bind( control.valueProperty(), control.spanProperty() );
+			}
+
+			@Override
+			protected double computeValue()
+			{
+				double value = Double.isInfinite( getSkinnable().getMin() ) ? getSkinnable().getValue() : getSkinnable()
+						.getValue() - getSkinnable().getMin();
+				return getStartAngle() + ( getAngleSpan() * value / getSkinnable().getSpan() ) % getAngleSpan();
+			}
+		};
 
 		label = LabelBuilder.create().build();
 		label.textProperty().bind( control.textProperty() );
 
 		handle = RegionBuilder.create().styleClass( "handle" ).build();
 
-		base = StackPaneBuilder.create().styleClass( "base" ).build();
+		base = StackPaneBuilder.create().styleClass( "ticks" )
+				.children( RegionBuilder.create().styleClass( "base" ).build() ).build();
+
 		addEventHandler( MouseEvent.ANY, new DragBehavior() );
 		setOnScroll( new EventHandler<ScrollEvent>()
 		{
@@ -74,6 +146,21 @@ public class KnobSkin extends SkinBase<Knob, KnobBehavior>
 		getChildren().setAll( base, handle, label );
 	}
 
+	public Label getLabel()
+	{
+		return label;
+	}
+
+	public Region getBase()
+	{
+		return base;
+	}
+
+	public Region getHandle()
+	{
+		return handle;
+	}
+
 	@Override
 	protected double computeMinHeight( double width )
 	{
@@ -98,14 +185,12 @@ public class KnobSkin extends SkinBase<Knob, KnobBehavior>
 		remainingHeight -= label.getHeight();
 		layoutInArea( base, left, top, width, remainingHeight, getBaselineOffset(), Insets.EMPTY, false, false,
 				HPos.CENTER, VPos.TOP );
-		handle.autosize();
 
+		handle.autosize();
 		double handleRadius = Math.max( handle.getWidth(), handle.getHeight() ) / 2;
 		double radius = Math.min( remainingHeight, width ) / 2 - handleRadius;
-		double angle = START_ANGLE + ( Math.PI * 2 * getSkinnable().getValue() / getSkinnable().getSpan() )
-				% ( 2 * Math.PI );
-		double x = Math.cos( angle ) * radius;
-		double y = Math.sin( angle ) * radius;
+		double x = Math.cos( getAngle() ) * radius;
+		double y = Math.sin( getAngle() ) * radius;
 		layoutInArea( handle, left + width / 2 + ( x - handleRadius ), top + remainingHeight / 2 + ( y - handleRadius ),
 				handleRadius * 2, handleRadius * 2, handle.getBaselineOffset(), HPos.CENTER, VPos.CENTER );
 	}
@@ -183,7 +268,7 @@ public class KnobSkin extends SkinBase<Knob, KnobBehavior>
 				}
 			} );
 
-			bridge.getChildren().setAll( StackPaneBuilder.create().children( valueField ).build() );
+			bridge.getChildren().setAll( valueField );
 		}
 
 		public void display()
