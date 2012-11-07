@@ -37,7 +37,7 @@
 	</MenuButton>
 	<HBox maxWidth="200" maxHeight="60" alignment="CENTER_RIGHT"
 		AnchorPane.topAnchor="18" AnchorPane.rightAnchor="10">
-		<Button fx:id="openHelpPageButton" text="Help" onAction="#openHelpPage" />
-		<Button fx:id="close" text="Close" onAction="#closeScenario" />
+		<Button fx:id="openHelpPageButton" id="openHelpPageButton" styleClass="styleable-graphic, toolbar-button" onAction="#openHelpPage" />
+		<Button fx:id="closeScenarioButton" id="closeScenarioButton" styleClass="styleable-graphic, toolbar-button" onAction="#closeScenario" />
 	</HBox>
 </fx:root>
