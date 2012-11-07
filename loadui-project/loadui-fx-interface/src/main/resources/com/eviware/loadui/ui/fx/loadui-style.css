@@ -107,6 +107,7 @@
 
 .toolbar-button.styleable-graphic:focused {
 	-fx-background-insets: 0;
+	-fx-background-radius: 5;
 }
 
 .toolbar-button.styleable-graphic .graphic {

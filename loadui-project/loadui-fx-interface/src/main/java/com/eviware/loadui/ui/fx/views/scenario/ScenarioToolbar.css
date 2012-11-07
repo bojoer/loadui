@@ -1,3 +1,12 @@
 .title {
 	-fx-font-size: 20px;
 }
+
+#openHelpPageButton .graphic {
+	-fx-shape: -fx-shape-icon-help;
+	-fx-scale-x: 0.7;
+}
+
+#closeScenarioButton .graphic {
+	-fx-shape: -fx-shape-icon-close;
+}
