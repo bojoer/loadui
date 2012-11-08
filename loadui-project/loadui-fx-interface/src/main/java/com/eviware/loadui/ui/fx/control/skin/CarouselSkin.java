@@ -23,6 +23,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBuilder;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Separator;
@@ -37,6 +38,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.StackPaneBuilder;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.VBoxBuilder;
 import javafx.scene.shape.RectangleBuilder;
@@ -55,9 +57,11 @@ public class CarouselSkin<E extends Node> extends SkinBase<Carousel<E>, Behavior
 	private final Pager<Node> pager = new Pager<>();
 	private final IntegerProperty depth = new SimpleIntegerProperty( this, "depth", 2 );
 
-	private static Node createPlaceholder()
+	private final StackPane placeholder;
+
+	private static Node createPadderNode()
 	{
-		return RectangleBuilder.create().id( "placeholder" ).build();
+		return RectangleBuilder.create().id( "padder" ).build();
 	}
 
 	public CarouselSkin( final Carousel<E> carousel )
@@ -65,6 +69,10 @@ public class CarouselSkin<E extends Node> extends SkinBase<Carousel<E>, Behavior
 		super( carousel, new BehaviorBase<>( carousel ) );
 
 		this.carousel = carousel;
+
+		Label placeholderLabel = new Label();
+		placeholderLabel.textProperty().bind( carousel.placeholderTextProperty() );
+		placeholder = StackPaneBuilder.create().styleClass( "placeholder" ).children( placeholderLabel ).build();
 
 		pager.setFluentMode( true );
 		pager.itemsPerPageProperty().bind( depth.multiply( 2 ).add( 1 ) );
@@ -77,12 +85,20 @@ public class CarouselSkin<E extends Node> extends SkinBase<Carousel<E>, Behavior
 				List<Node> nodes = new ArrayList<>();
 				for( int i = depth.get(); i > 0; i-- )
 				{
-					nodes.add( createPlaceholder() );
+					nodes.add( createPadderNode() );
 				}
-				nodes.addAll( carousel.getItems() );
+
+				if( carousel.getItems().isEmpty() )
+				{
+					nodes.add( placeholder );
+				}
+				else
+				{
+					nodes.addAll( carousel.getItems() );
+				}
 				for( int i = depth.get(); i > 0; i-- )
 				{
-					nodes.add( createPlaceholder() );
+					nodes.add( createPadderNode() );
 				}
 
 				pager.getItems().setAll( nodes );

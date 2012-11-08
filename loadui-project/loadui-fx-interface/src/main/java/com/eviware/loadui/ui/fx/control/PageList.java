@@ -4,6 +4,7 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -77,6 +78,23 @@ public class PageList<E extends Node> extends Control
 	public ObservableList<E> getItems()
 	{
 		return items;
+	}
+
+	private final StringProperty placeholderText = new SimpleStringProperty( this, "placeholderText", "No items" );
+
+	public StringProperty placeholderTextProperty()
+	{
+		return placeholderText;
+	}
+
+	public String getPlaceholderText()
+	{
+		return placeholderText.get();
+	}
+
+	public void setPlaceholderText( String value )
+	{
+		placeholderText.set( value );
 	}
 
 	private final DoubleProperty widthPerItem = new SimpleDoubleProperty( this, "widthPerItem", 100.0 );

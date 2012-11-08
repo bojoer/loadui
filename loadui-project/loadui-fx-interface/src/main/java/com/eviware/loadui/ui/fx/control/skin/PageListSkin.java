@@ -42,6 +42,7 @@ public class PageListSkin<E extends Node> extends SkinBase<PageList<E>, Behavior
 		labelList.spacingProperty().bind( pageList.spacingProperty() );
 		itemList.sizePerItemProperty().bind( pageList.widthPerItemProperty() );
 		labelList.sizePerItemProperty().bind( pageList.widthPerItemProperty() );
+		itemList.placeholderTextProperty().bind( pageList.placeholderTextProperty() );
 		VBox.setVgrow( itemList, Priority.ALWAYS );
 
 		labelList.pageProperty().bindBidirectional( itemList.pageProperty() );

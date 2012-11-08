@@ -25,10 +25,31 @@
 } 
  
 .placeholder {
-	-fx-background-color: white;
+	-fx-background-color: #292929;
 	-fx-background-radius: 8;
+	-fx-border-color: #6e6e6e;
+	-fx-border-radius: 8;
+	-fx-border-style: dashed;
+	-fx-border-width: 2;
 }
- 
+
+.placeholder .label {
+	-fx-text-fill: #6e6e6e;
+}
+
+.table-view .placeholder {
+	-fx-background-color: white;
+	-fx-background-radius: 0;
+	-fx-border-color: none;
+	-fx-border-radius: 0;
+	-fx-border-style: none;
+	-fx-border-width: 0;
+}
+
+.table-view .placeholder .label {	
+	-fx-text-fill: black;
+}
+
 .label.icon {
 	-fx-content-display: top;
 	-fx-wrap-text: true;
@@ -150,9 +171,9 @@
  
 .tool-box {
 	-fx-skin: "com.eviware.loadui.ui.fx.control.skin.ToolBoxSkin";
-	-fx-background-color: black, #4f4f4f, #484848, #565656;
-	-fx-background-insets: 0, 1, 2, 20 3 3 2;
-	-fx-background-radius: 0 3 3 0, 0 3 3 0, 0 3 3 0, 0 0 3 0;
+	-fx-background-color: #333333, #707171, #484848, #565656;
+	-fx-background-insets: 0, 1 1 1 0, 3 1 1 0, 20 3 3 0;
+	-fx-background-radius: 0 4 4 0, 0 4 4 0, 0 3 3 0, 0 0 3 0;
 	-fx-padding: 0 0 0 0;
 	-fx-alignment: center;
 }
@@ -165,6 +186,7 @@
 .tool-box .title {
 	-fx-padding: 2;
 	-fx-font-size: 12;
+	-fx-text-fill: #303030;
 }
 
 .tool-box .scrollable-list {
@@ -178,14 +200,14 @@
 }
 
 .tool-box .item-box {
-	-fx-background-color: #616161, #6d6d6d, #505050, #4b4b4b, #565656;
+	-fx-background-color: #616161, #6d6d6d, #505050, #484848, #565656;
 	-fx-background-insets: 3 3 2 1, 2 3 3 1, 2 3 4 1, 3 3 4 1, 3 3 4 1;
 	-fx-padding: 4 0 4 0;
 }
 
 .tool-box .category {
 	-fx-padding: 0 5 0 0;
-	-fx-background-color: #4b4b4b, #505050, #6d6d6d, #616161, #565656;
+	-fx-background-color: #484848, #505050, #6d6d6d, #616161, #565656;
 	-fx-background-insets: 0 1 0 1, 1 3 1 1, 0 3 2 1, 1 3 2 1, 2 3 2 1;
 }
 
@@ -198,14 +220,33 @@
 	-fx-spacing: 5;
 }
 
+.item-holder .label {
+	-fx-text-fill: #9c9c9c;
+}
+
 .item-holder > .items {
 	-fx-spacing: 15;
 }
 
 .tool-box-expander .item-holder {
-	-fx-background-color: black, lightgrey;
-	-fx-background-radius: 0 2 2 0;
-	-fx-background-insets: -3 0 -3 0, -2 1 -2 1;
+	-fx-backgroundFill: rgb(68,68,68,0.8);
+	-fx-borderFill: rgb(38,38,38,0.8);
+	/* -fx-textFill: rgb(156,156,156); */
+
+	-fx-border-color: -fx-borderFill;
+	-fx-border-radius:  0 5 5 0;
+	-fx-border-insets: 0;
+
+	-fx-background-color: -fx-backgroundFill;
+		
+	-fx-background-radius: 0 5 5 0;
+	-fx-background-insets: 0;
+}
+
+.tool-box-expander .line {
+	-fx-background-color: rgb(120,120,120);
+	-fx-background-insets: -30 0 30 0;
+	
 }
 
 /**
