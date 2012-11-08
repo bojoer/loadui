@@ -2,6 +2,7 @@ package com.eviware.loadui.ui.fx.control;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -93,5 +94,10 @@ public class ConfirmationDialog extends ButtonDialog
 	public void setConfirmDisable( boolean disable )
 	{
 		confirmButton.setDisable( disable );
+	}
+
+	public StringProperty confirmationTextProperty()
+	{
+		return confirmButton.textProperty();
 	}
 }

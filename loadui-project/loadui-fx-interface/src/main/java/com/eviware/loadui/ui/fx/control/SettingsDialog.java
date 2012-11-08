@@ -2,15 +2,10 @@ package com.eviware.loadui.ui.fx.control;
 
 import static com.eviware.loadui.ui.fx.util.NodeUtils.bindStyleClass;
 import static javafx.beans.binding.Bindings.size;
-import static javafx.beans.binding.Bindings.when;
 
 import java.util.List;
 
-import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableBooleanValue;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -66,7 +61,10 @@ public class SettingsDialog extends ConfirmationDialog
 			boolean wasValid = true;
 			for( SettingsTab tab : tabs )
 			{
-				wasValid = wasValid && tab.validate();
+				boolean tabIsValid = tab.validate();
+				if( !tabIsValid )
+					tab.getTabPane().getSelectionModel().select( tab );
+				wasValid = wasValid && tabIsValid;
 			}
 			if( wasValid )
 			{
