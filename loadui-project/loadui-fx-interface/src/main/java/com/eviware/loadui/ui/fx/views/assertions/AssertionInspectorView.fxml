@@ -7,7 +7,7 @@
 <?import com.eviware.loadui.ui.fx.control.ToolBox?>
 <?import com.eviware.loadui.ui.fx.control.ScrollableList?>
 
-<fx:root type="javafx.scene.layout.HBox" styleClass="assertion-inspector-view" xmlns:fx="http://javafx.com/fxml" spacing="10" fillHeight="true">
+<fx:root type="javafx.scene.layout.HBox" styleClass="assertion-inspector-view, inspector" xmlns:fx="http://javafx.com/fxml" spacing="10" fillHeight="true">
 	<stylesheets>
 		<URL value="@AssertionInspectorView.css" />
 	</stylesheets>

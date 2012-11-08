@@ -1,8 +1,6 @@
-
-.web-container0{
-	-fx-background-color: #333333;
+.inspector {
+	-fx-background-color: #6f6f6f;
 }
-
 
 .tab-header-area {
 	/* This seems to be a bug in the implementation (JavaFX 2.2). The spec says to use v-resize, but the implementation fails unless v_resize is used! */

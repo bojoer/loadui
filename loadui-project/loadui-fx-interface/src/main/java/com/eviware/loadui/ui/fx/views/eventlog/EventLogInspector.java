@@ -41,7 +41,8 @@ public class EventLogInspector implements Inspector
 		this.executionManager = executionManager;
 		this.testEventManager = testEventManager;
 
-		panel = StackPaneBuilder.create().padding( new Insets( 10 ) ).children( eventLog ).build();
+		panel = StackPaneBuilder.create().padding( new Insets( 10 ) ).styleClass( "inspector" ).children( eventLog )
+				.build();
 
 		executionManager.addExecutionListener( new CurrentExecutionListener() );
 		execution.addListener( new ChangeListener<Execution>()
