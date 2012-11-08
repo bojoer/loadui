@@ -107,6 +107,8 @@ public abstract class CanvasObjectView extends StackPane implements Deletable
 				fx( ofCollection( canvasObject, TerminalHolder.TERMINALS, OutputTerminal.class,
 						Iterables.filter( canvasObject.getTerminals(), OutputTerminal.class ) ) ), OUTPUT_TERMINAL_TO_VIEW );
 
+		setStyle( "-fx-header-color: " + canvasObject.getColor() + ";" );
+
 		FXMLUtils
 				.load( this, this, CanvasObjectView.class.getResource( CanvasObjectView.class.getSimpleName() + ".fxml" ) );
 	}
