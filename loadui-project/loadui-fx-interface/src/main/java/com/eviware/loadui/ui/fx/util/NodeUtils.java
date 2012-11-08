@@ -2,6 +2,14 @@ package com.eviware.loadui.ui.fx.util;
 
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.BooleanPropertyBase;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableBooleanValue;
+import javafx.beans.value.ObservableValue;
+import javafx.beans.value.WritableBooleanValue;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
@@ -67,4 +75,26 @@ public final class NodeUtils
 		return false;
 	}
 
+	public static void bindStyleClass( @Nonnull final Node nodeToStyle, @Nonnull final String styleClass,
+			ObservableBooleanValue value )
+	{
+		updateStyleClasses( nodeToStyle, styleClass, value.getValue() );
+		value.addListener( new ChangeListener<Boolean>()
+		{
+			@Override
+			public void changed( ObservableValue<? extends Boolean> arg0, Boolean oldValue, Boolean newValue )
+			{
+				updateStyleClasses( nodeToStyle, styleClass, newValue );
+			}
+
+		} );
+	}
+
+	private static void updateStyleClasses( final Node nodeToStyle, final String styleClass, Boolean newValue )
+	{
+		if( newValue )
+			nodeToStyle.getStyleClass().add( styleClass );
+		else
+			nodeToStyle.getStyleClass().remove( styleClass );
+	}
 }

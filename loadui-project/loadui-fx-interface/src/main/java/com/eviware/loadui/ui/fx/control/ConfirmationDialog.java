@@ -8,6 +8,9 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBuilder;
+import javafx.scene.control.Separator;
+import javafx.scene.control.SeparatorBuilder;
+import javafx.scene.layout.HBox;
 
 import javax.annotation.Nonnull;
 
@@ -19,6 +22,13 @@ public class ConfirmationDialog extends ButtonDialog
 	private final Button cancelButton;
 
 	public ConfirmationDialog( @Nonnull final Node owner, @Nonnull String header, @Nonnull String actionButtonLabel )
+	{
+		this( owner, header, actionButtonLabel, false );
+		addStyleClass( "confirmation-dialog" );
+	}
+
+	public ConfirmationDialog( @Nonnull final Node owner, @Nonnull String header, @Nonnull String actionButtonLabel,
+			boolean separateButtons )
 	{
 		super( owner, header );
 
@@ -42,7 +52,14 @@ public class ConfirmationDialog extends ButtonDialog
 					}
 				} ).build();
 
-		if( PlatformUtil.isMac() )
+		if( separateButtons )
+		{
+			Separator buttonSeparator = SeparatorBuilder.create().style( "visibility: hidden;" )
+					.maxWidth( Double.MAX_VALUE ).build();
+			HBox.setHgrow( buttonSeparator, javafx.scene.layout.Priority.ALWAYS );
+			getButtons().setAll( cancelButton, buttonSeparator, confirmButton );
+		}
+		else if( PlatformUtil.isMac() )
 			getButtons().setAll( cancelButton, confirmButton );
 		else
 			getButtons().setAll( confirmButton, cancelButton );
