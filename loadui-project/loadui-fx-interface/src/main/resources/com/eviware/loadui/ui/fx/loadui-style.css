@@ -165,6 +165,7 @@
 .tool-box .title {
 	-fx-padding: 2;
 	-fx-font-size: 12;
+	-fx-text-fill: #303030;
 }
 
 .tool-box .scrollable-list {
@@ -198,14 +199,33 @@
 	-fx-spacing: 5;
 }
 
+.item-holder .label {
+	-fx-text-fill: #9c9c9c;
+}
+
 .item-holder > .items {
 	-fx-spacing: 15;
 }
 
 .tool-box-expander .item-holder {
-	-fx-background-color: black, lightgrey;
-	-fx-background-radius: 0 2 2 0;
-	-fx-background-insets: -3 0 -3 0, -2 1 -2 1;
+	-fx-backgroundFill: rgb(68,68,68,0.8);
+	-fx-borderFill: rgb(38,38,38,0.8);
+	/* -fx-textFill: rgb(156,156,156); */
+
+	-fx-border-color: -fx-borderFill;
+	-fx-border-radius:  0 5 5 0;
+	-fx-border-insets: 0;
+
+	-fx-background-color: -fx-backgroundFill;
+		
+	-fx-background-radius: 0 5 5 0;
+	-fx-background-insets: 0;
+}
+
+.tool-box-expander .line {
+	-fx-background-color: rgb(120,120,120);
+	-fx-background-insets: -30 0 30 0;
+	
 }
 
 /**
