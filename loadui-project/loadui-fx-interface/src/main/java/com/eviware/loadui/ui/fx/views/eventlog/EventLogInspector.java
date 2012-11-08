@@ -8,8 +8,11 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.StackPaneBuilder;
 
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
@@ -26,7 +29,8 @@ public class EventLogInspector implements Inspector
 {
 	private static final String FILTER = PerspectiveEvent.getPath( PerspectiveEvent.PERSPECTIVE_PROJECT ) + ".*";
 
-	private final EventLogView panel = new EventLogView();
+	private final EventLogView eventLog = new EventLogView();
+	private final StackPane panel;
 	private final ExecutionManager executionManager;
 	private final TestEventManager testEventManager;
 
@@ -37,6 +41,8 @@ public class EventLogInspector implements Inspector
 		this.executionManager = executionManager;
 		this.testEventManager = testEventManager;
 
+		panel = StackPaneBuilder.create().padding( new Insets( 10 ) ).children( eventLog ).build();
+
 		executionManager.addExecutionListener( new CurrentExecutionListener() );
 		execution.addListener( new ChangeListener<Execution>()
 		{
@@ -45,11 +51,11 @@ public class EventLogInspector implements Inspector
 			{
 				if( newExecution == null )
 				{
-					panel.getItems().clear();
+					eventLog.getItems().clear();
 				}
 				else
 				{
-					panel.getItems().setAll( Lists.newArrayList( newExecution.getTestEventRange( 0, Long.MAX_VALUE ) ) );
+					eventLog.getItems().setAll( Lists.newArrayList( newExecution.getTestEventRange( 0, Long.MAX_VALUE ) ) );
 				}
 			}
 		} );
@@ -152,8 +158,8 @@ public class EventLogInspector implements Inspector
 					public void run()
 					{
 						//We need to get it from the Execution for it to have the adjusted timestamp.
-						panel.getItems()
-								.add( Iterables.getFirst( execution.getValue().getTestEvents( panel.getItems().size(), false ),
+						eventLog.getItems().add(
+								Iterables.getFirst( execution.getValue().getTestEvents( eventLog.getItems().size(), false ),
 										null ) );
 					}
 				} );

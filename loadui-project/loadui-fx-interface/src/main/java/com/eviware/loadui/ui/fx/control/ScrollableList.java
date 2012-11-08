@@ -11,6 +11,8 @@ import javafx.beans.property.Property;
 import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -21,14 +23,14 @@ import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBuilder;
+import javafx.scene.control.Label;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.HBoxBuilder;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.RegionBuilder;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.StackPaneBuilder;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.VBoxBuilder;
 
@@ -42,7 +44,7 @@ public class ScrollableList<E extends Node> extends StackPane
 
 	private final Pager<E> pager = new Pager<>();
 	private final FixedSpaceBox itemBox = new FixedSpaceBox();
-	private final Region placeholder = RegionBuilder.create().styleClass( "placeholder" ).build();
+	private final StackPane placeholder;
 	private final Button prevButton;
 	private final Button nextButton;
 
@@ -50,9 +52,14 @@ public class ScrollableList<E extends Node> extends StackPane
 			Orientation.VERTICAL );
 	private final DoubleProperty sizePerItem = new SimpleDoubleProperty( this, "sizePerItem", 100.0 );
 	private final DoubleProperty spacing = new SimpleDoubleProperty( this, "spacing", 0.0 );
+	private final StringProperty placeholderText = new SimpleStringProperty( this, "placeholderText", "No items" );
 
 	public ScrollableList()
 	{
+		Label placeholderLabel = new Label();
+		placeholderLabel.textProperty().bind( placeholderText );
+		placeholder = StackPaneBuilder.create().styleClass( "placeholder" ).children( placeholderLabel ).build();
+
 		prevButton = ButtonBuilder.create().styleClass( "nav", "prev" ).onAction( new EventHandler<ActionEvent>()
 		{
 			@Override
@@ -206,6 +213,21 @@ public class ScrollableList<E extends Node> extends StackPane
 	public void setOrientation( Orientation value )
 	{
 		orientation.set( value );
+	}
+
+	public StringProperty placeholderTextProperty()
+	{
+		return placeholderText;
+	}
+
+	public String getPlaceholderText()
+	{
+		return placeholderText.get();
+	}
+
+	public void setPlaceholderText( String value )
+	{
+		placeholderText.set( value );
 	}
 
 	public IntegerProperty pageProperty()

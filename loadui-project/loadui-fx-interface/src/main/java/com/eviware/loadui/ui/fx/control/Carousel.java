@@ -4,6 +4,8 @@ import javafx.beans.DefaultProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ObjectPropertyBase;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -80,7 +82,7 @@ public class Carousel<E extends Node> extends Control
 	private void initialize()
 	{
 		getStyleClass().setAll( DEFAULT_STYLE_CLASS );
-		
+
 		label.getStyleClass().add( "list-title" );
 
 		items.addListener( new ListChangeListener<E>()
@@ -154,5 +156,22 @@ public class Carousel<E extends Node> extends Control
 	public ObservableList<E> getItems()
 	{
 		return items;
+	}
+
+	private final StringProperty placeholderText = new SimpleStringProperty( this, "placeholderText", "No items" );
+
+	public StringProperty placeholderTextProperty()
+	{
+		return placeholderText;
+	}
+
+	public String getPlaceholderText()
+	{
+		return placeholderText.get();
+	}
+
+	public void setPlaceholderText( String value )
+	{
+		placeholderText.set( value );
 	}
 }

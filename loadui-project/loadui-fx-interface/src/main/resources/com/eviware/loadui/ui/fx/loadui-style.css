@@ -25,10 +25,19 @@
 } 
  
 .placeholder {
-	-fx-background-color: white;
+	-fx-background-color: #292929;
 	-fx-background-radius: 8;
+	-fx-border-color: #6e6e6e;
+	-fx-border-radius: 8;
+	-fx-border-style: dashed;
+	-fx-border-width: 2;
 }
- 
+
+.placeholder .label {
+	
+	-fx-text-fill: #6e6e6e;
+}
+
 .label.icon {
 	-fx-content-display: top;
 	-fx-wrap-text: true;
