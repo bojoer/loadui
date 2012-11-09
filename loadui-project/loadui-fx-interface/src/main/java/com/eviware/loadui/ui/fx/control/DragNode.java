@@ -56,6 +56,7 @@ public class DragNode extends PopupControl implements Draggable
 	public static DragNode install( Node node, Node draggableNode )
 	{
 		DragNode dragNode = new DragNode( draggableNode );
+		node.setCursor( Cursor.MOVE );
 		BEHAVIOR.install( node, dragNode );
 
 		return dragNode;
@@ -401,12 +402,12 @@ public class DragNode extends PopupControl implements Draggable
 			dragNode.getNode().effectProperty()
 					.bind( Bindings.when( dragNode.draggingProperty() ).then( SHADOW_EFFECT ).otherwise( ( Effect )null ) );
 
-			dragNode
-					.getNode()
-					.cursorProperty()
-					.bind(
-							Bindings.when( dragNode.draggingProperty() ).then( Cursor.CLOSED_HAND )
-									.otherwise( Cursor.OPEN_HAND ) );
+			//			dragNode
+			//					.getNode()
+			//					.cursorProperty()
+			//					.bind(
+			//							Bindings.when( dragNode.draggingProperty() ).then( Cursor.CLOSED_HAND )
+			//									.otherwise( Cursor.OPEN_HAND ) );
 		}
 
 		private void uninstall( Node node )
