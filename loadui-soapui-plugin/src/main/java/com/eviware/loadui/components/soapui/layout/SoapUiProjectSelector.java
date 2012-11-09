@@ -1,6 +1,7 @@
 package com.eviware.loadui.components.soapui.layout;
 
 import java.io.File;
+import java.lang.reflect.Array;
 import java.util.concurrent.CountDownLatch;
 
 import javafx.application.Platform;
@@ -228,8 +229,11 @@ public class SoapUiProjectSelector
 			@Override
 			public void run()
 			{
-				testCaseCombo.setItems( FXCollections.observableArrayList( testCases ) );
-				testCase.setValue( testCases[0] );
+				if( testCases.length > 0 )
+				{
+					testCaseCombo.setItems( FXCollections.observableArrayList( testCases ) );
+					testCase.setValue( testCases[0] );
+				}
 				testCaseLatch.countDown();
 			}
 		} );
