@@ -18,6 +18,8 @@ public class RenameDialog extends ConfirmationDialog
 
 		Label newName = new Label( "New name" );
 		final ValidatableStringField newNameField = new ValidatableStringField( ValidatableStringField.NOT_EMPTY );
+		newNameField.setText( labeled.getLabel() );
+		newNameField.selectAll();
 
 		getItems().setAll( newName, newNameField );
 

@@ -81,6 +81,21 @@ public class ConfirmationDialog extends ButtonDialog
 		confirmButton.onActionProperty().set( value );
 	}
 
+	public ObjectProperty<EventHandler<ActionEvent>> onCancelProperty()
+	{
+		return cancelButton.onActionProperty();
+	}
+
+	public EventHandler<ActionEvent> getOnCancel()
+	{
+		return cancelButton.onActionProperty().get();
+	}
+
+	public void setOnCancel( EventHandler<ActionEvent> value )
+	{
+		cancelButton.onActionProperty().set( value );
+	}
+
 	public BooleanProperty confirmDisableProperty()
 	{
 		return confirmButton.disableProperty();

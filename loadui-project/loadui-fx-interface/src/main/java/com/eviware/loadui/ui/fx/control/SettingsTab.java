@@ -19,10 +19,12 @@ import com.eviware.loadui.ui.fx.control.fields.ValidatableStringField;
 import com.eviware.loadui.ui.fx.control.fields.ValidatableTextField;
 import com.eviware.loadui.ui.fx.util.UIUtils;
 import com.google.common.base.Objects;
+import com.google.common.collect.Iterables;
 
 public class SettingsTab extends Tab
 {
-	private final Map<Field<?>, Property<?>> fieldToProperty = new HashMap<>();
+	private final Map<Field<?>, Property<?>> fieldToLoaduiProperty = new HashMap<>();
+	private final Map<Field<?>, javafx.beans.property.Property<?>> fieldToJavafxProperty = new HashMap<>();
 	private final VBox vBox = new VBox( SettingsDialog.VERTICAL_SPACING );
 
 	SettingsTab( String label )
@@ -40,7 +42,7 @@ public class SettingsTab extends Tab
 			checkBox.setSelected( ( Boolean )property.getValue() );
 			checkBox.setId( UIUtils.toCssId( label ) );
 			vBox.getChildren().add( checkBox );
-			fieldToProperty.put( checkBox, property );
+			fieldToLoaduiProperty.put( checkBox, property );
 		}
 		else
 		{
@@ -57,27 +59,51 @@ public class SettingsTab extends Tab
 			}
 			textField.setId( UIUtils.toCssId( label ) );
 			vBox.getChildren().addAll( new Label( label + ":" ), textField );
-			fieldToProperty.put( textField, property );
+			fieldToLoaduiProperty.put( textField, property );
+		}
+	}
+
+	void addField( String label, javafx.beans.property.Property<?> property )
+	{
+		if( property.getValue() instanceof String )
+		{
+			ValidatableTextField<?> textField = new ValidatableStringField();
+			textField.setText( Objects.firstNonNull( property.getValue(), "" ).toString() );
+			textField.setId( UIUtils.toCssId( label ) );
+			vBox.getChildren().addAll( new Label( label + ":" ), textField );
+			fieldToJavafxProperty.put( textField, property );
+		}
+		else
+		{
+			throw new UnsupportedOperationException( "This operation is not yet available for class "
+					+ property.getValue().getClass().getName() );
 		}
 	}
 
 	boolean validate()
 	{
 		boolean wasValid = true;
-		for( Entry<Field<?>, Property<?>> entry : fieldToProperty.entrySet() )
+		Iterable<Field<?>> allFields = Iterables.concat( fieldToLoaduiProperty.keySet(), fieldToJavafxProperty.keySet() );
+		for( Validatable field : allFields )
 		{
-			Validatable field = entry.getKey();
 			wasValid = wasValid && field.isValid();
 		}
 		return wasValid;
 	}
 
+	@SuppressWarnings( { "unchecked", "rawtypes" } )
 	void save()
 	{
-		for( Entry<Field<?>, Property<?>> entry : fieldToProperty.entrySet() )
+		for( Entry<Field<?>, Property<?>> entry : fieldToLoaduiProperty.entrySet() )
 		{
 			Field<?> field = entry.getKey();
 			entry.getValue().setValue( field.getValue() );
+		}
+		for( Entry<Field<?>, javafx.beans.property.Property<?>> entry : fieldToJavafxProperty.entrySet() )
+		{
+			Field<?> field = entry.getKey();
+			javafx.beans.property.Property property = entry.getValue();
+			property.setValue( field.getValue() );
 		}
 	}
 
@@ -96,6 +122,12 @@ public class SettingsTab extends Tab
 		}
 
 		public <T> Builder field( @Nonnull String label, @Nonnull Property<T> property )
+		{
+			tab.addField( label, property );
+			return this;
+		}
+
+		public <T> Builder field( @Nonnull String label, @Nonnull javafx.beans.property.Property<T> property )
 		{
 			tab.addField( label, property );
 			return this;

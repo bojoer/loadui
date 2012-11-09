@@ -2,6 +2,7 @@ package com.eviware.loadui.ui.fx.control;
 
 import static com.eviware.loadui.ui.fx.util.NodeUtils.bindStyleClass;
 import static javafx.beans.binding.Bindings.equal;
+import static javafx.beans.binding.Bindings.not;
 import static javafx.beans.binding.Bindings.when;
 
 import java.util.List;
@@ -13,6 +14,8 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBuilder;
 import javafx.scene.control.Label;
 import javafx.scene.control.LabelBuilder;
 import javafx.scene.control.Tab;
@@ -30,14 +33,16 @@ public class Wizard extends ConfirmationDialog
 	@Nonnull
 	private final List<SettingsTab> tabs;
 
+	private final BooleanProperty isFirstStep = new SimpleBooleanProperty();
 	private final BooleanProperty isLastStep = new SimpleBooleanProperty();
 
-	public Wizard( Node owner, String title, @Nonnull List<SettingsTab> tabs )
+	public Wizard( Node owner, String title, @Nonnull final List<SettingsTab> tabs )
 	{
 		super( owner, title, "", true );
 		this.tabs = tabs;
 		tabPane.getTabs().addAll( tabs );
 		addStyleClass( "wizard" );
+		isFirstStep.bind( equal( 0, tabPane.getSelectionModel().selectedIndexProperty() ) );
 		isLastStep.bind( equal( tabs.size() - 1, tabPane.getSelectionModel().selectedIndexProperty() ) );
 
 		confirmationTextProperty().bind( when( isLastStep ).then( "Finish" ).otherwise( "Next >" ) );
@@ -52,15 +57,37 @@ public class Wizard extends ConfirmationDialog
 
 		tabPane.setTabMaxHeight( 0.0 );
 
+		Button backButton = ButtonBuilder.create().text( "< Back" ).onAction( new EventHandler<ActionEvent>()
+		{
+			@Override
+			public void handle( ActionEvent _ )
+			{
+				tabPane.getSelectionModel().selectPrevious();
+			}
+		} ).build();
+		backButton.visibleProperty().bind( not( isFirstStep ) );
+		getButtons().add( 2, backButton );
+
 		setOnConfirm( new EventHandler<ActionEvent>()
 		{
 			@Override
-			public void handle( ActionEvent e )
+			public void handle( ActionEvent _ )
 			{
-				if( isLastStep.get() )
-					close();
-				else
-					tabPane.getSelectionModel().selectNext();
+				if( ( ( SettingsTab )tabPane.getSelectionModel().getSelectedItem() ).validate() )
+				{
+					if( isLastStep.get() )
+					{
+						for( SettingsTab tab : tabs )
+						{
+							tab.save();
+						}
+						close();
+					}
+					else
+					{
+						tabPane.getSelectionModel().selectNext();
+					}
+				}
 			}
 		} );
 	}
@@ -72,12 +99,12 @@ public class Wizard extends ConfirmationDialog
 		public StepIndicator( final int stepIndex, String label )
 		{
 			setText( label );
-			Label l = LabelBuilder.create().alignment( Pos.CENTER ).prefHeight( 16 ).prefWidth( 16 )
+			Label stepNumber = LabelBuilder.create().alignment( Pos.CENTER ).prefHeight( 16 ).prefWidth( 16 )
 					.text( String.valueOf( stepIndex + 1 ) ).build();
-			l.getStyleClass().add( "step-dot" );
+			stepNumber.getStyleClass().add( "step-dot" );
 			isCurrentStep = equal( stepIndex, tabPane.getSelectionModel().selectedIndexProperty() );
-			bindStyleClass( l, "current-step", isCurrentStep );
-			setGraphic( StackPaneBuilder.create().children( l ).build() );
+			bindStyleClass( stepNumber, "current-step", isCurrentStep );
+			setGraphic( StackPaneBuilder.create().children( stepNumber ).build() );
 		}
 	}
 
