@@ -39,7 +39,7 @@ public class SplitterTest
 	@Test
 	public void shouldHaveCorrectTerminals()
 	{
-		assertThat( component.getTerminals().size(), is( 2 ) );
+		assertThat( component.getTerminals().size(), is( 3 ) );
 
 		System.out.println( component.getTerminals() );
 
