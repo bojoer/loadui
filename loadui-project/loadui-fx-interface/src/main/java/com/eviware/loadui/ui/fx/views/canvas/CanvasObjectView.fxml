@@ -40,7 +40,7 @@
 			</BorderPane>
 			<StackPane fx:id="content" id="content" minWidth="80" minHeight="50">
 				<VBox.margin>
-					<Insets top="3" bottom="3" />
+					<Insets top="3" right="5" bottom="6" left="5" />
 				</VBox.margin>
 			</StackPane>
 			<HBox fx:id="outputTerminalPane" minHeight="14">
