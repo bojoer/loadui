@@ -525,18 +525,18 @@
 	-fx-padding: 24;
 }
 
-.wizard .step-label *.dot-strong {
-	-fx-background-radius: 8;
-	-fx-background-insets: 0, 1;
-	-fx-background-color: #8f8f90, linear-gradient(to bottom, #61cbfe, #4e9ff8);
-	-fx-text-fill: #ffffff;
-}
-
-.wizard .step-label *.dot {
+.step-dot {
 	-fx-background-radius: 8;
 	-fx-background-insets: 0, 1;
 	-fx-background-color: #8f8f90, linear-gradient(to bottom, #e5e5e5, #a0a2a4);
-	-fx-text-fill: #000000;
+	-fx-text-fill: white;
+}
+
+.step-dot .current-step {
+	-fx-background-radius: 8;
+	-fx-background-insets: 0, 1;
+	-fx-background-color: #8f8f90, linear-gradient(to bottom, #61cbfe, #4e9ff8);
+	-fx-text-fill: white;
 }
 
 .wizard .tab-header-area {

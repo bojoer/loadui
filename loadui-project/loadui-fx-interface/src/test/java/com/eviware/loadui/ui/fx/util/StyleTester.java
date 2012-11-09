@@ -15,12 +15,16 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.SceneBuilder;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBuilder;
+import javafx.scene.control.Label;
+import javafx.scene.control.LabelBuilder;
 import javafx.scene.control.SplitPaneBuilder;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextAreaBuilder;
 import javafx.scene.layout.HBoxBuilder;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.RegionBuilder;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.VBoxBuilder;
@@ -37,13 +41,21 @@ import com.google.common.io.Files;
 
 public class StyleTester extends Application
 {
+	Node testNode = null;
+
 	private Node createTestNode()
 	{
+		if( testNode != null )
+			return testNode;
 		//		return HBoxBuilder
 		//				.create()
 		//				.children( new com.eviware.loadui.ui.fx.control.Wizard.StepIndicator( "First" ),
 		//						new com.eviware.loadui.ui.fx.control.Wizard.StepIndicator( "Second" ) ).spacing( 18.0 ).build();
-		return null;
+		Label l = LabelBuilder.create().text( "asddasdas" ).build();
+		l.getStyleClass().add( "one" );
+		l.getStyleClass().add( "two" );
+		testNode = l;
+		return l;
 	}
 
 	@Override
@@ -93,6 +105,16 @@ public class StyleTester extends Application
 
 		VBox.setVgrow( styleArea, Priority.ALWAYS );
 
+		Button b = ButtonBuilder.create().text( "remove" ).onAction( new EventHandler<ActionEvent>()
+		{
+			@Override
+			public void handle( ActionEvent arg0 )
+			{
+				createTestNode().getStyleClass().remove( "two" );
+
+			}
+		} ).build();
+
 		primaryStage.setScene( SceneBuilder
 				.create()
 				.width( 1200 )
@@ -106,6 +128,7 @@ public class StyleTester extends Application
 												.create()
 												.children(
 														styleArea,
+														b,
 														ButtonBuilder.create().text( "Rebuild" )
 																.onAction( new EventHandler<ActionEvent>()
 																{

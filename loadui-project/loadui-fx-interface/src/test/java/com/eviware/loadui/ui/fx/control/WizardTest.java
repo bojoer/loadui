@@ -109,7 +109,7 @@ public class WizardTest
 		StylingUtils.applyLoaduiStyling( wizard.getScene() );
 
 		//		controller.click( "#general-tab" );
-		controller.sleep( 1000 );
+		//		controller.sleep( 1000 );
 		//		Platform.runLater( new Runnable()
 		//		{
 		//			@Override
