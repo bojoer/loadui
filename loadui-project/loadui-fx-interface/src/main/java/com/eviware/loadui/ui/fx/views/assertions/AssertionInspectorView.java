@@ -115,15 +115,18 @@ public class AssertionInspectorView extends HBox
 			@Override
 			public void handle( final DraggableEvent event )
 			{
-				if( event.getEventType() == DraggableEvent.DRAGGABLE_ENTERED && event.getData() instanceof StatisticHolder )
+				if( event.getData() instanceof StatisticHolder )
 				{
-					event.accept();
-					event.consume();
-				}
-				else if( event.getEventType() == DraggableEvent.DRAGGABLE_DROPPED )
-				{
-					handleDrop( event );
-					event.consume();
+					if( event.getEventType() == DraggableEvent.DRAGGABLE_ENTERED )
+					{
+						event.accept();
+						event.consume();
+					}
+					else if( event.getEventType() == DraggableEvent.DRAGGABLE_DROPPED )
+					{
+						handleDrop( event );
+						event.consume();
+					}
 				}
 			}
 		} );

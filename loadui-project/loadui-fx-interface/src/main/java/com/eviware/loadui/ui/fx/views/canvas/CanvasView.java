@@ -231,15 +231,18 @@ public class CanvasView extends StackPane
 
 	private void handleDraggableEvents( final DraggableEvent event )
 	{
-		if( event.getEventType() == DraggableEvent.DRAGGABLE_ENTERED && shouldAccept( event.getData() ) )
+		if( shouldAccept( event.getData() ) )
 		{
-			event.accept();
-			event.consume();
-		}
-		else if( event.getEventType() == DraggableEvent.DRAGGABLE_DROPPED )
-		{
-			handleDrop( event );
-			event.consume();
+			if( event.getEventType() == DraggableEvent.DRAGGABLE_ENTERED )
+			{
+				event.accept();
+				event.consume();
+			}
+			else if( event.getEventType() == DraggableEvent.DRAGGABLE_DROPPED )
+			{
+				handleDrop( event );
+				event.consume();
+			}
 		}
 	}
 

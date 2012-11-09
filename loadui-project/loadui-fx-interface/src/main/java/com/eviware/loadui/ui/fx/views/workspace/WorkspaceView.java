@@ -206,13 +206,16 @@ public class WorkspaceView extends StackPane
 			@Override
 			public void handle( DraggableEvent event )
 			{
-				if( event.getEventType() == DraggableEvent.DRAGGABLE_ENTERED && event.getData() instanceof NewAgentIcon )
+				if( event.getData() instanceof NewAgentIcon )
 				{
-					event.accept();
-				}
-				else if( event.getEventType() == DraggableEvent.DRAGGABLE_DROPPED )
-				{
-					fireEvent( IntentEvent.create( IntentEvent.INTENT_CREATE, AgentItem.class ) );
+					if( event.getEventType() == DraggableEvent.DRAGGABLE_ENTERED )
+					{
+						event.accept();
+					}
+					else if( event.getEventType() == DraggableEvent.DRAGGABLE_DROPPED )
+					{
+						fireEvent( IntentEvent.create( IntentEvent.INTENT_CREATE, AgentItem.class ) );
+					}
 				}
 			}
 		} );
