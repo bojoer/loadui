@@ -43,7 +43,7 @@
 .table-view .placeholder {
 	-fx-background-color: white;
 	-fx-background-radius: 0;
-	-fx-border-color: none;
+	-fx-border-color: null;
 	-fx-border-radius: 0;
 	-fx-border-style: none;
 	-fx-border-width: 0;
