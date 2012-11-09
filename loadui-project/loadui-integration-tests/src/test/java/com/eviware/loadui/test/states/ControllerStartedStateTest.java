@@ -1,14 +1,11 @@
 package com.eviware.loadui.test.states;
 
-import static org.hamcrest.Matchers.anyOf;
-import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
@@ -25,21 +22,6 @@ public class ControllerStartedStateTest
 	{
 		ControllerStartedState.STATE.enter();
 		context = ControllerStartedState.STATE.getBundleContext();
-	}
-
-	@Test
-	public void shouldHaveNoFailedBundles()
-	{
-		Bundle[] bundles = context.getBundles();
-
-		for( Bundle bundle : bundles )
-		{
-			assertThat( bundle.getSymbolicName() + " is not Active or Resolved", bundle.getState(),
-					anyOf( is( Bundle.ACTIVE ), is( Bundle.RESOLVED ) ) );
-			System.out.println( "Bundle: " + bundle );
-		}
-
-		System.out.println( "BUNDLES: " + bundles.length );
 	}
 
 	@Test
