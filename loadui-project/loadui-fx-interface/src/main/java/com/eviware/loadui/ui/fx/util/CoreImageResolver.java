@@ -27,11 +27,11 @@ public class CoreImageResolver implements ImageResolver
 	@Nullable
 	public Image resolveImageFor( Object object )
 	{
-		if( object instanceof AgentItem )
+		if( object instanceof AgentItem || AgentItem.class.equals( object ) )
 		{
 			return new Image( root( "agent-icon.png" ) );
 		}
-		else if( object instanceof ProjectItem )
+		else if( object instanceof ProjectItem || ProjectItem.class.equals( object ) )
 		{
 			return new Image( root( "project-icon.png" ) );
 		}

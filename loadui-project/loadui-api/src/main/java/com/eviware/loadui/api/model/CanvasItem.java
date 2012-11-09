@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 import com.eviware.loadui.api.component.ComponentCreationException;
 import com.eviware.loadui.api.component.ComponentDescriptor;
 import com.eviware.loadui.api.counter.CounterHolder;
+import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.summary.Summary;
 import com.eviware.loadui.api.terminal.Connection;
@@ -222,9 +223,14 @@ public interface CanvasItem extends ModelItem, CounterHolder, StatisticHolder
 	public void cancelComponents();
 
 	/**
-	 * Determines if ongoing requests should be aborted on finish
+	 * Determines whether ongoing requests should be aborted on finish
 	 */
 	public boolean isAbortOnFinish();
+
+	/**
+	 * Determines whether ongoing requests should be aborted on finish
+	 */
+	public Property<Boolean> abortOnFinishProperty();
 
 	/**
 	 * Used to define if ongoing requests should be aborted on finish

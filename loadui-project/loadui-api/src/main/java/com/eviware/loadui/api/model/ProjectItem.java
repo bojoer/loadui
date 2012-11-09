@@ -21,6 +21,7 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.api.statistics.model.StatisticPages;
 
 /**
@@ -151,14 +152,19 @@ public interface ProjectItem extends CanvasItem
 	public void unassignScene( @Nonnull SceneItem scene, @Nonnull AgentItem agent );
 
 	/**
-	 * Checks if summaries are saved at the end of each run
+	 * Checks if summaries are saved at the end of each run.
 	 * 
 	 * @return true if the summaries are saved.
 	 */
 	public boolean isSaveReport();
 
 	/**
-	 * Used to set whether the summary should be saved at the end of each run
+	 * Whether summary reports are saved at the end of each run.
+	 */
+	public Property<Boolean> saveReportProperty();
+
+	/**
+	 * Used to set whether the summary should be saved at the end of each run.
 	 * 
 	 * @param save
 	 *           true if the reports should be saved

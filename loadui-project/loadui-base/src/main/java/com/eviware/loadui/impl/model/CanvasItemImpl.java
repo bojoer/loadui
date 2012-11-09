@@ -659,6 +659,12 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 	}
 
 	@Override
+	public Property<Boolean> abortOnFinishProperty()
+	{
+		return abortOnFinish;
+	}
+
+	@Override
 	public void setAbortOnFinish( boolean abort )
 	{
 		abortOnFinish.setValue( abort );

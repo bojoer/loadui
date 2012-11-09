@@ -72,8 +72,6 @@ addEventListener( PropertyEvent ) { event ->
 			cancelTasks()
 		if (stateProperty.value)
 			cancelTasks()
-		if (event.property == type)
-			redraw()
 		
 		if( event.property == unit ) {
 			if ( unit.value == "Sec" )
@@ -98,30 +96,25 @@ onAction( 'STOP' ) {
 	cancelTasks()
 }
 
-//Layout
-redraw = {
-	layout { 
-		property( property:rate, label:'Base Rate', min:0 ) 
-		separator( vertical:true )
-		property( property:unit, label:'Unit', options:['Sec','Min','Hour'] )
-		separator( vertical:true )
-		
-		node(widget: 'selectorWidget', label:'Distribution', labels:['Uniform','Exponential','Gaussian'], 
-				images:['linear_shape.png', 'poisson_shape.png', 'gauss_shape.png'], selected: type)
-		
-		separator( vertical:true )
-		def isNotExponential = (type.value != 'Exponential')
-		property( property:factor, label:'Random\nFactor', min: 0, max: 100, step: 1, enabled: isNotExponential )
-		separator( vertical:true )
-		box( widget:'display', layout:'align center') {
-			node( label:'Current rate', content: { "$rate.value / $unit.value" } )
-			node( label:'Random', content: { "$factor.value %" } )
-		}
+layout { 
+	property( property:rate, label:'Base Rate', min:0 ) 
+	separator( vertical:true )
+	property( property:unit, label:'Unit', options:['Sec','Min','Hour'] )
+	separator( vertical:true )
+	
+	node(widget: 'selectorWidget', label:'Distribution', labels:['Uniform','Exponential','Gaussian'], 
+			images:['linear_shape.png', 'poisson_shape.png', 'gauss_shape.png'], selected: type)
+	
+	separator( vertical:true )
+	def isNotExponential = (type.value != 'Exponential')
+	property( property:factor, label:'Random\nFactor', min: 0, max: 100, step: 1, enabled: isNotExponential )
+	separator( vertical:true )
+	box( widget:'display', layout:'align center') {
+		node( label:'Current rate', content: { "$rate.value / $unit.value" } )
+		node( label:'Random', content: { "$factor.value %" } )
 	}
 }
-redraw()
 	
-//Compact Layout
 compactLayout {
 	box( widget: 'display', layout: 'align center' ) {
 		node( label: 'Current rate', content: { "$rate.value / $unit.value" } )
