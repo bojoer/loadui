@@ -31,8 +31,6 @@ import javafx.scene.control.PopupControl;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.HBoxBuilder;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.RegionBuilder;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.VBoxBuilder;
@@ -292,13 +290,10 @@ public class ToolBoxSkin<E extends Node> extends SkinBase<ToolBox<E>, BehaviorBa
 		{
 			expandedCategory.set( category );
 
-			Region line = RegionBuilder.create().maxHeight( 1 ).minHeight( 1 ).styleClass( "line" ).build();
-
 			ItemHolder itemHolder = new ItemHolder( category.category );
 			itemHolder.setMinWidth( ToolBoxSkin.this.getWidth() );
 			itemHolder.setMinHeight( category.itemHolder.getHeight() );
 			itemHolder.items.setAll( category.categoryItems );
-			itemHolder.getChildren().addAll( line );
 
 			//The padding here allows the ItemHolder to grow beyond its usual size using negative insets, while still remaining in its correct position.
 			StackPane pane = new StackPane();
