@@ -15,9 +15,9 @@ public class SaveProjectDialog extends ButtonDialog
 
 	public SaveProjectDialog( final MainWindowView mainWindow, final ProjectItem project )
 	{
-		super( mainWindow, "Save project?" );
+		super( mainWindow, "Save changes?" );
 
-		Button yesButton = ButtonBuilder.create().text( "Yes" ).id( "yes" ).alignment( Pos.BOTTOM_RIGHT )
+		Button yesButton = ButtonBuilder.create().text( "Save" ).id( "yes" ).alignment( Pos.BOTTOM_RIGHT )
 				.onAction( new EventHandler<ActionEvent>()
 				{
 					@Override
@@ -31,7 +31,7 @@ public class SaveProjectDialog extends ButtonDialog
 					}
 				} ).build();
 
-		Button noButton = ButtonBuilder.create().text( "No" ).id( "no" ).alignment( Pos.BOTTOM_RIGHT )
+		Button noButton = ButtonBuilder.create().text( "Don't Save" ).id( "no" ).alignment( Pos.BOTTOM_RIGHT )
 				.onAction( new EventHandler<ActionEvent>()
 				{
 					@Override
