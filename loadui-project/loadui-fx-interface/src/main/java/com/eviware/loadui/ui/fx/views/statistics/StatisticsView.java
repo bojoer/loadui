@@ -28,7 +28,7 @@ public class StatisticsView extends StackPane
 		final ExecutionManager executionManager = BeanInjector.getBean( ExecutionManager.class );
 		final ProjectExecutionManager projectExecutionManager = BeanInjector.getBean( ProjectExecutionManager.class );
 
-		executionList = ObservableLists.filter( ObservableLists.ofCollection( executionManager,
+		executionList = ObservableLists.fx( ObservableLists.filter( ObservableLists.ofCollection( executionManager,
 				ExecutionManager.EXECUTIONS, Execution.class, executionManager.getExecutions() ),
 				new Predicate<Execution>()
 				{
@@ -37,7 +37,7 @@ public class StatisticsView extends StackPane
 					{
 						return Objects.equal( projectExecutionManager.getProjectId( input ), project.getId() );
 					}
-				} );
+				} ) );
 
 		addEventHandler( IntentEvent.ANY, new EventHandler<IntentEvent<?>>()
 		{

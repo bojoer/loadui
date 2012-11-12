@@ -34,6 +34,7 @@
 	-fx-border-radius: 8;
 	-fx-border-style: dashed;
 	-fx-border-width: 2;
+	-fx-padding: 15;
 }
 
 .placeholder .label {
