@@ -165,6 +165,7 @@ public class ProjectView extends AnchorPane
 				{
 					Platform.runLater( new Runnable()
 					{
+						@Override
 						public void run()
 						{
 							summaryButton.setDisable( true );
@@ -175,6 +176,7 @@ public class ProjectView extends AnchorPane
 				{
 					Platform.runLater( new Runnable()
 					{
+						@Override
 						public void run()
 						{
 							lastRunCanvas = execution.getCanvas();
@@ -256,7 +258,7 @@ public class ProjectView extends AnchorPane
 	public void openSettings()
 	{
 		log.info( "Open settings page" );
-		new ProjectSettingsDialog( this, project ).show();
+		ProjectSettingsDialog.newInstance( this, project ).show();
 	}
 
 	@FXML

@@ -3,14 +3,14 @@ package com.eviware.loadui.ui.fx.views.workspace;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.RectangleBuilder;
 
 import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.control.DragNode;
+import com.eviware.loadui.ui.fx.util.UIUtils;
 
 public class NewAgentIcon extends Label
 {
@@ -38,6 +38,6 @@ public class NewAgentIcon extends Label
 
 	private static Node createIcon()
 	{
-		return RectangleBuilder.create().width( 75 ).height( 50 ).fill( Color.BLUE ).build();
+		return new ImageView( UIUtils.getImageFor( AgentItem.class ) );
 	}
 }

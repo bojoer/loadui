@@ -582,6 +582,12 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	}
 
 	@Override
+	public Property<Boolean> saveReportProperty()
+	{
+		return saveReport;
+	}
+
+	@Override
 	public void setSaveReport( boolean save )
 	{
 		saveReport.setValue( save );

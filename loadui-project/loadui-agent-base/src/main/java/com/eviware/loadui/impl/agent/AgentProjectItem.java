@@ -550,4 +550,16 @@ public class AgentProjectItem implements ProjectItem
 	{
 		return this;
 	}
+
+	@Override
+	public Property<Boolean> abortOnFinishProperty()
+	{
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Property<Boolean> saveReportProperty()
+	{
+		throw new UnsupportedOperationException();
+	}
 }

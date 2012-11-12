@@ -24,6 +24,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import com.eviware.loadui.test.categories.GUITest;
+import com.eviware.loadui.ui.fx.util.StylingUtils;
 import com.eviware.loadui.ui.fx.util.test.FXScreenController;
 import com.eviware.loadui.ui.fx.util.test.FXTestUtils;
 import com.eviware.loadui.ui.fx.util.test.TestFX;
@@ -61,6 +62,8 @@ public class KnobTest
 					.build() );
 
 			primaryStage.show();
+
+			StylingUtils.applyLoaduiStyling( primaryStage.getScene() );
 
 			stageFuture.set( primaryStage );
 		}

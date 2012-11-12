@@ -1,8 +1,13 @@
 package com.eviware.loadui.ui.fx.views.assertions;
 
 import static com.eviware.loadui.ui.fx.control.SettingsDialog.VERTICAL_SPACING;
+import static com.eviware.loadui.ui.fx.control.fields.ValidatableLongField.CONVERTABLE_TO_LONG;
+import static com.eviware.loadui.ui.fx.control.fields.ValidatableLongField.EMPTY_TO_NEGATIVE_ONE;
+import static com.eviware.loadui.ui.fx.control.fields.ValidatableLongField.IS_EMPTY;
+import static com.google.common.base.Predicates.or;
 import static javafx.beans.binding.Bindings.and;
 import static javafx.beans.binding.Bindings.when;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -43,7 +48,8 @@ public class ConstraintPane extends VBox implements Validatable
 		HBox constraintFields = HBoxBuilder.create().spacing( 26.0 ).children( minBox, maxBox ).build();
 
 		timesAllowed = ValidatableLongField.Builder.create().text( "0" ).build();
-		timeWindow = ValidatableLongField.Builder.create().build();
+		timeWindow = ValidatableLongField.Builder.create().convertFunction( EMPTY_TO_NEGATIVE_ONE )
+				.stringConstraint( or( IS_EMPTY, CONVERTABLE_TO_LONG ) ).build();
 		timeWindow.disableProperty().bind(
 				when( timesAllowed.textProperty().isEqualTo( "0" ) ).then( true ).otherwise( false ) );
 		HBox tolerancePane = HBoxBuilder.create()

@@ -1,14 +1,12 @@
 package com.eviware.loadui.ui.fx.control;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Map.Entry;
-
-import javax.annotation.Nonnull;
 
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.VBox;
+
+import javax.annotation.Nonnull;
 
 import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.ui.fx.control.fields.Field;
@@ -19,12 +17,15 @@ import com.eviware.loadui.ui.fx.control.fields.ValidatableStringField;
 import com.eviware.loadui.ui.fx.control.fields.ValidatableTextField;
 import com.eviware.loadui.ui.fx.util.UIUtils;
 import com.google.common.base.Objects;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Iterables;
 
 public class SettingsTab extends Tab
 {
-	private final Map<Field<?>, Property<?>> fieldToLoaduiProperty = new HashMap<>();
-	private final Map<Field<?>, javafx.beans.property.Property<?>> fieldToJavafxProperty = new HashMap<>();
+	private final BiMap<Field<?>, Property<?>> fieldToLoaduiProperty = HashBiMap.create();
+	private final BiMap<Field<?>, javafx.beans.property.Property<?>> fieldToJavafxProperty = HashBiMap.create();
+	private final BiMap<Field<?>, FieldSaveHandler<?>> fieldToFieldSaveHandler = HashBiMap.create();
 	private final VBox vBox = new VBox( SettingsDialog.VERTICAL_SPACING );
 
 	SettingsTab( String label )
@@ -32,6 +33,16 @@ public class SettingsTab extends Tab
 		super( label );
 		setClosable( false );
 		setContent( vBox );
+	}
+
+	public Field<?> getFieldFor( Property<?> loaduiProperty )
+	{
+		return fieldToLoaduiProperty.inverse().get( loaduiProperty );
+	}
+
+	public Field<?> getFieldFor( javafx.beans.property.Property<?> fxProperty )
+	{
+		return fieldToJavafxProperty.inverse().get( fxProperty );
 	}
 
 	void addField( String label, Property<?> property )
@@ -80,10 +91,36 @@ public class SettingsTab extends Tab
 		}
 	}
 
+	<T> void addField( String label, T initialValue, FieldSaveHandler<T> fieldSaveHandler )
+	{
+		if( initialValue instanceof String )
+		{
+			ValidatableTextField<?> textField = new ValidatableStringField();
+			textField.setText( ( String )initialValue );
+			textField.setId( UIUtils.toCssId( label ) );
+			vBox.getChildren().addAll( new Label( label + ":" ), textField );
+			fieldToFieldSaveHandler.put( textField, fieldSaveHandler );
+		}
+		else if( initialValue instanceof Boolean )
+		{
+			ValidatableCheckBox checkBox = new ValidatableCheckBox( label );
+			checkBox.setSelected( ( Boolean )initialValue );
+			checkBox.setId( UIUtils.toCssId( label ) );
+			vBox.getChildren().add( checkBox );
+			fieldToFieldSaveHandler.put( checkBox, fieldSaveHandler );
+		}
+		else
+		{
+			throw new UnsupportedOperationException( "This operation is not yet available for class "
+					+ initialValue.getClass().getName() );
+		}
+	}
+
 	boolean validate()
 	{
 		boolean wasValid = true;
-		Iterable<Field<?>> allFields = Iterables.concat( fieldToLoaduiProperty.keySet(), fieldToJavafxProperty.keySet() );
+		Iterable<Field<?>> allFields = Iterables.concat( fieldToLoaduiProperty.keySet(), fieldToJavafxProperty.keySet(),
+				fieldToFieldSaveHandler.keySet() );
 		for( Validatable field : allFields )
 		{
 			wasValid = wasValid && field.isValid();
@@ -105,6 +142,12 @@ public class SettingsTab extends Tab
 			javafx.beans.property.Property property = entry.getValue();
 			property.setValue( field.getValue() );
 		}
+		for( Entry<Field<?>, FieldSaveHandler<?>> entry : fieldToFieldSaveHandler.entrySet() )
+		{
+			Field<?> field = entry.getKey();
+			FieldSaveHandler saveHandler = entry.getValue();
+			saveHandler.save( field.getValue() );
+		}
 	}
 
 	public static class Builder
@@ -121,15 +164,21 @@ public class SettingsTab extends Tab
 			tab = new SettingsTab( label );
 		}
 
-		public <T> Builder field( @Nonnull String label, @Nonnull Property<T> property )
+		public <T> Builder field( @Nonnull String label, @Nonnull Property<T> loaduiProperty )
 		{
-			tab.addField( label, property );
+			tab.addField( label, loaduiProperty );
 			return this;
 		}
 
-		public <T> Builder field( @Nonnull String label, @Nonnull javafx.beans.property.Property<T> property )
+		public <T> Builder field( @Nonnull String label, @Nonnull javafx.beans.property.Property<T> fxProperty )
 		{
-			tab.addField( label, property );
+			tab.addField( label, fxProperty );
+			return this;
+		}
+
+		public <T> Builder field( String label, T initialValue, FieldSaveHandler<T> fieldSaveHandler )
+		{
+			tab.addField( label, initialValue, fieldSaveHandler );
 			return this;
 		}
 

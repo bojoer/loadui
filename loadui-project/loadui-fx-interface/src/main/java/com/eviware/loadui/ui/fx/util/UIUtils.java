@@ -26,7 +26,7 @@ public class UIUtils
 			if( image != null )
 				return image;
 		}
-		return new Image( "{__ROOT__}images/png/default-component-icon.png" );
+		throw new RuntimeException( "No image found for resource of class " + object.getClass().getName() );
 	}
 
 	public static String toCssId( String label )
