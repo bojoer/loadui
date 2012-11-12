@@ -48,7 +48,7 @@ public class StatisticsView extends StackPane
 				{
 					if( event.getEventType() == IntentEvent.INTENT_OPEN )
 					{
-						final AnalysisView analysisView = new AnalysisView( project, executionList );
+						AnalysisView analysisView = new AnalysisView( project, executionList );
 						analysisView.setCurrentExecution( ( Execution )event.getArg() );
 						getChildren().setAll( analysisView );
 						event.consume();

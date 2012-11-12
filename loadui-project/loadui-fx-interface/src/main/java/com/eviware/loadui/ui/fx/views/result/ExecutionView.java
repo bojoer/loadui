@@ -1,5 +1,7 @@
 package com.eviware.loadui.ui.fx.views.result;
 
+import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -17,17 +19,39 @@ import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.util.Properties;
 
-public class ExecutionNode extends Region
+public class ExecutionView extends Region
 {
 	private final Execution execution;
 
-	public ExecutionNode( Execution execution )
+	public ExecutionView( final Execution execution )
 	{
 		this.execution = execution;
 		setStyle( "-fx-background-color: black, darkgrey; -fx-background-insets: 0, 2; -fx-background-radius: 5;" );
 
 		Label executionLabel = LabelBuilder.create().build();
 		executionLabel.textProperty().bind( Properties.forLabel( execution ) );
+
+		final Task<Void> loadAndOpenExecution = new Task<Void>()
+		{
+			{
+				updateMessage( "Loading execution: " + execution.getLabel() );
+			}
+
+			@Override
+			protected Void call() throws Exception
+			{
+				execution.getTestEventCount();
+				return null;
+			}
+		};
+		loadAndOpenExecution.setOnSucceeded( new EventHandler<WorkerStateEvent>()
+		{
+			@Override
+			public void handle( WorkerStateEvent workserStateEvent )
+			{
+				ExecutionView.this.fireEvent( IntentEvent.create( IntentEvent.INTENT_OPEN, ExecutionView.this.execution ) );
+			}
+		} );
 
 		getChildren().add(
 				VBoxBuilder
@@ -41,7 +65,7 @@ public class ExecutionNode extends Region
 									@Override
 									public void handle( ActionEvent arg0 )
 									{
-										ExecutionNode.this.execution.delete();
+										ExecutionView.this.execution.delete();
 									}
 								} ).build(),
 								executionLabel,
@@ -51,8 +75,8 @@ public class ExecutionNode extends Region
 											@Override
 											public void handle( MouseEvent event )
 											{
-												ExecutionNode.this.fireEvent( IntentEvent.create( IntentEvent.INTENT_OPEN,
-														ExecutionNode.this.execution ) );
+												ExecutionView.this.fireEvent( IntentEvent.create( IntentEvent.INTENT_RUN_BLOCKING,
+														loadAndOpenExecution ) );
 											}
 										} ).build() ).build() );
 	}
