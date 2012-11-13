@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.AnchorPane?>
+<?import java.net.URL?>
 
-<fx:root type="javafx.scene.layout.StackPane" xmlns:fx="http://javafx.com/fxml" styleClass="Scenario-Toolbox-Item">
+<fx:root type="javafx.scene.layout.StackPane" xmlns:fx="http://javafx.com/fxml" styleClass="scenario-toolbox-item">
 	<stylesheets>
 		<URL value="@ScenarioToolboxItem.css" />
 	</stylesheets>
