@@ -2,6 +2,7 @@ package com.eviware.loadui.ui.fx.views.analysis;
 
 import java.util.concurrent.Callable;
 
+import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleLongProperty;
@@ -31,20 +32,34 @@ import com.google.common.collect.Iterables;
 
 public class LineChartViewNode extends VBox
 {
+	private static final Function<DataPoint<?>, XYChart.Data<Number, Number>> DATAPOINT_TO_CHARTDATA = new Function<DataPoint<?>, XYChart.Data<Number, Number>>()
+	{
+		@Override
+		public Data<Number, Number> apply( DataPoint<?> point )
+		{
+			return new XYChart.Data<Number, Number>( point.getTimestamp(), point.getValue() );
+		}
+	};
+
+	private final Function<LineSegment, XYChart.Series<Number, Number>> segmentToSeries;
 
 	private final ObservableValue<Execution> executionProperty;
+	private final Observable poll;
 	private final LineChartView chartView;
 
 	private final LongProperty position = new SimpleLongProperty( 0 );
 	private final LongProperty length = new SimpleLongProperty( 0 );
 	private final LongProperty shownSpan = new SimpleLongProperty( 60000 );
 
-	public LineChartViewNode( final ObservableValue<Execution> executionProperty, LineChartView chartView )
+	public LineChartViewNode( final ObservableValue<Execution> executionProperty, LineChartView chartView,
+			Observable poll )
 	{
 		this.executionProperty = executionProperty;
 		this.chartView = chartView;
+		this.poll = poll;
 
-		//TODO: executions lengths can change if it is not yet completed, in which case this has to be updated more often.
+		segmentToSeries = new SegmentToSeriesFunction();
+
 		length.bind( Bindings.createLongBinding( new Callable<Long>()
 		{
 			@Override
@@ -52,7 +67,7 @@ public class LineChartViewNode extends VBox
 			{
 				return executionProperty.getValue().getLength();
 			}
-		}, executionProperty ) );
+		}, executionProperty, poll ) );
 
 		ScrollBar scrollbar = ScrollBarBuilder.create().build();
 		scrollbar.visibleAmountProperty().bind( shownSpan );
@@ -83,16 +98,7 @@ public class LineChartViewNode extends VBox
 		getChildren().addAll( lineChart, scrollbar, label );
 	}
 
-	private static final Function<DataPoint<?>, XYChart.Data<Number, Number>> DATAPOINT_TO_CHARTDATA = new Function<DataPoint<?>, XYChart.Data<Number, Number>>()
-	{
-		@Override
-		public Data<Number, Number> apply( DataPoint<?> point )
-		{
-			return new XYChart.Data<Number, Number>( point.getTimestamp(), point.getValue() );
-		}
-	};
-
-	private final Function<LineSegment, XYChart.Series<Number, Number>> segmentToSeries = new Function<LineSegment, XYChart.Series<Number, Number>>()
+	private final class SegmentToSeriesFunction implements Function<LineSegment, XYChart.Series<Number, Number>>
 	{
 		@Override
 		public Series<Number, Number> apply( final LineSegment segment )
@@ -111,9 +117,9 @@ public class LineChartViewNode extends VBox
 											position.longValue() + shownSpan.get() + 2000, 0, executionProperty.getValue() ),
 									DATAPOINT_TO_CHARTDATA );
 						}
-					}, executionProperty, position, shownSpan ) );
+					}, executionProperty, position, shownSpan, poll ) );
 
 			return series;
 		}
-	};
+	}
 }

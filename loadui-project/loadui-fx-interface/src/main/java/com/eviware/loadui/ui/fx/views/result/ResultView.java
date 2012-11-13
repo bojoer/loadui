@@ -38,5 +38,4 @@ public class ResultView extends StackPane
 					}
 				} ) ) );
 	}
-
 }

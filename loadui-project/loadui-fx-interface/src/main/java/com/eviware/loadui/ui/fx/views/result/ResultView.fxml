@@ -18,7 +18,7 @@
 			<URL value="@ResultView.css" />
 		</stylesheets>
 		<Label styleClass="title" text="Results" />
-		<PageList fx:id="resultNodeList" maxHeight="260" widthPerItem="120">
+		<PageList fx:id="resultNodeList" maxHeight="260" widthPerItem="110" spacing="10">
 			<VBox.margin>
 				<Insets top="10" right="10" bottom="10" left="10" />
 			</VBox.margin>

@@ -1,18 +1,29 @@
 package com.eviware.loadui.ui.fx.views.statistics;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.animation.TimelineBuilder;
+import javafx.application.Platform;
+import javafx.beans.property.Property;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.layout.StackPane;
+import javafx.util.Duration;
 
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.statistics.ProjectExecutionManager;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
+import com.eviware.loadui.ui.fx.util.ObservableBase;
 import com.eviware.loadui.ui.fx.util.ObservableLists;
 import com.eviware.loadui.ui.fx.views.analysis.AnalysisView;
 import com.eviware.loadui.ui.fx.views.result.ResultView;
 import com.eviware.loadui.util.BeanInjector;
+import com.eviware.loadui.util.statistics.ExecutionListenerAdapter;
 import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
 
@@ -20,13 +31,19 @@ public class StatisticsView extends StackPane
 {
 	private final ProjectItem project;
 	private final ObservableList<Execution> executionList;
+	private final Property<Execution> currentExecution = new SimpleObjectProperty<>( this, "currentExecution" );
+	private final ManualObservable poll = new ManualObservable();
+
+	private final ExecutionManager executionManager;
 
 	public StatisticsView( final ProjectItem project )
 	{
 		this.project = project;
 
-		final ExecutionManager executionManager = BeanInjector.getBean( ExecutionManager.class );
+		executionManager = BeanInjector.getBean( ExecutionManager.class );
 		final ProjectExecutionManager projectExecutionManager = BeanInjector.getBean( ProjectExecutionManager.class );
+
+		executionManager.addExecutionListener( new CurrentExecutionListener() );
 
 		executionList = ObservableLists.fx( ObservableLists.filter( ObservableLists.ofCollection( executionManager,
 				ExecutionManager.EXECUTIONS, Execution.class, executionManager.getExecutions() ),
@@ -48,8 +65,13 @@ public class StatisticsView extends StackPane
 				{
 					if( event.getEventType() == IntentEvent.INTENT_OPEN )
 					{
-						AnalysisView analysisView = new AnalysisView( project, executionList );
-						analysisView.setCurrentExecution( ( Execution )event.getArg() );
+						if( !currentExecution.isBound() )
+						{
+							currentExecution.setValue( ( Execution )event.getArg() );
+						}
+
+						AnalysisView analysisView = new AnalysisView( project, executionList, poll );
+						analysisView.currentExecutionProperty().bind( currentExecution );
 						getChildren().setAll( analysisView );
 						event.consume();
 					}
@@ -63,5 +85,55 @@ public class StatisticsView extends StackPane
 		} );
 
 		getChildren().setAll( new ResultView( executionList ) );
+	}
+
+	private final class CurrentExecutionListener extends ExecutionListenerAdapter
+	{
+		private final Timeline pollTimeline = TimelineBuilder.create().cycleCount( Timeline.INDEFINITE )
+				.keyFrames( new KeyFrame( Duration.millis( 500 ), new EventHandler<ActionEvent>()
+				{
+					@Override
+					public void handle( ActionEvent arg0 )
+					{
+						poll.fireInvalidation();
+					}
+				} ) ).build();
+
+		@Override
+		public void executionStarted( ExecutionManager.State oldState )
+		{
+			Platform.runLater( new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					currentExecution.bind( new ReadOnlyObjectWrapper<>( executionManager.getCurrentExecution() ) );
+					pollTimeline.playFromStart();
+				}
+			} );
+		}
+
+		@Override
+		public void executionStopped( ExecutionManager.State oldState )
+		{
+			Platform.runLater( new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					currentExecution.unbind();
+					pollTimeline.stop();
+				}
+			} );
+		}
+	}
+
+	private class ManualObservable extends ObservableBase
+	{
+		@Override
+		public void fireInvalidation()
+		{
+			super.fireInvalidation();
+		}
 	}
 }

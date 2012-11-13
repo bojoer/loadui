@@ -1,12 +1,14 @@
 package com.eviware.loadui.ui.fx.views.analysis;
 
 import static com.eviware.loadui.ui.fx.util.ObservableLists.transform;
+import static javafx.beans.binding.Bindings.bindContent;
 
 import java.util.Collection;
 
 import javax.annotation.Nullable;
 
 import javafx.beans.binding.Bindings;
+import javafx.beans.Observable;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -21,9 +23,12 @@ import javafx.scene.layout.StackPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.statistics.model.StatisticPage;
 import com.eviware.loadui.api.statistics.model.StatisticPages;
+import com.eviware.loadui.api.statistics.model.ChartGroup;
+import com.eviware.loadui.api.statistics.model.StatisticPage;
 import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
@@ -32,6 +37,7 @@ import com.eviware.loadui.ui.fx.util.ObservableLists;
 import com.eviware.loadui.ui.fx.util.Properties;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
+import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
 public class AnalysisView extends StackPane
@@ -44,33 +50,32 @@ public class AnalysisView extends StackPane
 	@FXML
 	private TabPane tabPane;
 
-	@FXML
-	private StackPane chartContainer;
-
 	private final ProjectItem project;
 	private final ObservableList<Execution> executionList;
+	private final Observable poll;
 
-	private final Property<Execution> currentExecutionProperty = new SimpleObjectProperty<>();
+	private final Property<Execution> currentExecution = new SimpleObjectProperty<>( this, "currentExecution" );
 
 	public Property<Execution> currentExecutionProperty()
 	{
-		return currentExecutionProperty;
+		return currentExecution;
 	}
 
-	public void setCurrentExecution( Execution currentExecution )
+	public void setCurrentExecution( Execution value )
 	{
-		currentExecutionProperty.setValue( currentExecution );
+		currentExecution.setValue( value );
 	}
 
 	public Execution getCurrentExecution()
 	{
-		return currentExecutionProperty.getValue();
+		return currentExecution.getValue();
 	}
 
-	public AnalysisView( ProjectItem project, ObservableList<Execution> executionList )
+	public AnalysisView( ProjectItem project, ObservableList<Execution> executionList, Observable poll )
 	{
 		this.project = project;
 		this.executionList = executionList;
+		this.poll = poll;
 
 		FXMLUtils.load( this );
 	}
@@ -78,7 +83,7 @@ public class AnalysisView extends StackPane
 	@FXML
 	private void initialize()
 	{
-		currentExecutionProperty.addListener( new ChangeListener<Execution>()
+		currentExecution.addListener( new ChangeListener<Execution>()
 		{
 			@Override
 			public void changed( ObservableValue<? extends Execution> arg0, Execution arg1, Execution arg2 )
@@ -101,18 +106,31 @@ public class AnalysisView extends StackPane
 			{
 				@Override
 				@Nullable
-				public Tab apply( @Nullable StatisticPage input )
+				public StatisticTab apply( @Nullable StatisticPage page )
 				{
-					return new Tab( input.getTitle() );
+					return new StatisticTab( page );
 				}
 			} );
 
-			Bindings.bindContent( tabPane.getTabs(), tabs );
+			bindContent( tabPane.getTabs(), tabs );
 
+			//			if( project.getStatisticPages().getChildCount() == 0 )
+			//			{
+			//				StatisticPage page = project.getStatisticPages().createPage( "New Page" );
+			//				ChartGroup group = page.createChartGroup( LineChartView.class.getName(), "New Chart" );
+			//				group.createChart( Iterables.find( project.getComponents(), new Predicate<ComponentItem>()
+			//				{
+			//					@Override
+			//					public boolean apply( ComponentItem input )
+			//					{
+			//						return input.getLabel().startsWith( "Web" );
+			//					}
+			//				} ) );
+			//			}
 			//			LineChartView chartView = ( LineChartView )project.getStatisticPages().getChildAt( 0 ).getChildAt( 0 )
 			//					.getChartView();
-
-			//			chartContainer.getChildren().setAll( new LineChartViewNode( currentExecutionProperty, chartView ) );
+			//
+			//			chartContainer.getChildren().setAll( new LineChartViewNode( currentExecution, chartView, poll ) );
 		}
 		catch( Exception e )
 		{

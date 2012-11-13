@@ -10,6 +10,7 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -20,6 +21,8 @@ import javafx.scene.control.ButtonBuilder;
 import javafx.scene.control.Label;
 import javafx.scene.control.LabelBuilder;
 import javafx.scene.control.SplitPaneBuilder;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextAreaBuilder;
 import javafx.scene.layout.HBoxBuilder;
@@ -45,17 +48,43 @@ public class StyleTester extends Application
 
 	private Node createTestNode()
 	{
-		if( testNode != null )
-			return testNode;
-		//		return HBoxBuilder
-		//				.create()
-		//				.children( new com.eviware.loadui.ui.fx.control.Wizard.StepIndicator( "First" ),
-		//						new com.eviware.loadui.ui.fx.control.Wizard.StepIndicator( "Second" ) ).spacing( 18.0 ).build();
-		Label l = LabelBuilder.create().text( "asddasdas" ).build();
-		l.getStyleClass().add( "one" );
-		l.getStyleClass().add( "two" );
-		testNode = l;
-		return l;
+		TableView<String> table = new TableView<String>();
+		table.getColumns().setAll( new TableColumn<String, String>( "columnOne" ),
+				new TableColumn<String, String>( "columnTwo" ), new TableColumn<String, String>( "columnThree" ) );
+		table.getColumns().addListener( new ListChangeListener<TableColumn>()
+		{
+			@Override
+			public void onChanged( javafx.collections.ListChangeListener.Change<? extends TableColumn> c )
+			{
+				while( c.next() )
+				{
+					if( c.wasPermutated() )
+					{
+						System.out.println( "wasPermutated!" );
+						for( int i = c.getFrom(); i < c.getTo(); ++i )
+						{
+							System.out.println( "permutated: " + i );
+						}
+					}
+					else if( c.wasUpdated() )
+					{
+						System.out.println( "updated: " + c );
+					}
+					else
+					{
+						for( TableColumn<String, String> remitem : c.getRemoved() )
+						{
+							System.out.println( "removed: " + remitem );
+						}
+						for( TableColumn<String, String> additem : c.getAddedSubList() )
+						{
+							System.out.println( "added: " + additem );
+						}
+					}
+				}
+			}
+		} );
+		return table;
 	}
 
 	@Override
