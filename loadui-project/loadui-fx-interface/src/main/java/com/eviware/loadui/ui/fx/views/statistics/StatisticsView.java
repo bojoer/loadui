@@ -1,18 +1,24 @@
 package com.eviware.loadui.ui.fx.views.statistics;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.animation.TimelineBuilder;
 import javafx.application.Platform;
 import javafx.beans.property.Property;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.layout.StackPane;
+import javafx.util.Duration;
 
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.statistics.ProjectExecutionManager;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
+import com.eviware.loadui.ui.fx.util.ObservableBase;
 import com.eviware.loadui.ui.fx.util.ObservableLists;
 import com.eviware.loadui.ui.fx.views.analysis.AnalysisView;
 import com.eviware.loadui.ui.fx.views.result.ResultView;
@@ -26,6 +32,7 @@ public class StatisticsView extends StackPane
 	private final ProjectItem project;
 	private final ObservableList<Execution> executionList;
 	private final Property<Execution> currentExecution = new SimpleObjectProperty<>( this, "currentExecution" );
+	private final ManualObservable poll = new ManualObservable();
 
 	private final ExecutionManager executionManager;
 
@@ -63,7 +70,7 @@ public class StatisticsView extends StackPane
 							currentExecution.setValue( ( Execution )event.getArg() );
 						}
 
-						AnalysisView analysisView = new AnalysisView( project, executionList );
+						AnalysisView analysisView = new AnalysisView( project, executionList, poll );
 						analysisView.currentExecutionProperty().bind( currentExecution );
 						getChildren().setAll( analysisView );
 						event.consume();
@@ -82,6 +89,16 @@ public class StatisticsView extends StackPane
 
 	private final class CurrentExecutionListener extends ExecutionListenerAdapter
 	{
+		private final Timeline pollTimeline = TimelineBuilder.create().cycleCount( Timeline.INDEFINITE )
+				.keyFrames( new KeyFrame( Duration.millis( 500 ), new EventHandler<ActionEvent>()
+				{
+					@Override
+					public void handle( ActionEvent arg0 )
+					{
+						poll.fireInvalidation();
+					}
+				} ) ).build();
+
 		@Override
 		public void executionStarted( ExecutionManager.State oldState )
 		{
@@ -91,6 +108,7 @@ public class StatisticsView extends StackPane
 				public void run()
 				{
 					currentExecution.bind( new ReadOnlyObjectWrapper<>( executionManager.getCurrentExecution() ) );
+					pollTimeline.playFromStart();
 				}
 			} );
 		}
@@ -104,8 +122,18 @@ public class StatisticsView extends StackPane
 				public void run()
 				{
 					currentExecution.unbind();
+					pollTimeline.stop();
 				}
 			} );
+		}
+	}
+
+	private class ManualObservable extends ObservableBase
+	{
+		@Override
+		public void fireInvalidation()
+		{
+			super.fireInvalidation();
 		}
 	}
 }

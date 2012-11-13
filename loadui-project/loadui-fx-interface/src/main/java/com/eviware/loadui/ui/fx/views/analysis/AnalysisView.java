@@ -1,5 +1,6 @@
 package com.eviware.loadui.ui.fx.views.analysis;
 
+import javafx.beans.Observable;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -36,6 +37,7 @@ public class AnalysisView extends StackPane
 
 	private final ProjectItem project;
 	private final ObservableList<Execution> executionList;
+	private final Observable poll;
 
 	private final Property<Execution> currentExecution = new SimpleObjectProperty<>( this, "currentExecution" );
 
@@ -54,10 +56,11 @@ public class AnalysisView extends StackPane
 		return currentExecution.getValue();
 	}
 
-	public AnalysisView( ProjectItem project, ObservableList<Execution> executionList )
+	public AnalysisView( ProjectItem project, ObservableList<Execution> executionList, Observable poll )
 	{
 		this.project = project;
 		this.executionList = executionList;
+		this.poll = poll;
 
 		FXMLUtils.load( this );
 	}
@@ -71,7 +74,6 @@ public class AnalysisView extends StackPane
 			public void changed( ObservableValue<? extends Execution> arg0, Execution arg1, Execution arg2 )
 			{
 				executionLabel.textProperty().unbind();
-				System.out.println( "Changed currentExecution to: " + arg2 );
 				executionLabel.textProperty().bind( Properties.forLabel( arg2 ) );
 			}
 		} );
@@ -94,7 +96,7 @@ public class AnalysisView extends StackPane
 			LineChartView chartView = ( LineChartView )project.getStatisticPages().getChildAt( 0 ).getChildAt( 0 )
 					.getChartView();
 
-			chartContainer.getChildren().setAll( new LineChartViewNode( currentExecution, chartView ) );
+			chartContainer.getChildren().setAll( new LineChartViewNode( currentExecution, chartView, poll ) );
 		}
 		catch( Exception e )
 		{
