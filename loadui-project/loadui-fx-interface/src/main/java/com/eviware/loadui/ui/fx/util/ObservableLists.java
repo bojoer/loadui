@@ -27,6 +27,8 @@ import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.eviware.loadui.api.base.OrderedCollection;
+import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.events.EventFirer;
 import com.eviware.loadui.api.events.EventHandler;
@@ -128,6 +130,26 @@ public class ObservableLists
 			Iterable<? extends E> initialValues )
 	{
 		CollectionListData<E> data = new CollectionListData<>( owner, collectionName, type, initialValues );
+
+		ObservableList<E> readOnlyList = FXCollections.unmodifiableObservableList( data.list );
+		lists.put( readOnlyList, data );
+
+		return readOnlyList;
+	}
+
+	/**
+	 * Creates an ObservableList of elements from an OrderedCollection.
+	 * 
+	 * Note that ObservableLists, as opposed to OrderedCollections, does not
+	 * support move operations. Such operations will be translated into removeAll
+	 * and setAll.
+	 * 
+	 * @param collection
+	 * @return
+	 */
+	public static <E> ObservableList<E> ofCollection( OrderedCollection<E> collection )
+	{
+		OrderedCollectionListData<E> data = new OrderedCollectionListData<>( collection );
 
 		ObservableList<E> readOnlyList = FXCollections.unmodifiableObservableList( data.list );
 		lists.put( readOnlyList, data );
@@ -446,6 +468,48 @@ public class ObservableLists
 		public void release()
 		{
 			eventFirer.removeEventListener( CollectionEvent.class, this );
+		}
+	}
+
+	private static class OrderedCollectionListData<E> implements EventHandler<BaseEvent>, Releasable
+	{
+		private final ObservableList<E> list = FXCollections.observableArrayList();
+		private final OrderedCollection<E> collection;
+
+		private OrderedCollectionListData( OrderedCollection<E> collection )
+		{
+			this.collection = collection;
+
+			collection.addEventListener( BaseEvent.class, this );
+			list.addAll( collection.getChildren() );
+		}
+
+		@Override
+		public void handleEvent( BaseEvent event )
+		{
+			if( event instanceof CollectionEvent )
+			{
+				CollectionEvent collectionEvent = ( CollectionEvent )event;
+				if( collectionEvent.getEvent() == CollectionEvent.Event.ADDED )
+				{
+					Object element = collectionEvent.getElement();
+					list.add( ( E )collectionEvent.getElement() );
+				}
+				else
+				{
+					list.remove( collectionEvent.getElement() );
+				}
+			}
+			else if( OrderedCollection.CHILD_ORDER.equals( event.getKey() ) )
+			{
+				list.setAll( collection.getChildren() );
+			}
+		}
+
+		@Override
+		public void release()
+		{
+			collection.removeEventListener( CollectionEvent.class, this );
 		}
 	}
 
