@@ -12,12 +12,17 @@ import javafx.scene.layout.StackPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.model.ProjectItem;
+import com.eviware.loadui.api.statistics.model.ChartGroup;
+import com.eviware.loadui.api.statistics.model.StatisticPage;
 import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.Properties;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 
 public class AnalysisView extends StackPane
 {
@@ -32,21 +37,21 @@ public class AnalysisView extends StackPane
 	private final ProjectItem project;
 	private final ObservableList<Execution> executionList;
 
-	private final Property<Execution> currentExecutionProperty = new SimpleObjectProperty<>();
+	private final Property<Execution> currentExecution = new SimpleObjectProperty<>( this, "currentExecution" );
 
 	public Property<Execution> currentExecutionProperty()
 	{
-		return currentExecutionProperty;
+		return currentExecution;
 	}
 
-	public void setCurrentExecution( Execution currentExecution )
+	public void setCurrentExecution( Execution value )
 	{
-		currentExecutionProperty.setValue( currentExecution );
+		currentExecution.setValue( value );
 	}
 
 	public Execution getCurrentExecution()
 	{
-		return currentExecutionProperty.getValue();
+		return currentExecution.getValue();
 	}
 
 	public AnalysisView( ProjectItem project, ObservableList<Execution> executionList )
@@ -60,22 +65,36 @@ public class AnalysisView extends StackPane
 	@FXML
 	private void initialize()
 	{
-		currentExecutionProperty.addListener( new ChangeListener<Execution>()
+		currentExecution.addListener( new ChangeListener<Execution>()
 		{
 			@Override
 			public void changed( ObservableValue<? extends Execution> arg0, Execution arg1, Execution arg2 )
 			{
 				executionLabel.textProperty().unbind();
+				System.out.println( "Changed currentExecution to: " + arg2 );
 				executionLabel.textProperty().bind( Properties.forLabel( arg2 ) );
 			}
 		} );
 
 		try
 		{
+			if( project.getStatisticPages().getChildCount() == 0 )
+			{
+				StatisticPage page = project.getStatisticPages().createPage( "New Page" );
+				ChartGroup group = page.createChartGroup( LineChartView.class.getName(), "New Chart" );
+				group.createChart( Iterables.find( project.getComponents(), new Predicate<ComponentItem>()
+				{
+					@Override
+					public boolean apply( ComponentItem input )
+					{
+						return input.getLabel().startsWith( "Web" );
+					}
+				} ) );
+			}
 			LineChartView chartView = ( LineChartView )project.getStatisticPages().getChildAt( 0 ).getChildAt( 0 )
 					.getChartView();
 
-			chartContainer.getChildren().setAll( new LineChartViewNode( currentExecutionProperty, chartView ) );
+			chartContainer.getChildren().setAll( new LineChartViewNode( currentExecution, chartView ) );
 		}
 		catch( Exception e )
 		{
