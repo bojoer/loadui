@@ -1,17 +1,22 @@
 package com.eviware.loadui.ui.fx.views.distribution;
 
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
 import javafx.scene.layout.HBox;
 
 import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.model.WorkspaceItem;
+import com.eviware.loadui.ui.fx.control.PageList;
+import com.eviware.loadui.ui.fx.control.ToolBox;
+import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.ObservableLists;
 import com.eviware.loadui.ui.fx.views.agent.AgentView;
 import com.google.common.base.Function;
@@ -43,6 +48,11 @@ public class DistributionView extends HBox
 	private ObservableList<ScenarioToolboxItem> scenarioViews;
 	private ObservableList<AgentView> agentViews;
 
+	@FXML
+	private ToolBox<ScenarioToolboxItem> scenarioToolBox;
+	@FXML
+	private PageList<AgentView> agentList;
+
 	public DistributionView()
 	{
 		project.addListener( new ChangeListener<ProjectItem>()
@@ -63,6 +73,7 @@ public class DistributionView extends HBox
 				}
 
 				scenarioViews = ObservableLists.transform( scenarios, SCENARIO_TO_VIEW );
+				Bindings.bindContent( scenarioToolBox.getItems(), scenarioViews );
 			}
 		} );
 
@@ -82,8 +93,11 @@ public class DistributionView extends HBox
 				}
 
 				agentViews = ObservableLists.transform( agents, AGENT_TO_VIEW );
+				Bindings.bindContent( agentList.getItems(), agentViews );
 			}
 		} );
+
+		FXMLUtils.load( this );
 	}
 
 	public ObservableList<SceneItem> getScenarios()
