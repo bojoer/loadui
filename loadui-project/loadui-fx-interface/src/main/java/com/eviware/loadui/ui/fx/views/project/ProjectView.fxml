@@ -31,7 +31,7 @@
 				<Insets top="-37" />
 			</padding>
 			<children>
-				<TabPane tabClosingPolicy="unavailable">
+				<TabPane id="project-tab-pane" tabClosingPolicy="unavailable">
 					<DetachableTab fx:id="designTab" text="Design" />
 					<DetachableTab fx:id="resultTab" text="Results" />
 				</TabPane>
