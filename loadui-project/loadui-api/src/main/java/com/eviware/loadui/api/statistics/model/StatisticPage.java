@@ -17,6 +17,7 @@ package com.eviware.loadui.api.statistics.model;
 
 import com.eviware.loadui.api.base.OrderedCollection;
 import com.eviware.loadui.api.traits.Deletable;
+import com.eviware.loadui.api.traits.Labeled;
 import com.eviware.loadui.api.traits.Releasable;
 
 /**
@@ -25,25 +26,8 @@ import com.eviware.loadui.api.traits.Releasable;
  * 
  * @author dain.nilsson
  */
-public interface StatisticPage extends OrderedCollection<ChartGroup>, Deletable, Releasable
+public interface StatisticPage extends OrderedCollection<ChartGroup>, Labeled.Mutable, Deletable, Releasable
 {
-	// BaseEvent key fired when the title of the StatisticPage changes.
-	public static final String TITLE = StatisticPage.class.getName() + "@title";
-
-	/**
-	 * Gets the title of the StatisticPage.
-	 * 
-	 * @return
-	 */
-	public String getTitle();
-
-	/**
-	 * Sets the title of the StatisticPage.
-	 * 
-	 * @param title
-	 */
-	public void setTitle( String title );
-
 	/**
 	 * Creates and returns a new ChartGroup of the given type, with the given
 	 * title, placing it at the end of the existing ChartGroups.
