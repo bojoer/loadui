@@ -86,15 +86,16 @@ public class StatisticPageImpl implements StatisticPage
 	}
 
 	@Override
-	public String getTitle()
+	public String getLabel()
 	{
 		return config.isSetTitle() ? config.getTitle() : "";
 	}
 
 	@Override
-	public void setTitle( String title )
+	public void setLabel( String title )
 	{
 		config.setTitle( title );
+		fireEvent( new BaseEvent( this, LABEL ) );
 	}
 
 	@Override
