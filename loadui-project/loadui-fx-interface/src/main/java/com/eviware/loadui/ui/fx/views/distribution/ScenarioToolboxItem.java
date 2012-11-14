@@ -34,4 +34,9 @@ public class ScenarioToolboxItem extends StackPane
 		return label;
 	}
 
+	public SceneItem getScenario()
+	{
+		return scenario;
+	}
+
 }

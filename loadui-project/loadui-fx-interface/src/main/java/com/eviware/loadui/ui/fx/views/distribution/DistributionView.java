@@ -11,6 +11,7 @@ import javafx.fxml.FXML;
 import javafx.scene.layout.HBox;
 
 import com.eviware.loadui.api.model.AgentItem;
+import com.eviware.loadui.api.model.Assignment;
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.model.WorkspaceItem;
@@ -32,12 +33,14 @@ public class DistributionView extends HBox
 		}
 	};
 
-	private static final Function<AgentItem, AgentView> AGENT_TO_VIEW = new Function<AgentItem, AgentView>()
+	private final Function<AgentItem, AgentView> AGENT_TO_VIEW = new Function<AgentItem, AgentView>()
 	{
 		@Override
 		public AgentView apply( AgentItem agent )
 		{
-			return new AgentView( agent );
+			AgentView agentView = new AgentView( agent );
+			Bindings.bindContent( agentView.getAssignments(), assignments );
+			return agentView;
 		}
 	};
 
@@ -47,6 +50,7 @@ public class DistributionView extends HBox
 	private ObservableList<SceneItem> scenarios;
 	private ObservableList<ScenarioToolboxItem> scenarioViews;
 	private ObservableList<AgentView> agentViews;
+	private ObservableList<Assignment> assignments = FXCollections.emptyObservableList();
 
 	@FXML
 	private ToolBox<ScenarioToolboxItem> scenarioToolBox;
@@ -58,18 +62,28 @@ public class DistributionView extends HBox
 		project.addListener( new ChangeListener<ProjectItem>()
 		{
 			@Override
-			public void changed( ObservableValue<? extends ProjectItem> arg0, ProjectItem arg1, ProjectItem arg2 )
+			public void changed( ObservableValue<? extends ProjectItem> arg0, ProjectItem oldProject,
+					ProjectItem newProject )
 			{
-				if( arg2 == null )
+				if( newProject == null )
 				{
 					workspace.setValue( null );
 					scenarios = FXCollections.emptyObservableList();
 				}
 				else
 				{
-					workspace.setValue( arg2.getWorkspace() );
-					scenarios = ObservableLists.fx( ObservableLists.ofCollection( arg2, ProjectItem.SCENES, SceneItem.class,
-							arg2.getChildren() ) );
+					workspace.setValue( newProject.getWorkspace() );
+					scenarios = ObservableLists.fx( ObservableLists.ofCollection( newProject, ProjectItem.SCENES,
+							SceneItem.class, newProject.getChildren() ) );
+					ObservableList<Assignment> oldAssignments = assignments;
+					assignments = ObservableLists.fx( ObservableLists.ofCollection( newProject, ProjectItem.ASSIGNMENTS,
+							Assignment.class, newProject.getAssignments() ) );
+
+					for( AgentView agent : agentViews )
+					{
+						Bindings.unbindContent( agent.getAssignments(), oldAssignments );
+						Bindings.bindContent( agent.getAssignments(), assignments );
+					}
 				}
 
 				scenarioViews = ObservableLists.transform( scenarios, SCENARIO_TO_VIEW );
