@@ -1,48 +1,57 @@
 package com.eviware.loadui.ui.fx.views.analysis;
 
+import static com.eviware.loadui.ui.fx.util.ObservableLists.appendElement;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.transform;
 import static javafx.beans.binding.Bindings.bindContent;
 
-import java.util.Collection;
+import java.util.Random;
 
-import javax.annotation.Nullable;
-
-import javafx.beans.binding.Bindings;
 import javafx.beans.Observable;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBuilder;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
+import javafx.scene.control.TabBuilder;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.StackPane;
+
+import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.statistics.model.StatisticPage;
 import com.eviware.loadui.api.statistics.model.StatisticPages;
-import com.eviware.loadui.api.statistics.model.ChartGroup;
-import com.eviware.loadui.api.statistics.model.StatisticPage;
-import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.ObservableLists;
 import com.eviware.loadui.ui.fx.util.Properties;
 import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
 
 public class AnalysisView extends StackPane
 {
 	private static final Logger log = LoggerFactory.getLogger( AnalysisView.class );
+
+	private final Function<StatisticPage, Tab> STATISTIC_PAGE_TO_TAB = new Function<StatisticPage, Tab>()
+	{
+		@Override
+		@Nullable
+		public StatisticTab apply( @Nullable StatisticPage page )
+		{
+			return new StatisticTab( page );
+		}
+	};
 
 	@FXML
 	private Label executionLabel;
@@ -55,6 +64,15 @@ public class AnalysisView extends StackPane
 	private final Observable poll;
 
 	private final Property<Execution> currentExecution = new SimpleObjectProperty<>( this, "currentExecution" );
+
+	@FXML
+	private Button button;
+
+	private StatisticPages pagesObject;
+
+	private ObservableList<StatisticPage> statisticPages;
+
+	private ObservableList<Tab> tabs;
 
 	public Property<Execution> currentExecutionProperty()
 	{
@@ -95,24 +113,43 @@ public class AnalysisView extends StackPane
 
 		try
 		{
-			StatisticPages pagesObject = project.getStatisticPages();
+			pagesObject = project.getStatisticPages();
 
 			if( pagesObject.getChildCount() == 0 )
 				pagesObject.createPage( "General" );
 
-			ObservableList<StatisticPage> statisticPages = ObservableLists.ofCollection( pagesObject );
+			statisticPages = ObservableLists.ofCollection( pagesObject );
 
-			ObservableList<Tab> tabs = transform( statisticPages, new Function<StatisticPage, Tab>()
+			tabs = transform( ObservableLists.fx( statisticPages ), STATISTIC_PAGE_TO_TAB );
+
+			final Tab plusButton = TabBuilder.create().text( "+" ).closable( false ).styleClass( "create-new-button" )
+					.build();
+			plusButton.setOnSelectionChanged( new EventHandler<Event>()
 			{
 				@Override
-				@Nullable
-				public StatisticTab apply( @Nullable StatisticPage page )
+				public void handle( Event e )
 				{
-					return new StatisticTab( page );
+					if( plusButton.isSelected() )
+					{
+						pagesObject.createPage( "new page " + new Random().nextInt() );
+					}
 				}
 			} );
 
-			bindContent( tabPane.getTabs(), tabs );
+			button = ButtonBuilder.create().text( "+" ).build();
+
+			bindContent( tabPane.getTabs(), appendElement( tabs, plusButton ) );
+
+			tabPane.getTabs().addListener( new ListChangeListener<Tab>()
+			{
+				@Override
+				public void onChanged( javafx.collections.ListChangeListener.Change<? extends Tab> c )
+				{
+					while( c.next() )
+						if( c.wasAdded() )
+							tabPane.getSelectionModel().select( c.getAddedSubList().get( 0 ) );
+				}
+			} );
 
 			//			if( project.getStatisticPages().getChildCount() == 0 )
 			//			{
