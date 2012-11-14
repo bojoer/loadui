@@ -6,11 +6,13 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.control.Tab;
 
+import com.eviware.loadui.ui.fx.util.Properties;
+
 public class StatisticTab extends Tab
 {
 	StatisticTab( final StatisticPage page )
 	{
-		setText( page.getTitle() );
+		textProperty().bind( Properties.forLabel( page ) );
 		setOnClosed( new EventHandler<Event>()
 		{
 			@Override

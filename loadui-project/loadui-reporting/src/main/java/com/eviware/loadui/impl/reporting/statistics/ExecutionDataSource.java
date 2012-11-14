@@ -73,7 +73,7 @@ public class ExecutionDataSource extends JRAbstractBeanDataSource
 		if( fieldName.equals( "projectName" ) )
 			return label;
 		if( fieldName.equals( "pageName" ) )
-			return page.getTitle();
+			return page.getLabel();
 		if( fieldName.equals( "startTime" ) )
 			return new Date( startTime ).toString();
 		if( fieldName.equals( "endTime" ) )

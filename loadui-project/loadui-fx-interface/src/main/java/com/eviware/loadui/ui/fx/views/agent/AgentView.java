@@ -6,23 +6,43 @@ import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.RectangleBuilder;
+
+import javax.annotation.Nullable;
 
 import com.eviware.loadui.api.model.AgentItem;
+import com.eviware.loadui.api.model.Assignment;
+import com.eviware.loadui.api.model.SceneItem;
+import com.eviware.loadui.ui.fx.api.input.DraggableEvent;
 import com.eviware.loadui.ui.fx.control.OptionsSlider;
 import com.eviware.loadui.ui.fx.control.ScrollableList;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
+import com.eviware.loadui.ui.fx.util.ObservableLists;
 import com.eviware.loadui.ui.fx.util.Properties;
+import com.eviware.loadui.ui.fx.views.distribution.AssignmentView;
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 
 public class AgentView extends VBox
 {
+	private static final Function<Assignment, AssignmentView> ASSIGNMENT_TO_VIEW = new Function<Assignment, AssignmentView>()
+	{
+		@Override
+		@Nullable
+		public AssignmentView apply( @Nullable Assignment assignment )
+		{
+			return new AssignmentView( assignment );
+		}
+	};
+
 	@FXML
 	private OptionsSlider onOffSwitch;
 
@@ -40,6 +60,8 @@ public class AgentView extends VBox
 	private final StringProperty urlProperty;
 	private final BooleanProperty enabledProperty;
 	private final ReadOnlyBooleanProperty readyProperty;
+	private final ObservableList<Assignment> assignments = FXCollections.observableArrayList();
+	private final ObservableList<AssignmentView> assignmentViews;
 
 	public AgentView( final AgentItem agent )
 	{
@@ -49,6 +71,17 @@ public class AgentView extends VBox
 		urlProperty = Properties.stringProperty( agent, "url", AgentItem.URL );
 		enabledProperty = Properties.booleanProperty( agent, "enabled", AgentItem.ENABLED );
 		readyProperty = Properties.readOnlyBooleanProperty( agent, "ready", AgentItem.READY );
+
+		ObservableList<Assignment> filtered = ObservableLists.filter( assignments, new Predicate<Assignment>()
+		{
+			@Override
+			public boolean apply( @Nullable Assignment assignment )
+			{
+				return assignment.getAgent().equals( agent );
+			}
+		} );
+
+		assignmentViews = ObservableLists.transform( filtered, ASSIGNMENT_TO_VIEW );
 
 		FXMLUtils.load( this );
 	}
@@ -90,13 +123,37 @@ public class AgentView extends VBox
 			}
 		} );
 
-		scenarioList.getItems().add( RectangleBuilder.create().width( 80 ).height( 16 ).fill( Color.RED ).build() );
-		scenarioList.getItems().add( RectangleBuilder.create().width( 80 ).height( 16 ).fill( Color.ORANGE ).build() );
-		scenarioList.getItems().add( RectangleBuilder.create().width( 80 ).height( 16 ).fill( Color.YELLOW ).build() );
-		scenarioList.getItems().add( RectangleBuilder.create().width( 80 ).height( 16 ).fill( Color.GREEN ).build() );
-		scenarioList.getItems().add( RectangleBuilder.create().width( 80 ).height( 16 ).fill( Color.BLUE ).build() );
-		scenarioList.getItems().add( RectangleBuilder.create().width( 80 ).height( 16 ).fill( Color.INDIGO ).build() );
-		scenarioList.getItems().add( RectangleBuilder.create().width( 80 ).height( 16 ).fill( Color.VIOLET ).build() );
+		Bindings.bindContent( scenarioList.getItems(), assignmentViews );
+
+		addEventHandler( DraggableEvent.ANY, new EventHandler<DraggableEvent>()
+		{
+			@Override
+			public void handle( DraggableEvent event )
+			{
+				if( event.getData() instanceof SceneItem )
+				{
+					if( event.getEventType() == DraggableEvent.DRAGGABLE_ENTERED )
+					{
+
+						event.accept();
+						event.consume();
+
+					}
+					else if( event.getEventType() == DraggableEvent.DRAGGABLE_DROPPED )
+					{
+						final SceneItem scenario = ( SceneItem )event.getData();
+
+						event.consume();
+						scenario.getProject().assignScene( scenario, agent );
+					}
+				}
+			}
+		} );
+	}
+
+	public ObservableList<Assignment> getAssignments()
+	{
+		return assignments;
 	}
 
 	@Override
