@@ -91,6 +91,7 @@ import com.eviware.loadui.impl.summary.sections.ProjectExecutionNotablesSection;
 import com.eviware.loadui.impl.terminal.ConnectionImpl;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.ReleasableUtils;
+import com.eviware.loadui.util.collections.CollectionEventSupport;
 import com.eviware.loadui.util.collections.CollectionFuture;
 import com.eviware.loadui.util.events.EventFuture;
 import com.eviware.loadui.util.messaging.BroadcastMessageEndpointImpl;
@@ -109,7 +110,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 
 	private final WorkspaceItem workspace;
 	private final LoaduiProjectDocumentConfig doc;
-	private final Set<Assignment> assignments = Sets.newHashSet();
+	private final CollectionEventSupport<Assignment, Void> assignments = new CollectionEventSupport<>( this, ASSIGNMENTS );
 	private final AgentListener agentListener = new AgentListener();
 	private final SceneListener sceneListener = new SceneListener();
 	private final WorkspaceListener workspaceListener = new WorkspaceListener();
@@ -207,11 +208,9 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 			if( agent != null )
 			{
 				sceneEndpoints.get( scene ).registerEndpoint( agent );
-				AssignmentImpl assignment = new AssignmentImpl( scene, agent );
-				if( assignments.add( assignment ) )
+				if( assignments.addItem( getOrCreateAssignment( scene, agent ) ) )
 				{
 					sendAssignMessage( agent, scene );
-					fireCollectionEvent( ASSIGNMENTS, Event.ADDED, assignment );
 				}
 			}
 		}
@@ -393,8 +392,8 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	@Override
 	public void assignScene( SceneItem scene, AgentItem agent )
 	{
-		AssignmentImpl assignment = new AssignmentImpl( scene, agent );
-		if( assignments.add( assignment ) )
+		AssignmentImpl assignment = getOrCreateAssignment( scene, agent );
+		if( assignments.addItem( assignment ) )
 		{
 			sceneEndpoints.get( scene ).registerEndpoint( agent );
 			SceneAssignmentConfig conf = getConfig().addNewSceneAssignment();
@@ -412,7 +411,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	public Collection<AgentItem> getAgentsAssignedTo( SceneItem scene )
 	{
 		Set<AgentItem> agents = new HashSet<>();
-		for( Assignment assignment : assignments )
+		for( Assignment assignment : assignments.getItems() )
 			if( scene.equals( assignment.getScene() ) )
 				agents.add( assignment.getAgent() );
 		return agents;
@@ -422,7 +421,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	public Collection<SceneItem> getScenesAssignedTo( AgentItem agent )
 	{
 		Set<SceneItem> scenesOnAgent = new HashSet<>();
-		for( Assignment assignment : assignments )
+		for( Assignment assignment : assignments.getItems() )
 			if( agent.equals( assignment.getAgent() ) )
 				scenesOnAgent.add( assignment.getScene() );
 		return scenesOnAgent;
@@ -431,14 +430,14 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	@Override
 	public Collection<Assignment> getAssignments()
 	{
-		return Collections.unmodifiableCollection( assignments );
+		return Collections.unmodifiableCollection( assignments.getItems() );
 	}
 
 	@Override
 	public void unassignScene( SceneItem scene, AgentItem agent )
 	{
-		AssignmentImpl assignment = new AssignmentImpl( scene, agent );
-		if( assignments.remove( assignment ) )
+		AssignmentImpl assignment = getOrCreateAssignment( scene, agent );
+		if( assignments.removeItem( assignment ) )
 		{
 			BroadcastMessageEndpoint bme = sceneEndpoints.get( scene );
 			if( bme != null )
@@ -474,11 +473,17 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 
 	private AssignmentImpl getAssignment( SceneItem scene, AgentItem agent )
 	{
-		for( Assignment assignment : assignments )
+		for( Assignment assignment : assignments.getItems() )
 			if( assignment.getScene() == scene && assignment.getAgent() == agent )
 				return ( AssignmentImpl )assignment;
 
 		return null;
+	}
+
+	private AssignmentImpl getOrCreateAssignment( SceneItem scene, AgentItem agent )
+	{
+		AssignmentImpl assignment = getAssignment( scene, agent );
+		return assignment != null ? assignment : new AssignmentImpl( scene, agent );
 	}
 
 	@Override
@@ -652,7 +657,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		private final AgentItem agent;
 		private boolean loaded = false;
 
-		public AssignmentImpl( SceneItem scene, AgentItem agent )
+		private AssignmentImpl( SceneItem scene, AgentItem agent )
 		{
 			this.scene = scene;
 			this.agent = agent;
@@ -677,29 +682,6 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		public SceneItem getScene()
 		{
 			return scene;
-		}
-
-		@Override
-		public int hashCode()
-		{
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + ( ( agent == null ) ? 0 : agent.getId().hashCode() );
-			return prime * result + ( ( scene == null ) ? 0 : scene.getId().hashCode() );
-		}
-
-		@Override
-		public boolean equals( Object obj )
-		{
-			if( this == obj )
-				return true;
-			if( obj == null )
-				return false;
-			if( getClass() != obj.getClass() )
-				return false;
-			AssignmentImpl other = ( AssignmentImpl )obj;
-
-			return( agent.getId().equals( other.agent.getId() ) && scene.getId().equals( other.scene.getId() ) );
 		}
 	}
 
