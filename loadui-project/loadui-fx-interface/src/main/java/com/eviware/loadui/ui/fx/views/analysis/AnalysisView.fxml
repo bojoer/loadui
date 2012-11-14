@@ -10,6 +10,7 @@
 <?import javafx.geometry.Insets?>
 <?import java.net.URL?>
 
+<?import com.eviware.loadui.ui.fx.views.statistics.StatisticHolderToolBox?>
 
 <fx:root type="javafx.scene.layout.StackPane" xmlns:fx="http://javafx.com/fxml">
 	<VBox xmlns:fx="http://javafx.com/fxml" styleClass="analysis-view">
@@ -20,6 +21,9 @@
 			<Label fx:id="executionLabel" styleClass="title" text="No Execution" />
 			<Button text="close" onAction="#close" />
 		</HBox>
-		<TabPane fx:id="tabPane" />
+		<HBox spacing="10">
+			<StatisticHolderToolBox fx:id="toolBox" heightPerItem="110" maxWidth="100" />
+			<TabPane fx:id="tabPane" HBox.hgrow="ALWAYS" />
+		</HBox>
 	</VBox>
 </fx:root>

@@ -49,7 +49,6 @@ import org.osgi.framework.Constants;
 import org.osgi.framework.launch.Framework;
 
 import com.eviware.loadui.launcher.api.OSGiUtils;
-import com.eviware.loadui.launcher.api.SplashController;
 import com.eviware.loadui.launcher.util.BndUtils;
 
 /**
@@ -290,7 +289,7 @@ public class LoadUILauncher
 
 	private void startAllNonFxBundles()
 	{
-		Pattern fxPattern = Pattern.compile( "^com\\.eviware\\.loadui\\.(\\w+[.-])*((fx-interface)|(cssbox-browser)).*$" );
+		Pattern fxPattern = Pattern.compile( "^com\\.eviware\\.loadui\\.(\\w+[.-])*(fx-interface).*$" );
 		for( Bundle bundle : framework.getBundleContext().getBundles() )
 		{
 			String bundleName = bundle.getSymbolicName();
@@ -421,18 +420,9 @@ public class LoadUILauncher
 
 	protected void processCommandLine( CommandLine cmdLine )
 	{
-		if( !cmdLine.hasOption( NOFX_OPTION ) )
-		{
-			System.out.println( "Opening splash..." );
-			SplashController.openSplash();
-			addJavaFxPackages();
-		}
-		else
-		{
-			//Do not auto-load any loadui JavaFX bundles
-			configProps.setProperty( "felix.auto.deploy.action", "install" );
-			nofx = true;
-		}
+		//Do not auto-load any loadui JavaFX bundles
+		configProps.setProperty( "felix.auto.deploy.action", "install" );
+		nofx = true;
 	}
 
 	protected final void initSystemProperties()
@@ -450,8 +440,6 @@ public class LoadUILauncher
 		setDefaultSystemProperty( "loadui.ssl.trustStorePassword", "password" );
 
 		setDefaultSystemProperty( "loadui.instance", "controller" );
-
-		setDefaultSystemProperty( "sun.java2d.noddraw", "true" );
 
 		File loaduiHome = new File( System.getProperty( LOADUI_HOME ) );
 		if( !loaduiHome.isDirectory() )
@@ -536,39 +524,6 @@ public class LoadUILauncher
 		if( System.getProperty( property ) == null )
 		{
 			System.setProperty( property, value );
-		}
-	}
-
-	protected void addJavaFxPackages()
-	{
-		try
-		{
-			Class.forName( "javafx.lang.FX" );
-		}
-		catch( ClassNotFoundException e )
-		{
-			return;
-		}
-
-		try (InputStream is = getClass().getResourceAsStream( "/packages-extra.txt" ))
-		{
-			if( is != null )
-			{
-				StringBuilder out = new StringBuilder();
-				byte[] b = new byte[4096];
-				for( int n; ( n = is.read( b ) ) != -1; )
-					out.append( new String( b, 0, n ) );
-
-				String extra = configProps.getProperty( ORG_OSGI_FRAMEWORK_SYSTEM_PACKAGES_EXTRA, "" );
-				if( !extra.isEmpty() )
-					out.append( "," ).append( extra );
-
-				configProps.setProperty( ORG_OSGI_FRAMEWORK_SYSTEM_PACKAGES_EXTRA, out.toString() );
-			}
-		}
-		catch( IOException e )
-		{
-			e.printStackTrace();
 		}
 	}
 }

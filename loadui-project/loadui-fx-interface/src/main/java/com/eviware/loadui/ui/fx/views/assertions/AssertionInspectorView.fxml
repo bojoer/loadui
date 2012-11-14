@@ -4,8 +4,8 @@
 <?import javafx.scene.control.ListView?>
 <?import javafx.geometry.Insets?>
 <?import java.net.URL?>
-<?import com.eviware.loadui.ui.fx.control.ToolBox?>
 <?import com.eviware.loadui.ui.fx.control.ScrollableList?>
+<?import com.eviware.loadui.ui.fx.views.statistics.StatisticHolderToolBox?>
 
 <fx:root type="javafx.scene.layout.HBox" styleClass="assertion-inspector-view, inspector" xmlns:fx="http://javafx.com/fxml" spacing="10" fillHeight="true">
 	<stylesheets>
@@ -14,6 +14,6 @@
 	<padding>
 		<Insets top="10" right="10" bottom="10" />
 	</padding>
-	<ToolBox fx:id="componentToolBox" text="Assertables" heightPerItem="120" />
+	<StatisticHolderToolBox fx:id="componentToolBox" text="Assertables" heightPerItem="120" />
 	<ScrollableList fx:id="assertionList" spacing="10" sizePerItem="75" HBox.hgrow="ALWAYS" />
 </fx:root>

@@ -2,12 +2,6 @@ package com.eviware.loadui.ui.fx.views.analysis;
 
 import static com.eviware.loadui.ui.fx.util.ObservableLists.transform;
 import static javafx.beans.binding.Bindings.bindContent;
-
-import java.util.Collection;
-
-import javax.annotation.Nullable;
-
-import javafx.beans.binding.Bindings;
 import javafx.beans.Observable;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
@@ -20,23 +14,24 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.StackPane;
 
+import javax.annotation.Nullable;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.model.ProjectItem;
-import com.eviware.loadui.api.statistics.model.StatisticPage;
-import com.eviware.loadui.api.statistics.model.StatisticPages;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
 import com.eviware.loadui.api.statistics.model.StatisticPage;
+import com.eviware.loadui.api.statistics.model.StatisticPages;
 import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.ObservableLists;
 import com.eviware.loadui.ui.fx.util.Properties;
+import com.eviware.loadui.ui.fx.views.statistics.StatisticHolderToolBox;
 import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
@@ -49,6 +44,9 @@ public class AnalysisView extends StackPane
 
 	@FXML
 	private TabPane tabPane;
+
+	@FXML
+	private StatisticHolderToolBox toolBox;
 
 	private final ProjectItem project;
 	private final ObservableList<Execution> executionList;
@@ -97,8 +95,19 @@ public class AnalysisView extends StackPane
 		{
 			StatisticPages pagesObject = project.getStatisticPages();
 
-			if( pagesObject.getChildCount() == 0 )
-				pagesObject.createPage( "General" );
+			if( project.getStatisticPages().getChildCount() == 0 )
+			{
+				StatisticPage page = project.getStatisticPages().createPage( "General" );
+				ChartGroup group = page.createChartGroup( LineChartView.class.getName(), "New Chart" );
+				group.createChart( Iterables.find( project.getComponents(), new Predicate<ComponentItem>()
+				{
+					@Override
+					public boolean apply( ComponentItem input )
+					{
+						return input.getLabel().startsWith( "Web" );
+					}
+				} ) );
+			}
 
 			ObservableList<StatisticPage> statisticPages = ObservableLists.ofCollection( pagesObject );
 
