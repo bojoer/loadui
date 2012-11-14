@@ -3,6 +3,7 @@ package com.eviware.loadui.ui.fx.views.analysis;
 import javafx.scene.control.Tab;
 
 import com.eviware.loadui.api.statistics.model.StatisticPage;
+import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.Properties;
 
 public class StatisticTab extends Tab
@@ -14,5 +15,7 @@ public class StatisticTab extends Tab
 		this.page = page;
 
 		textProperty().bind( Properties.forLabel( page ) );
+
+		FXMLUtils.load( this );
 	}
 }
