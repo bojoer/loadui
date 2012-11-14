@@ -15,7 +15,7 @@
 <?import com.eviware.loadui.ui.fx.control.OptionsSlider?>
 <?import com.eviware.loadui.ui.fx.control.ScrollableList?>
 
-<fx:root type="javafx.scene.layout.VBox" xmlns:fx="http://javafx.com/fxml" styleClass="agent-view" maxHeight="180">
+<fx:root type="javafx.scene.layout.VBox" xmlns:fx="http://javafx.com/fxml" styleClass="agent-view">
 	<stylesheets>
 		<URL value="@AgentView.css" />
 	</stylesheets>

@@ -14,6 +14,7 @@
 	<osgi:service ref="eventLogInspector" interface="com.eviware.loadui.ui.fx.api.Inspector" />
 	<osgi:service ref="systemLogInspector" interface="com.eviware.loadui.ui.fx.api.Inspector" />
 	<osgi:service ref="assertionInspector" interface="com.eviware.loadui.ui.fx.api.Inspector" />
+	<osgi:service ref="distributionInspector" interface="com.eviware.loadui.ui.fx.api.Inspector" />
 
 	<osgi:service ref="coreImageResolver">
 		<osgi:interfaces>

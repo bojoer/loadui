@@ -74,6 +74,13 @@
 	-fx-skin: "com.eviware.loadui.ui.fx.control.skin.StyleableGraphicButtonSkin";
 }
 
+.label.slim-icon {
+	-fx-background-radius: 3;
+	-fx-background-insets: 0, 1;
+	-fx-background-color: black, grey;
+	-fx-padding: 3;
+}
+
 /**
  * Navigation button styles
  */
