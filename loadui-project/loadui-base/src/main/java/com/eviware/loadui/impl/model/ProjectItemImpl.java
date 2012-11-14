@@ -436,9 +436,10 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	@Override
 	public void unassignScene( SceneItem scene, AgentItem agent )
 	{
-		AssignmentImpl assignment = getOrCreateAssignment( scene, agent );
-		if( assignments.removeItem( assignment ) )
+		AssignmentImpl assignment = getAssignment( scene, agent );
+		if( assignment != null )
 		{
+			assignments.removeItem( assignment );
 			BroadcastMessageEndpoint bme = sceneEndpoints.get( scene );
 			if( bme != null )
 			{
