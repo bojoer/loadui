@@ -12,6 +12,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -21,6 +22,8 @@ import javafx.scene.control.ButtonBuilder;
 import javafx.scene.control.Label;
 import javafx.scene.control.LabelBuilder;
 import javafx.scene.control.SplitPaneBuilder;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
@@ -42,49 +45,32 @@ import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 
+//import com.javafx.experiments.scenicview.ScenicView;
+
 public class StyleTester extends Application
 {
 	Node testNode = null;
 
 	private Node createTestNode()
 	{
-		TableView<String> table = new TableView<String>();
-		table.getColumns().setAll( new TableColumn<String, String>( "columnOne" ),
-				new TableColumn<String, String>( "columnTwo" ), new TableColumn<String, String>( "columnThree" ) );
-		table.getColumns().addListener( new ListChangeListener<TableColumn>()
+		final TabPane pane = new TabPane();
+		pane.getTabs().setAll( new Tab( "hej" ), new Tab( "heeej" ) );
+
+		Tab plus = new Tab( "+" );
+		pane.getTabs().add( plus );
+
+		plus.setOnSelectionChanged( new EventHandler<Event>()
 		{
 			@Override
-			public void onChanged( javafx.collections.ListChangeListener.Change<? extends TableColumn> c )
+			public void handle( Event e )
 			{
-				while( c.next() )
-				{
-					if( c.wasPermutated() )
-					{
-						System.out.println( "wasPermutated!" );
-						for( int i = c.getFrom(); i < c.getTo(); ++i )
-						{
-							System.out.println( "permutated: " + i );
-						}
-					}
-					else if( c.wasUpdated() )
-					{
-						System.out.println( "updated: " + c );
-					}
-					else
-					{
-						for( TableColumn<String, String> remitem : c.getRemoved() )
-						{
-							System.out.println( "removed: " + remitem );
-						}
-						for( TableColumn<String, String> additem : c.getAddedSubList() )
-						{
-							System.out.println( "added: " + additem );
-						}
-					}
-				}
+				Tab t = new Tab( "new" );
+				pane.getTabs().add( t );
+				pane.getSelectionModel().select( t );
 			}
 		} );
-		return table;
+
+		return pane;
 	}
 
 	@Override
@@ -175,7 +161,7 @@ public class StyleTester extends Application
 		//		final Wizard dialog = new Wizard( panel, "sdad", tabs );
 		//		dialog.show();
 
-		//ScenicView.show( primaryStage.getScene() );
+		//		ScenicView.show( primaryStage.getScene() );
 	}
 
 	public static void main( String[] args )

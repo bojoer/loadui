@@ -1,5 +1,7 @@
 package com.eviware.loadui.ui.fx.util;
 
+import static java.util.Arrays.asList;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -15,6 +17,7 @@ import java.util.concurrent.Callable;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -255,7 +258,50 @@ public class ObservableLists
 	@SafeVarargs
 	public static final <T> ObservableList<T> concatUnordered( ObservableList<? extends T>... listsToConcat )
 	{
-		ConcatenatedListData<T> data = new ConcatenatedListData<>( Arrays.asList( listsToConcat ) );
+		ConcatenatedUnorderedListData<T> data = new ConcatenatedUnorderedListData<>( Arrays.asList( listsToConcat ) );
+
+		ObservableList<T> readOnlyList = FXCollections.unmodifiableObservableList( data.list );
+		lists.put( readOnlyList, data );
+
+		return readOnlyList;
+	}
+
+	/**
+	 * Returns a new ObservableList that contains all the elements of the given
+	 * lists, and keeps the new list in sync with any changes to the original
+	 * lists. The order of the elements are guaranteed to correspond to the order
+	 * of the elements in the sublists -- but as a consequence, this method is
+	 * inefficient and recreates the whole list on any change.
+	 * 
+	 * @param listsToConcat
+	 * @return
+	 */
+
+	@SafeVarargs
+	public static final <T> ObservableList<T> concat( ObservableList<? extends T>... listsToConcat )
+	{
+		ConcatenatedListData<T> data = new ConcatenatedListData<>( asList( listsToConcat ) );
+
+		ObservableList<T> readOnlyList = FXCollections.unmodifiableObservableList( data.list );
+		lists.put( readOnlyList, data );
+
+		return readOnlyList;
+	}
+
+	/**
+	 * Returns a new ObservableList that contains all the elements of the given
+	 * lists, and keeps the new list in sync with any changes to the original
+	 * lists. The order of the elements are guaranteed to correspond to the order
+	 * of the elements in the sublists -- but as a consequence, this method is
+	 * inefficient and recreates the whole list on any change.
+	 * 
+	 * @param listsToConcat
+	 * @return
+	 */
+
+	public static final <T> ObservableList<T> appendElement( ObservableList<? extends T> inputList, T elementToAppend )
+	{
+		AppendedListData<T> data = new AppendedListData<>( inputList, elementToAppend );
 
 		ObservableList<T> readOnlyList = FXCollections.unmodifiableObservableList( data.list );
 		lists.put( readOnlyList, data );
@@ -564,12 +610,12 @@ public class ObservableLists
 		}
 	}
 
-	private static class ConcatenatedListData<T> implements ListChangeListener<T>, Releasable
+	private static class ConcatenatedUnorderedListData<T> implements ListChangeListener<T>, Releasable
 	{
 		private final ObservableList<T> list = FXCollections.observableArrayList();
 		private final List<ObservableList<? extends T>> originalLists;
 
-		private ConcatenatedListData( List<ObservableList<? extends T>> originalLists )
+		private ConcatenatedUnorderedListData( List<ObservableList<? extends T>> originalLists )
 		{
 			this.originalLists = originalLists;
 
@@ -597,6 +643,80 @@ public class ObservableLists
 			{
 				listToRelease.removeListener( this );
 			}
+		}
+	}
+
+	private static class ConcatenatedListData<T> implements ListChangeListener<T>, Releasable
+	{
+		private final ObservableList<T> list = FXCollections.observableArrayList();
+		private final List<ObservableList<? extends T>> originalLists;
+
+		private ConcatenatedListData( List<ObservableList<? extends T>> originalLists )
+		{
+			this.originalLists = originalLists;
+
+			for( ObservableList<? extends T> listToAdd : originalLists )
+			{
+				listToAdd.addListener( this );
+				list.addAll( listToAdd );
+			}
+		}
+
+		@Override
+		public void onChanged( ListChangeListener.Change<? extends T> change )
+		{
+			list.clear();
+			for( ObservableList<? extends T> listToAdd : originalLists )
+			{
+				list.addAll( listToAdd );
+			}
+		}
+
+		@Override
+		public void release()
+		{
+			for( ObservableList<? extends T> listToRelease : originalLists )
+			{
+				listToRelease.removeListener( this );
+			}
+		}
+	}
+
+	private static class AppendedListData<T> implements ListChangeListener<T>, Releasable
+	{
+		private final ObservableList<T> list = FXCollections.observableArrayList();
+		private final ObservableList<? extends T> originalList;
+
+		private AppendedListData( ObservableList<? extends T> originalList, T element )
+		{
+			this.originalList = originalList;
+
+			originalList.addListener( this );
+			list.setAll( originalList );
+			list.add( element );
+		}
+
+		@Override
+		public void onChanged( ListChangeListener.Change<? extends T> change )
+		{
+			while( change.next() )
+			{
+				if( change.wasRemoved() )
+				{
+					list.removeAll( change.getRemoved() );
+				}
+				if( change.wasAdded() )
+				{
+					for( T added : change.getAddedSubList() )
+						list.add( list.size() - 1, added );
+				}
+			}
+		}
+
+		@Override
+		public void release()
+		{
+			originalList.removeListener( this );
 		}
 	}
 
