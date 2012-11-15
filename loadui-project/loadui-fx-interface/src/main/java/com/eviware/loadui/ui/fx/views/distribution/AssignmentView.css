@@ -1,0 +1,9 @@
+.deployed-scenario-view
+{
+	-fx-opacity: 1;
+}
+
+.dragging
+{
+	-fx-opacity: 0.3;
+}
