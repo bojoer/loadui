@@ -55,7 +55,7 @@ public class AnalysisView extends StackPane
 		@Nullable
 		public StatisticTab apply( @Nullable StatisticPage page )
 		{
-			return new StatisticTab( page, poll );
+			return new StatisticTab( page, currentExecution, poll );
 		}
 	};
 
