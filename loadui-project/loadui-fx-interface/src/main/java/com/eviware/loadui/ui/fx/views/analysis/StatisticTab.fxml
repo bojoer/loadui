@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.control.ScrollPane?>
+<?import java.net.URL?>
+
+<fx:root type="javafx.scene.control.Tab" xmlns:fx="http://javafx.com/fxml" styleClass="statistic-tab">
+	<ScrollPane fitToWidth="true">
+		<VBox fx:id="chartList" />
+	</ScrollPane>
+</fx:root>

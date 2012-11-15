@@ -31,8 +31,6 @@ import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.model.ProjectItem;
-import com.eviware.loadui.api.statistics.model.StatisticPage;
-import com.eviware.loadui.api.statistics.model.StatisticPages;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
 import com.eviware.loadui.api.statistics.model.StatisticPage;
 import com.eviware.loadui.api.statistics.model.StatisticPages;
@@ -57,7 +55,7 @@ public class AnalysisView extends StackPane
 		@Nullable
 		public StatisticTab apply( @Nullable StatisticPage page )
 		{
-			return new StatisticTab( page );
+			return new StatisticTab( page, currentExecution, poll );
 		}
 	};
 
