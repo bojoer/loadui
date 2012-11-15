@@ -85,8 +85,9 @@ public class LineChartViewNode extends VBox
 		lineChart.setCreateSymbols( false );
 		lineChart.titleProperty().bind( Properties.forLabel( chartView ) );
 
-		ObservableList<LineSegment> lineSegments = ObservableLists.ofCollection( chartView, LineChartView.SEGMENTS,
-				LineSegment.class, Iterables.filter( chartView.getSegments(), LineSegment.class ) );
+		ObservableList<LineSegment> lineSegments = ObservableLists
+				.fx( ObservableLists.ofCollection( chartView, LineChartView.SEGMENTS, LineSegment.class,
+						Iterables.filter( chartView.getSegments(), LineSegment.class ) ) );
 		ObservableList<Series<Number, Number>> series = ObservableLists.transform( lineSegments, segmentToSeries );
 		Bindings.bindContent( lineChart.getData(), series );
 
@@ -106,18 +107,17 @@ public class LineChartViewNode extends VBox
 			XYChart.Series<Number, Number> series = new XYChart.Series<>();
 			series.setName( segment.getStatisticName() );
 
-			Bindings.bindContent( series.getData(),
-					ObservableLists.fromExpression( new Callable<Iterable<XYChart.Data<Number, Number>>>()
-					{
-						@Override
-						public Iterable<Data<Number, Number>> call() throws Exception
-						{
-							return Iterables.transform(
-									segment.getStatistic().getPeriod( position.longValue() - 2000,
-											position.longValue() + shownSpan.get() + 2000, 0, executionProperty.getValue() ),
-									DATAPOINT_TO_CHARTDATA );
-						}
-					}, executionProperty, position, shownSpan, poll ) );
+			series.setData( ObservableLists.fromExpression( new Callable<Iterable<XYChart.Data<Number, Number>>>()
+			{
+				@Override
+				public Iterable<Data<Number, Number>> call() throws Exception
+				{
+					return Iterables.transform(
+							segment.getStatistic().getPeriod( position.longValue() - 2000,
+									position.longValue() + shownSpan.get() + 2000, 0, executionProperty.getValue() ),
+							DATAPOINT_TO_CHARTDATA );
+				}
+			}, executionProperty, position, shownSpan, poll ) );
 
 			return series;
 		}
