@@ -45,7 +45,6 @@ import com.eviware.loadui.api.counter.CounterSynchronizer;
 import com.eviware.loadui.api.events.ActionEvent;
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.CollectionEvent;
-import com.eviware.loadui.api.events.CollectionEvent.Event;
 import com.eviware.loadui.api.events.EventFirer;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.RemoteActionEvent;
@@ -403,7 +402,6 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 			conf.setAgentLabel( agent.getLabel() );
 			conf.setAgentAddress( agent.getUrl() );
 			sendAssignMessage( agent, scene );
-			fireCollectionEvent( ASSIGNMENTS, Event.ADDED, assignment );
 		}
 	}
 
@@ -457,7 +455,6 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 					break;
 				}
 			}
-			fireCollectionEvent( ASSIGNMENTS, Event.REMOVED, assignment );
 		}
 	}
 
