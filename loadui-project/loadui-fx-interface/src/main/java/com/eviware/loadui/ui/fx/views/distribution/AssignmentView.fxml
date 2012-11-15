@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.net.URL?>
-<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
 
 <fx:root type="javafx.scene.layout.StackPane" xmlns:fx="http://javafx.com/fxml" styleClass="deployed-scenario-view">
 	<stylesheets>
 		<URL value="@AssignmentView.css" />
 	</stylesheets>
-	<Label fx:id="nameLabel" styleClass="slim-icon" minWidth="100" maxWidth="100" />
-	<MenuButton fx:id="menuButton" id="menuButton" />
+	<MenuButton fx:id="menuButton" id="menuButton" >
+		<items>
+			<MenuItem text="Open" onAction="#openScenario" />
+			<MenuItem text="Delete" onAction="#delete" />
+		</items>
+	</MenuButton>
 </fx:root>
