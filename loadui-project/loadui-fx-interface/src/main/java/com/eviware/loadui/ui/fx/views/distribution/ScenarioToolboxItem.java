@@ -3,16 +3,16 @@ package com.eviware.loadui.ui.fx.views.distribution;
 import javafx.beans.binding.Bindings;
 import javafx.scene.control.Label;
 import javafx.scene.control.LabelBuilder;
-import javafx.scene.control.TooltipBuilder;
 import javafx.scene.layout.StackPane;
 
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.ui.fx.control.DragNode;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
+import com.eviware.loadui.ui.fx.util.Properties;
 
 public class ScenarioToolboxItem extends StackPane
 {
-	SceneItem scenario;
+	private final SceneItem scenario;
 
 	public ScenarioToolboxItem( SceneItem scenario )
 	{
@@ -22,21 +22,14 @@ public class ScenarioToolboxItem extends StackPane
 		DragNode.install( this, createLabel() ).setData( scenario );
 
 		final Label baseLabel = createLabel();
-		baseLabel.setTooltip( TooltipBuilder.create().text( scenario.getDescription() ).build() );
 		getChildren().setAll( baseLabel );
 	}
 
 	private Label createLabel()
 	{
-		Label label = LabelBuilder.create().text( scenario.getLabel() ).styleClass( "slim-icon" ).minWidth( 100 )
-				.maxWidth( 100 ).build();
+		Label label = LabelBuilder.create().styleClass( "slim-icon" ).minWidth( 100 ).maxWidth( 100 ).build();
+		label.textProperty().bind( Properties.forLabel( scenario ) );
 		Bindings.bindContent( label.getStylesheets(), getStylesheets() );
 		return label;
 	}
-
-	public SceneItem getScenario()
-	{
-		return scenario;
-	}
-
 }
