@@ -1,11 +1,10 @@
 package com.eviware.loadui.ui.fx.views.analysis;
 
-import com.eviware.loadui.api.statistics.model.StatisticPage;
-
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.control.Tab;
 
+import com.eviware.loadui.api.statistics.model.StatisticPage;
 import com.eviware.loadui.ui.fx.util.Properties;
 
 public class StatisticTab extends Tab

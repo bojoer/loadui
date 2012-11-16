@@ -17,7 +17,6 @@ import java.util.concurrent.Callable;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
-import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -36,13 +35,11 @@ import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.events.EventFirer;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.traits.Releasable;
-import com.eviware.loadui.ui.fx.views.assertions.AssertionInspectorView;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.ReleasableUtils;
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import com.google.common.base.Supplier;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -295,18 +292,15 @@ public class ObservableLists
 	 * of the elements in the sublists -- but as a consequence, this method is
 	 * inefficient and recreates the whole list on any change.
 	 * 
-	 * @param listsToConcat
 	 * @return
 	 */
 
 	public static final <T> ObservableList<T> appendElement( ObservableList<? extends T> inputList, T elementToAppend )
 	{
 		AppendedListData<T> data = new AppendedListData<>( inputList, elementToAppend );
+		lists.put( data.list, data );
 
-		ObservableList<T> readOnlyList = FXCollections.unmodifiableObservableList( data.list );
-		lists.put( readOnlyList, data );
-
-		return readOnlyList;
+		return data.list;
 	}
 
 	/**
@@ -530,6 +524,7 @@ public class ObservableLists
 			list.addAll( collection.getChildren() );
 		}
 
+		@SuppressWarnings( "unchecked" )
 		@Override
 		public void handleEvent( BaseEvent event )
 		{
@@ -539,7 +534,7 @@ public class ObservableLists
 				if( collectionEvent.getEvent() == CollectionEvent.Event.ADDED )
 				{
 					Object element = collectionEvent.getElement();
-					list.add( ( E )collectionEvent.getElement() );
+					list.add( ( E )element );
 				}
 				else
 				{
@@ -708,7 +703,9 @@ public class ObservableLists
 				if( change.wasAdded() )
 				{
 					for( T added : change.getAddedSubList() )
+					{
 						list.add( list.size() - 1, added );
+					}
 				}
 			}
 		}

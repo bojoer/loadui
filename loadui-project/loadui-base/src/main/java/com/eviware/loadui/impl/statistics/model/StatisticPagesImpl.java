@@ -79,7 +79,7 @@ public class StatisticPagesImpl implements StatisticPages
 	{
 		for( StatisticPage page : getChildren() )
 			if( label.equals( page.getLabel() ) )
-				throw new IllegalArgumentException( "Non-unique label given for StatisticPage!" );
+				throw new IllegalArgumentException( "Non-unique label given for StatisticPage: " + label );
 
 		StatisticsPageConfig statisticPageConfig = config.addNewPage();
 		statisticPageConfig.setTitle( label );
