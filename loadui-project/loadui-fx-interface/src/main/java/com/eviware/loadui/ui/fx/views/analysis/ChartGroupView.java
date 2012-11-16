@@ -68,9 +68,6 @@ public class ChartGroupView extends VBox
 	private Label chartGroupLabel;
 
 	@FXML
-	private VBox segments;
-
-	@FXML
 	private StackPane chartView;
 
 	public ChartGroupView( ChartGroup chartGroup, ObservableValue<Execution> executionProperty, Observable poll )
