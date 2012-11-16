@@ -8,6 +8,7 @@ import javafx.scene.control.MenuButton;
 import javafx.scene.layout.StackPane;
 
 import com.eviware.loadui.api.model.Assignment;
+import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.control.DragNode;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.NodeUtils;
@@ -45,7 +46,7 @@ public class AssignmentView extends StackPane
 	@FXML
 	private void openScenario()
 	{
-		// TODO
+		fireEvent( IntentEvent.create( IntentEvent.INTENT_OPEN, assignment.getScene() ) );
 	}
 
 	@FXML

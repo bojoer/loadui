@@ -1,9 +1,48 @@
+/*
 .agent-view {
 	-fx-background-color: black, darkgrey, grey;
 	-fx-background-insets: 0, 2, 22 2 2 2;
 	-fx-background-radius: 5, 5, 0 0 5 5;
 	-fx-padding: 5;
 	-fx-spacing: 5;
+}
+*/
+.agent-view 
+{
+	-fx-base-color: #d3d3d3;
+	fx-header-color: #9A9A9A;
+	
+	-fx-padding: 5;
+	-fx-background-color:
+		black,
+		-fx-header-color,
+		-fx-base-color,
+		rgba(255,255,255,0.6),
+		rgba(0,0,0,0.2),
+		-fx-header-color,
+		-fx-base-color,
+		linear-gradient(from 0 0 to 0 20, white, rgba(255,255,255,0)),
+		#dbdbdb;
+	-fx-background-radius:
+		8,
+		6,
+		0 0 6 6,
+		6 0 0 0,
+		0 0 6 0,
+		6,
+		0 0 6 6,
+		6 6 0 0,
+		0;
+	-fx-background-insets:
+		0,
+		2,
+		30 2 2 2,
+		2 9 9 2,
+		9 2 2 9,
+		4,
+		30 4 4 4,
+		2,
+		30 4 14 4;	
 }
 
 .dots {
