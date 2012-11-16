@@ -8,25 +8,22 @@ import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
-import javafx.geometry.Side;
+import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.NumberAxisBuilder;
 import javafx.scene.chart.XYChart;
-import javafx.scene.chart.XYChart.Data;
-import javafx.scene.chart.XYChart.Series;
-import javafx.scene.control.Label;
-import javafx.scene.control.LabelBuilder;
 import javafx.scene.control.ScrollBar;
-import javafx.scene.control.ScrollBarBuilder;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import com.eviware.loadui.api.statistics.DataPoint;
 import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
 import com.eviware.loadui.api.statistics.model.chart.line.LineSegment;
 import com.eviware.loadui.api.statistics.store.Execution;
+import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.ObservableLists;
 import com.eviware.loadui.ui.fx.util.Properties;
+import com.eviware.loadui.ui.fx.views.analysis.linechart.LineSegmentView;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 
@@ -35,13 +32,14 @@ public class LineChartViewNode extends VBox
 	private static final Function<DataPoint<?>, XYChart.Data<Number, Number>> DATAPOINT_TO_CHARTDATA = new Function<DataPoint<?>, XYChart.Data<Number, Number>>()
 	{
 		@Override
-		public Data<Number, Number> apply( DataPoint<?> point )
+		public XYChart.Data<Number, Number> apply( DataPoint<?> point )
 		{
 			return new XYChart.Data<Number, Number>( point.getTimestamp(), point.getValue() );
 		}
 	};
 
-	private final Function<LineSegment, XYChart.Series<Number, Number>> segmentToSeries;
+	private final Function<LineSegment, XYChart.Series<Number, Number>> segmentToSeries = new SegmentToSeriesFunction();
+	private final Function<LineSegment, LineSegmentView> segmentToView = new SegmentToViewFunction();
 
 	private final ObservableValue<Execution> executionProperty;
 	private final Observable poll;
@@ -50,6 +48,27 @@ public class LineChartViewNode extends VBox
 	private final LongProperty position = new SimpleLongProperty( 0 );
 	private final LongProperty length = new SimpleLongProperty( 0 );
 	private final LongProperty shownSpan = new SimpleLongProperty( 60000 );
+	private final ObservableList<LineSegment> lineSegments;
+	private final ObservableList<XYChart.Series<Number, Number>> seriesList;
+	private final ObservableList<LineSegmentView> lineSegmentViews;
+
+	@FXML
+	private VBox segments;
+
+	@FXML
+	private LineChart<Number, Number> lineChart;
+
+	@FXML
+	private NumberAxis xAxis;
+
+	@FXML
+	private NumberAxis yAxis;
+
+	@FXML
+	private ScrollBar scrollBar;
+
+	@FXML
+	private HBox buttonBar;
 
 	public LineChartViewNode( final ObservableValue<Execution> executionProperty, LineChartView chartView,
 			Observable poll )
@@ -57,8 +76,6 @@ public class LineChartViewNode extends VBox
 		this.executionProperty = executionProperty;
 		this.chartView = chartView;
 		this.poll = poll;
-
-		segmentToSeries = new SegmentToSeriesFunction();
 
 		length.bind( Bindings.createLongBinding( new Callable<Long>()
 		{
@@ -69,40 +86,37 @@ public class LineChartViewNode extends VBox
 			}
 		}, executionProperty, poll ) );
 
-		ScrollBar scrollbar = ScrollBarBuilder.create().build();
-		scrollbar.visibleAmountProperty().bind( shownSpan );
-		scrollbar.blockIncrementProperty().bind( shownSpan );
-		scrollbar.maxProperty().bind( Bindings.max( 0, length.subtract( shownSpan ) ) );
-		position.bindBidirectional( scrollbar.valueProperty() );
+		lineSegments = ObservableLists.fx( ObservableLists.ofCollection( chartView, LineChartView.SEGMENTS,
+				LineSegment.class, Iterables.filter( chartView.getSegments(), LineSegment.class ) ) );
+		seriesList = ObservableLists.transform( lineSegments, segmentToSeries );
+		lineSegmentViews = ObservableLists.transform( lineSegments, segmentToView );
 
-		NumberAxis xAxis = NumberAxisBuilder.create().autoRanging( false ).minorTickCount( 10 ).tickUnit( 10000 ).build();
-		xAxis.lowerBoundProperty().bind( scrollbar.valueProperty() );
-		xAxis.upperBoundProperty().bind( scrollbar.valueProperty().add( shownSpan ) );
+		FXMLUtils.load( this );
+	}
 
-		LineChart<Number, Number> lineChart = new LineChart<>( xAxis, new NumberAxis() );
-		lineChart.setAnimated( false );
-		lineChart.setLegendSide( Side.LEFT );
-		lineChart.setCreateSymbols( false );
+	@FXML
+	private void initialize()
+	{
+		scrollBar.visibleAmountProperty().bind( shownSpan );
+		scrollBar.blockIncrementProperty().bind( shownSpan );
+		scrollBar.maxProperty().bind( Bindings.max( 0, length.subtract( shownSpan ) ) );
+		position.bindBidirectional( scrollBar.valueProperty() );
+
+		xAxis.lowerBoundProperty().bind( scrollBar.valueProperty() );
+		xAxis.upperBoundProperty().bind( scrollBar.valueProperty().add( shownSpan ) );
+
 		lineChart.titleProperty().bind( Properties.forLabel( chartView ) );
 
-		ObservableList<LineSegment> lineSegments = ObservableLists
-				.fx( ObservableLists.ofCollection( chartView, LineChartView.SEGMENTS, LineSegment.class,
-						Iterables.filter( chartView.getSegments(), LineSegment.class ) ) );
-		ObservableList<Series<Number, Number>> series = ObservableLists.transform( lineSegments, segmentToSeries );
-		Bindings.bindContent( lineChart.getData(), series );
-
-		Label label = LabelBuilder.create().build();
-		label.textProperty().bind( Bindings.convert( scrollbar.valueProperty() ) );
+		Bindings.bindContent( lineChart.getData(), seriesList );
+		Bindings.bindContent( segments.getChildren(), lineSegmentViews );
 
 		shownSpan.bind( xAxis.widthProperty().multiply( 30 ) );
-
-		getChildren().addAll( lineChart, scrollbar, label );
 	}
 
 	private final class SegmentToSeriesFunction implements Function<LineSegment, XYChart.Series<Number, Number>>
 	{
 		@Override
-		public Series<Number, Number> apply( final LineSegment segment )
+		public XYChart.Series<Number, Number> apply( final LineSegment segment )
 		{
 			XYChart.Series<Number, Number> series = new XYChart.Series<>();
 			series.setName( segment.getStatisticName() );
@@ -110,7 +124,7 @@ public class LineChartViewNode extends VBox
 			series.setData( ObservableLists.fromExpression( new Callable<Iterable<XYChart.Data<Number, Number>>>()
 			{
 				@Override
-				public Iterable<Data<Number, Number>> call() throws Exception
+				public Iterable<XYChart.Data<Number, Number>> call() throws Exception
 				{
 					return Iterables.transform(
 							segment.getStatistic().getPeriod( position.longValue() - 2000,
@@ -120,6 +134,15 @@ public class LineChartViewNode extends VBox
 			}, executionProperty, position, shownSpan, poll ) );
 
 			return series;
+		}
+	}
+
+	private final class SegmentToViewFunction implements Function<LineSegment, LineSegmentView>
+	{
+		@Override
+		public LineSegmentView apply( final LineSegment segment )
+		{
+			return new LineSegmentView( segment );
 		}
 	}
 }

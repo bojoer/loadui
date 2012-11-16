@@ -8,8 +8,5 @@
 
 <fx:root type="com.eviware.loadui.ui.fx.views.analysis.ChartGroupView" xmlns:fx="http://javafx.com/fxml" styleClass="chart-group-list-cell">
 	<Label fx:id="chartGroupLabel" />
-	<HBox>
-		<VBox fx:id="segments" />
-		<StackPane fx:id="chartView" HBox.hgrow="ALWAYS" />
-	</HBox>
+	<StackPane fx:id="chartView" HBox.hgrow="ALWAYS" />
 </fx:root>
