@@ -3,8 +3,8 @@ package com.eviware.loadui.ui.fx.views.analysis;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.appendElement;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.ofCollection;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.transform;
+import static javafx.beans.binding.Bindings.bindContentBidirectional;
 import javafx.beans.Observable;
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -83,7 +83,7 @@ public class AnalysisView extends StackPane
 		@Nullable
 		public StatisticTab apply( @Nullable StatisticPage page )
 		{
-			return new StatisticTab( page );
+			return new StatisticTab( page, currentExecution, poll );
 		}
 	};
 
@@ -168,7 +168,7 @@ public class AnalysisView extends StackPane
 			plusButton = TabBuilder.create().text( "+" ).closable( false ).onSelectionChanged( createNewTab )
 					.styleClass( "create-new-button" ).build();
 
-			Bindings.bindContentBidirectional( tabPane.getTabs(), appendElement( tabs, plusButton ) );
+			bindContentBidirectional( tabPane.getTabs(), appendElement( tabs, plusButton ) );
 
 			tabPane.getTabs().addListener( new ListChangeListener<Tab>()
 			{

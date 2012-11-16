@@ -1,5 +1,10 @@
 package com.eviware.loadui.ui.fx.views.result;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -9,10 +14,13 @@ import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.ui.fx.control.PageList;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.ObservableLists;
+import com.eviware.loadui.ui.fx.views.analysis.AnalysisView;
 import com.google.common.base.Function;
 
 public class ResultView extends StackPane
 {
+	protected static final Logger log = LoggerFactory.getLogger( ResultView.class );
+
 	@FXML
 	private PageList<ExecutionView> resultNodeList;
 
@@ -37,5 +45,16 @@ public class ResultView extends StackPane
 						return new ExecutionView( projectRef );
 					}
 				} ) ) );
+
+		executionList.addListener( new InvalidationListener()
+		{
+			@Override
+			public void invalidated( Observable arg0 )
+			{
+				log.debug( " EXECUTION LIST CHANGED:" );
+				for( Execution e : executionList )
+					log.debug( "   " + e.getLabel() );
+			}
+		} );
 	}
 }

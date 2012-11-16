@@ -132,19 +132,58 @@ public class AgentView extends VBox
 			{
 				if( event.getData() instanceof SceneItem )
 				{
+					final SceneItem scenario = ( SceneItem )event.getData();
+
 					if( event.getEventType() == DraggableEvent.DRAGGABLE_ENTERED )
 					{
 
-						event.accept();
 						event.consume();
+						if( !scenario.getProject().getAgentsAssignedTo( scenario ).contains( agent ) )
+						{
+							event.accept();
+						}
 
 					}
 					else if( event.getEventType() == DraggableEvent.DRAGGABLE_DROPPED )
 					{
-						final SceneItem scenario = ( SceneItem )event.getData();
-
 						event.consume();
 						scenario.getProject().assignScene( scenario, agent );
+					}
+				}
+				else if( event.getData() instanceof Assignment )
+				{
+					final Assignment assignment = ( Assignment )event.getData();
+					final SceneItem scenario = assignment.getScene();
+
+					if( event.getEventType() == DraggableEvent.DRAGGABLE_STARTED )
+					{
+						// TODO make assignment invisible
+						event.consume();
+					}
+					else if( event.getEventType() == DraggableEvent.DRAGGABLE_ENTERED )
+					{
+						event.consume();
+
+						if( !scenario.getProject().getAgentsAssignedTo( scenario ).contains( agent ) )
+						{
+							event.accept();
+						}
+
+					}
+					else if( event.getEventType() == DraggableEvent.DRAGGABLE_DROPPED )
+					{
+						event.consume();
+
+						if( !assignment.getAgent().equals( agent )
+								&& !scenario.getProject().getAgentsAssignedTo( scenario ).contains( agent ) )
+						{
+							scenario.getProject().unassignScene( scenario, assignment.getAgent() );
+							scenario.getProject().assignScene( scenario, agent );
+						}
+						else
+						{
+							// TODO make assignment visible again
+						}
 					}
 				}
 			}
