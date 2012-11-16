@@ -17,6 +17,7 @@ import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.WeakEventHandler;
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.ProjectRef;
+import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.model.WorkspaceProvider;
 import com.eviware.loadui.api.traits.Labeled;
@@ -139,8 +140,13 @@ public class MainWindowView extends StackPane
 						};
 
 						fireEvent( IntentEvent.create( IntentEvent.INTENT_RUN_BLOCKING, openProject ) );
-
-						//new Thread( openProject ).start();
+					}
+					else if( event.getArg() instanceof SceneItem )
+					{
+						if( container.getChildren().size() == 1 )
+						{
+							container.getChildren().get( 0 ).fireEvent( event );
+						}
 					}
 					else
 					{
