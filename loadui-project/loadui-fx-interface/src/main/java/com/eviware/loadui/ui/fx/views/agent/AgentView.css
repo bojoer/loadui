@@ -1,16 +1,7 @@
-/*
-.agent-view {
-	-fx-background-color: black, darkgrey, grey;
-	-fx-background-insets: 0, 2, 22 2 2 2;
-	-fx-background-radius: 5, 5, 0 0 5 5;
-	-fx-padding: 5;
-	-fx-spacing: 5;
-}
-*/
 .agent-view 
 {
 	-fx-base-color: #d3d3d3;
-	fx-header-color: #9A9A9A;
+	-fx-header-color: #9A9A9A;
 	
 	-fx-padding: 5;
 	-fx-background-color:
@@ -45,6 +36,21 @@
 		30 4 14 4;	
 }
 
+.agent-view .scrollable-list
+{
+	-fx-background-color: 
+		#666666
+		#ABABAB,
+		linear-gradient(to bottom, #E0E1E2, #B5B5B5);
+	
+	-fx-background-insets: 
+		0, 
+		0.5 0.2 0.2 0.8,
+		3;
+
+	-fx-background-radius: 3;
+	
+}
 .dots {
 	-fx-background-image: url("dot-pattern.png");
 	-fx-background-repeat: repeat;
