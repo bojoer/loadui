@@ -231,7 +231,12 @@
 	-fx-spacing: 5;
 }
 
-.item-holder .label {
+.item-holder .category-label {
+	-fx-text-fill: #9c9c9c;
+}
+
+.item-holder .icon 
+{
 	-fx-text-fill: #9c9c9c;
 }
 

@@ -7,3 +7,7 @@
 {
 	-fx-opacity: 0.3;
 }
+
+#menubutton {
+	-fx-cursor: hand;
+}
