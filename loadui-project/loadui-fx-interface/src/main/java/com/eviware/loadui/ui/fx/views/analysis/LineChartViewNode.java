@@ -12,6 +12,7 @@ import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.Button;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -24,6 +25,7 @@ import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.ObservableLists;
 import com.eviware.loadui.ui.fx.util.Properties;
 import com.eviware.loadui.ui.fx.views.analysis.linechart.LineSegmentView;
+import com.eviware.loadui.ui.fx.views.assertions.CreateAssertionDialog;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 
@@ -141,5 +143,11 @@ public class LineChartViewNode extends VBox
 		{
 			return new LineSegmentView( segment );
 		}
+	}
+
+	public void createStatistic()
+	{
+		//		chartView.getChartGroup().getChildren().iterator().next().getOwner();
+		//		CreateAssertionDialog dialog = new CreateAssertionDialog( this, holder );
 	}
 }
