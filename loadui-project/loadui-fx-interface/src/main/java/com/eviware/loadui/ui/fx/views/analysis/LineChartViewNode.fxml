@@ -16,9 +16,10 @@
 		<VBox HBox.hgrow="ALWAYS">
 			<LineChart fx:id="lineChart" animated="false" createSymbols="false" legendVisible="false">
 		        <xAxis><NumberAxis fx:id="xAxis" autoRanging="false" minorTickCount="10" tickUnit="10000"/></xAxis>
-		        <yAxis><NumberAxis /></yAxis>
+		        <yAxis><NumberAxis fx:id="yAxis" /></yAxis>
 		    </LineChart>
 			<ScrollBar fx:id="scrollBar" />
 		</VBox>
 	</HBox>
+	<HBox fx:id="buttonBar" />
 </fx:root>

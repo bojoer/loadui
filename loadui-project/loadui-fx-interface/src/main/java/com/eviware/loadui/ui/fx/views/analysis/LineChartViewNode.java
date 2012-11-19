@@ -9,12 +9,11 @@ import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.Label;
 import javafx.scene.control.ScrollBar;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import com.eviware.loadui.api.statistics.DataPoint;
@@ -24,6 +23,7 @@ import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.ObservableLists;
 import com.eviware.loadui.ui.fx.util.Properties;
+import com.eviware.loadui.ui.fx.views.analysis.linechart.LineSegmentView;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 
@@ -39,7 +39,7 @@ public class LineChartViewNode extends VBox
 	};
 
 	private final Function<LineSegment, XYChart.Series<Number, Number>> segmentToSeries = new SegmentToSeriesFunction();
-	private final Function<LineSegment, Node> segmentToLegend = new SegmentToLegendFunction();
+	private final Function<LineSegment, LineSegmentView> segmentToView = new SegmentToViewFunction();
 
 	private final ObservableValue<Execution> executionProperty;
 	private final Observable poll;
@@ -50,7 +50,7 @@ public class LineChartViewNode extends VBox
 	private final LongProperty shownSpan = new SimpleLongProperty( 60000 );
 	private final ObservableList<LineSegment> lineSegments;
 	private final ObservableList<XYChart.Series<Number, Number>> seriesList;
-	private final ObservableList<Node> legends;
+	private final ObservableList<LineSegmentView> lineSegmentViews;
 
 	@FXML
 	private VBox segments;
@@ -63,6 +63,9 @@ public class LineChartViewNode extends VBox
 
 	@FXML
 	private ScrollBar scrollBar;
+
+	@FXML
+	private HBox buttonBar;
 
 	public LineChartViewNode( final ObservableValue<Execution> executionProperty, LineChartView chartView,
 			Observable poll )
@@ -83,7 +86,7 @@ public class LineChartViewNode extends VBox
 		lineSegments = ObservableLists.fx( ObservableLists.ofCollection( chartView, LineChartView.SEGMENTS,
 				LineSegment.class, Iterables.filter( chartView.getSegments(), LineSegment.class ) ) );
 		seriesList = ObservableLists.transform( lineSegments, segmentToSeries );
-		legends = ObservableLists.transform( lineSegments, segmentToLegend );
+		lineSegmentViews = ObservableLists.transform( lineSegments, segmentToView );
 
 		FXMLUtils.load( this );
 	}
@@ -102,7 +105,7 @@ public class LineChartViewNode extends VBox
 		lineChart.titleProperty().bind( Properties.forLabel( chartView ) );
 
 		Bindings.bindContent( lineChart.getData(), seriesList );
-		Bindings.bindContent( segments.getChildren(), legends );
+		Bindings.bindContent( segments.getChildren(), lineSegmentViews );
 
 		shownSpan.bind( xAxis.widthProperty().multiply( 30 ) );
 	}
@@ -131,17 +134,12 @@ public class LineChartViewNode extends VBox
 		}
 	}
 
-	private final class SegmentToLegendFunction implements Function<LineSegment, Node>
+	private final class SegmentToViewFunction implements Function<LineSegment, LineSegmentView>
 	{
 		@Override
-		public Node apply( final LineSegment segment )
+		public LineSegmentView apply( final LineSegment segment )
 		{
-			//TODO: Bind and possibly do some ChartNamePrettifying ;)
-			Label label = new Label( segment.getStatisticHolder().getLabel() + " " + segment.getVariableName() + " "
-					+ segment.getStatisticName() );
-			label.getStyleClass().add( "slim-icon" );
-
-			return label;
+			return new LineSegmentView( segment );
 		}
 	}
 }
