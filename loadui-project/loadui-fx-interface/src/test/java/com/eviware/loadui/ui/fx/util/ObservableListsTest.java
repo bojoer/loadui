@@ -8,16 +8,12 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.EventObject;
-import java.util.List;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -31,7 +27,6 @@ import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.events.EventHandler;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 
 public class ObservableListsTest
@@ -98,31 +93,6 @@ public class ObservableListsTest
 		unsorted.removeAll( 2, 4 );
 		unsorted.addAll( 7, 8 );
 		assertThat( sorted, equalTo( Arrays.asList( 1, 1, 3, 5, 6, 7, 8, 9 ) ) );
-	}
-
-	@Test
-	public void concatUnorderedShouldReturnAListThatIsKeptInSyncWithItsSubLists()
-	{
-		ObservableList<String> a = FXCollections.observableArrayList();
-		ObservableList<String> b = FXCollections.observableArrayList();
-
-		ObservableList<String> ab = ObservableLists.concatUnordered( a, b );
-
-		a.add( "Foo" );
-		System.gc();
-		b.add( "Bar" );
-
-		assertTrue( ab.size() == a.size() + b.size() );
-		assertTrue( ab.containsAll( a ) );
-		assertTrue( ab.containsAll( b ) );
-
-		a.remove( "Foo" );
-		System.gc();
-		b.add( "Foo" );
-
-		assertTrue( ab.size() == a.size() + b.size() );
-		assertTrue( ab.containsAll( a ) );
-		assertTrue( ab.containsAll( b ) );
 	}
 
 	@Test
