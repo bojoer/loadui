@@ -44,7 +44,7 @@ public class ProjectCanvasView extends CanvasView
 					}
 				} ) );
 
-		return ObservableLists.concatUnordered( super.createCanvasObjects(), scenarios );
+		return ObservableLists.concat( super.createCanvasObjects(), scenarios );
 	}
 
 	@Override
@@ -53,7 +53,7 @@ public class ProjectCanvasView extends CanvasView
 		NewScenarioIcon scenarioIcon = new NewScenarioIcon();
 		scenarioIcon.setId( "newScenarioIcon" );
 		ObservableList<NewScenarioIcon> scenario = FXCollections.observableList( ImmutableList.of( scenarioIcon ) );
-		return ObservableLists.concatUnordered( scenario, super.createToolBoxContent() );
+		return ObservableLists.concat( scenario, super.createToolBoxContent() );
 	}
 
 	@Override

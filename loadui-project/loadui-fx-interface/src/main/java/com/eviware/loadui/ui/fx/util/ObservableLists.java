@@ -1,6 +1,7 @@
 package com.eviware.loadui.ui.fx.util;
 
-import static java.util.Arrays.asList;
+import static com.google.common.base.Predicates.in;
+import static com.google.common.base.Predicates.not;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -53,6 +54,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
+import com.google.common.collect.Ordering;
 
 /**
  * Utility class for dealing with JavaFX ObservableLists.
@@ -209,7 +211,25 @@ public class ObservableLists
 		return readOnlyList;
 	}
 
-	public static <E> ObservableList<E> fromExpression( Callable<Iterable<E>> expression, Observable... observables )
+	/**
+	 * Returns an unmodifiable view of the given ObservableList, where all
+	 * modifications are optimized.
+	 * 
+	 * @param originalList
+	 * @return
+	 */
+	public static <E> ObservableList<E> optimize( ObservableList<E> originalList )
+	{
+		OptimizedListData<E> data = new OptimizedListData<>( originalList );
+
+		ObservableList<E> readOnlyList = FXCollections.unmodifiableObservableList( data.list );
+		lists.put( readOnlyList, data );
+
+		return readOnlyList;
+	}
+
+	public static <E> ObservableList<E> fromExpression( Callable<Iterable<E>> expression,
+			ObservableList<? extends Observable> observables )
 	{
 		ExpressionListData<E> data = new ExpressionListData<>( expression, observables );
 
@@ -273,16 +293,24 @@ public class ObservableLists
 	 * @param listsToConcat
 	 * @return
 	 */
+	public static final <T> ObservableList<T> concat(
+			final ObservableList<? extends ObservableList<? extends T>> listsToConcat )
+	{
+		return fromExpression( new Callable<Iterable<T>>()
+		{
+			@Override
+			public Iterable<T> call() throws Exception
+			{
+				return Iterables.concat( listsToConcat );
+			}
+		}, listsToConcat );
+	}
 
 	@SafeVarargs
-	public static final <T> ObservableList<T> concat( ObservableList<? extends T>... listsToConcat )
+	public static final <T> ObservableList<T> concat( ObservableList<? extends T> first,
+			ObservableList<? extends T> second, ObservableList<? extends T>... rest )
 	{
-		ConcatenatedListData<T> data = new ConcatenatedListData<>( asList( listsToConcat ) );
-
-		ObservableList<T> readOnlyList = FXCollections.unmodifiableObservableList( data.list );
-		lists.put( readOnlyList, data );
-
-		return readOnlyList;
+		return concat( FXCollections.observableList( Lists.asList( first, second, rest ) ) );
 	}
 
 	/**
@@ -298,9 +326,10 @@ public class ObservableLists
 	public static final <T> ObservableList<T> appendElement( ObservableList<? extends T> inputList, T elementToAppend )
 	{
 		AppendedListData<T> data = new AppendedListData<>( inputList, elementToAppend );
-		lists.put( data.list, data );
+		ObservableList<T> readOnlyList = FXCollections.unmodifiableObservableList( data.list );
+		lists.put( readOnlyList, data );
 
-		return data.list;
+		return readOnlyList;
 	}
 
 	/**
@@ -560,12 +589,13 @@ public class ObservableLists
 		private final ObservableList<F> originalList;
 		private final Function<F, T> function;
 		private final LoadingCache<F, T> cache;
+		private int sync = 0;
 
 		private TransformedListData( ObservableList<F> originalList, final Function<F, T> function )
 		{
 			this.originalList = originalList;
 
-			this.cache = CacheBuilder.newBuilder().build( new CacheLoader<F, T>()
+			this.cache = CacheBuilder.newBuilder().weakKeys().build( new CacheLoader<F, T>()
 			{
 				@Override
 				public T load( F key ) throws Exception
@@ -584,17 +614,29 @@ public class ObservableLists
 			};
 
 			originalList.addListener( this );
-			list.addAll( Lists.transform( originalList, this.function ) );
+			list.setAll( Lists.transform( originalList, this.function ) );
 		}
 
 		@Override
 		public void onChanged( ListChangeListener.Change<? extends F> change )
 		{
-			while( change.next() )
+			list.setAll( Lists.transform( originalList, function ) );
+			final int nextSync = ++sync;
+			Platform.runLater( new Runnable()
 			{
-				list.removeAll( Lists.transform( change.getRemoved(), function ) );
-				cache.invalidateAll( change.getRemoved() );
-				list.addAll( Lists.transform( change.getAddedSubList(), function ) );
+				@Override
+				public void run()
+				{
+					invalidate( nextSync );
+				}
+			} );
+		}
+
+		private void invalidate( int syncNumber )
+		{
+			if( sync == syncNumber )
+			{
+				cache.invalidateAll( Iterables.filter( cache.asMap().keySet(), not( in( originalList ) ) ) );
 			}
 		}
 
@@ -628,42 +670,6 @@ public class ObservableLists
 			{
 				list.removeAll( change.getRemoved() );
 				list.addAll( change.getAddedSubList() );
-			}
-		}
-
-		@Override
-		public void release()
-		{
-			for( ObservableList<? extends T> listToRelease : originalLists )
-			{
-				listToRelease.removeListener( this );
-			}
-		}
-	}
-
-	private static class ConcatenatedListData<T> implements ListChangeListener<T>, Releasable
-	{
-		private final ObservableList<T> list = FXCollections.observableArrayList();
-		private final List<ObservableList<? extends T>> originalLists;
-
-		private ConcatenatedListData( List<ObservableList<? extends T>> originalLists )
-		{
-			this.originalLists = originalLists;
-
-			for( ObservableList<? extends T> listToAdd : originalLists )
-			{
-				listToAdd.addListener( this );
-				list.addAll( listToAdd );
-			}
-		}
-
-		@Override
-		public void onChanged( ListChangeListener.Change<? extends T> change )
-		{
-			list.clear();
-			for( ObservableList<? extends T> listToAdd : originalLists )
-			{
-				list.addAll( listToAdd );
 			}
 		}
 
@@ -717,7 +723,7 @@ public class ObservableLists
 		}
 	}
 
-	private static class FXObservableListData<E> implements ListChangeListener<E>, Releasable
+	private static class FXObservableListData<E> implements InvalidationListener, Releasable
 	{
 		private final ObservableList<E> list = FXCollections.observableArrayList();
 		private final ObservableList<E> originalList;
@@ -744,25 +750,12 @@ public class ObservableLists
 		}
 
 		@Override
-		public void onChanged( final ListChangeListener.Change<? extends E> change )
+		public void invalidated( Observable arg0 )
 		{
-			final ImmutableList.Builder<E> added = ImmutableList.builder();
-			final ImmutableList.Builder<E> removed = ImmutableList.builder();
-			while( change.next() )
-			{
-				if( change.wasAdded() )
-				{
-					added.addAll( change.getAddedSubList() );
-				}
-				if( change.wasRemoved() )
-				{
-					removed.addAll( change.getRemoved() );
-				}
-			}
-
+			final ImmutableList<E> elements = ImmutableList.copyOf( originalList );
 			if( Platform.isFxApplicationThread() )
 			{
-				handleChange( added.build(), removed.build() );
+				list.setAll( elements );
 			}
 			else
 			{
@@ -771,7 +764,7 @@ public class ObservableLists
 					@Override
 					public void run()
 					{
-						handleChange( added.build(), removed.build() );
+						list.setAll( elements );
 					}
 				} );
 			}
@@ -781,12 +774,6 @@ public class ObservableLists
 		public void release()
 		{
 			originalList.removeListener( this );
-		}
-
-		private void handleChange( List<? extends E> added, List<? extends E> removed )
-		{
-			list.addAll( added );
-			list.removeAll( removed );
 		}
 	}
 
@@ -826,22 +813,35 @@ public class ObservableLists
 	{
 		private final ObservableList<E> list = FXCollections.observableArrayList();
 		private final Callable<Iterable<E>> expression;
-		private final Observable[] observables;
+		private final ObservableListChanged observablesChanged = new ObservableListChanged();
+		private final ObservableList<? extends Observable> observables;
 
-		public ExpressionListData( Callable<Iterable<E>> expression, Observable... observables )
+		public ExpressionListData( Callable<Iterable<E>> expression, ObservableList<? extends Observable> observables )
 		{
 			this.expression = expression;
 			this.observables = observables;
 
+			observables.addListener( observablesChanged );
+
 			for( Observable observable : observables )
 			{
 				observable.addListener( this );
+			}
+
+			try
+			{
+				list.setAll( Lists.newArrayList( expression.call() ) );
+			}
+			catch( Exception e )
+			{
+				throw new RuntimeException( e );
 			}
 		}
 
 		@Override
 		public void release()
 		{
+			observables.removeListener( observablesChanged );
 			for( Observable observable : observables )
 			{
 				observable.removeListener( this );
@@ -857,7 +857,78 @@ public class ObservableLists
 			}
 			catch( Exception e )
 			{
-				list.clear();
+				throw new RuntimeException( e );
+			}
+		}
+
+		private class ObservableListChanged implements ListChangeListener<Observable>
+		{
+			@Override
+			public void onChanged( ListChangeListener.Change<? extends Observable> change )
+			{
+				while( change.next() )
+				{
+					for( Observable elem : change.getAddedSubList() )
+					{
+						elem.addListener( ExpressionListData.this );
+					}
+					for( Observable elem : change.getRemoved() )
+					{
+						elem.removeListener( ExpressionListData.this );
+					}
+				}
+			}
+		}
+	}
+
+	private static class OptimizedListData<E> implements InvalidationListener, Releasable
+	{
+		private final ObservableList<E> originalList;
+		private final ObservableList<E> list = FXCollections.observableArrayList();
+		private int sync = 0;
+
+		public OptimizedListData( ObservableList<E> originalList )
+		{
+			this.originalList = originalList;
+			originalList.addListener( this );
+			list.setAll( originalList );
+		}
+
+		@Override
+		public void release()
+		{
+			originalList.removeListener( this );
+		}
+
+		@Override
+		public void invalidated( Observable arg0 )
+		{
+			final int nextSync = ++sync;
+			Platform.runLater( new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					sync( nextSync );
+				}
+			} );
+		}
+
+		private void sync( int syncNumber )
+		{
+			if( syncNumber == sync )
+			{
+				list.retainAll( originalList );
+
+				Ordering<E> ordering = Ordering.explicit( originalList );
+				FXCollections.sort( list, ordering );
+
+				List<E> elementsToAdd = Lists.newArrayList( Iterables.filter( originalList, not( in( list ) ) ) );
+				Collections.sort( elementsToAdd, ordering );
+				for( E element : elementsToAdd )
+				{
+					list.add( originalList.indexOf( element ), element );
+				}
 			}
 		}
 	}

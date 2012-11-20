@@ -1,5 +1,7 @@
 package com.eviware.loadui.ui.fx.views.assertions;
 
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -74,10 +76,26 @@ public class AssertionInspectorView extends HBox
 				}
 				if( newValue != null )
 				{
-					assertions = ObservableLists.transform( ObservableLists.fx( ObservableLists.ofCollection(
-							projectProperty.get(), AssertionAddon.ASSERTION_ITEMS, AssertionItem.class, projectProperty.get()
-									.getAddon( AssertionAddon.class ).getAssertions() ) ), ASSERTION_TO_VIEW );
+					final ObservableList<AssertionItem> nonFxAssertions = AssertionUtils.assertions( newValue );
+					nonFxAssertions.addListener( new InvalidationListener()
+					{
+						@Override
+						public void invalidated( Observable arg0 )
+						{
+							System.out.println( "Non-FX Assertions: " + arg0 );
+						}
+					} );
 
+					final ObservableList<AssertionItem> rawAssertions = ObservableLists.fx( nonFxAssertions );
+					rawAssertions.addListener( new InvalidationListener()
+					{
+						@Override
+						public void invalidated( Observable arg0 )
+						{
+							System.out.println( "FX Assertions: " + arg0 );
+						}
+					} );
+					assertions = ObservableLists.transform( rawAssertions, ASSERTION_TO_VIEW );
 					Bindings.bindContent( assertionList.getItems(), assertions );
 				}
 			}
