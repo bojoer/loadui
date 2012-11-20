@@ -1,5 +1,14 @@
 package com.eviware.loadui.ui.fx.views.analysis;
 
+import static com.eviware.loadui.ui.fx.util.ObservableLists.fromExpression;
+import static com.eviware.loadui.ui.fx.util.ObservableLists.fx;
+import static com.eviware.loadui.ui.fx.util.ObservableLists.ofCollection;
+import static com.eviware.loadui.ui.fx.util.ObservableLists.transform;
+import static com.google.common.collect.Iterables.transform;
+import static javafx.beans.binding.Bindings.bindContent;
+import static javafx.beans.binding.Bindings.createLongBinding;
+import static javafx.collections.FXCollections.observableArrayList;
+
 import java.util.concurrent.Callable;
 
 import javafx.beans.Observable;
@@ -21,7 +30,6 @@ import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
 import com.eviware.loadui.api.statistics.model.chart.line.LineSegment;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
-import com.eviware.loadui.ui.fx.util.ObservableLists;
 import com.eviware.loadui.ui.fx.util.Properties;
 import com.eviware.loadui.ui.fx.views.analysis.linechart.LineSegmentView;
 import com.google.common.base.Function;
@@ -74,7 +82,7 @@ public class LineChartViewNode extends VBox
 		this.chartView = chartView;
 		this.poll = poll;
 
-		length.bind( Bindings.createLongBinding( new Callable<Long>()
+		length.bind( createLongBinding( new Callable<Long>()
 		{
 			@Override
 			public Long call() throws Exception
@@ -83,10 +91,10 @@ public class LineChartViewNode extends VBox
 			}
 		}, executionProperty, poll ) );
 
-		lineSegments = ObservableLists.fx( ObservableLists.ofCollection( chartView, LineChartView.SEGMENTS,
-				LineSegment.class, Iterables.filter( chartView.getSegments(), LineSegment.class ) ) );
-		seriesList = ObservableLists.transform( lineSegments, segmentToSeries );
-		lineSegmentViews = ObservableLists.transform( lineSegments, segmentToView );
+		lineSegments = fx( ofCollection( chartView, LineChartView.SEGMENTS, LineSegment.class,
+				Iterables.filter( chartView.getSegments(), LineSegment.class ) ) );
+		seriesList = transform( lineSegments, segmentToSeries );
+		lineSegmentViews = transform( lineSegments, segmentToView );
 
 		FXMLUtils.load( this );
 	}
@@ -104,8 +112,8 @@ public class LineChartViewNode extends VBox
 
 		lineChart.titleProperty().bind( Properties.forLabel( chartView ) );
 
-		Bindings.bindContent( lineChart.getData(), seriesList );
-		Bindings.bindContent( segments.getChildren(), lineSegmentViews );
+		bindContent( lineChart.getData(), seriesList );
+		bindContent( segments.getChildren(), lineSegmentViews );
 
 		shownSpan.bind( xAxis.widthProperty().multiply( 30 ) );
 	}
@@ -118,17 +126,17 @@ public class LineChartViewNode extends VBox
 			XYChart.Series<Number, Number> series = new XYChart.Series<>();
 			series.setName( segment.getStatisticName() );
 
-			series.setData( ObservableLists.fromExpression( new Callable<Iterable<XYChart.Data<Number, Number>>>()
+			series.setData( fromExpression( new Callable<Iterable<XYChart.Data<Number, Number>>>()
 			{
 				@Override
 				public Iterable<XYChart.Data<Number, Number>> call() throws Exception
 				{
-					return Iterables.transform(
+					return transform(
 							segment.getStatistic().getPeriod( position.longValue() - 2000,
 									position.longValue() + shownSpan.get() + 2000, 0, executionProperty.getValue() ),
 							DATAPOINT_TO_CHARTDATA );
 				}
-			}, executionProperty, position, shownSpan, poll ) );
+			}, observableArrayList( executionProperty, position, shownSpan, poll ) ) );
 
 			return series;
 		}

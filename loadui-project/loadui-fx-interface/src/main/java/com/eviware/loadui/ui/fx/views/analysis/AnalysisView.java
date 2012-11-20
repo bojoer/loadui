@@ -1,9 +1,10 @@
 package com.eviware.loadui.ui.fx.views.analysis;
 
 import static com.eviware.loadui.ui.fx.util.ObservableLists.appendElement;
+import static com.eviware.loadui.ui.fx.util.ObservableLists.fx;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.ofCollection;
+import static com.eviware.loadui.ui.fx.util.ObservableLists.optimize;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.transform;
-import static javafx.beans.binding.Bindings.bindContentBidirectional;
 import javafx.beans.Observable;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
@@ -34,7 +35,6 @@ import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
-import com.eviware.loadui.ui.fx.util.ObservableLists;
 import com.eviware.loadui.ui.fx.util.Properties;
 import com.eviware.loadui.ui.fx.views.statistics.StatisticHolderToolBox;
 import com.google.common.base.Function;
@@ -106,6 +106,8 @@ public class AnalysisView extends StackPane
 
 	private StatisticPages pagesObject;
 
+	private ObservableList<Tab> allTabs;
+
 	public Property<Execution> currentExecutionProperty()
 	{
 		return currentExecution;
@@ -163,12 +165,29 @@ public class AnalysisView extends StackPane
 
 			final ObservableList<StatisticPage> statisticPages = ofCollection( pagesObject );
 
-			final ObservableList<Tab> tabs = transform( ObservableLists.fx( statisticPages ), STATISTIC_PAGE_TO_TAB );
+			final ObservableList<Tab> tabs = transform( fx( statisticPages ), STATISTIC_PAGE_TO_TAB );
 
 			plusButton = TabBuilder.create().text( "+" ).closable( false ).onSelectionChanged( createNewTab )
 					.styleClass( "create-new-button" ).build();
 
-			bindContentBidirectional( tabPane.getTabs(), appendElement( tabs, plusButton ) );
+			allTabs = optimize( appendElement( tabs, plusButton ) );
+			allTabs.addListener( new ListChangeListener<Tab>()
+			{
+				@Override
+				public void onChanged( ListChangeListener.Change<? extends Tab> change )
+				{
+					while( change.next() )
+					{
+						tabPane.getTabs().removeAll( change.getRemoved() );
+						for( Tab newTab : change.getAddedSubList() )
+						{
+							tabPane.getTabs().add( allTabs.indexOf( newTab ), newTab );
+						}
+					}
+				}
+			} );
+			tabPane.getTabs().setAll( allTabs );
+			//bindContentUnordered( tabPane.getTabs(), allTabs );
 
 			tabPane.getTabs().addListener( new ListChangeListener<Tab>()
 			{
