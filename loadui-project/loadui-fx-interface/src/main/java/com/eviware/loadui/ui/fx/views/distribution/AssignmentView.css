@@ -1,13 +1,15 @@
-.deployed-scenario-view
-{
+.assignment-view {
 	-fx-opacity: 1;
 }
 
-.dragging
-{
+.dragging {
 	-fx-opacity: 0.3;
 }
 
+.assignment-view:focused {
+	-fx-background-color: blue;
+}
+
 #menubutton {
-	-fx-cursor: hand;
+	-fx-cursor: default;
 }
