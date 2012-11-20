@@ -77,7 +77,6 @@ public class AgentView extends VBox
 				@Override
 				public void handle( ActionEvent arg0 )
 				{
-					System.out.println( "ON" );
 					lightOn.set( true );
 				}
 			} ), new KeyFrame( Duration.millis( 500 ), new EventHandler<ActionEvent>()
@@ -85,7 +84,6 @@ public class AgentView extends VBox
 				@Override
 				public void handle( ActionEvent arg0 )
 				{
-					System.out.println( "OFF" );
 					lightOn.set( false );
 				}
 			} ), new KeyFrame( Duration.millis( 1000 ) ) ).build();
