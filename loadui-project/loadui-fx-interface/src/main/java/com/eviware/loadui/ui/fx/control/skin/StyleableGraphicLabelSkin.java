@@ -1,16 +1,16 @@
 package com.eviware.loadui.ui.fx.control.skin;
 
-import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.RegionBuilder;
 
-import com.sun.javafx.scene.control.skin.ButtonSkin;
+import com.sun.javafx.scene.control.skin.LabelSkin;
 
-public class StyleableGraphicLabelSkin extends ButtonSkin
+public class StyleableGraphicLabelSkin extends LabelSkin
 {
-	public StyleableGraphicLabelSkin( Button button )
+	public StyleableGraphicLabelSkin( Label label )
 	{
-		super( button );
+		super( label );
 
-		button.setGraphic( RegionBuilder.create().styleClass( "graphic" ).build() );
+		label.setGraphic( RegionBuilder.create().styleClass( "graphic" ).build() );
 	}
 }

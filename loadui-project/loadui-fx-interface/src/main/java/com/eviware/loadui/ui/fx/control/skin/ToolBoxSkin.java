@@ -154,8 +154,8 @@ public class ToolBoxSkin<E extends Node> extends SkinBase<ToolBox<E>, BehaviorBa
 						{
 							categories.put( categoryName, category = new ToolBoxCategory( categoryName ) );
 						}
-						int index = -Collections.binarySearch( category.categoryItems, added,
-								toolBox.getComparator( categoryName ) ) - 1;
+						int index = Math.max( 0, -Collections.binarySearch( category.categoryItems, added,
+								toolBox.getComparator( categoryName ) ) - 1 );
 						category.categoryItems.add( index, added );
 						possiblyEmpty.remove( category );
 					}

@@ -36,7 +36,6 @@ import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.Properties;
-import com.eviware.loadui.ui.fx.views.statistics.StatisticHolderToolBox;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
@@ -94,7 +93,7 @@ public class AnalysisView extends StackPane
 	private TabPane tabPane;
 
 	@FXML
-	private StatisticHolderToolBox toolBox;
+	private AnalysisToolBox toolBox;
 
 	private final ProjectItem project;
 	private final ObservableList<Execution> executionList;
@@ -135,6 +134,8 @@ public class AnalysisView extends StackPane
 	@FXML
 	private void initialize()
 	{
+		toolBox.setProject( project );
+
 		currentExecution.addListener( new ChangeListener<Execution>()
 		{
 			@Override
@@ -187,7 +188,6 @@ public class AnalysisView extends StackPane
 				}
 			} );
 			tabPane.getTabs().setAll( allTabs );
-			//bindContentUnordered( tabPane.getTabs(), allTabs );
 
 			tabPane.getTabs().addListener( new ListChangeListener<Tab>()
 			{

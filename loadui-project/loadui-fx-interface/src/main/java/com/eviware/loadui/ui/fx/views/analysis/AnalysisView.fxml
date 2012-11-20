@@ -11,7 +11,7 @@
 <?import javafx.geometry.Insets?>
 <?import java.net.URL?>
 
-<?import com.eviware.loadui.ui.fx.views.statistics.StatisticHolderToolBox?>
+<?import com.eviware.loadui.ui.fx.views.analysis.AnalysisToolBox?>
 
 <fx:root type="javafx.scene.layout.StackPane" xmlns:fx="http://javafx.com/fxml">
 	<VBox xmlns:fx="http://javafx.com/fxml" styleClass="analysis-view">
@@ -23,7 +23,7 @@
 			<Button text="close" onAction="#close" />
 		</HBox>
 		<AnchorPane VBox.vgrow="ALWAYS">
-			<StatisticHolderToolBox fx:id="toolBox" AnchorPane.leftAnchor="0" AnchorPane.topAnchor="0" heightPerItem="110" maxWidth="100" />
+			<AnalysisToolBox fx:id="toolBox" AnchorPane.leftAnchor="0" AnchorPane.topAnchor="0" heightPerItem="110" maxWidth="100" />
 			<TabPane fx:id="tabPane" AnchorPane.topAnchor="0" AnchorPane.rightAnchor="10" AnchorPane.bottomAnchor="30" AnchorPane.leftAnchor="110" />
 		</AnchorPane>
 	</VBox>
