@@ -74,6 +74,10 @@
 	-fx-skin: "com.eviware.loadui.ui.fx.control.skin.StyleableGraphicButtonSkin";
 }
 
+.label.styleable-graphic {
+	-fx-skin: "com.eviware.loadui.ui.fx.control.skin.StyleableGraphicLabelSkin";
+}
+
 .label.slim-icon {
 	-fx-background-radius: 3;
 	-fx-background-insets: 0, 1;
