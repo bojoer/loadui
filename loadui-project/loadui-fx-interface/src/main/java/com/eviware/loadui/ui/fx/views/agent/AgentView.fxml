@@ -17,9 +17,9 @@
 
 <fx:root type="javafx.scene.layout.VBox" xmlns:fx="http://javafx.com/fxml" styleClass="agent-view">
 	<stylesheets>
-		<URL value="@AgentView.css" />
+		<URL value="@AgentView.css"  />
 	</stylesheets>
-	<Label fx:id="agentLabel" id="agentLabel" minHeight= "20" />
+	<Label fx:id="agentLabel" id="agentLabel" minHeight= "20" styleClass="styleable-graphic"/>
 	<HBox spacing="3">
 		<OptionsSlider fx:id="onOffSwitch" styleClass="switch" options="ON, OFF" />
 		<MenuButton fx:id="menuButton" HBox.hgrow="SOMETIMES" maxWidth="200" text="Menu">

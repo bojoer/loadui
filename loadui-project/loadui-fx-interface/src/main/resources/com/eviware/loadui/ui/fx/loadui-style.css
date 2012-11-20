@@ -83,6 +83,25 @@
 	-fx-skin: "com.eviware.loadui.ui.fx.control.skin.StyleableGraphicLabelSkin";
 }
 
+.label.styleable-graphic .graphic {
+	-fx-padding: 3;
+	-fx-background-radius: 50;
+	-graphic-color: lightgray;
+	
+	
+	-fx-background-color: 
+		black,
+		-graphic-color;
+	
+	-fx-background-insets: 
+		0,
+		1;	
+}
+
+.label.styleable-graphic.label-enabled .graphic  {
+	-graphic-color: red;
+}
+
 .label.slim-icon {
 	-fx-background-radius: 3;
 	-fx-background-insets: 0, 1;
