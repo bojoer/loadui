@@ -85,6 +85,12 @@
 	-fx-padding: 3;
 }
 
+.scenario-toolbox-item {
+	-fx-background-color: transparent;
+	-fx-text-fill: lightgray;
+}
+
+
 /**
  * Navigation button styles
  */
@@ -235,7 +241,12 @@
 	-fx-spacing: 5;
 }
 
-.item-holder .label {
+.item-holder .category-label {
+	-fx-text-fill: #9c9c9c;
+}
+
+.item-holder .icon 
+{
 	-fx-text-fill: #9c9c9c;
 }
 

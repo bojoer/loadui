@@ -1,35 +1,39 @@
 package com.eviware.loadui.ui.fx.views.distribution;
 
-import javafx.beans.binding.Bindings;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.control.LabelBuilder;
-import javafx.scene.layout.StackPane;
+import javafx.scene.image.ImageView;
 
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.ui.fx.control.DragNode;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
-import com.eviware.loadui.ui.fx.util.Properties;
+import com.eviware.loadui.ui.fx.util.UIUtils;
 
-public class ScenarioToolboxItem extends StackPane
+public class ScenarioToolboxItem extends Label
 {
 	private final SceneItem scenario;
 
 	public ScenarioToolboxItem( SceneItem scenario )
 	{
+		getStyleClass().add( "icon" );
 		this.scenario = scenario;
 		FXMLUtils.load( this );
 
-		DragNode.install( this, createLabel() ).setData( scenario );
+		DragNode.install( this, createIcon() ).setData( scenario );
 
-		final Label baseLabel = createLabel();
-		getChildren().setAll( baseLabel );
+		setGraphic( createIcon() );
+		setText( scenario.getLabel() );
+
 	}
 
-	private Label createLabel()
+	private Node createIcon()
 	{
-		Label label = LabelBuilder.create().styleClass( "slim-icon" ).minWidth( 100 ).maxWidth( 100 ).build();
-		label.textProperty().bind( Properties.forLabel( scenario ) );
-		Bindings.bindContent( label.getStylesheets(), getStylesheets() );
-		return label;
+		return new ImageView( UIUtils.getImageFor( SceneItem.class ) );
+	}
+
+	@Override
+	public String toString()
+	{
+		return scenario.getLabel();
 	}
 }
