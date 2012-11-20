@@ -19,7 +19,7 @@
 	<stylesheets>
 		<URL value="@AgentView.css" />
 	</stylesheets>
-	<Label fx:id="agentLabel" id="agentLabel" minHeight= "30" />
+	<Label fx:id="agentLabel" id="agentLabel" minHeight= "20" />
 	<HBox spacing="3">
 		<OptionsSlider fx:id="onOffSwitch" styleClass="switch" options="ON, OFF" />
 		<MenuButton fx:id="menuButton" HBox.hgrow="SOMETIMES" maxWidth="200" text="Menu">
@@ -29,9 +29,6 @@
 		</MenuButton>
 	</HBox>
 	<StackPane prefWidth="60" VBox.vgrow="ALWAYS" styleClass="dots">
-		<padding>
-			<Insets top="6" right="6" bottom="6" left="6" />
-		</padding>
-		<ScrollableList fx:id="scenarioList" orientation="VERTICAL" sizePerItem="18" />
+		<ScrollableList fx:id="scenarioList" orientation="VERTICAL" sizePerItem="22" />
 	</StackPane>
 </fx:root>

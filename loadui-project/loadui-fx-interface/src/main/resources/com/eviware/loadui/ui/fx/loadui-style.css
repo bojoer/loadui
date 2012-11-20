@@ -85,6 +85,12 @@
 	-fx-padding: 3;
 }
 
+.scenario-toolbox-item {
+	-fx-background-color: transparent;
+	-fx-text-fill: lightgray;
+}
+
+
 /**
  * Navigation button styles
  */

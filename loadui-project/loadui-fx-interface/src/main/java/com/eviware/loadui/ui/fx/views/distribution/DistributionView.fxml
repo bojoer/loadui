@@ -13,6 +13,6 @@
 	<padding>
 		<Insets top="10" right="10" bottom="10" />
 	</padding>
-	<ToolBox fx:id="scenarioToolBox" text="Scenarios" heightPerItem="60" />
-	<PageList fx:id="agentList" text="Agents" spacing="10" widthPerItem="150" HBox.hgrow="ALWAYS" />
+	<ToolBox fx:id="scenarioToolBox" text="Scenarios" heightPerItem="100" />
+	<PageList fx:id="agentList" text="Agents" spacing="10" widthPerItem="140" HBox.hgrow="ALWAYS" />
 </fx:root>
