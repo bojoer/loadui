@@ -5,9 +5,6 @@ import static com.eviware.loadui.ui.fx.util.TreeUtils.dummyItem;
 import java.util.Collection;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -15,19 +12,24 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeItemBuilder;
 import javafx.scene.control.TreeView;
 import javafx.util.Callback;
 
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.Immutable;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.eviware.loadui.api.model.AgentItem;
-import com.eviware.loadui.api.serialization.ListenableValue;
 import com.eviware.loadui.api.statistics.Statistic;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.traits.Labeled;
 import com.eviware.loadui.ui.fx.control.fields.Validatable;
-import com.eviware.loadui.ui.fx.util.TreeUtils;
 import com.eviware.loadui.ui.fx.views.assertions.LabeledTreeCell;
+import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
 
 public class StatisticTree extends TreeView<Labeled> implements Validatable
 {
@@ -38,21 +40,31 @@ public class StatisticTree extends TreeView<Labeled> implements Validatable
 	// Used to prevent unwanted chain reactions when forcing TreeItems to collapse. 
 	public final AtomicBoolean isForceCollapsing = new AtomicBoolean( false );
 
-	private Collection<? extends AgentItem> agents;
+	private final ImmutableCollection<AgentItem> agents;
+	private final boolean multipleHolders;
 
 	public static StatisticTree forHolders( Collection<StatisticHolder> holders )
 	{
-		TreeItem<Labeled> holderItem = dummyItem( "ROOT" );
-		return new StatisticTree( holders, holderItem );
+		TreeItem<Labeled> root;
+		if( holders.size() > 1 )
+		{
+			root = dummyItem( "ROOT" );
+		}
+		else
+		{
+			root = new TreeItem<Labeled>( holders.iterator().next() );
+		}
+		return new StatisticTree( holders, root );
 	}
 
-	StatisticTree( Collection<StatisticHolder> holders, TreeItem<Labeled> root )
+	private StatisticTree( Collection<StatisticHolder> holders, TreeItem<Labeled> root )
 	{
 		super( root );
 		setShowRoot( false );
 		getStyleClass().add( "assertable-tree" );
+		multipleHolders = holders.size() > 1;
 
-		agents = holders.iterator().next().getCanvas().getProject().getWorkspace().getAgents();
+		agents = ImmutableList.copyOf( holders.iterator().next().getCanvas().getProject().getWorkspace().getAgents() );
 
 		if( holders.size() == 1 )
 			addVariablesToTree( holders.iterator().next(), root );
@@ -92,6 +104,7 @@ public class StatisticTree extends TreeView<Labeled> implements Validatable
 						isValidProperty.set( true );
 					}
 				}
+				log.debug( "getSelectionModel().getSelectedItem(): " + getSelectionModel().getSelectedItem() );
 			}
 		} );
 
@@ -145,6 +158,31 @@ public class StatisticTree extends TreeView<Labeled> implements Validatable
 		return isValidProperty.get();
 	}
 
+	private int getDepth()
+	{
+		int depth = 3;
+		if( !agents.isEmpty() )
+			depth++ ;
+		if( multipleHolders )
+			depth++ ;
+		return depth;
+	}
+
+	private boolean isSource( TreeItem<Labeled> item )
+	{
+		if( agents.isEmpty() )
+			return false;
+		log.debug( "TreeView.getNodeLevel( item ): " + TreeView.getNodeLevel( item ) );
+		log.debug( "getDepth(): " + getDepth() );
+		return TreeView.getNodeLevel( item ) + 1 == getDepth();
+	}
+
+	public Selection getSelection()
+	{
+		TreeItem<Labeled> selectedItem = getSelectionModel().getSelectedItem();
+		return new Selection( selectedItem, isSource( selectedItem ) );
+	}
+
 	private class ExpandedTreeItemsLimiter implements ChangeListener<Boolean>
 	{
 		private final TreeItem<Labeled> variableItem;
@@ -170,6 +208,33 @@ public class StatisticTree extends TreeView<Labeled> implements Validatable
 						isForceCollapsing.set( false );
 					}
 				}
+			}
+		}
+	}
+
+	@Immutable
+	public static class Selection
+	{
+		public final String source;
+		public final String statistic;
+		public final String variable;
+		public final StatisticHolder holder;
+
+		private Selection( @Nonnull TreeItem<Labeled> selected, boolean selectedIsSource )
+		{
+			if( selectedIsSource )
+			{
+				source = selected.getValue().getLabel();
+				statistic = selected.getParent().getValue().getLabel();
+				variable = selected.getParent().getParent().getValue().getLabel();
+				holder = ( StatisticHolder )selected.getParent().getParent().getParent().getValue();
+			}
+			else
+			{
+				source = null;
+				statistic = selected.getValue().getLabel();
+				variable = selected.getParent().getValue().getLabel();
+				holder = ( StatisticHolder )selected.getParent().getParent().getValue();
 			}
 		}
 	}

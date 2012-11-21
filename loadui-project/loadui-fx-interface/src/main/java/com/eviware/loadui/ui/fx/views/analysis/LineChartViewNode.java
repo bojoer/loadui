@@ -19,6 +19,8 @@ import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
@@ -29,14 +31,20 @@ import javafx.scene.layout.VBox;
 
 import com.eviware.loadui.api.statistics.DataPoint;
 import com.eviware.loadui.api.statistics.StatisticHolder;
+import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.model.Chart;
+import com.eviware.loadui.api.statistics.model.chart.ChartView;
+import com.eviware.loadui.api.statistics.model.chart.line.ConfigurableLineChartView;
 import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
 import com.eviware.loadui.api.statistics.model.chart.line.LineSegment;
 import com.eviware.loadui.api.statistics.store.Execution;
+import com.eviware.loadui.ui.fx.control.Dialog;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.Properties;
+import com.eviware.loadui.ui.fx.views.analysis.StatisticTree.Selection;
 import com.eviware.loadui.ui.fx.views.analysis.linechart.LineSegmentView;
 import com.google.common.base.Function;
+import com.google.common.base.Objects;
 import com.google.common.collect.Iterables;
 
 public class LineChartViewNode extends VBox
@@ -158,10 +166,31 @@ public class LineChartViewNode extends VBox
 	public void createStatistic()
 	{
 		Collection<StatisticHolder> holders = new LinkedList<>();
-		for( Chart chart : chartView.getChartGroup().getChildren() )
+		final Collection<Chart> charts = chartView.getChartGroup().getChildren();
+		for( Chart chart : charts )
 			holders.add( ( StatisticHolder )chart.getOwner() );
 
-		AddStatisticDialog dialog = new AddStatisticDialog( this, holders );
+		final AddStatisticDialog dialog = new AddStatisticDialog( this, holders );
+		dialog.setOnConfirm( new EventHandler<ActionEvent>()
+		{
+			@Override
+			public void handle( ActionEvent arg0 )
+			{
+				Selection selection = dialog.getSelection();
+
+				for( Chart chart : charts )
+				{
+					if( selection.holder.equals( chart.getOwner() ) )
+					{
+						ChartView holderChartView = chartView.getChartGroup().getChartViewForChart( chart );
+						( ( ConfigurableLineChartView )holderChartView ).addSegment( selection.variable, selection.statistic,
+								Objects.firstNonNull( selection.source, StatisticVariable.MAIN_SOURCE ) );
+						break;
+					}
+				}
+				dialog.close();
+			}
+		} );
 		dialog.show();
 	}
 }
