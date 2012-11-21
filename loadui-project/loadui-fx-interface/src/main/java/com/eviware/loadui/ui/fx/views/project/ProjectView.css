@@ -30,3 +30,94 @@
 #summaryButton .graphic {
 	-fx-shape: -fx-shape-icon-summary;
 }					
+
+/* detachable tab styling */
+
+.tab-pane  .headers-region{
+	/* fx effect do not accept null or none? */
+	-fx-effect: dropshadow(gaussian, transparent, 0, 0, 0, 0);
+}
+ 
+.detachable-tab {
+	/* seperator was in an early design */
+	-color-gradient: transparent;
+	-color-separator: -color-gradient;
+	-color-border: transparent;
+
+	-fx-background-color: 
+		-color-gradient,
+		-color-separator,
+		-color-gradient;
+
+	-fx-background-radius: 
+		4 4 0 0,
+		4 0 0 0;
+		
+	-fx-background-insets: 
+		0 3 0 3,
+		0 20 9 3,
+		0 20 0 3;
+
+	-fx-padding: 0 0 0 18;
+
+	-fx-border-color: -color-border;
+	-fx-border-radius: 4 4 0 0;
+	-fx-border-width:  1 1 0 1;
+	-fx-border-insets : 0 2 0 2;
+}
+
+.detachable-tab .tab-label {
+	-fx-content-display: right;
+	-fx-text-fill: #333333;
+	-fx-padding: -2 2 0 0;
+}
+
+.detachable-tab:hover {
+	-color-gradient: linear-gradient(to bottom, derive(-base-color-mid, 50%),  derive(-base-color-mid, 10%));
+	-color-border: #666666;
+}
+
+.detachable-tab:selected {
+	-color-gradient: linear-gradient(to bottom, derive(-base-color-mid, -40%), derive(-base-color-mid, -10%));	
+	-color-separator:  linear-gradient(to bottom, derive(-base-color-mid, -33%), derive(-base-color-mid, -10%));
+	-color-border: #666666;
+}
+
+.detachable-tab:selected .tab-label {
+	-fx-text-fill: #e6e6e6;
+}
+
+.detachable-tab .styleable-graphic {
+	-color-button-gradient: transparent;
+	-color-button-border: transparent;
+	-color-arrow: -fx-body-color;
+
+	-fx-background-color: 
+		-color-button-border,
+		-color-button-gradient;
+
+	-fx-padding: 
+		0,
+		0;
+	-fx-background-radius: 
+		4,
+		4;
+	
+	-fx-background-insets: 
+		-3 -2 5 1,
+		-2 -1 6 2;	
+
+}
+
+.detachable-tab .styleable-graphic:hover {
+	-color-button-gradient:  linear-gradient(to bottom, derive(-base-color-mid, 50%),  derive(-base-color-mid, 10%));
+	-color-button-border: #666666;
+	-color-arrow: #666666;
+}
+.detachable-tab .graphic {
+	-fx-background-color: -color-arrow;
+	-fx-background-insets: 1 2 9 5;
+	-fx-padding: 0 6;
+	-fx-shape: -fx-shape-icon-detach-arrow;
+	
+}
