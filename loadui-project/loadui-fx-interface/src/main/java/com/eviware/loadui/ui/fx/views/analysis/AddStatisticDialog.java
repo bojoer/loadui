@@ -30,4 +30,9 @@ public class AddStatisticDialog extends ConfirmationDialog
 		HBox hBox = HBoxBuilder.create().children( tree ).build();
 		getItems().add( hBox );
 	}
+
+	public Selection getSelection()
+	{
+		return tree.getSelection();
+	}
 }
