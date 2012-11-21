@@ -1,5 +1,7 @@
 package com.eviware.loadui.ui.fx.views.statistics;
 
+import java.lang.ref.WeakReference;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.animation.TimelineBuilder;
@@ -34,16 +36,14 @@ public class StatisticsView extends StackPane
 	private final Property<Execution> currentExecution = new SimpleObjectProperty<>( this, "currentExecution" );
 	private final ManualObservable poll = new ManualObservable();
 
-	private final ExecutionManager executionManager;
-
 	public StatisticsView( final ProjectItem project )
 	{
 		this.project = project;
 
-		executionManager = BeanInjector.getBean( ExecutionManager.class );
+		ExecutionManager executionManager = BeanInjector.getBean( ExecutionManager.class );
 		final ProjectExecutionManager projectExecutionManager = BeanInjector.getBean( ProjectExecutionManager.class );
 
-		executionManager.addExecutionListener( new CurrentExecutionListener() );
+		executionManager.addExecutionListener( new CurrentExecutionListener( executionManager, this ) );
 
 		executionList = ObservableLists.fx( ObservableLists.filter( ObservableLists.ofCollection( executionManager,
 				ExecutionManager.EXECUTIONS, Execution.class, executionManager.getExecutions() ),
@@ -87,17 +87,34 @@ public class StatisticsView extends StackPane
 		getChildren().setAll( new ResultView( executionList ) );
 	}
 
-	private final class CurrentExecutionListener extends ExecutionListenerAdapter
+	private final static class CurrentExecutionListener extends ExecutionListenerAdapter
 	{
+		private final ExecutionManager executionManager;
+		private final WeakReference<StatisticsView> ref;
+
 		private final Timeline pollTimeline = TimelineBuilder.create().cycleCount( Timeline.INDEFINITE )
 				.keyFrames( new KeyFrame( Duration.millis( 500 ), new EventHandler<ActionEvent>()
 				{
 					@Override
 					public void handle( ActionEvent arg0 )
 					{
-						poll.fireInvalidation();
+						StatisticsView view = ref.get();
+						if( view != null )
+						{
+							view.poll.fireInvalidation();
+						}
+						else
+						{
+							executionManager.removeExecutionListener( CurrentExecutionListener.this );
+						}
 					}
 				} ) ).build();
+
+		public CurrentExecutionListener( ExecutionManager executionManager, StatisticsView view )
+		{
+			this.executionManager = executionManager;
+			ref = new WeakReference<>( view );
+		}
 
 		@Override
 		public void executionStarted( ExecutionManager.State oldState )
@@ -107,8 +124,16 @@ public class StatisticsView extends StackPane
 				@Override
 				public void run()
 				{
-					currentExecution.bind( new ReadOnlyObjectWrapper<>( executionManager.getCurrentExecution() ) );
-					pollTimeline.playFromStart();
+					StatisticsView view = ref.get();
+					if( view != null )
+					{
+						view.currentExecution.bind( new ReadOnlyObjectWrapper<>( executionManager.getCurrentExecution() ) );
+						pollTimeline.playFromStart();
+					}
+					else
+					{
+						executionManager.removeExecutionListener( CurrentExecutionListener.this );
+					}
 				}
 			} );
 		}
@@ -121,8 +146,16 @@ public class StatisticsView extends StackPane
 				@Override
 				public void run()
 				{
-					currentExecution.unbind();
-					pollTimeline.stop();
+					StatisticsView view = ref.get();
+					if( view != null )
+					{
+						view.currentExecution.unbind();
+						pollTimeline.stop();
+					}
+					else
+					{
+						executionManager.removeExecutionListener( CurrentExecutionListener.this );
+					}
 				}
 			} );
 		}
