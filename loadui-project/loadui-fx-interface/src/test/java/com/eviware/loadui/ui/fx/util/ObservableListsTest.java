@@ -18,6 +18,7 @@ import java.util.Arrays;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
@@ -60,6 +61,7 @@ public class ObservableListsTest
 	}
 
 	@Test
+	@Ignore( "This is no longer the behavior, the callers MUST keep the references themselves." )
 	public void bindContentUnorderedShouldKeepAStrongReferenceToTheBindee() throws InterruptedException
 	{
 		ObservableList<String> bindee = FXCollections.observableArrayList();

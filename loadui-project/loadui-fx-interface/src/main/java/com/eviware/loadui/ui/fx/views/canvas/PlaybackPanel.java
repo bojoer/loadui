@@ -1,6 +1,6 @@
 package com.eviware.loadui.ui.fx.views.canvas;
 
-import javax.annotation.Nonnull;
+import java.lang.ref.WeakReference;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -17,6 +17,8 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.util.Duration;
 
+import javax.annotation.Nonnull;
+
 import com.eviware.loadui.api.counter.CounterHolder;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.SceneItem;
@@ -24,11 +26,13 @@ import com.eviware.loadui.ui.fx.util.Properties;
 
 public abstract class PlaybackPanel<T extends CounterDisplay, C extends CanvasItem> extends HBox
 {
-	protected final C canvas;
-
 	public final static String TIME_LABEL = "Time";
 	public final static String REQUESTS_LABEL = "Requests";
 	public final static String FAILURES_LABEL = "Failures";
+
+	private final UpdateDisplays updateDisplays = new UpdateDisplays( this );
+
+	protected final C canvas;
 
 	protected final T time;
 	protected final T requests;
@@ -46,8 +50,7 @@ public abstract class PlaybackPanel<T extends CounterDisplay, C extends CanvasIt
 		requests = timeRequests();
 		failures = timeFailures();
 
-		updateDisplays.setCycleCount( Timeline.INDEFINITE );
-		updateDisplays.play();
+		updateDisplays.timeline.play();
 	}
 
 	protected abstract T timeCounter();
@@ -64,18 +67,6 @@ public abstract class PlaybackPanel<T extends CounterDisplay, C extends CanvasIt
 			canvas.triggerAction( CounterHolder.COUNTER_RESET_ACTION );
 		}
 	};
-
-	private final Timeline updateDisplays = new Timeline( new KeyFrame( Duration.millis( 500 ),
-			new EventHandler<ActionEvent>()
-			{
-				@Override
-				public void handle( ActionEvent event )
-				{
-					time.setValue( canvas.getCounter( CanvasItem.TIMER_COUNTER ).get() );
-					requests.setValue( canvas.getCounter( CanvasItem.REQUEST_COUNTER ).get() );
-					failures.setValue( canvas.getCounter( CanvasItem.FAILURE_COUNTER ).get() );
-				}
-			} ) );
 
 	protected final EventHandler<ActionEvent> openLimitsDialog = new EventHandler<ActionEvent>()
 	{
@@ -107,5 +98,34 @@ public abstract class PlaybackPanel<T extends CounterDisplay, C extends CanvasIt
 		Property<Boolean> linkedProperty = Properties.convert( scenario.followProjectProperty() );
 		linkButton.selectedProperty().bindBidirectional( linkedProperty );
 		return linkButton;
+	}
+
+	private static class UpdateDisplays implements EventHandler<ActionEvent>
+	{
+		private final WeakReference<? extends PlaybackPanel<?, ?>> ref;
+		private final Timeline timeline;
+
+		private UpdateDisplays( PlaybackPanel<?, ?> panel )
+		{
+			ref = new WeakReference<PlaybackPanel<?, ?>>( panel );
+			timeline = new Timeline( new KeyFrame( Duration.millis( 500 ), this ) );
+			timeline.setCycleCount( Timeline.INDEFINITE );
+		}
+
+		@Override
+		public void handle( ActionEvent event )
+		{
+			PlaybackPanel<?, ?> panel = ref.get();
+			if( panel != null )
+			{
+				panel.time.setValue( panel.canvas.getCounter( CanvasItem.TIMER_COUNTER ).get() );
+				panel.requests.setValue( panel.canvas.getCounter( CanvasItem.REQUEST_COUNTER ).get() );
+				panel.failures.setValue( panel.canvas.getCounter( CanvasItem.FAILURE_COUNTER ).get() );
+			}
+			else
+			{
+				timeline.stop();
+			}
+		}
 	}
 }

@@ -63,7 +63,9 @@ public class WorkspaceView extends StackPane
 
 	private final WorkspaceItem workspace;
 	private final ObservableList<ProjectRef> projectRefList;
+	private final ObservableList<ProjectRefView> projectRefViews;
 	private final ObservableList<AgentItem> agentList;
+	private final ObservableList<AgentView> agentViews;
 
 	@FXML
 	private MenuButton workspaceButton;
@@ -80,10 +82,27 @@ public class WorkspaceView extends StackPane
 	public WorkspaceView( final WorkspaceItem workspace )
 	{
 		this.workspace = workspace;
-		this.projectRefList = ObservableLists.fx( ObservableLists.ofCollection( workspace, WorkspaceItem.PROJECT_REFS,
+		projectRefList = ObservableLists.fx( ObservableLists.ofCollection( workspace, WorkspaceItem.PROJECT_REFS,
 				ProjectRef.class, workspace.getProjectRefs() ) );
-		this.agentList = ObservableLists.fx( ObservableLists.ofCollection( workspace, WorkspaceItem.AGENTS,
-				AgentItem.class, workspace.getAgents() ) );
+		projectRefViews = ObservableLists.transform( projectRefList, new Function<ProjectRef, ProjectRefView>()
+		{
+			@Override
+			public ProjectRefView apply( ProjectRef projectRef )
+			{
+				return new ProjectRefView( projectRef );
+			}
+		} );
+
+		agentList = ObservableLists.fx( ObservableLists.ofCollection( workspace, WorkspaceItem.AGENTS, AgentItem.class,
+				workspace.getAgents() ) );
+		agentViews = ObservableLists.transform( agentList, new Function<AgentItem, AgentView>()
+		{
+			@Override
+			public AgentView apply( AgentItem agent )
+			{
+				return new AgentView( agent );
+			}
+		} );
 
 		FXMLUtils.load( this );
 	}
@@ -189,15 +208,7 @@ public class WorkspaceView extends StackPane
 
 	private void initAgentCarousel()
 	{
-		ObservableLists.bindSorted( agentCarousel.getItems(),
-				ObservableLists.transform( agentList, new Function<AgentItem, AgentView>()
-				{
-					@Override
-					public AgentView apply( AgentItem agent )
-					{
-						return new AgentView( agent );
-					}
-				} ), Ordering.usingToString() );
+		ObservableLists.bindSorted( agentCarousel.getItems(), agentViews, Ordering.usingToString() );
 
 		agentCarousel.setSelected( Iterables.getFirst( agentCarousel.getItems(), null ) );
 
@@ -235,15 +246,7 @@ public class WorkspaceView extends StackPane
 	{
 		final Observables.Group group = Observables.group();
 
-		ObservableLists.bindSorted( projectRefCarousel.getItems(),
-				ObservableLists.transform( projectRefList, new Function<ProjectRef, ProjectRefView>()
-				{
-					@Override
-					public ProjectRefView apply( ProjectRef projectRef )
-					{
-						return new ProjectRefView( projectRef );
-					}
-				} ), Ordering.usingToString(), group );
+		ObservableLists.bindSorted( projectRefCarousel.getItems(), projectRefViews, Ordering.usingToString(), group );
 
 		Bindings.bindContent( group.getObservables(),
 				ObservableLists.transform( projectRefCarousel.getItems(), new Function<ProjectRefView, Observable>()
