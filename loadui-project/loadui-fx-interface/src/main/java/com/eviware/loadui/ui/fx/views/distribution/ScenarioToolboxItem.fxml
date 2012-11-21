@@ -2,7 +2,7 @@
 
 <?import java.net.URL?>
 
-<fx:root type="javafx.scene.layout.StackPane" xmlns:fx="http://javafx.com/fxml" styleClass="scenario-toolbox-item">
+<fx:root type="javafx.scene.control.Label" xmlns:fx="http://javafx.com/fxml" styleClass="scenario-toolbox-item">
 	<stylesheets>
 		<URL value="@ScenarioToolboxItem.css" />
 	</stylesheets>

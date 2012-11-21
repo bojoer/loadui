@@ -26,7 +26,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBuilder;
-import javafx.scene.control.Label;
+import javafx.scene.control.LabelBuilder;
 import javafx.scene.control.PopupControl;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -154,8 +154,8 @@ public class ToolBoxSkin<E extends Node> extends SkinBase<ToolBox<E>, BehaviorBa
 						{
 							categories.put( categoryName, category = new ToolBoxCategory( categoryName ) );
 						}
-						int index = -Collections.binarySearch( category.categoryItems, added,
-								toolBox.getComparator( categoryName ) ) - 1;
+						int index = Math.max( 0, -Collections.binarySearch( category.categoryItems, added,
+								toolBox.getComparator( categoryName ) ) - 1 );
 						category.categoryItems.add( index, added );
 						possiblyEmpty.remove( category );
 					}
@@ -261,7 +261,7 @@ public class ToolBoxSkin<E extends Node> extends SkinBase<ToolBox<E>, BehaviorBa
 			getStyleClass().setAll( "item-holder" );
 			HBox hbox = HBoxBuilder.create().styleClass( "items" ).build();
 			Bindings.bindContent( hbox.getChildren(), items );
-			getChildren().setAll( new Label( category ), hbox );
+			getChildren().setAll( LabelBuilder.create().text( category ).styleClass( "category-label" ).build(), hbox );
 		}
 	}
 

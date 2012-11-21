@@ -110,4 +110,11 @@ public class StatisticTab extends Tab
 
 		Bindings.bindContent( chartList.getChildren(), chartGroupViews );
 	}
+
+	@Override
+	public String toString()
+	{
+		return page.getLabel();
+	}
+
 }

@@ -74,10 +74,8 @@ public class AssertionInspectorView extends HBox
 				}
 				if( newValue != null )
 				{
-					assertions = ObservableLists.transform( ObservableLists.fx( ObservableLists.ofCollection(
-							projectProperty.get(), AssertionAddon.ASSERTION_ITEMS, AssertionItem.class, projectProperty.get()
-									.getAddon( AssertionAddon.class ).getAssertions() ) ), ASSERTION_TO_VIEW );
-
+					assertions = ObservableLists.transform( ObservableLists.fx( AssertionUtils.assertions( newValue ) ),
+							ASSERTION_TO_VIEW );
 					Bindings.bindContent( assertionList.getItems(), assertions );
 				}
 			}
