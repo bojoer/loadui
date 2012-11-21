@@ -245,7 +245,7 @@ log.info """
 ------------------------------------
  RUNNING TEST
  TARGET ${target.label}
- LIMITS Time: ${FormattingUtils.formatTime(target.getLimit(CanvasItem.TIMER_COUNTER))} Samples: ${displayLimit(target.getLimit(CanvasItem.SAMPLE_COUNTER))} Failures: ${displayLimit(target.getLimit(CanvasItem.FAILURE_COUNTER))}
+ LIMITS Time: ${FormattingUtils.formatTime(target.getLimit(CanvasItem.TIMER_COUNTER))} Requests: ${displayLimit(target.getLimit(CanvasItem.SAMPLE_COUNTER))} Failures: ${displayLimit(target.getLimit(CanvasItem.FAILURE_COUNTER))}
 ------------------------------------
 
 """
@@ -263,7 +263,7 @@ def failures = target.getCounter( CanvasItem.FAILURE_COUNTER )
 
 //Monitor
 while( testExecution.state != TestState.COMPLETED ) {
-	log.info "Time: ${FormattingUtils.formatTime(time.value)} Samples: ${samples.value} Failures: ${failures.value}"
+	log.info "Time: ${FormattingUtils.formatTime(time.value)} Requests: ${samples.value} Failures: ${failures.value}"
 	sleep 1000
 }
 
@@ -312,7 +312,7 @@ log.info """
 
 ------------------------------------
  TEST EXECUTION COMPLETED
- FINAL RESULTS: ${FormattingUtils.formatTime(time.value)} Samples: ${samples.value} Failures: ${failures.value}
+ FINAL RESULTS: ${FormattingUtils.formatTime(time.value)} Requests: ${samples.value} Failures: ${failures.value}
 ------------------------------------
 
 """

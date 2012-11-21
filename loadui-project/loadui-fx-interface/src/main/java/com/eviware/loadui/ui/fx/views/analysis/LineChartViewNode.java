@@ -9,6 +9,8 @@ import static javafx.beans.binding.Bindings.bindContent;
 import static javafx.beans.binding.Bindings.createLongBinding;
 import static javafx.collections.FXCollections.observableArrayList;
 
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.concurrent.Callable;
 
 import javafx.beans.Observable;
@@ -26,6 +28,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import com.eviware.loadui.api.statistics.DataPoint;
+import com.eviware.loadui.api.statistics.StatisticHolder;
+import com.eviware.loadui.api.statistics.model.Chart;
 import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
 import com.eviware.loadui.api.statistics.model.chart.line.LineSegment;
 import com.eviware.loadui.api.statistics.store.Execution;
@@ -149,5 +153,15 @@ public class LineChartViewNode extends VBox
 		{
 			return new LineSegmentView( segment );
 		}
+	}
+
+	public void createStatistic()
+	{
+		Collection<StatisticHolder> holders = new LinkedList<>();
+		for( Chart chart : chartView.getChartGroup().getChildren() )
+			holders.add( ( StatisticHolder )chart.getOwner() );
+
+		AddStatisticDialog dialog = new AddStatisticDialog( this, holders );
+		dialog.show();
 	}
 }

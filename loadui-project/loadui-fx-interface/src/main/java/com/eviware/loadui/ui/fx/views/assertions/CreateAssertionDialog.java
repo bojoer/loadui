@@ -25,7 +25,7 @@ public class CreateAssertionDialog extends ConfirmationDialog
 
 	public CreateAssertionDialog( Node owner, StatisticHolder holder )
 	{
-		super( owner, "Create assertion", "Create" );
+		super( owner, "Create Assertion", "Create" );
 
 		tree = AssertableTree.forHolder( holder );
 		constraintPane = new ConstraintPane();

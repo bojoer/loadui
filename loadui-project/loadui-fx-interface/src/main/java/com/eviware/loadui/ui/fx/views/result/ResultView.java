@@ -11,6 +11,7 @@ import javafx.fxml.FXML;
 import javafx.scene.layout.StackPane;
 
 import com.eviware.loadui.api.statistics.store.Execution;
+import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.control.PageList;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.ObservableLists;
@@ -46,15 +47,6 @@ public class ResultView extends StackPane
 					}
 				} ) ) );
 
-		executionList.addListener( new InvalidationListener()
-		{
-			@Override
-			public void invalidated( Observable arg0 )
-			{
-				log.debug( " EXECUTION LIST CHANGED:" );
-				for( Execution e : executionList )
-					log.debug( "   " + e.getLabel() );
-			}
-		} );
 	}
+
 }

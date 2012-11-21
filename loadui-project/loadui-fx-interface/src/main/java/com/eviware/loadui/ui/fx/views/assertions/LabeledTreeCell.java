@@ -17,9 +17,6 @@ public class LabeledTreeCell extends TreeCell<Labeled>
 		}
 		else
 		{
-			//			if( item instanceof AssertableWrapper )
-			//				getStyleClass().add( "leaf" );
-
 			setText( item.getLabel() );
 		}
 	}

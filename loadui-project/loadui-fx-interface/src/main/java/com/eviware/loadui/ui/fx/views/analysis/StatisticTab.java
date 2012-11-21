@@ -4,6 +4,7 @@ import static com.eviware.loadui.ui.fx.util.ObservableLists.fx;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.ofCollection;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.transform;
 import static com.eviware.loadui.ui.fx.util.Properties.forLabel;
+import static com.google.common.base.Strings.isNullOrEmpty;
 import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ObservableValue;
@@ -26,22 +27,20 @@ import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.ui.fx.api.input.DraggableEvent;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.google.common.base.Function;
-import com.google.common.base.Strings;
 
 public class StatisticTab extends Tab
 {
 	public final static StatisticPage createStatisticPage( StatisticPages pages, @Nullable String label )
 	{
-		StatisticPage page = pages.createPage( Strings.isNullOrEmpty( label ) ? "Page " + ( pages.getChildCount() + 1 )
-				: label );
+		StatisticPage page = pages.createPage( isNullOrEmpty( label ) ? "Page " + ( pages.getChildCount() + 1 ) : label );
 
 		return page;
 	}
 
 	public static final ChartGroup createChartGroup( StatisticPage page, String chartType, String label )
 	{
-		ChartGroup group = page.createChartGroup( Strings.isNullOrEmpty( chartType ) ? LineChartView.class.getName()
-				: chartType, Strings.isNullOrEmpty( label ) ? "Chart " + ( page.getChildCount() + 1 ) : label );
+		ChartGroup group = page.createChartGroup( isNullOrEmpty( chartType ) ? LineChartView.class.getName() : chartType,
+				isNullOrEmpty( label ) ? "Chart " + ( page.getChildCount() + 1 ) : label );
 
 		return group;
 	}
