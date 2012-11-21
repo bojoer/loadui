@@ -35,10 +35,10 @@ public class ChartGroupView extends VBox
 		Chart chart = chartGroup.createChart( owner );
 		if( owner instanceof StatisticHolder )
 		{
-			for( Statistic.Descriptor statistic : ( ( StatisticHolder )owner ).getDefaultStatistics() )
+			ChartView chartView = chartGroup.getChartViewForChart( chart );
+			if( chartView instanceof ConfigurableLineChartView )
 			{
-				ChartView chartView = chartGroup.getChartViewForChart( chart );
-				if( chartView instanceof ConfigurableLineChartView )
+				for( Statistic.Descriptor statistic : ( ( StatisticHolder )owner ).getDefaultStatistics() )
 				{
 					( ( ConfigurableLineChartView )chartView ).addSegment( statistic.getStatisticVariableLabel(),
 							statistic.getStatisticLabel(), statistic.getSource() );
