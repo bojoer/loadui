@@ -34,8 +34,6 @@ import com.eviware.loadui.api.events.PropertyEvent;
 import com.eviware.loadui.api.events.WeakEventHandler;
 import com.eviware.loadui.api.traits.Describable;
 import com.eviware.loadui.api.traits.Labeled;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 
 /**
  * Utility methods for working with JavaFX Properties.
@@ -46,9 +44,6 @@ public class Properties
 {
 	public final static ReadOnlyBooleanProperty TRUE = new SimpleBooleanProperty( true );
 	public final static ReadOnlyBooleanProperty FALSE = new SimpleBooleanProperty( false );
-
-	//Used to keep weak listeners alive as long as the key object is in use.
-	private static final Cache<Object, EventHandler<?>> listeners = CacheBuilder.newBuilder().weakKeys().build();
 
 	/**
 	 * Creates an ReadOnlyStringProperty for a Labeled. If the Labeled is
@@ -352,9 +347,8 @@ public class Properties
 
 	private static <T extends ReadOnlyJavaBeanProperty<?>> T withListener( T property, EventFirer bean, String eventKey )
 	{
-		EventHandler<BaseEvent> eventListener = new BaseEventListener( property, eventKey );
+		EventHandler<BaseEvent> eventListener = new BaseEventListener( property, eventKey, bean );
 		bean.addEventListener( BaseEvent.class, eventListener );
-		listeners.put( property, eventListener );
 
 		return property;
 	}
@@ -408,15 +402,17 @@ public class Properties
 		}
 	}
 
-	private static final class BaseEventListener implements WeakEventHandler<BaseEvent>
+	private static final class BaseEventListener implements EventHandler<BaseEvent>
 	{
 		private final String eventKey;
+		private final EventFirer eventFirer;
 		private final WeakReference<ReadOnlyJavaBeanProperty<?>> ref;
 
-		private BaseEventListener( ReadOnlyJavaBeanProperty<?> property, String eventKey )
+		private BaseEventListener( ReadOnlyJavaBeanProperty<?> property, String eventKey, EventFirer eventFirer )
 		{
 			ref = new WeakReference<ReadOnlyJavaBeanProperty<?>>( property );
 			this.eventKey = eventKey;
+			this.eventFirer = eventFirer;
 		}
 
 		@Override
@@ -435,6 +431,10 @@ public class Properties
 							property.fireValueChangedEvent();
 						}
 					} );
+				}
+				else
+				{
+					eventFirer.removeEventListener( BaseEvent.class, this );
 				}
 			}
 		}
