@@ -55,8 +55,8 @@ public class ConfirmationDialog extends ButtonDialog
 
 		if( separateButtons )
 		{
-			Separator buttonSeparator = SeparatorBuilder.create().style( "visibility: hidden;" )
-					.maxWidth( Double.MAX_VALUE ).build();
+			Separator buttonSeparator = SeparatorBuilder.create().style( "visibility: hidden;" ).maxWidth( 4 )
+					.minWidth( 4 ).build();
 			HBox.setHgrow( buttonSeparator, javafx.scene.layout.Priority.ALWAYS );
 			getButtons().setAll( cancelButton, buttonSeparator, confirmButton );
 		}

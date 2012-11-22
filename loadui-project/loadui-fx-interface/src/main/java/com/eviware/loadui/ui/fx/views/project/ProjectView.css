@@ -45,18 +45,6 @@
 	-fx-padding: -2 2 0 0;
 }
 
-.detachable-tab:hover {
-	-color-gradient: linear-gradient(to bottom, derive(-base-color-mid, 50%),  derive(-base-color-mid, 10%));
-	-color-border: #666666;
-}
-
-.detachable-tab:selected {
-	-color-gradient: linear-gradient(to bottom, derive(-base-color-mid, -40%), derive(-base-color-mid, -10%));	
-	-color-border: #666666;
-}
-
-
-
 .detachable-tab .styleable-graphic {
 	-color-button-gradient: transparent;
 	-color-button-border: transparent;

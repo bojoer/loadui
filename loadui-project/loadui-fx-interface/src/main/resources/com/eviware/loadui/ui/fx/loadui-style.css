@@ -21,8 +21,8 @@
 	
 	-fx-shape-icon-settings: "M14.00,12.06 L7.50,5.59 C7.74,5.08 7.88,4.53 7.88,3.93 C7.88,1.76 6.12,0.00 3.94,0.00 C3.36,0.00 2.80,0.14 2.31,0.36 L4.83,2.88 L2.89,4.82 L0.36,2.30 C0.13,2.80 -0.00,3.35 -0.00,3.93 C-0.00,6.10 1.76,7.86 3.94,7.86 C4.52,7.86 5.06,7.73 5.55,7.51 L12.06,14.00 Z";
 	-fx-shape-icon-help:"M2.46,10.21 C2.46,9.69 2.49,9.23 2.54,8.83 C2.59,8.43 2.69,8.07 2.82,7.75 C2.95,7.43 3.12,7.15 3.34,6.89 C3.55,6.63 3.82,6.39 4.15,6.15 C4.44,5.93 4.70,5.73 4.92,5.55 C5.14,5.36 5.32,5.18 5.47,4.99 C5.62,4.81 5.73,4.62 5.80,4.43 C5.87,4.25 5.91,4.03 5.91,3.80 C5.91,3.57 5.86,3.37 5.77,3.18 C5.67,2.99 5.54,2.82 5.36,2.68 C5.19,2.55 4.98,2.44 4.73,2.36 C4.48,2.29 4.21,2.25 3.90,2.25 C3.57,2.25 3.26,2.28 2.96,2.32 C2.67,2.37 2.39,2.44 2.12,2.52 C1.84,2.60 1.58,2.69 1.33,2.80 C1.08,2.90 0.83,3.01 0.58,3.13 L-0.00,1.18 C0.22,1.05 0.49,0.91 0.79,0.77 C1.10,0.63 1.45,0.50 1.83,0.39 C2.22,0.28 2.64,0.19 3.09,0.11 C3.55,0.04 4.04,0.00 4.56,0.00 C5.21,0.00 5.80,0.08 6.33,0.25 C6.86,0.42 7.32,0.65 7.70,0.96 C8.08,1.27 8.38,1.64 8.59,2.08 C8.80,2.52 8.90,3.02 8.90,3.57 C8.90,4.07 8.82,4.52 8.66,4.91 C8.50,5.30 8.29,5.66 8.03,5.99 C7.77,6.31 7.49,6.61 7.17,6.88 C6.85,7.15 6.53,7.41 6.21,7.67 C6.04,7.83 5.90,7.98 5.77,8.13 C5.64,8.28 5.53,8.46 5.45,8.65 C5.37,8.84 5.30,9.06 5.26,9.31 C5.22,9.56 5.20,9.86 5.20,10.21 Z M2.48,11.85 L5.25,11.85 L5.25,14.00 L2.48,14.00 Z";
-	-fx-shape-icon-summary: "m 0.82,16 c -0.29,-0.01 -0.66,-0.18 -0.71,-0.54 l 0,-6.3 c 0,-6.45 -0.14,-6.34 0.38,-6.72 0.1,-0.04 0.13,-0.13 1.07,-0.16 l 0.98,-0.03 c 0.02,3.65 0.03,7.3 0.05,10.95 l 4.35,0.03 4.35,0.03 c 0,-3.66 0,-7.32 0,-10.99 l 0.87,0 c 0.48,0 0.98,0.05 1.13,0.12 0.54,0.25 0.53,0.13 0.53,6.83 l 0,6.18 c -0.05,0.37 -0.23,0.54 -0.57,0.63 l -6.11,0.01 c -3.36,0.01 -6.2,-0.01 -6.32,-0.03 z m 3.48,-5.91 c 1.74,-0.02 3.49,-0.03 5.23,-0.05 0,0.33 0,0.65 0,0.98 -1.74,0 -3.49,0 -5.23,0 0,-0.31 0,-0.62 0,-0.92 z m 0,-2.38 c 1.74,0 3.49,0 5.23,0 0,0.32 0,0.65 0,0.97 -1.74,0 -3.49,0 -5.23,0 0,-0.32 0,-0.65 0,-0.97 z m 0,-2.38 c 1.74,-0.02 3.49,-0.03 5.23,-0.05 0,0.33 0,0.65 0,0.98 -1.74,0 -3.49,0 -5.23,0 0,-0.31 0,-0.62 0,-0.92 z m -0.24,-1.8 c 0,-1.52 0.12,-1.95 0.34,-2.13 0.18,-0.15 0.48,-0.16 0.83,-0.18 l 0.61,-0.05 c 0,-0.38 0,-0.76 0,-1.14 0.71,0 1.43,0 2.14,0 0,0.38 0,0.76 0,1.14 l 0.62,0.05 c 0.34,0.03 0.72,0.07 0.9,0.18 0.24,0.16 0.34,0.71 0.34,2.13 l -2.85,0 c -1.57,0 1.87,0 -2.92,0 z";
-	
+	-fx-shape-icon-close: "M14.00,2.00 L12.00,0.00 7.00,5.00 2.00,0.00 0.00,2.00 5.00,7.00 0.00,12.00 2.00,14.00 7.00,9.00 12.00,14.00 14.00,12.00 9.00,7.00 Z";
+	-fx-shape-icon-summary: "m 0.82,16 c -0.29,-0.01 -0.66,-0.18 -0.71,-0.54 l 0,-6.3 c 0,-6.45 -0.14,-6.34 0.38,-6.72 0.1,-0.04 0.13,-0.13 1.07,-0.16 l 0.98,-0.03 c 0.02,3.65 0.03,7.3 0.05,10.95 l 4.35,0.03 4.35,0.03 c 0,-3.66 0,-7.32 0,-10.99 l 0.87,0 c 0.48,0 0.98,0.05 1.13,0.12 0.54,0.25 0.53,0.13 0.53,6.83 l 0,6.18 c -0.05,0.37 -0.23,0.54 -0.57,0.63 l -6.11,0.01 c -3.36,0.01 -6.2,-0.01 -6.32,-0.03 z m 3.48,-5.91 c 1.74,-0.02 3.49,-0.03 5.23,-0.05 0,0.33 0,0.65 0,0.98 -1.74,0 -3.49,0 -5.23,0 0,-0.31 0,-0.62 0,-0.92 z m 0,-2.38 c 1.74,0 3.49,0 5.23,0 0,0.32 0,0.65 0,0.97 -1.74,0 -3.49,0 -5.23,0 0,-0.32 0,-0.65 0,-0.97 z m 0,-2.38 c 1.74,-0.02 3.49,-0.03 5.23,-0.05 0,0.33 0,0.65 0,0.98 -1.74,0 -3.49,0 -5.23,0 0,-0.31 0,-0.62 0,-0.92 z m -0.24,-1.8 c 0,-1.52 0.12,-1.95 0.34,-2.13 0.18,-0.15 0.48,-0.16 0.83,-0.18 l 0.61,-0.05 c 0,-0.38 0,-0.76 0,-1.14 0.71,0 1.43,0 2.14,0 0,0.38 0,0.76 0,1.14 l 0.62,0.05 c 0.34,0.03 0.72,0.07 0.9,0.18 0.24,0.16 0.34,0.71 0.34,2.13 l -2.85,0 c -1.57,0 1.87,0 -2.92,0 z";	
 	-fx-shape-icon-detach-arrow: "M 292.013,415.784 292.013,417.784 299.599,417.784 291.599,425.782 293.013,427.196 301.013,419.198 301.013,426.786 303.013,426.786 303.013,415.784 Z";
 	
 	/** Reusable color variables */
@@ -78,6 +78,7 @@
 
 .button.styleable-graphic {
 	-fx-skin: "com.eviware.loadui.ui.fx.control.skin.StyleableGraphicButtonSkin";
+	-fx-border-color: transparent;
 }
 
 .label.styleable-graphic {
@@ -113,6 +114,76 @@
 .scenario-toolbox-item {
 	-fx-background-color: transparent;
 	-fx-text-fill: lightgray;
+}
+
+.button-bar {
+	-fx-spacing: 4;
+}
+
+
+/**
+ * General button styles
+ */
+ 
+.button {
+	-button-color-border: #666666;
+	-button-color-background: linear-gradient(to bottom, #e7e7e7, #cbcbcb);
+	-button-color-focus: rgba( 0, 136, 255, 0.1 )  ;
+	-button-color-focus2: rgba( 0, 136, 255, 0.3 )  ;
+
+	-fx-background-color: 
+		-button-color-focus,
+		-button-color-focus2,
+		-button-color-background;
+
+	-fx-background-insets:
+		0,
+		0,
+		0; 
+
+	-fx-background-radius: 5;
+	-fx-padding: 0 11 4 10;
+
+	-fx-border-color: -button-color-border;
+	-fx-border-radius: 4;
+	-fx-border-width:  1;
+	-fx-border-insets :  0 0 -1 0;	
+	
+	-fx-text-fill: #333333;
+}
+
+.button .text{
+	-fx-padding: -5 0 0 0;
+}
+
+.button:hover {
+	-button-color-background: linear-gradient(to bottom, #fefefe, #e6e6e6);
+}
+
+.button:armed {
+	-button-color-background: linear-gradient(to bottom, #b4b4b4, #dedede);
+}
+
+.button:default {
+	-button-color-background: linear-gradient(to bottom, #bbddff, #0088ff);
+}
+
+.button:default:hover {
+	-button-color-background: linear-gradient(to bottom, pink, #0088ff);
+}
+
+
+.button:disabled {
+	-button-color-background: #d8d8d8;
+	-fx-opacity: 0.3;
+}
+
+.button:focused {
+	-fx-background-insets:
+	-2.5 -2.5 -3.5 -2.5,
+	-1 -1 -2 -1,
+	0; 
+	-fx-effect: null;
 }
 
 
@@ -207,9 +278,13 @@
  * TabPane styles
  */
  
- .tab-pane  .headers-region{
+ .tab-header-background {
+	-fx-effect: null;
+}
+ 
+ .tab-pane .headers-region{
 	/* fx effect do not accept null or none? */
-	-fx-effect: dropshadow(gaussian, transparent, 0, 0, 0, 0);
+	-fx-effect: null;
 }
 
 .tab {
@@ -228,19 +303,30 @@
 	-fx-border-insets : 0 2 0 2;	
 }
 
+.tab:hover {
+	-color-gradient: linear-gradient(to bottom, derive(-base-color-mid, 50%),  derive(-base-color-mid, 10%));
+	-color-border: #666666;
+
+} 
+
+.tab:pressed {
+	-color-gradient: linear-gradient(to bottom, #949494, #cecece);	
+	-color-border: #666666;
+}
+
 .tab:selected {
 	-color-gradient: linear-gradient(to bottom, derive(-base-color-mid, -40%), derive(-base-color-mid, -10%));	
 	-color-border: #666666;
-} 
-
-.tab:selected .tab-label {
-	-fx-text-fill: #e6e6e6;
 }
 
 .tab .tab-label {
 	-fx-content-display: right;
 	-fx-text-fill: #333333;
 	-fx-padding: -2 2 0 0;
+}
+
+.tab:selected .tab-label {
+	-fx-text-fill: #e6e6e6;
 }
 
 /**
@@ -556,25 +642,25 @@
 
 .knob.bounded .base {
 	-fx-outlineFill:
-	#000000;
+		#000000;
 	-fx-outerCircleFill: 
-	linear-gradient( to right, #607cb3, #17253d );
+		linear-gradient( to right, #607cb3, #17253d );
 	-fx-innerCircleFill:
-	#304b7d;
+		#304b7d;
 	-fx-markFill:
-	#ffffff;
+		#ffffff;
 
 	-fx-background-color: 
-	-fx-shadowFill,
-	-fx-outlineFill,
-	-fx-outerCircleFill,
-	-fx-innerCircleFill;
+		-fx-shadowFill,
+		-fx-outlineFill,
+		-fx-outerCircleFill,
+		-fx-innerCircleFill;
 
 	-fx-background-insets: 
-	4 -4 -4 4, 
-	1.3,
-	2,
-	3.5;
+		4 -4 -4 4, 
+		1.3,
+		2,
+		3.5;
 
 	-fx-padding: 11;
 }
@@ -621,6 +707,36 @@
 .settings-dialog .single-tab .tab-header-area {
 	visibility: hidden;
 }
+
+.settings-dialog .tab-header-background {
+	-fx-background-color: transparent;
+}
+
+.settings-dialog .tab {
+	/* height 23 m border, padding 16 */
+	-fx-padding: 0 10 0 10;
+}
+
+.settings-dialog .tab:hover {
+	-color-gradient: linear-gradient(to bottom, #f2f2f2, #cccccc);
+	-color-border: #666666;
+
+} 
+
+.settings-dialog .tab:pressed {
+	-color-gradient: linear-gradient(to bottom, #b4b4b4, #bebebe);	
+	-color-border: #666666;
+}
+
+.settings-dialog .tab:selected {
+	-color-gradient: linear-gradient(to bottom, #585858, #999999);	
+	-color-border: #666666;
+}
+
+.settings-dialog .tab .tab-label {
+	-fx-padding: -2 0 0 0;
+}
+
 
 /**
  * Controls
