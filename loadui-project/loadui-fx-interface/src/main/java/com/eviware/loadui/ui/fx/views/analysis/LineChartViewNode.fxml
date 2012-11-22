@@ -15,7 +15,7 @@
 	<HBox>
 		<VBox fx:id="segments" fillWidth="true" />
 		<VBox HBox.hgrow="ALWAYS">
-			<LineChart fx:id="lineChart" animated="false" createSymbols="false" legendVisible="false">
+			<LineChart fx:id="lineChart" animated="false" createSymbols="true" legendVisible="false">
 		        <xAxis><NumberAxis fx:id="xAxis" autoRanging="false" minorTickCount="10" tickUnit="10000"/></xAxis>
 		        <yAxis><NumberAxis fx:id="yAxis" /></yAxis>
 		    </LineChart>

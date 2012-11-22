@@ -606,3 +606,13 @@
 	-fx-background-radius: 10;
 	-fx-padding: 2 10 10 10;
  }
+
+/**
+ * Charts.
+ 
+.chart-line-symbol {
+    -fx-background-radius: 0;
+    -fx-scale-y: 10.0;
+}
+
+*/

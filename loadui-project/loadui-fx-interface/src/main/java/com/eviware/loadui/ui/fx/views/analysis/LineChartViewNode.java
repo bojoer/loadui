@@ -13,22 +13,35 @@ import static javafx.collections.FXCollections.observableArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.concurrent.Callable;
+import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleLongProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
+import javafx.scene.NodeBuilder;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
+import javafx.scene.chart.XYChart.Series;
+import javafx.scene.control.LabelBuilder;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.LineBuilder;
+import javafx.scene.shape.RectangleBuilder;
 
 import com.eviware.loadui.api.statistics.DataPoint;
 import com.eviware.loadui.api.statistics.StatisticHolder;
@@ -38,17 +51,23 @@ import com.eviware.loadui.api.statistics.model.chart.ChartView;
 import com.eviware.loadui.api.statistics.model.chart.line.ConfigurableLineChartView;
 import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
 import com.eviware.loadui.api.statistics.model.chart.line.LineSegment;
+import com.eviware.loadui.api.statistics.model.chart.line.TestEventSegment;
 import com.eviware.loadui.api.statistics.store.Execution;
+import com.eviware.loadui.api.testevents.TestEvent;
 import com.eviware.loadui.ui.fx.control.Dialog;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
+import com.eviware.loadui.ui.fx.util.ObservableLists;
 import com.eviware.loadui.ui.fx.util.Properties;
 import com.eviware.loadui.ui.fx.views.analysis.linechart.LineSegmentView;
+import com.eviware.loadui.ui.fx.views.canvas.CanvasView;
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.collect.Iterables;
 
 public class LineChartViewNode extends VBox
 {
+	protected static final Logger log = LoggerFactory.getLogger( LineChartViewNode.class );
+
 	private static final Function<DataPoint<?>, XYChart.Data<Number, Number>> DATAPOINT_TO_CHARTDATA = new Function<DataPoint<?>, XYChart.Data<Number, Number>>()
 	{
 		@Override
@@ -58,7 +77,19 @@ public class LineChartViewNode extends VBox
 		}
 	};
 
-	private final Function<LineSegment, XYChart.Series<Number, Number>> segmentToSeries = new SegmentToSeriesFunction();
+	private static final Function<TestEvent, XYChart.Data<Number, Number>> TESTEVENT_TO_CHARTDATA = new Function<TestEvent, XYChart.Data<Number, Number>>()
+	{
+		@Override
+		public XYChart.Data<Number, Number> apply( TestEvent event )
+		{
+			XYChart.Data<Number, Number> data = new XYChart.Data<Number, Number>( event.getTimestamp(), 10.0 );
+			data.setNode( LineBuilder.create().endY( 600 ).managed( false ).build() );
+			return data;
+		}
+	};
+
+	private final Function<LineSegment, XYChart.Series<Number, Number>> lineSegmentToSeries = new LineSegmentToSeriesFunction();
+	private final Function<TestEventSegment, Series<Number, Number>> eventSegmentToSeries = new TestEventSegmentToSeriesFunction();
 	private final Function<LineSegment, LineSegmentView> segmentToView = new SegmentToViewFunction();
 
 	private final ObservableValue<Execution> executionProperty;
@@ -69,6 +100,9 @@ public class LineChartViewNode extends VBox
 	private final LongProperty length = new SimpleLongProperty( 0 );
 	private final LongProperty shownSpan = new SimpleLongProperty( 60000 );
 	private final ObservableList<LineSegment> lineSegments;
+	private final ObservableList<TestEventSegment> eventSegments;
+	private final ObservableList<XYChart.Series<Number, Number>> lineSeriesList;
+	private final ObservableList<XYChart.Series<Number, Number>> eventSeriesList;
 	private final ObservableList<XYChart.Series<Number, Number>> seriesList;
 	private final ObservableList<LineSegmentView> lineSegmentViews;
 
@@ -105,8 +139,14 @@ public class LineChartViewNode extends VBox
 
 		lineSegments = fx( ofCollection( chartView, LineChartView.SEGMENTS, LineSegment.class,
 				Iterables.filter( chartView.getSegments(), LineSegment.class ) ) );
-		seriesList = transform( lineSegments, segmentToSeries );
+		lineSeriesList = transform( lineSegments, lineSegmentToSeries );
 		lineSegmentViews = transform( lineSegments, segmentToView );
+
+		eventSegments = fx( ofCollection( chartView, LineChartView.SEGMENTS, TestEventSegment.class,
+				Iterables.filter( chartView.getSegments(), TestEventSegment.class ) ) );
+		eventSeriesList = transform( eventSegments, eventSegmentToSeries );
+
+		seriesList = ObservableLists.concat( lineSeriesList, eventSeriesList );
 
 		FXMLUtils.load( this );
 	}
@@ -130,7 +170,7 @@ public class LineChartViewNode extends VBox
 		shownSpan.bind( xAxis.widthProperty().multiply( 30 ) );
 	}
 
-	private final class SegmentToSeriesFunction implements Function<LineSegment, XYChart.Series<Number, Number>>
+	private final class LineSegmentToSeriesFunction implements Function<LineSegment, XYChart.Series<Number, Number>>
 	{
 		@Override
 		public XYChart.Series<Number, Number> apply( final LineSegment segment )
@@ -149,6 +189,39 @@ public class LineChartViewNode extends VBox
 							DATAPOINT_TO_CHARTDATA );
 				}
 			}, observableArrayList( executionProperty, position, shownSpan, poll ) ) );
+
+			return series;
+		}
+	}
+
+	private final class TestEventSegmentToSeriesFunction implements
+			Function<TestEventSegment, XYChart.Series<Number, Number>>
+	{
+		@Override
+		public XYChart.Series<Number, Number> apply( final TestEventSegment segment )
+		{
+			final XYChart.Series<Number, Number> series = new XYChart.Series<>();
+			series.setName( segment.getTypeLabel() );
+
+			series.setData( fromExpression( new Callable<Iterable<XYChart.Data<Number, Number>>>()
+			{
+				@Override
+				public Iterable<XYChart.Data<Number, Number>> call() throws Exception
+				{
+					return transform(
+							segment.getTestEventsInRange( executionProperty.getValue(), position.longValue() - 2000,
+									position.longValue() + shownSpan.get() + 2000, 0 ), TESTEVENT_TO_CHARTDATA );
+				}
+			}, observableArrayList( executionProperty, position, shownSpan, poll ) ) );
+
+			series.nodeProperty().addListener( new ChangeListener<Node>()
+			{
+				@Override
+				public void changed( ObservableValue<? extends Node> arg0, Node arg1, Node newNode )
+				{
+					newNode.setVisible( false );
+				}
+			} );
 
 			return series;
 		}

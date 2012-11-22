@@ -1,5 +1,6 @@
 package com.eviware.loadui.ui.fx.views.analysis;
 
+import static com.eviware.loadui.ui.fx.util.Properties.forLabel;
 import javafx.beans.Observable;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -82,7 +83,7 @@ public class ChartGroupView extends VBox
 	@FXML
 	private void initialize()
 	{
-		chartGroupLabel.textProperty().bind( Properties.forLabel( chartGroup ) );
+		chartGroupLabel.textProperty().bind( forLabel( chartGroup ) );
 		chartView.getChildren().setAll( createChart( chartGroup.getType() ) );
 		//TODO: Bind SegmentViews.
 
