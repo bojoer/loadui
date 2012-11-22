@@ -207,7 +207,41 @@
  * TabPane styles
  */
  
- 
+ .tab-pane  .headers-region{
+	/* fx effect do not accept null or none? */
+	-fx-effect: dropshadow(gaussian, transparent, 0, 0, 0, 0);
+}
+
+.tab {
+	-color-gradient: transparent;
+	-color-border: transparent;
+
+	-fx-background-color: -color-gradient;
+
+	-fx-background-radius: 4 4 0 0;
+	-fx-background-insets: 0 3 0 3;
+	-fx-padding: 0 14 0 14;
+
+	-fx-border-color: -color-border;
+	-fx-border-radius: 4 4 0 0;
+	-fx-border-width:  1 1 0 1;
+	-fx-border-insets : 0 2 0 2;	
+}
+
+.tab:selected {
+	-color-gradient: linear-gradient(to bottom, derive(-base-color-mid, -40%), derive(-base-color-mid, -10%));	
+	-color-border: #666666;
+} 
+
+.tab:selected .tab-label {
+	-fx-text-fill: #e6e6e6;
+}
+
+.tab .tab-label {
+	-fx-content-display: right;
+	-fx-text-fill: #333333;
+	-fx-padding: -2 2 0 0;
+}
 
 /**
  * Toolbox styles
