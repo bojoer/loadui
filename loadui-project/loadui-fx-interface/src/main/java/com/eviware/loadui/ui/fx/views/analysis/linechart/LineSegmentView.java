@@ -23,4 +23,9 @@ public class LineSegmentView extends Label
 		setText( lineSegment.getStatisticHolder().getLabel() + " " + lineSegment.getVariableName() + " "
 				+ lineSegment.getStatisticName() );
 	}
+
+	public void setColor( String color )
+	{
+		setStyle( "-fx-background-color: " + color + ";" );
+	}
 }

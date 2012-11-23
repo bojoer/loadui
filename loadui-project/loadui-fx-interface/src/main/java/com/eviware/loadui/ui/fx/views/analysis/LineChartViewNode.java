@@ -43,6 +43,7 @@ import javafx.scene.control.ScrollBar;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.LineBuilder;
 import javafx.scene.shape.RectangleBuilder;
 
@@ -173,10 +174,50 @@ public class LineChartViewNode extends VBox
 
 		lineChart.titleProperty().bind( Properties.forLabel( chartView ) );
 
+		segments.getChildren().addListener( new InvalidationListener()
+		{
+			@Override
+			public void invalidated( Observable _ )
+			{
+				int i = 0;
+				for( Series<?, ?> series : lineSeriesList )
+				{
+					lineSegmentViews.get( i++ ).setColor( seriesToColor( series ) );
+				}
+			}
+		} );
+
 		bindContent( lineChart.getData(), seriesList );
 		bindContent( segments.getChildren(), segmentViews );
 
 		shownSpan.bind( xAxis.widthProperty().multiply( 30 ) );
+	}
+
+	private String seriesToColor( Series<?, ?> series )
+	{
+		int seriesOrder = seriesList.indexOf( series );
+
+		switch( seriesOrder % 8 )
+		{
+		case 0 :
+			return "#f9d900";
+		case 1 :
+			return "#a9e200";
+		case 2 :
+			return "#22bad9";
+		case 3 :
+			return "#0181e2";
+		case 4 :
+			return "#2f357f";
+		case 5 :
+			return "#860061";
+		case 6 :
+			return "#c62b00";
+		case 7 :
+			return "#ff5700";
+		}
+
+		throw new RuntimeException( "This is mathematically impossible!" );
 	}
 
 	private final class LineSegmentToSeriesFunction implements Function<LineSegment, XYChart.Series<Number, Number>>
