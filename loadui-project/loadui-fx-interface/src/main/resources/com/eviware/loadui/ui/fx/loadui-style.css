@@ -169,7 +169,7 @@
 }
 
 .button:default:hover {
-	-button-color-background: linear-gradient(to bottom, pink, #0088ff);
+	-button-color-background: linear-gradient(to bottom, derive(#bbddff, 50%), derive(#0088ff, 50%));
 }
 
 
