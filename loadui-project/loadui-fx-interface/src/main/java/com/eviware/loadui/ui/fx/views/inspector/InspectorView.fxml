@@ -14,7 +14,7 @@
 		<URL value="@InspectorView.css" />
 	</stylesheets>
 	<TabPane fx:id="tabPane" id="tabPane" tabClosingPolicy="unavailable" AnchorPane.topAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" />
-	<HBox fx:id="buttonBar" styleClass="button-bar" alignment="CENTER_RIGHT" spacing="4" AnchorPane.topAnchor="0" AnchorPane.rightAnchor="0">
+	<HBox fx:id="buttonBar" styleClass="button-bar" alignment="CENTER_RIGHT" AnchorPane.topAnchor="0" AnchorPane.rightAnchor="0">
 		<padding>
 			<Insets right="4" />
 		</padding>

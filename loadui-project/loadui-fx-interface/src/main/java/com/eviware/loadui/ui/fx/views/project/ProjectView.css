@@ -33,58 +33,16 @@
 
 /* detachable tab styling */
 
-.tab-pane  .headers-region{
-	/* fx effect do not accept null or none? */
-	-fx-effect: dropshadow(gaussian, transparent, 0, 0, 0, 0);
-}
- 
-.detachable-tab {
-	/* seperator was in an early design */
-	-color-gradient: transparent;
-	-color-separator: -color-gradient;
-	-color-border: transparent;
-
-	-fx-background-color: 
-		-color-gradient,
-		-color-separator,
-		-color-gradient;
-
-	-fx-background-radius: 
-		4 4 0 0,
-		4 0 0 0;
-		
-	-fx-background-insets: 
-		0 3 0 3,
-		0 20 9 3,
-		0 20 0 3;
-
+.detachable-tab
+{
 	-fx-padding: 0 0 0 18;
-
-	-fx-border-color: -color-border;
-	-fx-border-radius: 4 4 0 0;
-	-fx-border-width:  1 1 0 1;
-	-fx-border-insets : 0 2 0 2;
 }
+
 
 .detachable-tab .tab-label {
 	-fx-content-display: right;
 	-fx-text-fill: #333333;
 	-fx-padding: -2 2 0 0;
-}
-
-.detachable-tab:hover {
-	-color-gradient: linear-gradient(to bottom, derive(-base-color-mid, 50%),  derive(-base-color-mid, 10%));
-	-color-border: #666666;
-}
-
-.detachable-tab:selected {
-	-color-gradient: linear-gradient(to bottom, derive(-base-color-mid, -40%), derive(-base-color-mid, -10%));	
-	-color-separator:  linear-gradient(to bottom, derive(-base-color-mid, -33%), derive(-base-color-mid, -10%));
-	-color-border: #666666;
-}
-
-.detachable-tab:selected .tab-label {
-	-fx-text-fill: #e6e6e6;
 }
 
 .detachable-tab .styleable-graphic {
