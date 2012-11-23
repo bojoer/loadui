@@ -7,6 +7,7 @@ import javax.annotation.concurrent.Immutable;
 
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.traits.Labeled;
+import com.eviware.loadui.ui.fx.util.TreeUtils.LabeledStringValue;
 
 @Immutable
 public class Selection
@@ -20,7 +21,7 @@ public class Selection
 	{
 		if( selectedIsSource )
 		{
-			source = selected.getValue().getLabel();
+			source = ( ( LabeledStringValue )selected.getValue() ).getValue();
 			statistic = selected.getParent().getValue().getLabel();
 			variable = selected.getParent().getParent().getValue().getLabel();
 			holder = ( StatisticHolder )selected.getParent().getParent().getParent().getValue();

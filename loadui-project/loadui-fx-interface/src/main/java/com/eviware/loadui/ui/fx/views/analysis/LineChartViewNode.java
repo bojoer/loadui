@@ -1,5 +1,6 @@
 package com.eviware.loadui.ui.fx.views.analysis;
 
+import static com.eviware.loadui.ui.fx.util.ObservableLists.concat;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.fromExpression;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.fx;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.ofCollection;
@@ -8,6 +9,7 @@ import static com.google.common.base.Objects.firstNonNull;
 import static com.google.common.collect.Iterables.transform;
 import static javafx.beans.binding.Bindings.bindContent;
 import static javafx.beans.binding.Bindings.createLongBinding;
+import static javafx.beans.binding.Bindings.max;
 import static javafx.collections.FXCollections.observableArrayList;
 
 import java.util.Collection;
@@ -35,6 +37,7 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Series;
+import javafx.scene.control.Label;
 import javafx.scene.control.LabelBuilder;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.layout.HBox;
@@ -58,6 +61,7 @@ import com.eviware.loadui.ui.fx.control.Dialog;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.ObservableLists;
 import com.eviware.loadui.ui.fx.util.Properties;
+import com.eviware.loadui.ui.fx.views.analysis.linechart.EventSegmentView;
 import com.eviware.loadui.ui.fx.views.analysis.linechart.LineSegmentView;
 import com.eviware.loadui.ui.fx.views.canvas.CanvasView;
 import com.google.common.base.Function;
@@ -90,7 +94,8 @@ public class LineChartViewNode extends VBox
 
 	private final Function<LineSegment, XYChart.Series<Number, Number>> lineSegmentToSeries = new LineSegmentToSeriesFunction();
 	private final Function<TestEventSegment, Series<Number, Number>> eventSegmentToSeries = new TestEventSegmentToSeriesFunction();
-	private final Function<LineSegment, LineSegmentView> segmentToView = new SegmentToViewFunction();
+	private final Function<LineSegment, LineSegmentView> lineSegmentToView = new LineSegmentToViewFunction();
+	private final Function<TestEventSegment, EventSegmentView> eventSegmentToView = new EventSegmentToViewFunction();
 
 	private final ObservableValue<Execution> executionProperty;
 	private final Observable poll;
@@ -105,6 +110,8 @@ public class LineChartViewNode extends VBox
 	private final ObservableList<XYChart.Series<Number, Number>> eventSeriesList;
 	private final ObservableList<XYChart.Series<Number, Number>> seriesList;
 	private final ObservableList<LineSegmentView> lineSegmentViews;
+	private final ObservableList<EventSegmentView> eventSegmentViews;
+	private final ObservableList<Label> segmentViews;
 
 	@FXML
 	private VBox segments;
@@ -140,13 +147,15 @@ public class LineChartViewNode extends VBox
 		lineSegments = fx( ofCollection( chartView, LineChartView.SEGMENTS, LineSegment.class,
 				Iterables.filter( chartView.getSegments(), LineSegment.class ) ) );
 		lineSeriesList = transform( lineSegments, lineSegmentToSeries );
-		lineSegmentViews = transform( lineSegments, segmentToView );
+		lineSegmentViews = transform( lineSegments, lineSegmentToView );
 
 		eventSegments = fx( ofCollection( chartView, LineChartView.SEGMENTS, TestEventSegment.class,
 				Iterables.filter( chartView.getSegments(), TestEventSegment.class ) ) );
 		eventSeriesList = transform( eventSegments, eventSegmentToSeries );
+		eventSegmentViews = transform( eventSegments, eventSegmentToView );
 
-		seriesList = ObservableLists.concat( lineSeriesList, eventSeriesList );
+		seriesList = concat( lineSeriesList, eventSeriesList );
+		segmentViews = concat( lineSegmentViews, eventSegmentViews );
 
 		FXMLUtils.load( this );
 	}
@@ -156,7 +165,7 @@ public class LineChartViewNode extends VBox
 	{
 		scrollBar.visibleAmountProperty().bind( shownSpan );
 		scrollBar.blockIncrementProperty().bind( shownSpan );
-		scrollBar.maxProperty().bind( Bindings.max( 0, length.subtract( shownSpan ) ) );
+		scrollBar.maxProperty().bind( max( 0, length.subtract( shownSpan ) ) );
 		position.bindBidirectional( scrollBar.valueProperty() );
 
 		xAxis.lowerBoundProperty().bind( scrollBar.valueProperty() );
@@ -165,7 +174,7 @@ public class LineChartViewNode extends VBox
 		lineChart.titleProperty().bind( Properties.forLabel( chartView ) );
 
 		bindContent( lineChart.getData(), seriesList );
-		bindContent( segments.getChildren(), lineSegmentViews );
+		bindContent( segments.getChildren(), segmentViews );
 
 		shownSpan.bind( xAxis.widthProperty().multiply( 30 ) );
 	}
@@ -227,12 +236,21 @@ public class LineChartViewNode extends VBox
 		}
 	}
 
-	private final class SegmentToViewFunction implements Function<LineSegment, LineSegmentView>
+	private final class LineSegmentToViewFunction implements Function<LineSegment, LineSegmentView>
 	{
 		@Override
 		public LineSegmentView apply( final LineSegment segment )
 		{
 			return new LineSegmentView( segment );
+		}
+	}
+
+	private final class EventSegmentToViewFunction implements Function<TestEventSegment, EventSegmentView>
+	{
+		@Override
+		public EventSegmentView apply( final TestEventSegment segment )
+		{
+			return new EventSegmentView( segment );
 		}
 	}
 
@@ -255,6 +273,7 @@ public class LineChartViewNode extends VBox
 					if( selection.holder.equals( chart.getOwner() ) )
 					{
 						ChartView holderChartView = chartView.getChartGroup().getChartViewForChart( chart );
+
 						( ( ConfigurableLineChartView )holderChartView ).addSegment( selection.variable, selection.statistic,
 								firstNonNull( selection.source, StatisticVariable.MAIN_SOURCE ) );
 						break;

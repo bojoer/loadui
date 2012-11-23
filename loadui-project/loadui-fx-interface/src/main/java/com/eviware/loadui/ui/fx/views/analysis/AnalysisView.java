@@ -26,19 +26,14 @@ import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.model.ProjectItem;
-import com.eviware.loadui.api.statistics.model.ChartGroup;
 import com.eviware.loadui.api.statistics.model.StatisticPage;
 import com.eviware.loadui.api.statistics.model.StatisticPages;
-import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.Properties;
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
 
 public class AnalysisView extends StackPane
 {
@@ -139,10 +134,10 @@ public class AnalysisView extends StackPane
 		currentExecution.addListener( new ChangeListener<Execution>()
 		{
 			@Override
-			public void changed( ObservableValue<? extends Execution> arg0, Execution arg1, Execution arg2 )
+			public void changed( ObservableValue<? extends Execution> arg0, Execution arg1, Execution newExecution )
 			{
 				executionLabel.textProperty().unbind();
-				executionLabel.textProperty().bind( Properties.forLabel( arg2 ) );
+				executionLabel.textProperty().bind( Properties.forLabel( newExecution ) );
 			}
 		} );
 
@@ -152,16 +147,7 @@ public class AnalysisView extends StackPane
 
 			if( project.getStatisticPages().getChildCount() == 0 )
 			{
-				StatisticPage page = project.getStatisticPages().createPage( "General" );
-				ChartGroup group = page.createChartGroup( LineChartView.class.getName(), "New Chart" );
-				group.createChart( Iterables.find( project.getComponents(), new Predicate<ComponentItem>()
-				{
-					@Override
-					public boolean apply( ComponentItem input )
-					{
-						return input.getLabel().startsWith( "Web" );
-					}
-				} ) );
+				project.getStatisticPages().createPage( UNTITLED_PAGE_PREFIX + "1" );
 			}
 
 			final ObservableList<StatisticPage> statisticPages = ofCollection( pagesObject );

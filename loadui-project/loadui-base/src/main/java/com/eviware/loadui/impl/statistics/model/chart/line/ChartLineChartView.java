@@ -111,6 +111,7 @@ public class ChartLineChartView extends AbstractLineChartView implements Configu
 	private Segment addOrGetExistingSegment( Segment segment )
 	{
 		String segmentId = segment.toString();
+		log.debug( "SEGMENT ID: " + segmentId );
 
 		if( getSegment( segmentId ) == null )
 		{

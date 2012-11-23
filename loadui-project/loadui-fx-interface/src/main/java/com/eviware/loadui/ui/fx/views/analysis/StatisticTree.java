@@ -128,7 +128,7 @@ public class StatisticTree extends TreeView<Labeled> implements Validatable
 				final TreeItem<Labeled> statisticItem = autoCollapsingItem( statistic, variableItem );
 				if( !agents.isEmpty() )
 				{
-					statisticItem.getChildren().add( dummyItem( "Total" ) );
+					statisticItem.getChildren().add( dummyItem( "Total", StatisticVariable.MAIN_SOURCE ) );
 				}
 				for( AgentItem agent : agents )
 				{

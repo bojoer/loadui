@@ -22,5 +22,5 @@
 			<ScrollBar fx:id="scrollBar" />
 		</VBox>
 	</HBox>
-	<HBox fx:id="buttonBar" ><Button text="Add Statistic" onAction="#addStatistic" /></HBox>
+	<HBox fx:id="buttonBar" ><Button text="Add Statistic..." onAction="#addStatistic" /></HBox>
 </fx:root>
