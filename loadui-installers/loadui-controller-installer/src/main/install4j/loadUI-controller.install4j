@@ -886,7 +886,7 @@ catch(Exception e){
                     <string>The installer will now install JavaFX, and continue when the JavaFX installation has been completed.</string>
                   </void>
                   <void property="subTitle">
-                    <string>Please wait while JavaFX is being installed</string>
+                    <string>JavaFX.</string>
                   </void>
                   <void property="textSource">
                     <object class="com.install4j.runtime.beans.screens.components.TextSource" field="DIRECT" />
@@ -961,7 +961,7 @@ catch(Exception e){
               <java class="java.beans.XMLDecoder">
                 <object class="com.install4j.runtime.beans.screens.FormScreen">
                   <void property="subTitle">
-                    <string>For users who are using Mountain Lion or later</string>
+                    <string>Please read the following notice.</string>
                   </void>
                   <void property="title">
                     <string>Information</string>
@@ -969,7 +969,30 @@ catch(Exception e){
                 </object>
               </java>
             </serializedBean>
-            <condition>return Util.isMacOS();</condition>
+            <condition>String osName = System.getProperty("os.name");
+if (!osName.contains("OS X")) 
+    return false;
+
+// split the "10.x.y" version number
+String osVersion = System.getProperty("os.version");
+String[] fragments = osVersion.split("\\.");
+
+// sanity check the "10." part of the version
+if (!fragments[0].equals("10")) 
+    return false;
+    
+if (fragments.length &lt; 2) 
+    return false;
+
+// check if OS X 10.8(.y)
+try {
+    int minorVers = Integer.parseInt(fragments[1]);
+    if (minorVers &gt;= 8) return true;
+} catch (NumberFormatException e) {
+    // was not an integer
+}
+
+return false;</condition>
             <validation />
             <preActivation />
             <postActivation />
@@ -1000,7 +1023,9 @@ catch(Exception e){
                   <java class="java.beans.XMLDecoder">
                     <object class="com.install4j.runtime.beans.formcomponents.MultilineLabelComponent">
                       <void property="labelText">
-                        <string>LoadUI is currently not working on MacOSX 10.8 (Mountain Lion) and later. Please use this workaround to be able to start LoadUI:</string>
+                        <string>LoadUI is currently not working on Mac OSX 10.8 (Mountain Lion) and later. This will be fixed in an upcoming version of loadUI.
+
+Please use this workaround to be able to start loadUI:</string>
                       </void>
                     </object>
                   </java>
