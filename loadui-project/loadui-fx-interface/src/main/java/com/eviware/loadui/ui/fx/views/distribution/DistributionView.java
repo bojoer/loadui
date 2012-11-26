@@ -1,5 +1,11 @@
 package com.eviware.loadui.ui.fx.views.distribution;
 
+import static com.eviware.loadui.ui.fx.util.ObservableLists.fx;
+import static com.eviware.loadui.ui.fx.util.ObservableLists.ofCollection;
+import static com.eviware.loadui.ui.fx.util.ObservableLists.transform;
+import static javafx.beans.binding.Bindings.bindContent;
+import static javafx.beans.binding.Bindings.unbindContent;
+import static javafx.collections.FXCollections.emptyObservableList;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
@@ -39,7 +45,7 @@ public class DistributionView extends HBox
 		public AgentView apply( AgentItem agent )
 		{
 			AgentView agentView = new AgentView( agent );
-			Bindings.bindContent( agentView.getAssignments(), assignments );
+			bindContent( agentView.getAssignments(), assignments );
 			return agentView;
 		}
 	};
@@ -68,21 +74,21 @@ public class DistributionView extends HBox
 				if( newProject == null )
 				{
 					workspace.setValue( null );
-					scenarios = FXCollections.emptyObservableList();
+					scenarios = emptyObservableList();
 				}
 				else
 				{
 					workspace.setValue( newProject.getWorkspace() );
-					scenarios = ObservableLists.fx( ObservableLists.ofCollection( newProject, ProjectItem.SCENES,
-							SceneItem.class, newProject.getChildren() ) );
+					scenarios = fx( ObservableLists.ofCollection( newProject, ProjectItem.SCENES, SceneItem.class,
+							newProject.getChildren() ) );
 					ObservableList<Assignment> oldAssignments = assignments;
-					assignments = ObservableLists.fx( ObservableLists.ofCollection( newProject, ProjectItem.ASSIGNMENTS,
-							Assignment.class, newProject.getAssignments() ) );
+					assignments = fx( ObservableLists.ofCollection( newProject, ProjectItem.ASSIGNMENTS, Assignment.class,
+							newProject.getAssignments() ) );
 
 					for( AgentView agent : agentViews )
 					{
-						Bindings.unbindContent( agent.getAssignments(), oldAssignments );
-						Bindings.bindContent( agent.getAssignments(), assignments );
+						unbindContent( agent.getAssignments(), oldAssignments );
+						bindContent( agent.getAssignments(), assignments );
 					}
 				}
 
@@ -94,20 +100,20 @@ public class DistributionView extends HBox
 		workspace.addListener( new ChangeListener<WorkspaceItem>()
 		{
 			@Override
-			public void changed( ObservableValue<? extends WorkspaceItem> arg0, WorkspaceItem arg1, WorkspaceItem arg2 )
+			public void changed( ObservableValue<? extends WorkspaceItem> o, WorkspaceItem _, WorkspaceItem newWorkspace )
 			{
-				if( arg2 == null )
+				if( newWorkspace == null )
 				{
-					agents = FXCollections.emptyObservableList();
+					agents = emptyObservableList();
 				}
 				else
 				{
-					agents = ObservableLists.fx( ( ObservableLists.ofCollection( arg2, WorkspaceItem.AGENTS,
-							AgentItem.class, arg2.getAgents() ) ) );
+					agents = fx( ( ofCollection( newWorkspace, WorkspaceItem.AGENTS, AgentItem.class,
+							newWorkspace.getAgents() ) ) );
 				}
 
-				agentViews = ObservableLists.transform( agents, AGENT_TO_VIEW );
-				Bindings.bindContent( agentList.getItems(), agentViews );
+				agentViews = transform( agents, AGENT_TO_VIEW );
+				bindContent( agentList.getItems(), agentViews );
 			}
 		} );
 
