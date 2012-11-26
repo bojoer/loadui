@@ -10,10 +10,11 @@
 
 .tab {
 	/* height 21 m border, padding 16 */
+	-fx-padding: 0 14 0 14;
+
 }
 
 .tab .tab-label {
-
 	-fx-text-fill: #e6e6e6;
 }
 
@@ -30,7 +31,5 @@
 .tab:selected {
 	-color-gradient: linear-gradient(to bottom, #252525, #505050);	
 	-color-border: #404040;
+	-fx-padding: 0 -2 0 14;
 }
-
-
-
