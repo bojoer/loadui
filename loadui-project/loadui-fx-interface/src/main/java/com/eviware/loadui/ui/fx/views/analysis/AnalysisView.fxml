@@ -23,8 +23,8 @@
 			<Button text="close" onAction="#close" />
 		</HBox>
 		<AnchorPane VBox.vgrow="ALWAYS">
-			<AnalysisToolBox fx:id="toolBox" AnchorPane.leftAnchor="0" AnchorPane.topAnchor="0" heightPerItem="110" maxWidth="100" />
-			<TabPane fx:id="tabPane" AnchorPane.topAnchor="0" AnchorPane.rightAnchor="10" AnchorPane.bottomAnchor="30" AnchorPane.leftAnchor="110" />
+			<TabPane fx:id="tabPane" AnchorPane.topAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="30" AnchorPane.leftAnchor="0" />
+			<AnalysisToolBox fx:id="toolBox" AnchorPane.leftAnchor="0" AnchorPane.topAnchor="40" heightPerItem="110" maxWidth="100" />
 		</AnchorPane>
 	</VBox>
 </fx:root>
