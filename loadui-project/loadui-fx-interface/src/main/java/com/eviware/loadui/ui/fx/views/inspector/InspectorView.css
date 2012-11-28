@@ -4,6 +4,7 @@
 
 .tab-header-background {
 	-fx-background-color: #555555;
+	-fx-cursor: v-resize;
 }
 
 .tab {
@@ -11,8 +12,8 @@
 }
 
 .tab .tab-label {
-
 	-fx-text-fill: #e6e6e6;
+	-fx-cursor: hand;
 }
 
 .tab:hover {

@@ -35,7 +35,7 @@ public class AgentsCreatedState extends TestState
 				.type( "notAURL2" ).click( "#default" );
 
 		log.debug( "Creating new Agent by rightclicking on carousel" );
-		GUI.getController().click( agentCarousel, MouseButton.SECONDARY ).sleep( 100l ).click( "#add-agent-menu-button" )
+		GUI.getController().click( agentCarousel, MouseButton.SECONDARY ).click( "#add-agent-menu-button" )
 				.type( "Fake agent3" ).type( KeyCode.TAB ).type( "notAURL3" ).click( "#default" );
 
 		TestUtils.awaitCondition( new Callable<Boolean>()
@@ -52,9 +52,9 @@ public class AgentsCreatedState extends TestState
 	protected void exitToParent() throws Exception
 	{
 		log.debug( "Deleting project agents." );
-		GUI.getController().click( "#agentCarousel .agent-view .menu-button" ).click( "#delete" );
-		GUI.getController().click( "#agentCarousel .agent-view .menu-button" ).click( "#delete" );
-		GUI.getController().click( "#agentCarousel .agent-view .menu-button" ).click( "#delete" );
+		GUI.getController().click( "#agentCarousel .agent-view #menuButton" ).click( "#delete" );
+		GUI.getController().click( "#agentCarousel .agent-view #menuButton" ).click( "#delete" );
+		GUI.getController().click( "#agentCarousel .agent-view #menuButton" ).click( "#delete" );
 		final Node projectCarousel = find( "#projectRefCarousel" );
 
 		TestUtils.awaitCondition( new Callable<Boolean>()
