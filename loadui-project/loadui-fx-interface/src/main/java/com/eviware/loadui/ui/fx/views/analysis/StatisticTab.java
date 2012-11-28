@@ -7,6 +7,7 @@ import static com.eviware.loadui.ui.fx.util.Properties.forLabel;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
@@ -26,6 +27,7 @@ import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.ui.fx.api.input.DraggableEvent;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
+import com.eviware.loadui.ui.fx.util.UIUtils;
 import com.google.common.base.Function;
 
 public class StatisticTab extends Tab
@@ -76,6 +78,16 @@ public class StatisticTab extends Tab
 	private void initialize()
 	{
 		textProperty().bind( forLabel( page ) );
+
+		forLabel( page ).addListener( new ChangeListener<String>()
+		{
+			@Override
+			public void changed( ObservableValue<? extends String> arg0, String arg1, String newLabel )
+			{
+				setId( UIUtils.toCssId( newLabel ) );
+			}
+		} );
+		setId( UIUtils.toCssId( page.getLabel() ) );
 
 		setOnClosed( new EventHandler<Event>()
 		{

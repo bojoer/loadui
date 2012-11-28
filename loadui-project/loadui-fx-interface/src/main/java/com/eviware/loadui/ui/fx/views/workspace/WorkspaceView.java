@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import javafx.application.Platform;
+import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
@@ -78,6 +79,7 @@ public class WorkspaceView extends StackPane
 
 	@FXML
 	private WebView webView;
+	private ObservableList<Observable> labelProperties;
 
 	public WorkspaceView( final WorkspaceItem workspace )
 	{
@@ -248,15 +250,17 @@ public class WorkspaceView extends StackPane
 
 		ObservableLists.bindSorted( projectRefCarousel.getItems(), projectRefViews, Ordering.usingToString(), group );
 
-		Bindings.bindContent( group.getObservables(),
-				ObservableLists.transform( projectRefCarousel.getItems(), new Function<ProjectRefView, Observable>()
+		labelProperties = ObservableLists.transform( projectRefCarousel.getItems(),
+				new Function<ProjectRefView, Observable>()
 				{
 					@Override
 					public Observable apply( ProjectRefView projectRefView )
 					{
 						return projectRefView.labelProperty();
 					}
-				} ) );
+				} );
+
+		Bindings.bindContent( group.getObservables(), labelProperties );
 
 		final String lastProject = workspace.getAttribute( "lastOpenProject", "" );
 		projectRefCarousel.setSelected( Iterables.find( projectRefCarousel.getItems(), new Predicate<ProjectRefView>()

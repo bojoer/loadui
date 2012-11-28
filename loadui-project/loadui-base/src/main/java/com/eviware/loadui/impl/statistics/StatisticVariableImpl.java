@@ -94,6 +94,7 @@ public class StatisticVariableImpl implements StatisticVariable.Mutable, Releasa
 
 	public void addStatisticsWriter( @Nonnull StatisticsWriter writer )
 	{
+		System.out.println( "ADDING STATISTIC WRITER!!!" );
 		if( writers.add( writer ) )
 		{
 			TrackDescriptor descriptor = writer.getTrackDescriptor();
@@ -178,9 +179,9 @@ public class StatisticVariableImpl implements StatisticVariable.Mutable, Releasa
 	{
 		parent.removeEventListener( ActionEvent.class, actionListener );
 
+		ReleasableUtils.releaseAll( writers );
 		for( StatisticsWriter writer : writers )
 			addressableRegistry.unregister( writer );
-		ReleasableUtils.releaseAll( writers );
 		writers.clear();
 	}
 

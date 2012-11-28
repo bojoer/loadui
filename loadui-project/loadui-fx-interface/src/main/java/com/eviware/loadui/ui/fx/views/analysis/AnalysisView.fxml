@@ -20,7 +20,7 @@
 		</stylesheets>
 		<HBox spacing="10" alignment="baseline_left">
 			<Label fx:id="executionLabel" styleClass="title" text="No Execution" />
-			<Button text="close" onAction="#close" />
+			<Button text="close" id="close-analysis-view" onAction="#close" />
 		</HBox>
 		<AnchorPane VBox.vgrow="ALWAYS">
 			<AnalysisToolBox fx:id="toolBox" AnchorPane.leftAnchor="0" AnchorPane.topAnchor="0" heightPerItem="110" maxWidth="100" />

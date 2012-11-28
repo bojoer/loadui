@@ -3,6 +3,7 @@ package com.eviware.loadui.ui.fx.views.result;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.fx;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.transform;
 import static javafx.beans.binding.Bindings.bindContent;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.layout.StackPane;
@@ -45,5 +46,14 @@ public class ResultView extends StackPane
 		} ) );
 		bindContent( resultNodeList.getItems(), executionViews );
 
+		executionViews.addListener( new ListChangeListener<ExecutionView>()
+		{
+			@Override
+			public void onChanged( javafx.collections.ListChangeListener.Change<? extends ExecutionView> c )
+			{
+				for( ExecutionView e : executionViews )
+					e.setId( "result-" + Integer.toString( executionViews.indexOf( e ) ) );
+			}
+		} );
 	}
 }

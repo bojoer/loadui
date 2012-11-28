@@ -8,10 +8,27 @@ import javafx.collections.ObservableList;
 
 public class Observables
 {
+	/**
+	 * Creates a Group out of the provided observables.
+	 * 
+	 * @param observables
+	 * @return
+	 */
+
 	public static Group group( Observable... observables )
 	{
 		return new Group( observables );
 	}
+
+	/**
+	 * A Group is an Observable that invalidates whenever one of its group
+	 * members (observables) invalidates.
+	 * 
+	 * Note that a Group will NOT invalidate when observables are added or
+	 * removed. To monitor added and removed group members, use
+	 * myGroup.getObservables().addListener( ... ).
+	 * 
+	 */
 
 	public static class Group extends ObservableBase
 	{
@@ -43,7 +60,7 @@ public class Observables
 							observable.removeListener( invalidationListener );
 						}
 					}
-					fireInvalidation();
+					//					fireInvalidation();
 				}
 			} );
 

@@ -154,8 +154,8 @@ public class AnalysisView extends StackPane
 
 			final ObservableList<Tab> tabs = transform( fx( statisticPages ), STATISTIC_PAGE_TO_TAB );
 
-			plusButton = TabBuilder.create().text( "+" ).closable( false ).onSelectionChanged( createNewTab )
-					.styleClass( "create-new-button" ).build();
+			plusButton = TabBuilder.create().id( "plus-button" ).text( "+" ).closable( false )
+					.onSelectionChanged( createNewTab ).styleClass( "create-new-button" ).build();
 
 			allTabs = optimize( appendElement( tabs, plusButton ) );
 			allTabs.addListener( new ListChangeListener<Tab>()

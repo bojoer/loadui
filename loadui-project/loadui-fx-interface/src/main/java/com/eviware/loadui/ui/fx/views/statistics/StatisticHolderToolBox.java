@@ -90,14 +90,17 @@ public class StatisticHolderToolBox extends ToolBox<Node>
 		variableGroup = Observables.group();
 
 		bindContent( variableGroup.getObservables(), statisticVariables );
-		variableGroup.addListener( new InvalidationListener()
+
+		InvalidationListener variablesChanged = new InvalidationListener()
 		{
 			@Override
 			public void invalidated( Observable _ )
 			{
 				nonEmptyVariables.setAll( Collections2.filter( statisticVariables, not( IS_EMPTY ) ) );
 			}
-		} );
+		};
+		variableGroup.addListener( variablesChanged );
+		variableGroup.getObservables().addListener( variablesChanged );
 		nonEmptyVariables.setAll( Collections2.filter( statisticVariables, not( IS_EMPTY ) ) );
 
 		ObservableList<StatisticHolder> statisticHoldersWithVariables = transform( nonEmptyVariables, GET_HOLDER );

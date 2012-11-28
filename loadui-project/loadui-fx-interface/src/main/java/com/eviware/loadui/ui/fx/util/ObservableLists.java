@@ -37,6 +37,7 @@ import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.events.EventFirer;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.WeakEventHandler;
+import com.eviware.loadui.ui.fx.views.projectref.ProjectRefView;
 import com.eviware.loadui.util.BeanInjector;
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
@@ -152,6 +153,24 @@ public class ObservableLists
 			@Override
 			public void invalidated( Observable _ )
 			{
+				if( !original.isEmpty() )
+				{
+					if( original.get( 0 ) instanceof ProjectRefView )
+					{
+						System.out.println( "transform UPDATING" );
+						System.out.println( "original.size(): " + original.size() );
+						System.out.println( "listeningList.list.size(): " + listeningList.list.size() );
+					}
+				}
+				else if( !listeningList.list.isEmpty() )
+				{
+					if( listeningList.list.get( 0 ) instanceof Observable )
+					{
+						System.out.println( "transform UPDATING" );
+						System.out.println( "original.size(): " + original.size() );
+						System.out.println( "listeningList.list.size(): " + listeningList.list.size() );
+					}
+				}
 				listeningList.list.setAll( Lists.newArrayList( Iterables.transform( original, cache ) ) );
 			}
 		};
@@ -296,11 +315,13 @@ public class ObservableLists
 						@SuppressWarnings( "unchecked" )
 						public void onChanged( ListChangeListener.Change change )
 						{
+							System.out.println( "contentListeners" );
 							while( change.next() )
 							{
 								list.removeAll( change.getRemoved() );
 								list.addAll( change.getAddedSubList() );
 							}
+							System.out.println( "contentListeners done" );
 						}
 					};
 				}
@@ -399,11 +420,15 @@ public class ObservableLists
 			{
 				if( list1 instanceof ObservableList )
 				{
+					System.out.println( "FXCollections.sort" );
 					FXCollections.sort( ( ObservableList<E> )list1, comparator );
+					System.out.println( "FXCollections.sort done" );
 				}
 				else
 				{
+					System.out.println( "Collections.sort" );
 					Collections.sort( list1, comparator );
+					System.out.println( "Collections.sort done" );
 				}
 			}
 		};
