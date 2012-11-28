@@ -17,7 +17,7 @@ public class ProjectCreatedState extends TestState
 
 	private ProjectCreatedState()
 	{
-		super( "Project Created", FXAppLoadedState.STATE );
+		super( "Project Created", AgentsCreatedState.STATE );
 	}
 
 	@Override

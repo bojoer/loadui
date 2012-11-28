@@ -231,15 +231,18 @@ public class WorkspaceView extends StackPane
 			}
 		} );
 
-		agentCarousel.setContextMenu( ContextMenuBuilder.create()
-				.items( MenuItemBuilder.create().text( "Add Agent" ).onAction( new EventHandler<ActionEvent>()
-				{
-					@Override
-					public void handle( ActionEvent arg0 )
-					{
-						fireEvent( IntentEvent.create( IntentEvent.INTENT_CREATE, AgentItem.class ) );
-					}
-				} ).build() ).build() );
+		agentCarousel.setContextMenu( ContextMenuBuilder
+				.create()
+				.items(
+						MenuItemBuilder.create().text( "Add Agent" ).id( "add-agent-menu-button" )
+								.onAction( new EventHandler<ActionEvent>()
+								{
+									@Override
+									public void handle( ActionEvent arg0 )
+									{
+										fireEvent( IntentEvent.create( IntentEvent.INTENT_CREATE, AgentItem.class ) );
+									}
+								} ).build() ).build() );
 	}
 
 	private void initProjectRefCarousel()
