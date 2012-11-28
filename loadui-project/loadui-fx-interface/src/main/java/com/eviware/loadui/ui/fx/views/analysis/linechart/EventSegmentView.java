@@ -5,21 +5,20 @@ import javafx.fxml.FXML;
 import com.eviware.loadui.api.statistics.model.chart.line.TestEventSegment;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 
-public class EventSegmentView extends SegmentView
+public class EventSegmentView extends SegmentView<TestEventSegment>
 {
-	private final TestEventSegment eventSegment;
 
-	public EventSegmentView( TestEventSegment lineSegment )
+	public EventSegmentView( TestEventSegment segment )
 	{
-		this.eventSegment = lineSegment;
-
+		super( segment );
 		FXMLUtils.load( this );
 	}
 
 	@FXML
 	private void initialize()
 	{
-		setText( eventSegment.getTypeLabel() + " " + eventSegment.getSourceLabel() );
-	}
+		setText( segment.getTypeLabel() + " " + segment.getSourceLabel() );
 
+		createContextMenu();
+	}
 }

@@ -50,6 +50,7 @@ import com.eviware.loadui.api.statistics.model.chart.ChartView;
 import com.eviware.loadui.api.statistics.model.chart.line.ConfigurableLineChartView;
 import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
 import com.eviware.loadui.api.statistics.model.chart.line.LineSegment;
+import com.eviware.loadui.api.statistics.model.chart.line.Segment;
 import com.eviware.loadui.api.statistics.model.chart.line.TestEventSegment;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.testevents.TestEvent;
@@ -87,10 +88,8 @@ public class LineChartViewNode extends VBox
 				}
 			} );
 
-	private final Function<LineSegment, XYChart.Series<Number, Number>> lineSegmentToSeries = new LineSegmentToSeriesFunction();
-	private final Function<TestEventSegment, Series<Number, Number>> eventSegmentToSeries = new TestEventSegmentToSeriesFunction();
-	private final Function<LineSegment, LineSegmentView> lineSegmentToView = new LineSegmentToViewFunction();
-	private final Function<TestEventSegment, EventSegmentView> eventSegmentToView = new EventSegmentToViewFunction();
+	private final Function<Segment, XYChart.Series<Number, Number>> segmentToSeries = new SegmentToSeriesFunction();
+	private final Function<Segment, SegmentView> segmentToView = new SegmentToViewFunction();
 
 	private final ObservableValue<Execution> executionProperty;
 	private final Observable poll;
@@ -99,13 +98,8 @@ public class LineChartViewNode extends VBox
 	private final LongProperty position = new SimpleLongProperty( 0 );
 	private final LongProperty length = new SimpleLongProperty( 0 );
 	private final LongProperty shownSpan = new SimpleLongProperty( 60000 );
-	private final ObservableList<LineSegment> lineSegments;
-	private final ObservableList<TestEventSegment> eventSegments;
-	private final ObservableList<XYChart.Series<Number, Number>> lineSeriesList;
-	private final ObservableList<XYChart.Series<Number, Number>> eventSeriesList;
+	private final ObservableList<Segment> segmentsList;
 	private final ObservableList<XYChart.Series<Number, Number>> seriesList;
-	private final ObservableList<LineSegmentView> lineSegmentViews;
-	private final ObservableList<EventSegmentView> eventSegmentViews;
 	private final ObservableList<SegmentView> segmentViews;
 
 	@FXML
@@ -139,18 +133,9 @@ public class LineChartViewNode extends VBox
 			}
 		}, executionProperty, poll ) );
 
-		lineSegments = fx( ofCollection( chartView, LineChartView.SEGMENTS, LineSegment.class,
-				Iterables.filter( chartView.getSegments(), LineSegment.class ) ) );
-		lineSeriesList = transform( lineSegments, lineSegmentToSeries );
-		lineSegmentViews = transform( lineSegments, lineSegmentToView );
-
-		eventSegments = fx( ofCollection( chartView, LineChartView.SEGMENTS, TestEventSegment.class,
-				Iterables.filter( chartView.getSegments(), TestEventSegment.class ) ) );
-		eventSeriesList = transform( eventSegments, eventSegmentToSeries );
-		eventSegmentViews = transform( eventSegments, eventSegmentToView );
-
-		seriesList = concat( lineSeriesList, eventSeriesList );
-		segmentViews = concat( lineSegmentViews, eventSegmentViews );
+		segmentsList = fx( ofCollection( chartView, LineChartView.SEGMENTS, Segment.class, chartView.getSegments() ) );
+		seriesList = transform( segmentsList, segmentToSeries );
+		segmentViews = transform( segmentsList, segmentToView );
 
 		FXMLUtils.load( this );
 	}
@@ -176,11 +161,11 @@ public class LineChartViewNode extends VBox
 				int i = 0;
 				for( Series<?, ?> series : seriesList )
 				{
-					segmentViews.get( i++ ).setColor( seriesToColor( series ) );
-				}
-				for( Series<?, ?> series : eventSeriesList )
-				{
-					eventSeriesStyles.getUnchecked( series ).set( "-fx-stroke: " + seriesToColor( series ) + ";" );
+					segmentViews.get( i ).setColor( seriesToColor( series ) );
+					if( segmentViews.get( i ) instanceof EventSegmentView )
+						eventSeriesStyles.getUnchecked( series ).set( "-fx-stroke: " + seriesToColor( series ) + ";" );
+
+					i++ ;
 				}
 			}
 		} );
@@ -218,10 +203,18 @@ public class LineChartViewNode extends VBox
 		throw new RuntimeException( "This is mathematically impossible!" );
 	}
 
-	private final class LineSegmentToSeriesFunction implements Function<LineSegment, XYChart.Series<Number, Number>>
+	private final class SegmentToSeriesFunction implements Function<Segment, XYChart.Series<Number, Number>>
 	{
 		@Override
-		public XYChart.Series<Number, Number> apply( final LineSegment segment )
+		public XYChart.Series<Number, Number> apply( final Segment segment )
+		{
+			if( segment instanceof LineSegment )
+				return lineSegmentToSeries( ( LineSegment )segment );
+			else
+				return eventSegmentToSeries( ( TestEventSegment )segment );
+		}
+
+		private Series<Number, Number> lineSegmentToSeries( final LineSegment segment )
 		{
 			XYChart.Series<Number, Number> series = new XYChart.Series<>();
 			series.setName( segment.getStatisticName() );
@@ -240,13 +233,8 @@ public class LineChartViewNode extends VBox
 
 			return series;
 		}
-	}
 
-	private final class TestEventSegmentToSeriesFunction implements
-			Function<TestEventSegment, XYChart.Series<Number, Number>>
-	{
-		@Override
-		public XYChart.Series<Number, Number> apply( final TestEventSegment segment )
+		public XYChart.Series<Number, Number> eventSegmentToSeries( final TestEventSegment segment )
 		{
 			final XYChart.Series<Number, Number> series = new XYChart.Series<>();
 			series.setName( segment.getTypeLabel() );
@@ -283,17 +271,19 @@ public class LineChartViewNode extends VBox
 					newNode.setVisible( false );
 				}
 			} );
-
 			return series;
 		}
 	}
 
-	private final class LineSegmentToViewFunction implements Function<LineSegment, LineSegmentView>
+	private final class SegmentToViewFunction implements Function<Segment, SegmentView>
 	{
 		@Override
-		public LineSegmentView apply( final LineSegment segment )
+		public SegmentView apply( final Segment segment )
 		{
-			return new LineSegmentView( segment );
+			if( segment instanceof LineSegment )
+				return new LineSegmentView( ( LineSegment )segment );
+			else
+				return new EventSegmentView( ( TestEventSegment )segment );
 		}
 	}
 
