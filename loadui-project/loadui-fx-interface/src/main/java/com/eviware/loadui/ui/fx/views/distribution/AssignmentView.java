@@ -1,6 +1,7 @@
 package com.eviware.loadui.ui.fx.views.distribution;
 
-import javafx.beans.binding.Bindings;
+import static com.eviware.loadui.ui.fx.util.NodeUtils.bindStyleClass;
+import static javafx.beans.binding.Bindings.bindContent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.LabelBuilder;
@@ -11,7 +12,6 @@ import com.eviware.loadui.api.model.Assignment;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.control.DragNode;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
-import com.eviware.loadui.ui.fx.util.NodeUtils;
 import com.eviware.loadui.ui.fx.util.Properties;
 
 public class AssignmentView extends StackPane
@@ -29,7 +29,7 @@ public class AssignmentView extends StackPane
 		DragNode dragNode = DragNode.install( this, createLabel() );
 		dragNode.setData( assignment );
 
-		NodeUtils.bindStyleClass( this, "dragging", dragNode.draggingProperty() );
+		bindStyleClass( this, "dragging", dragNode.draggingProperty() );
 
 		final Label baseLabel = createLabel();
 		getChildren().add( 0, baseLabel );
@@ -39,7 +39,7 @@ public class AssignmentView extends StackPane
 	{
 		Label label = LabelBuilder.create().styleClass( "slim-icon" ).minWidth( 100 ).maxWidth( 100 ).build();
 		label.textProperty().bind( Properties.forLabel( assignment.getScene() ) );
-		Bindings.bindContent( label.getStylesheets(), getStylesheets() );
+		bindContent( label.getStylesheets(), getStylesheets() );
 		return label;
 	}
 

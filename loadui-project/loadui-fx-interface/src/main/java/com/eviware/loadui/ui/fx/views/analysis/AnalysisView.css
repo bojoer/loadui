@@ -1,0 +1,38 @@
+.tab-header-background {
+	-fx-background-color: #555555;
+}
+
+.tab-content-area
+{	
+	-fx-padding: 10 10 0 110;
+	-fx-background-color: #373737;
+}
+
+.tab {
+	/* height 21 m border, padding 16 */
+	-fx-padding: 0 14 0 14;
+}
+
+.create-new-button {
+	-fx-padding: 0 6 0 10;
+}
+
+.tab .tab-label {
+	-fx-text-fill: #e6e6e6;
+}
+
+.tab:hover {
+	-color-gradient: linear-gradient(to bottom, #737373, #404040);
+	-color-border: #404040;
+} 
+
+.tab:pressed {
+	-color-gradient: linear-gradient(to bottom, #1a1a1a, #404040);	
+	-color-border: #404040;
+}
+
+.tab:selected {
+	-color-gradient: linear-gradient(to bottom, #252525, #505050);	
+	-color-border: #404040;
+	-fx-padding: 0 -2 0 14;
+}
