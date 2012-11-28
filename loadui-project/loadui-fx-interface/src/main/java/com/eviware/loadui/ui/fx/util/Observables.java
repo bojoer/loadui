@@ -60,7 +60,6 @@ public class Observables
 							observable.removeListener( invalidationListener );
 						}
 					}
-					//					fireInvalidation();
 				}
 			} );
 

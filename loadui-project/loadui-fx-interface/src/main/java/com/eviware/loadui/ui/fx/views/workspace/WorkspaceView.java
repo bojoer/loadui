@@ -1,11 +1,13 @@
 package com.eviware.loadui.ui.fx.views.workspace;
 
+import static com.eviware.loadui.ui.fx.util.ObservableLists.bindSorted;
+import static javafx.beans.binding.Bindings.bindContent;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
 import javafx.application.Platform;
-import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
@@ -55,7 +57,8 @@ import com.google.common.io.Files;
 
 public class WorkspaceView extends StackPane
 {
-	private static final Logger LOG = LoggerFactory.getLogger( WorkspaceView.class );
+	protected static final Logger log = LoggerFactory.getLogger( WorkspaceView.class );
+
 	private static final String LATEST_DIRECTORY = "gui.latestDirectory";
 	private static final ExtensionFilter XML_EXTENSION_FILTER = new FileChooser.ExtensionFilter( "loadUI project file",
 			"*.xml" );
@@ -157,7 +160,7 @@ public class WorkspaceView extends StackPane
 		}
 		catch( IOException e )
 		{
-			LOG.warn( "Unable to load resource file 'application.properties!'", e );
+			log.warn( "Unable to load resource file 'application.properties!'", e );
 		}
 
 		webView.getEngine().load( props.getProperty( "starter.page.url" ) );
@@ -248,7 +251,7 @@ public class WorkspaceView extends StackPane
 	{
 		final Observables.Group group = Observables.group();
 
-		ObservableLists.bindSorted( projectRefCarousel.getItems(), projectRefViews, Ordering.usingToString(), group );
+		bindSorted( projectRefCarousel.getItems(), projectRefViews, Ordering.usingToString(), group );
 
 		labelProperties = ObservableLists.transform( projectRefCarousel.getItems(),
 				new Function<ProjectRefView, Observable>()
@@ -260,7 +263,7 @@ public class WorkspaceView extends StackPane
 					}
 				} );
 
-		Bindings.bindContent( group.getObservables(), labelProperties );
+		bindContent( group.getObservables(), labelProperties );
 
 		final String lastProject = workspace.getAttribute( "lastOpenProject", "" );
 		projectRefCarousel.setSelected( Iterables.find( projectRefCarousel.getItems(), new Predicate<ProjectRefView>()

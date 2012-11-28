@@ -63,5 +63,6 @@ public interface LineSegment extends Segment
 
 	public interface Removable extends LineSegment, Segment.Removable
 	{
+		// Marker interface.
 	}
 }

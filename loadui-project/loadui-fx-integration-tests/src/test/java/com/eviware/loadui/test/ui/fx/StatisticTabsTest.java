@@ -35,10 +35,15 @@ public class StatisticTabsTest
 	public void basics() throws Exception
 	{
 		StatisticPages pages = ProjectLoadedState.STATE.getProject().getStatisticPages();
-
 		assertTrue( pages.getChildCount() == 1 );
 
-		//		controller.click( ".project-playback-panel #play-button" );
-	}
+		controller.click( "#plus-button" ).click( "#untitled-page-2" ).click( "#untitled-page-1" ).click( "#plus-button" );
+		assertTrue( pages.getChildCount() == 3 );
 
+		controller.click( "#untitled-page-2" ).click( "#untitled-page-2 .tab-close-button" ).click( "#plus-button" )
+				.click( "#untitled-page-1" ).click( "#untitled-page-1 .tab-close-button" );
+		assertTrue( pages.getChildCount() == 2 );
+		assertTrue( pages.getChildAt( 0 ).getLabel().equals( "Untitled Page 3" ) );
+		assertTrue( pages.getChildAt( 1 ).getLabel().equals( "Untitled Page 4" ) );
+	}
 }
