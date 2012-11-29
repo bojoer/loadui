@@ -96,6 +96,196 @@ public class SplitterTest
 		assertThat( getProbabilityForOutput( 0 ), is( 100 ) );
 	}
 
+	@Test
+	public void changingKnobValueFirstTimeShouldCauseNearestKnobToCompensate() throws Exception
+	{
+		final int knobsCount = 4;
+		component.getProperty( "numOutputs" ).setValue( knobsCount );
+		TestUtils.awaitEvents( component );
+
+		// pre-condition: first knob is 100, others are all 0
+		assertThat( getProbabilityForOutput( 0 ), is( 100 ) );
+		assertThat( getProbabilityForOutput( 1 ), is( 0 ) );
+		assertThat( getProbabilityForOutput( 2 ), is( 0 ) );
+		assertThat( getProbabilityForOutput( 3 ), is( 0 ) );
+
+		// change one of them, should take off the value of the first knob
+		component.getProperty( "probability1" ).setValue( 50 );
+		TestUtils.awaitEvents( component );
+
+		assertThat( getProbabilityForOutput( 0 ), is( 50 ) );
+		assertThat( getProbabilityForOutput( 1 ), is( 50 ) );
+		assertThat( getProbabilityForOutput( 2 ), is( 0 ) );
+		assertThat( getProbabilityForOutput( 3 ), is( 0 ) );
+
+	}
+
+	@Test
+	public void changingKnobValueShouldCausePreviouslyChangedKnobToCompensate() throws Exception
+	{
+		final int knobsCount = 4;
+		component.getProperty( "numOutputs" ).setValue( knobsCount );
+		TestUtils.awaitEvents( component );
+
+		// pre-condition: first knob is 100, others are all 0
+		assertThat( getProbabilityForOutput( 0 ), is( 100 ) );
+		assertThat( getProbabilityForOutput( 1 ), is( 0 ) );
+		assertThat( getProbabilityForOutput( 2 ), is( 0 ) );
+		assertThat( getProbabilityForOutput( 3 ), is( 0 ) );
+
+		// change one of them, should take off the value of the first knob
+		component.getProperty( "probability1" ).setValue( 50 );
+		TestUtils.awaitEvents( component );
+
+		// change a second one, should take off the value from the previously changed one
+		component.getProperty( "probability2" ).setValue( 25 );
+		TestUtils.awaitEvents( component );
+
+		printValues();
+
+		assertThat( getProbabilityForOutput( 0 ), is( 50 ) );
+		assertThat( getProbabilityForOutput( 1 ), is( 25 ) );
+		assertThat( getProbabilityForOutput( 2 ), is( 25 ) );
+		assertThat( getProbabilityForOutput( 3 ), is( 0 ) );
+
+	}
+
+	@Test
+	public void changingAKnobToMoreThan100ShouldNotBePossible() throws Exception
+	{
+		component.getProperty( "numOutputs" ).setValue( 1 );
+		TestUtils.awaitEvents( component );
+
+		// pre-condition
+		assertThat( getProbabilityForOutput( 0 ), is( 100 ) );
+		
+		// set an invalid value
+		component.getProperty( "probability0" ).setValue( 101 );
+		TestUtils.awaitEvents( component );
+
+		assertThat( getProbabilityForOutput( 0 ), is( 100 ) );
+
+		// set an invalid value
+		component.getProperty( "probability0" ).setValue( 98712 );
+		TestUtils.awaitEvents( component );
+
+		assertThat( getProbabilityForOutput( 0 ), is( 100 ) );
+		
+	}
+	
+	@Test
+	public void changingAKnobToTooSmallValueShouldNotBePossible() throws Exception
+	{
+		component.getProperty( "numOutputs" ).setValue( 1 );
+		TestUtils.awaitEvents( component );
+
+		// pre-condition
+		assertThat( getProbabilityForOutput( 0 ), is( 100 ) );
+		
+		// set an invalid value
+		component.getProperty( "probability0" ).setValue( 98 );
+		TestUtils.awaitEvents( component );
+
+		assertThat( getProbabilityForOutput( 0 ), is( 100 ) );
+
+		// set an invalid value
+		component.getProperty( "probability0" ).setValue( -98 );
+		TestUtils.awaitEvents( component );
+
+		assertThat( getProbabilityForOutput( 0 ), is( 100 ) );
+		
+	}
+
+	@Test
+	public void changingSeveralKnobValuesShouldSumUpTo100() throws Exception
+	{
+		final int knobsCount = 7;
+		component.getProperty( "numOutputs" ).setValue( knobsCount );
+		TestUtils.awaitEvents( component );
+
+		// set knobs to absurd values
+		component.getProperty( "probability0" ).setValue( 50 );
+		component.getProperty( "probability1" ).setValue( 20 );
+		component.getProperty( "probability2" ).setValue( 20 );
+		component.getProperty( "probability3" ).setValue( 80 );
+		component.getProperty( "probability4" ).setValue( 60 );
+		component.getProperty( "probability5" ).setValue( 30 );
+		component.getProperty( "probability6" ).setValue( 2333333 );
+		TestUtils.awaitEvents( component );
+
+		assertThat( getProbabilityForOutput( 0 ), is( 50 ) );
+		assertThat( getProbabilityForOutput( 1 ), is( 20 ) );
+		assertThat( getProbabilityForOutput( 2 ), is( 20 ) );
+		assertThat( getProbabilityForOutput( 3 ), is( 10 ) );
+		assertThat( getProbabilityForOutput( 4 ), is( 0 ) );
+		assertThat( getProbabilityForOutput( 5 ), is( 0 ) );
+		assertThat( getProbabilityForOutput( 6 ), is( 0 ) );
+
+	}
+
+	@Test
+	public void changingSeveralKnobValuesTooHighAfterValidValuesEnteredNotAllowed() throws Exception
+	{
+		final int knobsCount = 7;
+		component.getProperty( "numOutputs" ).setValue( knobsCount );
+		TestUtils.awaitEvents( component );
+		
+		// set knobs to absurd values
+		component.getProperty( "probability0" ).setValue( 50 );
+		component.getProperty( "probability1" ).setValue( 10 );
+		component.getProperty( "probability2" ).setValue( 10 );
+		component.getProperty( "probability3" ).setValue( 10 );
+		component.getProperty( "probability4" ).setValue( 10 );
+		component.getProperty( "probability5" ).setValue( 5 );
+		component.getProperty( "probability6" ).setValue( 5 );
+		TestUtils.awaitEvents( component );
+
+		// ensure valid values were accepted
+		assertThat( getProbabilityForOutput( 0 ), is( 50 ) );
+		assertThat( getProbabilityForOutput( 1 ), is( 10 ) );
+		assertThat( getProbabilityForOutput( 2 ), is( 10 ) );
+		assertThat( getProbabilityForOutput( 3 ), is( 10 ) );
+		assertThat( getProbabilityForOutput( 4 ), is( 10 ) );
+		assertThat( getProbabilityForOutput( 5 ), is( 5 ) );
+		assertThat( getProbabilityForOutput( 6 ), is( 5 ) );
+
+		// try to change knobs to invalid values
+		component.getProperty( "probability0" ).setValue( 80 );
+		component.getProperty( "probability3" ).setValue( 30 );
+		component.getProperty( "probability5" ).setValue( 50 );
+		TestUtils.awaitEvents( component );
+
+		// ensure valid values were NOT accepted
+		assertThat( getProbabilityForOutput( 0 ), is( 50 ) );
+		assertThat( getProbabilityForOutput( 1 ), is( 10 ) );
+		assertThat( getProbabilityForOutput( 2 ), is( 10 ) );
+		assertThat( getProbabilityForOutput( 3 ), is( 10 ) );
+		assertThat( getProbabilityForOutput( 4 ), is( 10 ) );
+		assertThat( getProbabilityForOutput( 5 ), is( 5 ) );
+		assertThat( getProbabilityForOutput( 6 ), is( 5 ) );
+
+	}
+
+	/**
+	 * Useful for debugging what the knob values end up being set to
+	 */
+	private void printValues()
+	{
+		String toPrint = "";
+		for( int i = 0; true; i++ )
+		{
+			try
+			{
+				toPrint += "prob" + i + ":" + getProbabilityForOutput( i ) + " ";
+			}
+			catch( Error e )
+			{
+				break;
+			}
+		}
+		System.out.println( toPrint );
+	}
+
 	private int getProbabilityForOutput( int outputNumber )
 	{
 		assertThat( ( Integer )component.getProperty( "numOutputs" ).getValue(), Matchers.greaterThan( outputNumber ) );
