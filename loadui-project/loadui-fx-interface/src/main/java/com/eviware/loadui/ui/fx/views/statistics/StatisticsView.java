@@ -1,11 +1,21 @@
 package com.eviware.loadui.ui.fx.views.statistics;
 
+import static com.eviware.loadui.ui.fx.util.ObservableLists.filter;
+import static com.eviware.loadui.ui.fx.util.ObservableLists.fx;
+import static com.eviware.loadui.ui.fx.util.ObservableLists.ofCollection;
+import static com.google.common.base.Objects.equal;
+
 import java.lang.ref.WeakReference;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.animation.TimelineBuilder;
 import javafx.application.Platform;
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 import javafx.beans.property.Property;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleObjectProperty;
@@ -31,6 +41,8 @@ import com.google.common.base.Predicate;
 
 public class StatisticsView extends StackPane
 {
+	protected static final Logger log = LoggerFactory.getLogger( StatisticsView.class );
+
 	private final ProjectItem project;
 	private final ObservableList<Execution> executionList;
 	private final Property<Execution> currentExecution = new SimpleObjectProperty<>( this, "currentExecution" );
@@ -45,14 +57,23 @@ public class StatisticsView extends StackPane
 
 		executionManager.addExecutionListener( new CurrentExecutionListener( executionManager, this ) );
 
-		executionList = ObservableLists.fx( ObservableLists.filter( ObservableLists.ofCollection( executionManager,
-				ExecutionManager.EXECUTIONS, Execution.class, executionManager.getExecutions() ),
-				new Predicate<Execution>()
+		//		currentExecution.addListener( new InvalidationListener()
+		//		{
+		//			@Override
+		//			public void invalidated( Observable arg0 )
+		//			{
+		//				log.debug( "currentExecution.getName(): " + currentExecution.getName() );
+		//			}
+		//		} );
+
+		executionList = fx( filter(
+				ofCollection( executionManager, ExecutionManager.EXECUTIONS, Execution.class,
+						executionManager.getExecutions() ), new Predicate<Execution>()
 				{
 					@Override
 					public boolean apply( Execution input )
 					{
-						return Objects.equal( projectExecutionManager.getProjectId( input ), project.getId() );
+						return equal( projectExecutionManager.getProjectId( input ), project.getId() );
 					}
 				} ) );
 
@@ -77,14 +98,14 @@ public class StatisticsView extends StackPane
 					}
 					else if( event.getEventType() == IntentEvent.INTENT_CLOSE )
 					{
-						getChildren().setAll( new ResultView( executionList ) );
+						getChildren().setAll( new ResultView( currentExecution, executionList ) );
 						event.consume();
 					}
 				}
 			}
 		} );
 
-		getChildren().setAll( new ResultView( executionList ) );
+		getChildren().setAll( new ResultView( currentExecution, executionList ) );
 	}
 
 	private final static class CurrentExecutionListener extends ExecutionListenerAdapter

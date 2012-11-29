@@ -51,6 +51,7 @@ public class PageListSkin<E extends Node> extends SkinBase<PageList<E>, Behavior
 		StackPane.setAlignment( label, Pos.TOP_LEFT );
 
 		Label pageNum = new Label();
+		pageNum.getStyleClass().add( "page-number" );
 		pageNum.textProperty().bind(
 				Bindings.format( "Page %d of %d", itemList.pageProperty().add( 1 ), itemList.numPagesProperty() ) );
 		StackPane.setAlignment( pageNum, Pos.TOP_RIGHT );

@@ -3,6 +3,9 @@ package com.eviware.loadui.ui.fx.views.result;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.fx;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.transform;
 import static javafx.beans.binding.Bindings.bindContent;
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
+import javafx.beans.property.Property;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -23,11 +26,16 @@ public class ResultView extends StackPane
 	@FXML
 	private PageList<ExecutionView> resultNodeList;
 
+	@FXML
+	private PageList<ExecutionView> currentResultNode;
+
+	private final Property<Execution> currentExecution;
 	private final ObservableList<Execution> executionList;
 	private ObservableList<ExecutionView> executionViews;
 
-	public ResultView( ObservableList<Execution> executionList )
+	public ResultView( Property<Execution> currentExecution, ObservableList<Execution> executionList )
 	{
+		this.currentExecution = currentExecution;
 		this.executionList = executionList;
 
 		FXMLUtils.load( this );
@@ -36,12 +44,21 @@ public class ResultView extends StackPane
 	@FXML
 	private void initialize()
 	{
+		currentExecution.addListener( new InvalidationListener()
+		{
+			@Override
+			public void invalidated( Observable _ )
+			{
+				currentResultNode.getItems().setAll( new ExecutionView( currentExecution.getValue() ) );
+			}
+		} );
+
 		executionViews = fx( transform( executionList, new Function<Execution, ExecutionView>()
 		{
 			@Override
-			public ExecutionView apply( Execution projectRef )
+			public ExecutionView apply( Execution e )
 			{
-				return new ExecutionView( projectRef );
+				return new ExecutionView( e );
 			}
 		} ) );
 		bindContent( resultNodeList.getItems(), executionViews );
@@ -49,7 +66,7 @@ public class ResultView extends StackPane
 		executionViews.addListener( new ListChangeListener<ExecutionView>()
 		{
 			@Override
-			public void onChanged( javafx.collections.ListChangeListener.Change<? extends ExecutionView> c )
+			public void onChanged( Change<? extends ExecutionView> c )
 			{
 				for( ExecutionView e : executionViews )
 					e.setId( "result-" + Integer.toString( executionViews.indexOf( e ) ) );

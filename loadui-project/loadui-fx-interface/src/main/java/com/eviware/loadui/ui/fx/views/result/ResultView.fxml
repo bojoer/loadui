@@ -13,15 +13,21 @@
 <?import com.eviware.loadui.ui.fx.control.PageList?>
 
 <fx:root type="javafx.scene.layout.StackPane" xmlns:fx="http://javafx.com/fxml">
-	<VBox xmlns:fx="http://javafx.com/fxml" styleClass="result-view" spacing="10">
+	<VBox xmlns:fx="http://javafx.com/fxml" styleClass="result-view"
+		spacing="10">
 		<stylesheets>
 			<URL value="@ResultView.css" />
 		</stylesheets>
 		<Label styleClass="title" text="Results" />
-		<PageList fx:id="resultNodeList" maxHeight="260" widthPerItem="110" spacing="10">
-			<VBox.margin>
-				<Insets top="10" right="10" bottom="10" left="10" />
-			</VBox.margin>
-		</PageList>
+
+		<HBox>
+			<PageList fx:id="currentResultNode" id="current-result"/>
+			<PageList fx:id="resultNodeList" maxHeight="260"
+				widthPerItem="110" spacing="10">
+				<VBox.margin>
+					<Insets top="10" right="10" bottom="10" left="10" />
+				</VBox.margin>
+			</PageList>
+		</HBox>
 	</VBox>
 </fx:root>
