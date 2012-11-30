@@ -143,10 +143,21 @@ public class SplitterTest
 
 		printValues();
 
+		// after setting p2 to 25, should take this 25 from last changed which was p1
 		assertThat( getProbabilityForOutput( 0 ), is( 50 ) );
 		assertThat( getProbabilityForOutput( 1 ), is( 25 ) );
 		assertThat( getProbabilityForOutput( 2 ), is( 25 ) );
 		assertThat( getProbabilityForOutput( 3 ), is( 0 ) );
+
+		// now, setting p3 to 40 should cause the two previously changed knobs to go down
+		component.getProperty( "probability3" ).setValue( 40 );
+		TestUtils.awaitEvents( component );
+
+		// after setting p3 to 40, p2 should go down from 25 to 0, p1 should go down from 25 to 10
+		assertThat( getProbabilityForOutput( 0 ), is( 50 ) );
+		assertThat( getProbabilityForOutput( 1 ), is( 10 ) );
+		assertThat( getProbabilityForOutput( 2 ), is( 0 ) );
+		assertThat( getProbabilityForOutput( 3 ), is( 40 ) );
 
 	}
 
@@ -158,7 +169,7 @@ public class SplitterTest
 
 		// pre-condition
 		assertThat( getProbabilityForOutput( 0 ), is( 100 ) );
-		
+
 		// set an invalid value
 		component.getProperty( "probability0" ).setValue( 101 );
 		TestUtils.awaitEvents( component );
@@ -170,9 +181,9 @@ public class SplitterTest
 		TestUtils.awaitEvents( component );
 
 		assertThat( getProbabilityForOutput( 0 ), is( 100 ) );
-		
+
 	}
-	
+
 	@Test
 	public void changingAKnobToTooSmallValueShouldNotBePossible() throws Exception
 	{
@@ -181,7 +192,7 @@ public class SplitterTest
 
 		// pre-condition
 		assertThat( getProbabilityForOutput( 0 ), is( 100 ) );
-		
+
 		// set an invalid value
 		component.getProperty( "probability0" ).setValue( 98 );
 		TestUtils.awaitEvents( component );
@@ -193,7 +204,7 @@ public class SplitterTest
 		TestUtils.awaitEvents( component );
 
 		assertThat( getProbabilityForOutput( 0 ), is( 100 ) );
-		
+
 	}
 
 	@Test
@@ -213,6 +224,7 @@ public class SplitterTest
 		component.getProperty( "probability6" ).setValue( 2333333 );
 		TestUtils.awaitEvents( component );
 
+		// only the first ones that sum up to 100 should be set
 		assertThat( getProbabilityForOutput( 0 ), is( 50 ) );
 		assertThat( getProbabilityForOutput( 1 ), is( 20 ) );
 		assertThat( getProbabilityForOutput( 2 ), is( 20 ) );
@@ -229,7 +241,7 @@ public class SplitterTest
 		final int knobsCount = 7;
 		component.getProperty( "numOutputs" ).setValue( knobsCount );
 		TestUtils.awaitEvents( component );
-		
+
 		// set knobs to absurd values
 		component.getProperty( "probability0" ).setValue( 50 );
 		component.getProperty( "probability1" ).setValue( 10 );
@@ -263,6 +275,41 @@ public class SplitterTest
 		assertThat( getProbabilityForOutput( 4 ), is( 10 ) );
 		assertThat( getProbabilityForOutput( 5 ), is( 5 ) );
 		assertThat( getProbabilityForOutput( 6 ), is( 5 ) );
+
+	}
+
+	@Test
+	public void settingNonNumericValuesNotAllowed() throws Exception
+	{
+		component.getProperty( "numOutputs" ).setValue( 2 );
+		TestUtils.awaitEvents( component );
+
+		// set knobs to absurd values
+		component.getProperty( "probability0" ).setValue( "bogus" );
+		component.getProperty( "probability1" ).setValue( 50 );
+		TestUtils.awaitEvents( component );
+
+		// values should remain as they were initially
+		assertThat( getProbabilityForOutput( 0 ), is( 100 ) );
+		assertThat( getProbabilityForOutput( 1 ), is( 0 ) );
+
+		// set knobs to valid values
+		component.getProperty( "probability0" ).setValue( 50 );
+		component.getProperty( "probability1" ).setValue( 50 );
+		TestUtils.awaitEvents( component );
+
+		// values should have changed
+		assertThat( getProbabilityForOutput( 0 ), is( 50 ) );
+		assertThat( getProbabilityForOutput( 1 ), is( 50 ) );
+
+		// set knobs to absurd values
+		component.getProperty( "probability0" ).setValue( "bogus" );
+		component.getProperty( "probability1" ).setValue( "bad" );
+		TestUtils.awaitEvents( component );
+
+		// values should remain as they were before
+		assertThat( getProbabilityForOutput( 0 ), is( 50 ) );
+		assertThat( getProbabilityForOutput( 1 ), is( 50 ) );
 
 	}
 
