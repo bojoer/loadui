@@ -7,6 +7,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.sameInstance;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 import java.util.ArrayList;
@@ -47,8 +48,7 @@ public class CarouselTest
 		public void start( Stage primaryStage ) throws Exception
 		{
 			carousel = new Carousel<>( "ToolBox" );
-			carousel.getItems().setAll( buildRect( Color.RED ), buildRect( Color.ORANGE ), buildRect( Color.YELLOW ),
-					buildRect( Color.GREEN ), buildRect( Color.BLUE ), buildRect( Color.INDIGO ), buildRect( Color.VIOLET ) );
+			addTestItems();
 
 			primaryStage.setScene( SceneBuilder.create().stylesheets( "/com/eviware/loadui/ui/fx/loadui-style.css" )
 					.width( 300 ).height( 150 ).root( carousel ).build() );
@@ -57,14 +57,36 @@ public class CarouselTest
 			stageFuture.set( primaryStage );
 		}
 
-		private static Rectangle buildRect( Color color )
-		{
-			Rectangle rectangle = RectangleBuilder.create().width( 50 ).height( 75 ).fill( color ).id( color.toString() )
-					.build();
-			rectangles.add( rectangle );
+	}
 
-			return rectangle;
-		}
+	private static Rectangle buildRect( Color color )
+	{
+		Rectangle rectangle = RectangleBuilder.create().width( 50 ).height( 75 ).fill( color ).id( color.toString() )
+				.build();
+		rectangles.add( rectangle );
+
+		return rectangle;
+	}
+
+	private static void addTestItems()
+	{
+		carousel.getItems().setAll( buildRect( Color.RED ), buildRect( Color.ORANGE ), buildRect( Color.YELLOW ),
+				buildRect( Color.GREEN ), buildRect( Color.BLUE ), buildRect( Color.INDIGO ), buildRect( Color.VIOLET ) );
+	}
+
+	private static void setItems() throws Exception
+	{
+		FXTestUtils.invokeAndWait( new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				rectangles.clear();
+				carousel.getItems().clear();
+				addTestItems();
+			}
+		}, 5 );
+
 	}
 
 	@BeforeClass
@@ -84,7 +106,8 @@ public class CarouselTest
 			@Override
 			public void run()
 			{
-				carousel.setSelected( rectangles.get( 0 ) );
+				if( carousel.getItems().size() > 0 )
+					carousel.setSelected( carousel.getItems().get( 0 ) );
 			}
 		}, 5 );
 		FXTestUtils.printGraph( carousel );
@@ -93,6 +116,7 @@ public class CarouselTest
 	@Test
 	public void shouldHandleLessThanFull() throws Exception
 	{
+		setItems();
 		controller.move( ".carousel" );
 
 		while( !carousel.getItems().isEmpty() )
@@ -125,6 +149,7 @@ public class CarouselTest
 	@Test
 	public void shouldChangeSelectionUsingDropdown() throws Exception
 	{
+		setItems();
 		controller.click( ".combo-box" ).moveBy( 0, 70 ).click();
 		assertThat( carousel.getSelected(), sameInstance( rectangles.get( 2 ) ) );
 	}
@@ -132,6 +157,8 @@ public class CarouselTest
 	@Test
 	public void shouldScrollUsingButtons() throws Exception
 	{
+		setItems();
+
 		testScrolling( new Runnable()
 		{
 			@Override
@@ -153,6 +180,8 @@ public class CarouselTest
 	@Test
 	public void shouldScrollUsingMouseWheel() throws Exception
 	{
+		setItems();
+
 		controller.move( ".carousel" );
 		testScrolling( new Runnable()
 		{
@@ -207,4 +236,73 @@ public class CarouselTest
 		assertThat( rectangles.get( 2 ).getScene(), nullValue() );
 		assertThat( rectangles.get( 3 ).getScene(), notNullValue() );
 	}
+
+	@Test
+	public void shouldChangeSelectionWhenAddingNewNodes() throws Exception
+	{
+		final Rectangle whiteRect = buildRect( Color.WHITE );
+
+		FXTestUtils.invokeAndWait( new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				carousel.getItems().clear();
+			}
+		}, 5 );
+
+		assertThat( carousel.getSelected(), nullValue() );
+
+		FXTestUtils.invokeAndWait( new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				carousel.getItems().add( whiteRect );
+			}
+		}, 5 );
+
+		assertThat( carousel.getSelected(), sameInstance( whiteRect ) );
+		assertThat( carousel.getSelected().getStyleClass().contains( "selected" ), is( true ) );
+
+	}
+
+	@Test
+	public void shouldDisplayCorrectNumberOfNodesWhenAddingNewNodes() throws Exception
+	{
+		final Rectangle aPinkRect = RectangleBuilder.create().fill( Color.PINK ).styleClass( "pink" ).build();
+		final Rectangle bPurpleRect = RectangleBuilder.create().fill( Color.PURPLE ).styleClass( "purple" ).build();
+		final Rectangle cRedRect = RectangleBuilder.create().fill( Color.RED ).styleClass( "red" ).build();
+
+		FXTestUtils.invokeAndWait( new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				carousel.getItems().clear();
+			}
+		}, 5 );
+
+		assertThat( carousel.getSelected(), nullValue() );
+
+		FXTestUtils.invokeAndWait( new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				carousel.getItems().addAll( aPinkRect, bPurpleRect );
+				carousel.getItems().addAll( cRedRect );
+			}
+		}, 5 );
+
+		assertThat( carousel.getSelected(), notNullValue() );
+		assertEquals( carousel.getItems().size(), 3 );
+		controller.move( ".nav.left" );
+		assertThat( carousel.getSelected(), sameInstance( cRedRect ) );
+		controller.click( ".nav.left" ).sleep( 200 );
+		assertThat( carousel.getSelected(), sameInstance( bPurpleRect ) );
+		controller.click( ".nav.left" ).sleep( 200 );
+		assertThat( carousel.getSelected(), sameInstance( aPinkRect ) );
+	}
+
 }

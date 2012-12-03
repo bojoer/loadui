@@ -28,7 +28,10 @@ public class ScenarioToolboxItem extends Label
 
 	private Node createIcon()
 	{
-		return new ImageView( UIUtils.getImageFor( SceneItem.class ) );
+
+		ImageView imageView = new ImageView( UIUtils.getImageFor( SceneItem.class ) );
+		imageView.getStyleClass().add( "image" );
+		return imageView;
 	}
 
 	@Override

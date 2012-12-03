@@ -91,26 +91,37 @@ public class Carousel<E extends Node> extends Control
 			public void onChanged( ListChangeListener.Change<? extends E> change )
 			{
 				final E selected = getSelected();
-				if( selected == null )
-				{
-					return;
-				}
+
+				System.out.println( "****change detected: " + change );
 
 				if( items.isEmpty() )
 				{
+					System.out.println( "****Items empty: Setting Selected to NULL" );
 					setSelected( null );
+					return;
 				}
-				else if( !items.contains( selected ) )
+
+				while( change.next() )
 				{
-					while( change.next() )
+
+					if( change.wasAdded() )
 					{
+						System.out.println( "****ADD change: " + change );
+						setSelected( change.getAddedSubList().get( 0 ) );
+					}
+					else if( !items.contains( selected ) )
+					{
+						System.out.print( "*" );
 						if( change.getRemoved().contains( selected ) )
 						{
+							System.out.println( "****DELETE change: " + change );
 							setSelected( items.get( Math.max( 0, change.getFrom() - 1 ) ) );
 							return;
 						}
 					}
 				}
+
+				System.out.println( "****change processed: " + change );
 			}
 		} );
 	}
