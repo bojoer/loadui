@@ -15,8 +15,7 @@
  */
 package com.eviware.loadui.test.ui.fx.states;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -52,6 +51,7 @@ public class AgentsCreatedStateTest
 	public void shouldHaveAgents()
 	{
 		WorkspaceItem workspace = BeanInjector.getBean( WorkspaceProvider.class ).getWorkspace();
-		assertThat( workspace.getAgents().size(), is( 3 ) );
+		assertEquals( workspace.getAgents().size(), 3 );
 	}
+
 }

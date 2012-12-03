@@ -51,18 +51,20 @@ public class AgentsCreatedState extends TestState
 	@Override
 	protected void exitToParent() throws Exception
 	{
+		final Node agentCarousel = find( "#agentCarousel" );
+
 		log.debug( "Deleting project agents." );
-		GUI.getController().click( "#agentCarousel .agent-view #menuButton" ).click( "#delete" );
-		GUI.getController().click( "#agentCarousel .agent-view #menuButton" ).click( "#delete" );
-		GUI.getController().click( "#agentCarousel .agent-view #menuButton" ).click( "#delete" );
-		final Node projectCarousel = find( "#projectRefCarousel" );
+
+		GUI.getController().click( "#agentCarousel .agent-view.selected .menu-button" ).click( "#delete" );
+		GUI.getController().click( "#agentCarousel .agent-view.selected .menu-button" ).click( "#delete" );
+		GUI.getController().click( "#agentCarousel .agent-view.selected .menu-button" ).click( "#delete" );
 
 		TestUtils.awaitCondition( new Callable<Boolean>()
 		{
 			@Override
 			public Boolean call() throws Exception
 			{
-				return projectCarousel.lookup( ".project-ref-view" ) == null;
+				return agentCarousel.lookup( ".agent-view" ) == null;
 			}
 		} );
 	}
