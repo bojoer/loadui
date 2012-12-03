@@ -24,7 +24,7 @@
 		<OptionsSlider fx:id="onOffSwitch" styleClass="switch" options="ON, OFF" />
 		<MenuButton fx:id="menuButton" HBox.hgrow="SOMETIMES" maxWidth="200" text="Menu">
 			<items>
-				<MenuItem onAction="#delete" text="Delete" />
+				<MenuItem id = "delete" onAction="#delete" text="Delete" />
 			</items>
 		</MenuButton>
 	</HBox>
