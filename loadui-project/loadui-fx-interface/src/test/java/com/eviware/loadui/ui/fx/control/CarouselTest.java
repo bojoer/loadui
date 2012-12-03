@@ -263,6 +263,8 @@ public class CarouselTest
 		}, 5 );
 
 		assertThat( carousel.getSelected(), sameInstance( whiteRect ) );
+		assertThat( carousel.getSelected().getStyleClass().contains( "selected" ), is( true ) );
+
 	}
 
 	@Test
@@ -288,16 +290,19 @@ public class CarouselTest
 			@Override
 			public void run()
 			{
-				carousel.getItems().addAll( aPinkRect, bPurpleRect, cRedRect );
+				carousel.getItems().addAll( aPinkRect, bPurpleRect );
+				carousel.getItems().addAll( cRedRect );
 			}
 		}, 5 );
 
+		assertThat( carousel.getSelected(), notNullValue() );
 		assertEquals( carousel.getItems().size(), 3 );
-		controller.move( ".carousel" ).moveBy( 0, -20 ).sleep( 300 );
-		assertThat( carousel.getSelected(), sameInstance( aPinkRect ) );
-		controller.click( ".nav.right" ).sleep( 200 );
-		assertThat( carousel.getSelected(), sameInstance( bPurpleRect ) );
-		controller.click( ".nav.right" ).sleep( 200 );
+		controller.move( ".nav.left" );
 		assertThat( carousel.getSelected(), sameInstance( cRedRect ) );
+		controller.click( ".nav.left" ).sleep( 200 );
+		assertThat( carousel.getSelected(), sameInstance( bPurpleRect ) );
+		controller.click( ".nav.left" ).sleep( 200 );
+		assertThat( carousel.getSelected(), sameInstance( aPinkRect ) );
 	}
+
 }
