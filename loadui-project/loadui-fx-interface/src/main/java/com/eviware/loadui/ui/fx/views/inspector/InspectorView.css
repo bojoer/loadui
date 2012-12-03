@@ -4,16 +4,16 @@
 
 .tab-header-background {
 	-fx-background-color: #555555;
-	-fx-cursor: v-resize;
+	-fx-cursor: V_RESIZE;
 }
 
 .tab {
 	/* height 21 m border, padding 16 */
+	-fx-cursor: hand;
 }
 
 .tab .tab-label {
 	-fx-text-fill: #e6e6e6;
-	-fx-cursor: hand;
 }
 
 .tab:hover {
