@@ -232,7 +232,6 @@ public class AgentView extends VBox
 
 					if( event.getEventType() == DraggableEvent.DRAGGABLE_STARTED )
 					{
-						// TODO make assignment invisible
 						event.consume();
 					}
 					else if( event.getEventType() == DraggableEvent.DRAGGABLE_ENTERED )
@@ -255,10 +254,7 @@ public class AgentView extends VBox
 							scenario.getProject().unassignScene( scenario, assignment.getAgent() );
 							scenario.getProject().assignScene( scenario, agent );
 						}
-						else
-						{
-							// TODO make assignment visible again
-						}
+
 					}
 				}
 			}
