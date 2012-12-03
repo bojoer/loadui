@@ -157,19 +157,14 @@ public class CarouselSkin<E extends Node> extends SkinBase<Carousel<E>, Behavior
 			@Override
 			public void changed( ObservableValue<? extends E> arg0, E oldNode, E newNode )
 			{
-				System.out.println( "----COMBOBOX property changed: old; " + oldNode + " new: " + newNode
-						+ " - Is items empty? " + ( comboBox.getItems().isEmpty() ? "yes" : "no" ) );
 
 				if( newNode == null && !comboBox.getItems().isEmpty() )
 				{
 					comboBox.valueProperty().set( firstNonNull( oldNode, comboBox.getItems().get( 0 ) ) );
-					System.out.println( "----nCOMBOBOX setSelected to: "
-							+ firstNonNull( oldNode, comboBox.getItems().get( 0 ) ) );
 				}
 				else if( carousel.selectedProperty().getValue() != newNode )
 				{
 					carousel.setSelected( newNode );
-					System.out.println( "----COMBOBOX setSelected to: " + newNode );
 				}
 
 			}
@@ -194,7 +189,7 @@ public class CarouselSkin<E extends Node> extends SkinBase<Carousel<E>, Behavior
 			@Override
 			public void changed( ObservableValue<? extends E> arg0, E oldNode, E newNode )
 			{
-				System.out.println( "----Selected property changed: old; " + oldNode + " new: " + newNode );
+
 				if( oldNode != null )
 					oldNode.getStyleClass().remove( "selected" );
 

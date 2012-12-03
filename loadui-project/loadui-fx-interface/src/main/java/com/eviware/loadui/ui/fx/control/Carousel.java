@@ -92,11 +92,8 @@ public class Carousel<E extends Node> extends Control
 			{
 				final E selected = getSelected();
 
-				System.out.println( "****change detected: " + change );
-
 				if( items.isEmpty() )
 				{
-					System.out.println( "****Items empty: Setting Selected to NULL" );
 					setSelected( null );
 					return;
 				}
@@ -106,7 +103,6 @@ public class Carousel<E extends Node> extends Control
 
 					if( change.wasAdded() )
 					{
-						System.out.println( "****ADD change: " + change );
 						setSelected( change.getAddedSubList().get( 0 ) );
 					}
 					else if( !items.contains( selected ) )
@@ -114,14 +110,12 @@ public class Carousel<E extends Node> extends Control
 						System.out.print( "*" );
 						if( change.getRemoved().contains( selected ) )
 						{
-							System.out.println( "****DELETE change: " + change );
 							setSelected( items.get( Math.max( 0, change.getFrom() - 1 ) ) );
 							return;
 						}
 					}
 				}
 
-				System.out.println( "****change processed: " + change );
 			}
 		} );
 	}

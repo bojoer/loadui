@@ -39,7 +39,7 @@ import com.eviware.loadui.util.BeanInjector;
  * @author henrik.olsson
  */
 @Category( IntegrationTest.class )
-public class DistributionInspectorOpenedStateTest
+public class DistributionInspectorTest
 {
 	private static ArrayList<Node> toolBoxItems;
 	private static ArrayList<Node> agentViewBoxes;
@@ -47,7 +47,9 @@ public class DistributionInspectorOpenedStateTest
 	@BeforeClass
 	public static void enterState() throws Exception
 	{
-		DistributionInspectorOpenedState.STATE.enter();
+		TwoScenariosCreatedState.STATE.enter();
+
+		GUI.getController().click( "#Distribution" );
 
 		toolBoxItems = new ArrayList<Node>( TestFX.findAll( ".distribution-view .scenario-toolbox-item .image",
 				TestFX.find( ".distribution-view" ) ) );
@@ -55,17 +57,6 @@ public class DistributionInspectorOpenedStateTest
 		agentViewBoxes = new ArrayList<Node>( TestFX.findAll( ".distribution-view .agent-view .item-box",
 				TestFX.find( ".distribution-view" ) ) );
 
-		PopulateAgentViews();
-	}
-
-	@AfterClass
-	public static void leaveState() throws Exception
-	{
-		DistributionInspectorOpenedState.STATE.getParent().enter();
-	}
-
-	private static void PopulateAgentViews()
-	{
 		for( Node scenario : toolBoxItems )
 		{
 			GUI.getController().drag( scenario ).to( agentViewBoxes.get( 0 ) );
@@ -73,14 +64,20 @@ public class DistributionInspectorOpenedStateTest
 
 		GUI.getController().drag( toolBoxItems.get( 0 ) ).to( agentViewBoxes.get( 1 ) );
 		GUI.getController().drag( toolBoxItems.get( 1 ) ).to( agentViewBoxes.get( 2 ) );
+
+	}
+
+	@AfterClass
+	public static void leaveState() throws Exception
+	{
+		GUI.getController().click( "#Distribution" ).click( "#Distribution" );
+
+		TwoScenariosCreatedState.STATE.getParent().enter();
 	}
 
 	@Test
-	public void ScenariosShouldBeDeployed()
+	public void scenariosShouldBeDeployed()
 	{
-		System.out.println( "itemBoxItems size: " + toolBoxItems.size() + " CONTENT: " + toolBoxItems.toString() );
-		System.out.println( "agentViewBoxes size: " + agentViewBoxes.size() + " CONTENT: " + agentViewBoxes.toString() );
-
 		assertEquals( TestFX.findAll( ".assignment-view", agentViewBoxes.get( 0 ) ).size(), 2 );
 		assertEquals( TestFX.findAll( ".assignment-view", agentViewBoxes.get( 1 ) ).size(), 1 );
 		assertEquals( TestFX.findAll( ".assignment-view", agentViewBoxes.get( 2 ) ).size(), 1 );
@@ -92,7 +89,7 @@ public class DistributionInspectorOpenedStateTest
 	}
 
 	@Test
-	public void AssignmentShouldDragAndDrop()
+	public void assignmentShouldDragAndDrop()
 	{
 		ArrayList<Node> firstScenarioAssigments = new ArrayList<Node>( TestFX.findAll( ".assignment-view",
 				agentViewBoxes.get( 0 ) ) );
@@ -118,8 +115,8 @@ public class DistributionInspectorOpenedStateTest
 		ArrayList<Node> thirdScenarioAssigments = new ArrayList<Node>( TestFX.findAll( ".assignment-view",
 				agentViewBoxes.get( 2 ) ) );
 
-		GUI.getController().drag( secoundScenarioAssigments.get( 1 ) ).to( agentViewBoxes.get( 0 ) );
 		GUI.getController().drag( thirdScenarioAssigments.get( 1 ) ).to( agentViewBoxes.get( 0 ) );
+		GUI.getController().drag( secoundScenarioAssigments.get( 1 ) ).to( agentViewBoxes.get( 0 ) );
 
 		// original state
 		assertEquals( TestFX.findAll( ".assignment-view", agentViewBoxes.get( 0 ) ).size(), 2 );
@@ -129,7 +126,7 @@ public class DistributionInspectorOpenedStateTest
 	}
 
 	@Test
-	public void AssignmentShouldBeAddableAndDeleteable()
+	public void assignmentShouldBeAddableAndDeleteable()
 	{
 		ArrayList<Node> firstScenarioAssigments = new ArrayList<Node>( TestFX.findAll( ".assignment-view",
 				agentViewBoxes.get( 0 ) ) );
