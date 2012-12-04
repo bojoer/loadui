@@ -1,7 +1,4 @@
-.project-view {
-}
-
-.tab-header-area {
+#project-tab-pane > .tab-header-area {
 	-fx-padding: 0 0 0 250;
 }
 
@@ -17,3 +14,68 @@
 	-fx-font-size: 20px;
 }
 
+#settingsButton .graphic {
+	-fx-shape: -fx-shape-icon-settings;
+}
+
+#openHelpPageButton .graphic {
+	-fx-shape: -fx-shape-icon-help;
+	-fx-scale-x: 0.7;
+}
+
+#closeProjectButton .graphic {
+	-fx-shape: -fx-shape-icon-close;
+}
+
+#summaryButton .graphic {
+	-fx-shape: -fx-shape-icon-summary;
+}					
+
+/* detachable tab styling */
+
+.detachable-tab
+{
+	-fx-padding: 0 0 0 18;
+}
+
+
+.detachable-tab .tab-label {
+	-fx-content-display: right;
+	-fx-text-fill: #333333;
+	-fx-padding: -2 2 0 0;
+}
+
+.detachable-tab .styleable-graphic {
+	-color-button-gradient: transparent;
+	-color-button-border: transparent;
+	-color-arrow: -fx-body-color;
+
+	-fx-background-color: 
+		-color-button-border,
+		-color-button-gradient;
+
+	-fx-padding: 
+		0,
+		0;
+	-fx-background-radius: 
+		4,
+		4;
+	
+	-fx-background-insets: 
+		-3 -2 5 1,
+		-2 -1 6 2;	
+
+}
+
+.detachable-tab .styleable-graphic:hover {
+	-color-button-gradient:  linear-gradient(to bottom, derive(-base-color-mid, 50%),  derive(-base-color-mid, 10%));
+	-color-button-border: #666666;
+	-color-arrow: #666666;
+}
+.detachable-tab .graphic {
+	-fx-background-color: -color-arrow;
+	-fx-background-insets: 1 2 9 5;
+	-fx-padding: 0 6;
+	-fx-shape: -fx-shape-icon-detach-arrow;
+	
+}

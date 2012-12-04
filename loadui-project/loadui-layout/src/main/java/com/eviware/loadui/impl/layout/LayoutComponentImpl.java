@@ -20,7 +20,9 @@ import java.util.Map;
 import com.eviware.loadui.api.layout.LayoutComponent;
 import com.eviware.loadui.util.MapUtils;
 import com.google.common.base.Objects;
+import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 
 public class LayoutComponentImpl implements LayoutComponent
 {
@@ -30,7 +32,7 @@ public class LayoutComponentImpl implements LayoutComponent
 
 	public LayoutComponentImpl( Map<String, ?> args )
 	{
-		properties = args;
+		properties = ImmutableMap.copyOf( Maps.filterKeys( args, Predicates.notNull() ) );
 	}
 
 	public LayoutComponentImpl( String constraints )

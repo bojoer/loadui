@@ -15,6 +15,7 @@
  */
 package com.eviware.loadui.impl.statistics;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -148,6 +149,11 @@ public class StatisticHolderSupport implements Releasable
 	public Set<String> getStatisticVariableNames()
 	{
 		return Collections.unmodifiableSet( variables.keySet() );
+	}
+
+	public Collection<? extends StatisticVariable> getStatisticVariables()
+	{
+		return Collections.unmodifiableCollection( variables.values() );
 	}
 
 	/**

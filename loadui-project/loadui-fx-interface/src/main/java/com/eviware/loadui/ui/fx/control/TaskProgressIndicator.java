@@ -28,4 +28,10 @@ public class TaskProgressIndicator extends StackPane
 			progress.progressProperty().bind( task.progressProperty() );
 		}
 	}
+
+	public void dispose()
+	{
+		label.textProperty().unbind();
+		progress.progressProperty().unbind();
+	}
 }

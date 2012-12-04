@@ -1,7 +1,9 @@
 <?import java.net.URL?>
+<?import com.eviware.loadui.ui.fx.views.canvas.terminal.*?>
 
-<fx:root type="javafx.scene.layout.StackPane" xmlns:fx="http://javafx.com/fxml">
+<fx:root type="javafx.scene.layout.StackPane" xmlns:fx="http://javafx.com/fxml" styleClass="canvas-view">
 	<stylesheets>
 		<URL value="@CanvasView.css" />
 	</stylesheets>
+	<PascalOval/>
 </fx:root>

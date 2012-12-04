@@ -284,22 +284,26 @@ public final class ProjectRefImpl implements ProjectRef, Releasable
 		@Override
 		public void handleEvent( BaseEvent event )
 		{
-			if( Releasable.RELEASED.equals( event.getKey() ) )
+			//Verify that the event is from the same INSTANCE:
+			if( event.getSource() == project )
 			{
-				try
+				if( Releasable.RELEASED.equals( event.getKey() ) )
 				{
-					setEnabled( false );
+					try
+					{
+						setEnabled( false );
+					}
+					catch( IOException e )
+					{
+						//Ignore already logged exception.
+					}
 				}
-				catch( IOException e )
+				else if( Labeled.LABEL.equals( event.getKey() ) )
 				{
-					//Ignore already logged exception.
-				}
-			}
-			else if( Labeled.LABEL.equals( event.getKey() ) )
-			{
-				if( project != null )
-				{
-					doSetLabel( project.getLabel() );
+					if( project != null )
+					{
+						doSetLabel( project.getLabel() );
+					}
 				}
 			}
 		}

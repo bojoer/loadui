@@ -15,11 +15,13 @@
  */
 package com.eviware.loadui.api.statistics;
 
+import java.util.Collection;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
 
 import com.eviware.loadui.api.events.EventFirer;
+import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.statistics.model.Chart;
 
 /**
@@ -45,12 +47,20 @@ public interface StatisticHolder extends EventFirer, Chart.Owner
 	public StatisticVariable getStatisticVariable( String statisticVariableName );
 
 	/**
-	 * Gets a list of the names of all the contained StatisticsVariables.
+	 * Gets a set of the names of all the contained StatisticsVariables.
 	 * 
 	 * @return
 	 */
 	@Nonnull
 	public Set<String> getStatisticVariableNames();
+
+	/**
+	 * Gets a set of all the contained StatisticsVariables.
+	 * 
+	 * @return
+	 */
+	@Nonnull
+	public Collection<? extends StatisticVariable> getStatisticVariables();
 
 	/**
 	 * Gets a Set (which can be empty) of default Statistics contained under the
@@ -60,4 +70,12 @@ public interface StatisticHolder extends EventFirer, Chart.Owner
 	 */
 	@Nonnull
 	public Set<? extends Statistic.Descriptor> getDefaultStatistics();
+
+	/**
+	 * Returns the CanvasItem associated with this StatisticHolder.
+	 * 
+	 * @return
+	 */
+	@Nonnull
+	public CanvasItem getCanvas();
 }

@@ -1,10 +1,16 @@
 package com.eviware.loadui.ui.fx.util;
 
+import static com.google.common.collect.Lists.newArrayList;
+import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
@@ -12,8 +18,14 @@ import java.util.Arrays;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import org.junit.Ignore;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 
+import com.eviware.loadui.api.base.OrderedCollection;
+import com.eviware.loadui.api.events.BaseEvent;
+import com.eviware.loadui.api.events.CollectionEvent;
+import com.eviware.loadui.api.events.EventHandler;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Ordering;
@@ -49,6 +61,7 @@ public class ObservableListsTest
 	}
 
 	@Test
+	@Ignore( "This is no longer the behavior, the callers MUST keep the references themselves." )
 	public void bindContentUnorderedShouldKeepAStrongReferenceToTheBindee() throws InterruptedException
 	{
 		ObservableList<String> bindee = FXCollections.observableArrayList();
@@ -85,31 +98,6 @@ public class ObservableListsTest
 	}
 
 	@Test
-	public void concatUnorderedShouldReturnAListThatIsKeptInSyncWithItsSubLists()
-	{
-		ObservableList<String> a = FXCollections.observableArrayList();
-		ObservableList<String> b = FXCollections.observableArrayList();
-
-		ObservableList<String> ab = ObservableLists.concatUnordered( a, b );
-
-		a.add( "Foo" );
-		System.gc();
-		b.add( "Bar" );
-
-		assertTrue( ab.size() == a.size() + b.size() );
-		assertTrue( ab.containsAll( a ) );
-		assertTrue( ab.containsAll( b ) );
-
-		a.remove( "Foo" );
-		System.gc();
-		b.add( "Foo" );
-
-		assertTrue( ab.size() == a.size() + b.size() );
-		assertTrue( ab.containsAll( a ) );
-		assertTrue( ab.containsAll( b ) );
-	}
-
-	@Test
 	public void filterContainsOnlyValuesThatFulfilThePredicate()
 	{
 		ObservableList<Integer> allElements = FXCollections.observableArrayList();
@@ -124,7 +112,7 @@ public class ObservableListsTest
 
 		allElements.addAll( 1, 2, 3, 4 );
 		allElements.addAll( 5, 6, 7 );
-		assertThat( filteredElements, equalTo( Arrays.asList( 2, 4, 6 ) ) );
+		assertThat( filteredElements, equalTo( asList( 2, 4, 6 ) ) );
 	}
 
 	@Test
@@ -143,6 +131,44 @@ public class ObservableListsTest
 
 		allElements.addAll( 1, 2, 3, 4 );
 		allElements.addAll( 5, 6, 7 );
-		assertThat( transformedElements, equalTo( Arrays.asList( 2, 4, 6, 8, 10, 12, 14 ) ) );
+		assertThat( transformedElements, equalTo( asList( 2, 4, 6, 8, 10, 12, 14 ) ) );
+	}
+
+	@SuppressWarnings( { "unchecked", "rawtypes" } )
+	@Test
+	public void ofCollection_should_reflectAnOrderedCollection()
+	{
+		// Setup
+		ArgumentCaptor<EventHandler> eventHandlerArgument = ArgumentCaptor.forClass( EventHandler.class );
+		OrderedCollection.Mutable<Integer> collection = mock( OrderedCollection.Mutable.class );
+		when( collection.getChildren() ).thenReturn( newArrayList( 1, 2, 3 ) );
+
+		ObservableList<Integer> observableList = ObservableLists.ofCollection( collection );
+
+		// [initial state verification]
+		verify( collection ).addEventListener( any( Class.class ), eventHandlerArgument.capture() );
+		assertThat( observableList, equalTo( asList( 1, 2, 3 ) ) );
+
+		// collection.addChild( 4 );
+		when( collection.getChildren() ).thenReturn( newArrayList( 1, 2, 3, 4 ) );
+		EventHandler eventhandler = eventHandlerArgument.getValue();
+		eventhandler.handleEvent( new CollectionEvent( collection, OrderedCollection.CHILDREN,
+				CollectionEvent.Event.ADDED, 4 ) );
+
+		assertThat( observableList, equalTo( asList( 1, 2, 3, 4 ) ) );
+
+		// collection.removeChild( 2 );
+		when( collection.getChildren() ).thenReturn( newArrayList( 1, 3, 4 ) );
+		eventhandler.handleEvent( new CollectionEvent( collection, OrderedCollection.CHILDREN,
+				CollectionEvent.Event.REMOVED, 2 ) );
+
+		assertThat( observableList, equalTo( asList( 1, 3, 4 ) ) );
+
+		// collection.moveChild( 1, 2 );
+		when( collection.getChildren() ).thenReturn( newArrayList( 3, 4, 1 ) );
+		eventhandler.handleEvent( new BaseEvent( collection, OrderedCollection.CHILD_ORDER ) );
+
+		assertThat( observableList, equalTo( asList( 3, 4, 1 ) ) );
+
 	}
 }

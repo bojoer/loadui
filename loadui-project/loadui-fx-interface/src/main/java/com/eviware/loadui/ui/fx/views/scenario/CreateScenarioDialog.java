@@ -1,12 +1,11 @@
 package com.eviware.loadui.ui.fx.views.scenario;
 
+import javafx.beans.binding.Bindings;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TextFieldBuilder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,12 +14,13 @@ import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.control.ConfirmationDialog;
+import com.eviware.loadui.ui.fx.control.fields.ValidatableStringField;
 
 public class CreateScenarioDialog extends ConfirmationDialog
 {
 	private static final Logger log = LoggerFactory.getLogger( CreateScenarioDialog.class );
 
-	private final TextField scenarioNameField;
+	private final ValidatableStringField scenarioNameField;
 	private final ProjectItem project;
 	private final Point2D position;
 
@@ -29,9 +29,12 @@ public class CreateScenarioDialog extends ConfirmationDialog
 		super( owner, "New Scenario in: " + project.getLabel(), "Create" );
 		this.project = project;
 		this.position = position;
-		this.scenarioNameField = TextFieldBuilder.create().id( "scenario-name" ).build();
+		this.scenarioNameField = ValidatableStringField.Builder.create()
+				.stringConstraint( ValidatableStringField.NOT_EMPTY ).id( "scenario-name" ).build();
 
 		getItems().add( this.scenarioNameField );
+
+		confirmDisableProperty().bind( Bindings.not( ( scenarioNameField.isValidProperty() ) ) );
 
 		setOnConfirm( new EventHandler<ActionEvent>()
 		{

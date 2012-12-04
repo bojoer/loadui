@@ -12,6 +12,7 @@ import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.SceneBuilder;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBuilder;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.RegionBuilder;
@@ -69,6 +70,8 @@ public class DetachableTab extends Tab
 	{
 		super( label );
 
+		getStyleClass().add( "detachable-tab" );
+
 		contentProperty().bind(
 				Bindings
 						.when( detachedProperty )
@@ -120,13 +123,16 @@ public class DetachableTab extends Tab
 			}
 		} );
 
-		setGraphic( ButtonBuilder.create().text( "D" ).onAction( new EventHandler<ActionEvent>()
-		{
-			@Override
-			public void handle( ActionEvent arg0 )
-			{
-				setDetached( !isDetached() );
-			}
-		} ).build() );
+		Button detachButton = ButtonBuilder.create().styleClass( "styleable-graphic" )
+				.onAction( new EventHandler<ActionEvent>()
+				{
+					@Override
+					public void handle( ActionEvent arg0 )
+					{
+						setDetached( !isDetached() );
+					}
+				} ).build();
+		detachButton.visibleProperty().bind( selectedProperty() );
+		setGraphic( detachButton );
 	}
 }

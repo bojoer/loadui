@@ -1,6 +1,25 @@
 .workspace-view {
+	-fx-background-color: #333333;
 }
 
 .title {
 	-fx-font-size: 20px;
+}
+
+.web-container {
+	-fx-background-radius: 8;
+	-fx-padding: 10;
+	-fx-background-color: 
+	linear-gradient(from 0% 0% to 0% 100%, #262626 0%,#636363 50%,#272727 100%),
+	linear-gradient(from 0% 0% to 0% 100%, #262626 0%,#343434 70%,#272727 100%);
+	-fx-background-insets: 
+	0, 
+	0 2 0 2;
+	
+	-fx-padding: 30px;
+}
+
+#openHelpPageButton .graphic {
+	-fx-shape: -fx-shape-icon-help;
+	-fx-scale-x: 0.7;
 }

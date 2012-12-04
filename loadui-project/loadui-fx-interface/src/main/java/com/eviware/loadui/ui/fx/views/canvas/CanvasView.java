@@ -15,7 +15,6 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -27,8 +26,9 @@ import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
+import javafx.scene.GroupBuilder;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
+import javafx.scene.control.Labeled;
 import javafx.scene.control.Slider;
 import javafx.scene.control.SliderBuilder;
 import javafx.scene.effect.Effect;
@@ -57,8 +57,6 @@ import com.eviware.loadui.api.component.categories.SchedulerCategory;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.CanvasObjectItem;
 import com.eviware.loadui.api.model.ComponentItem;
-import com.eviware.loadui.api.model.ProjectItem;
-import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.terminal.Connection;
 import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
@@ -71,29 +69,25 @@ import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.control.DragNode;
 import com.eviware.loadui.ui.fx.control.ToolBox;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
-import com.eviware.loadui.ui.fx.util.ObservableLists;
 import com.eviware.loadui.ui.fx.views.canvas.component.ComponentView;
-import com.eviware.loadui.ui.fx.views.canvas.scenario.ScenarioView;
 import com.eviware.loadui.ui.fx.views.canvas.terminal.ConnectionView;
 import com.eviware.loadui.ui.fx.views.canvas.terminal.TerminalView;
 import com.eviware.loadui.ui.fx.views.canvas.terminal.Wire;
-import com.eviware.loadui.ui.fx.views.scenario.NewScenarioIcon;
 import com.eviware.loadui.util.collections.SafeExplicitOrdering;
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 
 public class CanvasView extends StackPane
 {
-	@SuppressWarnings( "unused" )
-	private static final Logger log = LoggerFactory.getLogger( CanvasView.class );
+	protected static final Logger log = LoggerFactory.getLogger( CanvasView.class );
+
 	private static final Effect selectedEffect = new Glow( 0.5 );
 	private static final int GRID_SIZE = 36;
-	private static final double PADDING = 100;
+	private static final double PADDING = -45;
 	private final UninstallCanvasObjectView uninstallCanvasObject = new UninstallCanvasObjectView();
 
 	private static final Function<String, String> TO_LOWER = new Function<String, String>()
@@ -118,15 +112,6 @@ public class CanvasView extends StackPane
 				public ComponentView apply( ComponentItem input )
 				{
 					return ComponentView.newInstance( input );
-				}
-			} );
-	private final Function<SceneItem, ScenarioView> SCENARIO_TO_VIEW = Functions.compose(
-			new InitializeCanvasObjectView<ScenarioView>(), new Function<SceneItem, ScenarioView>()
-			{
-				@Override
-				public ScenarioView apply( SceneItem input )
-				{
-					return new ScenarioView( input );
 				}
 			} );
 
@@ -159,7 +144,7 @@ public class CanvasView extends StackPane
 
 			ReadOnlyBooleanProperty selectedProperty = Selectable.installSelectable( connectionView ).selectedProperty();
 			connectionView.fillProperty().bind(
-					Bindings.when( selectedProperty ).then( Color.BLUE ).otherwise( Color.LIGHTGRAY ) );
+					Bindings.when( selectedProperty ).then( Color.web( "#00ADEE" ) ).otherwise( Color.GRAY ) );
 			connectionView.effectProperty().bind(
 					Bindings.when( selectedProperty ).then( selectedEffect ).otherwise( ( Effect )null ) );
 			selectedProperty.addListener( new ChangeListener<Boolean>()
@@ -199,35 +184,39 @@ public class CanvasView extends StackPane
 			return !input.isDeprecated();
 		}
 	};
-	private static final NewScenarioIcon SCENARIO_ICON = new NewScenarioIcon();
 
 	private final CanvasItem canvas;
-	private final ObservableList<CanvasObjectView> canvasObjects;
+	private final ObservableList<? extends CanvasObjectView> canvasObjects;
 	private final ObservableList<ConnectionView> connections;
 
-	protected final Group canvasLayer = new Group();
-	private final Group componentLayer = new Group();
-	private final Group connectionLayer = new Group();
+	protected final Group canvasLayer = GroupBuilder.create().styleClass( "canvas-layer" ).build();
+	private final Group componentLayer = GroupBuilder.create().styleClass( "component-layer" ).build();
+	private final Group connectionLayer = GroupBuilder.create().styleClass( "connection-layer" ).build();
 
 	public CanvasView( CanvasItem canvas )
 	{
 		this.canvas = canvas;
-		ObservableList<ComponentView> components = transform(
-				fx( ofCollection( canvas, CanvasItem.COMPONENTS, ComponentItem.class, canvas.getComponents() ) ),
-				COMPONENT_TO_VIEW );
 
-		ObservableList<ScenarioView> scenarios = transform(
-				fx( ofCollection( canvas, ProjectItem.SCENES, SceneItem.class, canvas.getChildren() ) ), SCENARIO_TO_VIEW );
+		canvasObjects = createCanvasObjects();
+		canvasObjects.addListener( uninstallCanvasObject );
 
 		connections = transform(
 				fx( ofCollection( canvas, CanvasItem.CONNECTIONS, Connection.class, canvas.getConnections() ) ),
 				CONNECTION_TO_VIEW );
 
-		canvasObjects = ObservableLists.concatUnordered( components, scenarios );
-		canvasObjects.addListener( uninstallCanvasObject );
-
 		FXMLUtils.load( this, this, CanvasView.class.getResource( CanvasView.class.getSimpleName() + ".fxml" ) );
-		System.out.println( "Created canvas: " + this );
+	}
+
+	protected ObservableList<? extends Labeled> createToolBoxContent()
+	{
+		return transform( fx( filter( ofServices( ComponentDescriptor.class ), NOT_DEPRECATED ) ), DESCRIPTOR_TO_VIEW );
+	}
+
+	protected ObservableList<? extends CanvasObjectView> createCanvasObjects()
+	{
+		return transform(
+				fx( ofCollection( canvas, CanvasItem.COMPONENTS, ComponentItem.class, canvas.getComponents() ) ),
+				COMPONENT_TO_VIEW );
 	}
 
 	protected boolean shouldAccept( final Object data )
@@ -242,15 +231,18 @@ public class CanvasView extends StackPane
 
 	private void handleDraggableEvents( final DraggableEvent event )
 	{
-		if( event.getEventType() == DraggableEvent.DRAGGABLE_ENTERED && shouldAccept( event.getData() ) )
+		if( shouldAccept( event.getData() ) )
 		{
-			event.accept();
-			event.consume();
-		}
-		else if( event.getEventType() == DraggableEvent.DRAGGABLE_DROPPED )
-		{
-			handleDrop( event );
-			event.consume();
+			if( event.getEventType() == DraggableEvent.DRAGGABLE_ENTERED )
+			{
+				event.accept();
+				event.consume();
+			}
+			else if( event.getEventType() == DraggableEvent.DRAGGABLE_DROPPED )
+			{
+				handleDrop( event );
+				event.consume();
+			}
 		}
 	}
 
@@ -292,25 +284,16 @@ public class CanvasView extends StackPane
 		bindContentUnordered( componentLayer.getChildren(), canvasObjects );
 		bindContentUnordered( connectionLayer.getChildren(), connections );
 
-		ToolBox<Label> descriptors = new ToolBox<>( "Components" );
+		ToolBox<Labeled> descriptors = new ToolBox<>( "Components" );
 		defineComparators( descriptors );
 
 		descriptors.setMaxWidth( 100 );
+		descriptors.setHeightPerItem( 120 );
 		StackPane.setAlignment( descriptors, Pos.CENTER_LEFT );
-		StackPane.setMargin( descriptors, new Insets( 10, 0, 10, 0 ) );
+		StackPane.setMargin( descriptors, new Insets( 10, 0, 34, 0 ) );
+		descriptors.maxHeightProperty().bind( descriptors.prefHeightProperty() );
 
-		ObservableList<ComponentDescriptorView> componentDescriptors = transform(
-				fx( filter( ofServices( ComponentDescriptor.class ), NOT_DEPRECATED ) ), DESCRIPTOR_TO_VIEW );
-		if( canvas instanceof SceneItem )
-		{
-			Bindings.bindContent( descriptors.getItems(), componentDescriptors );
-		}
-		else
-		{
-			ObservableList<NewScenarioIcon> scenario = FXCollections.observableList( ImmutableList.of( SCENARIO_ICON ) );
-			Bindings
-					.bindContent( descriptors.getItems(), ObservableLists.concatUnordered( scenario, componentDescriptors ) );
-		}
+		Bindings.bindContent( descriptors.getItems(), createToolBoxContent() );
 
 		Pane componentWrapper = new Pane();
 		Rectangle clipRect = new Rectangle();
@@ -327,7 +310,6 @@ public class CanvasView extends StackPane
 			{
 				handleDraggableEvents( event );
 			}
-
 		} );
 
 		componentLayer.addEventFilter( DraggableEvent.ANY, new ConnectionDraggingFilter() );
@@ -347,7 +329,7 @@ public class CanvasView extends StackPane
 
 	private Node createGrid()
 	{
-		Region gridRegion = RegionBuilder.create().styleClass( "canvas-view" ).build();
+		Region gridRegion = RegionBuilder.create().styleClass( "grid" ).build();
 		//Hack for setting CSS resources within an OSGi framework
 		String gridUrl = CanvasView.class.getResource( "grid-box.png" ).toExternalForm();
 		gridRegion.setStyle( "-fx-background-image: url('" + gridUrl + "');" );
@@ -494,22 +476,22 @@ public class CanvasView extends StackPane
 		return canvas;
 	}
 
-	private static final Function<Label, String> LABEL_TEXT = new Function<Label, String>()
+	private static final Function<Labeled, String> LABELED_TEXT = new Function<Labeled, String>()
 	{
 		@Override
-		public String apply( Label view )
+		public String apply( Labeled view )
 		{
 			return view.getText();
 		}
 	};
 
-	private static Ordering<Label> order( String... labels )
+	private static Ordering<Labeled> order( String... labels )
 	{
 		return Ordering.compound( Arrays.asList( SafeExplicitOrdering.of( labels ), Ordering.<String> natural() ) )
-				.onResultOf( LABEL_TEXT );
+				.onResultOf( LABELED_TEXT );
 	}
 
-	private static void defineComparators( ToolBox<Label> descriptors )
+	private static void defineComparators( ToolBox<Labeled> descriptors )
 	{
 		descriptors.setCategoryComparator( CATEGORY_COMPARATOR );
 		descriptors.setComparator( GeneratorCategory.CATEGORY,
@@ -543,8 +525,13 @@ public class CanvasView extends StackPane
 		}
 	}
 
-	private final class InitializeCanvasObjectView<T extends CanvasObjectView> implements Function<T, T>
+	protected final class InitializeCanvasObjectView<T extends CanvasObjectView> implements Function<T, T>
 	{
+		public InitializeCanvasObjectView()
+		{
+			//Needed by ProjectCanvasView
+		}
+
 		@Override
 		public T apply( final T view )
 		{
@@ -594,7 +581,7 @@ public class CanvasView extends StackPane
 
 		public ConnectionDraggingFilter()
 		{
-			wire.setFill( Color.LIGHTGRAY );
+			wire.setFill( Color.GRAY );
 			wire.setVisible( false );
 
 			canvasLayer.getChildren().add( 0, wire );

@@ -1,6 +1,7 @@
 package com.eviware.loadui.test.ui.fx.states;
 
 import static com.eviware.loadui.ui.fx.util.test.TestFX.find;
+import static com.eviware.loadui.util.test.TestUtils.awaitCondition;
 
 import java.util.concurrent.Callable;
 
@@ -9,7 +10,6 @@ import javafx.scene.input.KeyCode;
 
 import com.eviware.loadui.test.TestState;
 import com.eviware.loadui.test.ui.fx.GUI;
-import com.eviware.loadui.util.test.TestUtils;
 
 public class ProjectCreatedState extends TestState
 {
@@ -17,20 +17,21 @@ public class ProjectCreatedState extends TestState
 
 	private ProjectCreatedState()
 	{
-		super( "Project Created", FXAppLoadedState.STATE );
+		super( "Project Created", AgentsCreatedState.STATE );
 	}
 
+	// This method randomly throws an IndexOutOfBoundsException which breaks the test.
+	// TODO: We should look into it once the source code for ObservableList is released.
 	@Override
 	protected void enterFromParent() throws Exception
 	{
 		final Node projectCarousel = find( "#projectRefCarousel" );
 		log.debug( "Creating new project." );
-		GUI.getController().drag( "#newProjectIcon" ).to( projectCarousel ).type( "Project 1" ).type( KeyCode.TAB )
-				.type( "project-1.xml" ).click( ".check-box" ).click( "#default" );
 
-		//GUI.getController().click( projectCarousel, MouseButton.SECONDARY ).moveBy( 15, 10 ).click();
+		GUI.getController().sleep( 2000 ).drag( "#newProjectIcon" ).to( projectCarousel ).type( "Project 1" )
+				.type( KeyCode.TAB ).type( "project-1.xml" ).click( ".check-box" ).click( "#default" );
 
-		TestUtils.awaitCondition( new Callable<Boolean>()
+		awaitCondition( new Callable<Boolean>()
 		{
 			@Override
 			public Boolean call() throws Exception
@@ -47,7 +48,7 @@ public class ProjectCreatedState extends TestState
 		GUI.getController().click( "#projectRefCarousel .project-ref-view .menu-button" ).click( "#delete" );
 		final Node projectCarousel = find( "#projectRefCarousel" );
 
-		TestUtils.awaitCondition( new Callable<Boolean>()
+		awaitCondition( new Callable<Boolean>()
 		{
 			@Override
 			public Boolean call() throws Exception

@@ -1,25 +1,41 @@
 package com.eviware.loadui.ui.fx.views.result;
 
-import javafx.beans.binding.Bindings;
+import static com.eviware.loadui.ui.fx.util.ObservableLists.fx;
+import static com.eviware.loadui.ui.fx.util.ObservableLists.transform;
+import static javafx.beans.binding.Bindings.bindContent;
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
+import javafx.beans.property.Property;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.ListView;
 import javafx.scene.layout.StackPane;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.eviware.loadui.api.statistics.store.Execution;
+import com.eviware.loadui.ui.fx.control.PageList;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
-import com.eviware.loadui.ui.fx.util.ObservableLists;
 import com.google.common.base.Function;
 
 public class ResultView extends StackPane
 {
+	protected static final Logger log = LoggerFactory.getLogger( ResultView.class );
+
 	@FXML
-	private ListView<ExecutionNode> resultNodeList;
+	private PageList<ExecutionView> resultNodeList;
 
+	@FXML
+	private PageList<ExecutionView> currentResultNode;
+
+	private final Property<Execution> currentExecution;
 	private final ObservableList<Execution> executionList;
+	private ObservableList<ExecutionView> executionViews;
 
-	public ResultView( ObservableList<Execution> executionList )
+	public ResultView( Property<Execution> currentExecution, ObservableList<Execution> executionList )
 	{
+		this.currentExecution = currentExecution;
 		this.executionList = executionList;
 
 		FXMLUtils.load( this );
@@ -28,15 +44,33 @@ public class ResultView extends StackPane
 	@FXML
 	private void initialize()
 	{
-		Bindings.bindContent( resultNodeList.getItems(),
-				ObservableLists.fx( ObservableLists.transform( this.executionList, new Function<Execution, ExecutionNode>()
-				{
-					@Override
-					public ExecutionNode apply( Execution projectRef )
-					{
-						return new ExecutionNode( projectRef );
-					}
-				} ) ) );
-	}
+		currentExecution.addListener( new InvalidationListener()
+		{
+			@Override
+			public void invalidated( Observable _ )
+			{
+				currentResultNode.getItems().setAll( new ExecutionView( currentExecution.getValue() ) );
+			}
+		} );
 
+		executionViews = fx( transform( executionList, new Function<Execution, ExecutionView>()
+		{
+			@Override
+			public ExecutionView apply( Execution e )
+			{
+				return new ExecutionView( e );
+			}
+		} ) );
+		bindContent( resultNodeList.getItems(), executionViews );
+
+		executionViews.addListener( new ListChangeListener<ExecutionView>()
+		{
+			@Override
+			public void onChanged( Change<? extends ExecutionView> c )
+			{
+				for( ExecutionView e : executionViews )
+					e.setId( "result-" + Integer.toString( executionViews.indexOf( e ) ) );
+			}
+		} );
+	}
 }

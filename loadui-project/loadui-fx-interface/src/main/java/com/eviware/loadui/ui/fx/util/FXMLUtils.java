@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.Map;
 
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +19,7 @@ public class FXMLUtils
 	 * Loads an fxml resource using the simple name of root's class and sets root
 	 * as the component tree root and controller.
 	 */
-	public static void load( Node root )
+	public static void load( Object root )
 	{
 		load( root, root );
 	}
@@ -29,7 +28,7 @@ public class FXMLUtils
 	 * Loads an fxml resource using the simple name of root's class and sets root
 	 * as the component tree root and controller as the controller.
 	 */
-	public static void load( Node root, Object controller )
+	public static void load( Object root, Object controller )
 	{
 		load( root, controller, Collections.<String, Object> emptyMap() );
 	}
@@ -39,7 +38,7 @@ public class FXMLUtils
 	 * as the component tree root and controller as the controller. Uses mapping
 	 * for controlling namespaces.
 	 */
-	public static void load( Node root, Object controller, Map<String, ? extends Object> mapping )
+	public static void load( Object root, Object controller, Map<String, ? extends Object> mapping )
 	{
 		String fileName = root.getClass().getSimpleName() + ".fxml";
 		URL url = root.getClass().getResource( fileName );
@@ -58,7 +57,7 @@ public class FXMLUtils
 	 * Loads an fxml resource from resourceName and sets root as the component
 	 * tree root and controller as the controller.
 	 */
-	public static void load( Node root, Object controller, URL resourceName )
+	public static void load( Object root, Object controller, URL resourceName )
 	{
 		load( root, controller, Collections.<String, Object> emptyMap(), resourceName );
 	}
@@ -68,7 +67,7 @@ public class FXMLUtils
 	 * tree root and controller as the controller. Uses mapping for controlling
 	 * namespaces.
 	 */
-	public static void load( Node root, Object controller, Map<String, ? extends Object> mapping, URL resourceName )
+	public static void load( Object root, Object controller, Map<String, ? extends Object> mapping, URL resourceName )
 	{
 		FXMLLoader loader = new FXMLLoader( resourceName );
 		loader.setClassLoader( classLoader );
@@ -86,8 +85,7 @@ public class FXMLUtils
 		}
 		catch( IOException exception )
 		{
-			throw new RuntimeException( "Unable to load fxml view: " + root.getClass().getSimpleName() + ".fxml",
-					exception );
+			throw new RuntimeException( "Unable to load fxml view: " + resourceName, exception );
 		}
 	}
 }

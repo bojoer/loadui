@@ -13,19 +13,12 @@
 	<stylesheets>
 		<URL value="@InspectorView.css" />
 	</stylesheets>
-	<TabPane fx:id="tabPane" tabClosingPolicy="unavailable" AnchorPane.topAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0">
-		<Tab text="System log">
-			<Region id="mrgreen" style="-fx-background-color: green;" />
-		</Tab>
-		<Tab text="Agents">
-			<Region id="mryellow" style="-fx-background-color: yellow;" maxHeight="250" />
-		</Tab>
-	</TabPane>
-	<HBox fx:id="buttonBar" alignment="CENTER_RIGHT" spacing="4" AnchorPane.topAnchor="0" AnchorPane.rightAnchor="0">
+	<TabPane fx:id="tabPane" id="tabPane" tabClosingPolicy="unavailable" AnchorPane.topAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" />
+	<HBox fx:id="buttonBar" styleClass="button-bar" alignment="CENTER_RIGHT" AnchorPane.topAnchor="0" AnchorPane.rightAnchor="0">
 		<padding>
 			<Insets right="4" />
 		</padding>
-		<Button text="?" />
+		<Button fx:id="helpButton" text="?" />
 		<Button text="!" />
 	</HBox>
 </fx:root>

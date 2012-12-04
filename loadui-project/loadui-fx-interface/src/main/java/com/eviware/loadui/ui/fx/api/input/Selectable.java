@@ -146,12 +146,10 @@ public class Selectable
 	{
 		CURRENTLY_SELECTED.add( this );
 		setSelected( true );
-		log.debug( "Was selected." );
 	}
 
 	public void deselect()
 	{
-		log.debug( "deselect" );
 		CURRENTLY_SELECTED.remove( this );
 		setSelected( false );
 	}

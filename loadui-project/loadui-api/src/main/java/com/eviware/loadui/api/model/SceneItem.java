@@ -17,6 +17,8 @@ package com.eviware.loadui.api.model;
 
 import javax.annotation.Nonnull;
 
+import com.eviware.loadui.api.execution.TestExecution;
+import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.api.terminal.InputTerminal;
 
 /**
@@ -48,6 +50,21 @@ public interface SceneItem extends CanvasItem, CanvasObjectItem
 	 * @return
 	 */
 	public boolean isFollowProject();
+
+	/**
+	 * Gets the followProject property.
+	 * 
+	 * @return
+	 */
+	public Property<Boolean> followProjectProperty();
+
+	/**
+	 * TODO: Document
+	 * 
+	 * @param execution
+	 * @return
+	 */
+	public boolean isAffectedByExecutionTask( TestExecution execution );
 
 	/**
 	 * Sets the followProject property value.

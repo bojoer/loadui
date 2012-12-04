@@ -17,6 +17,7 @@ package com.eviware.loadui.launcher.util;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -106,11 +107,10 @@ public class BndUtils
 	 *           Java library to create bundle from.
 	 * @param output
 	 *           Created bundle file.
-	 * @return true on success, false otherwise.
 	 */
-	public static boolean wrap( File input, File output )
+	public static void wrap( File input, File output )
 	{
-		return wrap( input, output, null, null, null, true );
+		wrap( input, output, null, null, null, true );
 	}
 
 	/**
@@ -128,16 +128,16 @@ public class BndUtils
 	 * @param pedantic
 	 * @return true on success, false otherwise.
 	 */
-	public static boolean wrap( File input, File output, File properties, File classpath[],
-			Map<String, String> additional, boolean pedantic )
+	public static void wrap( File input, File output, File properties, File classpath[], Map<String, String> additional,
+			boolean pedantic )
 	{
 		if( !input.exists() )
 		{
 			//log.error( "Error creating bundle. No such file: " + input.getAbsolutePath() );
-			return false;
+			throw new IllegalArgumentException( "Input file does not exist: " + input.getAbsolutePath() );
 		}
 
-		try (Analyzer analyzer = new Analyzer(); Jar jar = analyzer.getJar())
+		try (Analyzer analyzer = new Analyzer())
 		{
 			analyzer.setPedantic( pedantic );
 			analyzer.setJar( input );
@@ -181,7 +181,7 @@ public class BndUtils
 			analyzer.calcManifest();
 			File f = File.createTempFile( "tmpbnd", ".jar" );
 			f.deleteOnExit();
-			try
+			try (Jar jar = analyzer.getJar())
 			{
 				jar.write( f );
 				jar.close();
@@ -193,14 +193,14 @@ public class BndUtils
 			finally
 			{
 				if( !f.delete() )
-					System.out.println( "Failed deleting file: " + f.getAbsolutePath() );
+				{
+					throw new IOException( "Failed deleting file: " + f.getAbsolutePath() );
+				}
 			}
-			return true;
 		}
 		catch( Exception e )
 		{
-			//log.error( "Error creating bundle. No such file: " + input.getAbsolutePath() );
-			return false;
+			throw new RuntimeException( e );
 		}
 	}
 

@@ -1,26 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.geometry.Insets?>
 <?import java.net.URL?>
+<?import java.lang.String?>
 
-<fx:root type="javafx.scene.layout.StackPane" xmlns:fx="http://javafx.com/fxml">
-	<VBox xmlns:fx="http://javafx.com/fxml" styleClass="agent-view">
-		<stylesheets>
-			<URL value="@AgentView.css" />
-		</stylesheets>
-		<HBox spacing="3">
-			<ToggleButton fx:id="onOffSwitch" />
-			<MenuButton fx:id="menuButton" HBox.hgrow="SOMETIMES" maxWidth="200" >
-				<items>
-					<MenuItem onAction="#delete" text="Delete" />
-				</items>
-			</MenuButton>
-		</HBox>
-		<Region prefWidth="60" prefHeight="80" style="-fx-background-color: blue;" />
-	</VBox>
+<?import com.eviware.loadui.ui.fx.control.OptionsSlider?>
+<?import com.eviware.loadui.ui.fx.control.ScrollableList?>
+
+<fx:root type="javafx.scene.layout.VBox" xmlns:fx="http://javafx.com/fxml" styleClass="agent-view">
+	<stylesheets>
+		<URL value="@AgentView.css"  />
+	</stylesheets>
+	<Label fx:id="agentLabel" id="agentLabel" minHeight= "20" styleClass="styleable-graphic"/>
+	<HBox spacing="3">
+		<OptionsSlider fx:id="onOffSwitch" styleClass="switch" options="ON, OFF" />
+		<MenuButton fx:id="menuButton" HBox.hgrow="SOMETIMES" maxWidth="200" text="Menu">
+			<items>
+				<MenuItem id = "delete" onAction="#delete" text="Delete" />
+			</items>
+		</MenuButton>
+	</HBox>
+	<StackPane prefWidth="60" VBox.vgrow="ALWAYS" styleClass="dots">
+		<ScrollableList fx:id="scenarioList" orientation="VERTICAL" sizePerItem="22" />
+	</StackPane>
 </fx:root>

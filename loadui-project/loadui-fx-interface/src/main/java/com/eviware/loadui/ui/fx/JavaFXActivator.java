@@ -9,6 +9,7 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 import com.eviware.loadui.api.model.WorkspaceProvider;
+import com.eviware.loadui.ui.fx.util.CoreImageResolver;
 import com.eviware.loadui.util.BeanInjector;
 
 public class JavaFXActivator implements BundleActivator
@@ -38,6 +39,7 @@ public class JavaFXActivator implements BundleActivator
 			{
 				try
 				{
+					BeanInjector.getBean( CoreImageResolver.class );
 					new MainWindow( BeanInjector.getBeanFuture( Stage.class ).get(), BeanInjector.getBeanFuture(
 							WorkspaceProvider.class ).get() ).show();
 				}

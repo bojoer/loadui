@@ -8,6 +8,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.Tab?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.HBox?>
@@ -16,34 +17,27 @@
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ToolBar?>
 
-<fx:root type="javafx.scene.layout.StackPane" minHeight="60" maxHeight="60" styleClass="scenario-toolbar" xmlns:fx="http://javafx.com/fxml">
+<fx:root type="javafx.scene.layout.AnchorPane" minHeight="60"
+	maxHeight="60" styleClass="scenario-toolbar" xmlns:fx="http://javafx.com/fxml">
 	<stylesheets>
 		<URL value="@ScenarioToolbar.css" />
 	</stylesheets>
-	<StackPane minHeight="60" maxHeight="60" style="-fx-background-color: red;" />
-	
-	<StackPane VBox.vgrow="always" minHeight="60" maxHeight="60">
-		<VBox fillWidth="true">
-			<ToolBar minHeight="60" />
-			<StackPane VBox.vgrow="always" />
-		</VBox>
-		<ScenarioPlaybackPanel fx:id="playbackPanel" StackPane.alignment="TOP_CENTER" />
-		<HBox maxWidth="300" minHeight="60" alignment="CENTER_LEFT" StackPane.alignment="TOP_LEFT">
-			<MenuButton fx:id="menuButton">
-				<HBox.margin>
-					<Insets left="80" />
-				</HBox.margin>
-				<items>
-					<MenuItem fx:id="clone" id="clone" text="Rename" onAction="#renameScenario" />
-					<MenuItem fx:id="close" id="close" text="Close" onAction="#closeScenario" />
-				</items>
-			</MenuButton>
-		</HBox>
-		<HBox maxWidth="200" minHeight="60" alignment="CENTER_RIGHT" StackPane.alignment="TOP_RIGHT">
-			<Button fx:id="openHelpPageButton" text="Help" onAction="#openHelpPage" />
-			<Button fx:id="close" text="Close" onAction="#closeScenario" />
-		</HBox>
-	</StackPane>
-	
-	
+
+	<VBox fillWidth="true" AnchorPane.topAnchor="0"
+		AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="0"
+		AnchorPane.leftAnchor="0">
+		<ToolBar minHeight="60" />
+	</VBox>
+	<MenuButton fx:id="menuButton" maxWidth="240"
+		AnchorPane.topAnchor="18" AnchorPane.leftAnchor="80">
+		<items>
+			<MenuItem fx:id="clone" id="clone" text="Rename" onAction="#renameScenario" />
+			<MenuItem fx:id="close" id="close" text="Close" onAction="#closeScenario" />
+		</items>
+	</MenuButton>
+	<HBox maxWidth="200" maxHeight="60" alignment="CENTER_RIGHT"
+		AnchorPane.topAnchor="18" AnchorPane.rightAnchor="10">
+		<Button fx:id="openHelpPageButton" id="openHelpPageButton" styleClass="styleable-graphic, toolbar-button" onAction="#openHelpPage" />
+		<Button fx:id="closeScenarioButton" id="closeScenarioButton" styleClass="styleable-graphic, toolbar-button" onAction="#closeScenario" />
+	</HBox>
 </fx:root>

@@ -3,6 +3,7 @@ package com.eviware.loadui.ui.fx.util;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanExpression;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ReadOnlyIntegerProperty;
@@ -65,7 +66,7 @@ public class Pager<T>
 
 	public void setPage( int page )
 	{
-		Preconditions.checkPositionIndex( page, getNumPages() );
+		Preconditions.checkPositionIndex( page, getNumPages() - 1 );
 		this.page.set( page );
 	}
 
@@ -88,7 +89,7 @@ public class Pager<T>
 		return numPages.getReadOnlyProperty();
 	}
 
-	private final ReadOnlyIntegerWrapper offset = new ReadOnlyIntegerWrapper( this, "offset" )
+	private final ReadOnlyIntegerWrapper offset = new ReadOnlyIntegerWrapper( this, "offset", 0 )
 	{
 		{
 			bind( Bindings.when( fluentMode ).then( page ).otherwise( page.multiply( itemsPerPage ) ) );
@@ -139,6 +140,54 @@ public class Pager<T>
 		items.addListener( shownItemsListener );
 		offset.addListener( shownItemsListener );
 		itemsPerPage.addListener( shownItemsListener );
+
+		numPages.addListener( new InvalidationListener()
+		{
+			@Override
+			public void invalidated( Observable arg0 )
+			{
+				if( page.get() >= numPages.get() )
+				{
+					page.set( numPages.get() - 1 );
+				}
+			}
+		} );
+	}
+
+	public BooleanExpression hasPrevProperty()
+	{
+		return page.greaterThan( 0 );
+	}
+
+	public boolean hasPrev()
+	{
+		return hasPrevProperty().getValue();
+	}
+
+	public BooleanExpression hasNextProperty()
+	{
+		return page.lessThan( numPages.subtract( 1 ) );
+	}
+
+	public boolean hasNext()
+	{
+		return hasNextProperty().getValue();
+	}
+
+	public void nextPage()
+	{
+		if( hasNext() )
+		{
+			setPage( getPage() + 1 );
+		}
+	}
+
+	public void prevPage()
+	{
+		if( hasPrev() )
+		{
+			setPage( getPage() - 1 );
+		}
 	}
 
 	public Pager( ObservableList<T> providedList, int itemsPerPage )

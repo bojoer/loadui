@@ -1,4 +1,4 @@
-.canvas-view {
+.canvas-view .grid {
 	-fx-background-color: #393939;
 	-fx-background-image: url("grid-box.png");
 	-fx-background-repeat: repeat;

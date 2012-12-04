@@ -1,58 +1,127 @@
 package com.eviware.loadui.ui.fx.views.analysis;
 
+import static com.eviware.loadui.ui.fx.util.ObservableLists.appendElement;
+import static com.eviware.loadui.ui.fx.util.ObservableLists.fx;
+import static com.eviware.loadui.ui.fx.util.ObservableLists.ofCollection;
+import static com.eviware.loadui.ui.fx.util.ObservableLists.optimize;
+import static com.eviware.loadui.ui.fx.util.ObservableLists.transform;
+import javafx.beans.Observable;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabBuilder;
+import javafx.scene.control.TabPane;
 import javafx.scene.layout.StackPane;
+
+import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.model.ProjectItem;
-import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
+import com.eviware.loadui.api.statistics.model.StatisticPage;
+import com.eviware.loadui.api.statistics.model.StatisticPages;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.Properties;
+import com.google.common.base.Function;
 
 public class AnalysisView extends StackPane
 {
-	private static final Logger log = LoggerFactory.getLogger( AnalysisView.class );
+	protected static final Logger log = LoggerFactory.getLogger( AnalysisView.class );
+
+	private static final String UNTITLED_PAGE_PREFIX = "Untitled Page ";
+
+	private final EventHandler<Event> createNewTab = new EventHandler<Event>()
+	{
+		@Override
+		public void handle( Event _ )
+		{
+			if( !plusButton.isSelected() )
+				return;
+
+			int maxNumber = 0;
+			for( StatisticPage page : pagesObject.getChildren() )
+			{
+				String label = page.getLabel();
+				if( label.startsWith( UNTITLED_PAGE_PREFIX ) )
+				{
+					try
+					{
+						int number = Integer.parseInt( label.substring( UNTITLED_PAGE_PREFIX.length() ) );
+						maxNumber = Math.max( number, maxNumber );
+					}
+					catch( NumberFormatException e )
+					{
+						// ignore
+					}
+				}
+			}
+
+			pagesObject.createPage( UNTITLED_PAGE_PREFIX + ++maxNumber );
+		}
+	};
+
+	private final Function<StatisticPage, Tab> STATISTIC_PAGE_TO_TAB = new Function<StatisticPage, Tab>()
+	{
+		@Override
+		@Nullable
+		public StatisticTab apply( @Nullable StatisticPage page )
+		{
+			return new StatisticTab( page, currentExecution, poll );
+		}
+	};
 
 	@FXML
 	private Label executionLabel;
 
 	@FXML
-	private StackPane chartContainer;
+	private TabPane tabPane;
+
+	@FXML
+	private AnalysisToolBox toolBox;
 
 	private final ProjectItem project;
 	private final ObservableList<Execution> executionList;
+	private final Observable poll;
 
-	private final Property<Execution> currentExecutionProperty = new SimpleObjectProperty<>();
+	private final Property<Execution> currentExecution = new SimpleObjectProperty<>( this, "currentExecution" );
+
+	private Tab plusButton;
+
+	private StatisticPages pagesObject;
+
+	private ObservableList<Tab> allTabs;
 
 	public Property<Execution> currentExecutionProperty()
 	{
-		return currentExecutionProperty;
+		return currentExecution;
 	}
 
-	public void setCurrentExecution( Execution currentExecution )
+	public void setCurrentExecution( Execution value )
 	{
-		currentExecutionProperty.setValue( currentExecution );
+		currentExecution.setValue( value );
 	}
 
 	public Execution getCurrentExecution()
 	{
-		return currentExecutionProperty.getValue();
+		return currentExecution.getValue();
 	}
 
-	public AnalysisView( ProjectItem project, ObservableList<Execution> executionList )
+	public AnalysisView( ProjectItem project, ObservableList<Execution> executionList, Observable poll )
 	{
 		this.project = project;
 		this.executionList = executionList;
+		this.poll = poll;
 
 		FXMLUtils.load( this );
 	}
@@ -60,22 +129,69 @@ public class AnalysisView extends StackPane
 	@FXML
 	private void initialize()
 	{
-		currentExecutionProperty.addListener( new ChangeListener<Execution>()
+		toolBox.setProject( project );
+
+		currentExecution.addListener( new ChangeListener<Execution>()
 		{
 			@Override
-			public void changed( ObservableValue<? extends Execution> arg0, Execution arg1, Execution arg2 )
+			public void changed( ObservableValue<? extends Execution> arg0, Execution arg1, Execution newExecution )
 			{
 				executionLabel.textProperty().unbind();
-				executionLabel.textProperty().bind( Properties.forLabel( arg2 ) );
+				executionLabel.textProperty().bind( Properties.forLabel( newExecution ) );
 			}
 		} );
 
 		try
 		{
-			LineChartView chartView = ( LineChartView )project.getStatisticPages().getChildAt( 0 ).getChildAt( 0 )
-					.getChartView();
+			pagesObject = project.getStatisticPages();
 
-			chartContainer.getChildren().setAll( new LineChartViewNode( currentExecutionProperty, chartView ) );
+			if( project.getStatisticPages().getChildCount() == 0 )
+			{
+				project.getStatisticPages().createPage( UNTITLED_PAGE_PREFIX + "1" );
+			}
+
+			final ObservableList<StatisticPage> statisticPages = ofCollection( pagesObject );
+
+			final ObservableList<Tab> tabs = transform( fx( statisticPages ), STATISTIC_PAGE_TO_TAB );
+
+			plusButton = TabBuilder.create().id( "plus-button" ).text( "+" ).closable( false )
+					.onSelectionChanged( createNewTab ).styleClass( "create-new-button" ).build();
+
+			allTabs = optimize( appendElement( tabs, plusButton ) );
+			allTabs.addListener( new ListChangeListener<Tab>()
+			{
+				@Override
+				public void onChanged( ListChangeListener.Change<? extends Tab> change )
+				{
+					while( change.next() )
+					{
+						tabPane.getTabs().removeAll( change.getRemoved() );
+						for( Tab newTab : change.getAddedSubList() )
+						{
+							tabPane.getTabs().add( allTabs.indexOf( newTab ), newTab );
+						}
+					}
+				}
+			} );
+			tabPane.getTabs().setAll( allTabs );
+
+			tabPane.getTabs().addListener( new ListChangeListener<Tab>()
+			{
+				@Override
+				public void onChanged( javafx.collections.ListChangeListener.Change<? extends Tab> c )
+				{
+					while( c.next() )
+					{
+						if( c.wasAdded() )
+						{
+							Tab newTab = c.getAddedSubList().get( 0 );
+							if( newTab != plusButton )
+								tabPane.getSelectionModel().select( newTab );
+						}
+					}
+				}
+			} );
+
 		}
 		catch( Exception e )
 		{
@@ -87,5 +203,4 @@ public class AnalysisView extends StackPane
 	{
 		AnalysisView.this.fireEvent( IntentEvent.create( IntentEvent.INTENT_CLOSE, getCurrentExecution() ) );
 	}
-
 }

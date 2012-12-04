@@ -3,8 +3,11 @@ package com.eviware.loadui.ui.fx.control;
 import java.util.Comparator;
 
 import javafx.beans.DefaultProperty;
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -14,6 +17,7 @@ import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Ordering;
 
 @DefaultProperty( "items" )
@@ -83,6 +87,8 @@ public class ToolBox<E extends Node> extends Control
 	{
 		getStyleClass().setAll( DEFAULT_STYLE_CLASS );
 
+		label.getStyleClass().add( "title" );
+
 		itemComparators.put( null, Ordering.usingToString() );
 
 		items.addListener( new ListChangeListener<E>()
@@ -109,6 +115,31 @@ public class ToolBox<E extends Node> extends Control
 	public Label getLabel()
 	{
 		return label;
+	}
+
+	public StringProperty textProperty()
+	{
+		return getLabel().textProperty();
+	}
+
+	public String getText()
+	{
+		return getLabel().getText();
+	}
+
+	public void setText( String text )
+	{
+		getLabel().setText( text );
+	}
+
+	public Node getGraphic()
+	{
+		return getLabel().getGraphic();
+	}
+
+	public void setGraphic( Node graphic )
+	{
+		getLabel().setGraphic( graphic );
 	}
 
 	public ObservableList<E> getItems()
@@ -158,5 +189,23 @@ public class ToolBox<E extends Node> extends Control
 			return itemComparators.get( category );
 		}
 		return getComparator();
+	}
+
+	private final DoubleProperty heightPerItem = new SimpleDoubleProperty( this, "heightPerItem", 100.0 );
+
+	public DoubleProperty heightPerItemProperty()
+	{
+		return heightPerItem;
+	}
+
+	public double getHeightPerItem()
+	{
+		return heightPerItem.get();
+	}
+
+	public void setHeightPerItem( double value )
+	{
+		Preconditions.checkArgument( value > 0, "heightPerItem must be >0, was %d", value );
+		heightPerItem.set( value );
 	}
 }

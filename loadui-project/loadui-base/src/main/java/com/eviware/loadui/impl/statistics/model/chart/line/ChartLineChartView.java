@@ -15,6 +15,8 @@
  */
 package com.eviware.loadui.impl.statistics.model.chart.line;
 
+import static com.google.common.collect.Iterables.filter;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -109,6 +111,7 @@ public class ChartLineChartView extends AbstractLineChartView implements Configu
 	private Segment addOrGetExistingSegment( Segment segment )
 	{
 		String segmentId = segment.toString();
+		log.debug( "SEGMENT ID: " + segmentId );
 
 		if( getSegment( segmentId ) == null )
 		{
@@ -205,7 +208,7 @@ public class ChartLineChartView extends AbstractLineChartView implements Configu
 			{
 				StatisticVariable removedElement = ( StatisticVariable )event.getElement();
 
-				for( LineSegment lineSegment : Iterables.filter( provider.getSegments(), LineSegment.class ) )
+				for( LineSegment lineSegment : filter( provider.getSegments(), LineSegment.class ) )
 					if( lineSegment.getStatistic().getStatisticVariable().equals( removedElement ) )
 						removeSegment( lineSegment );
 			}

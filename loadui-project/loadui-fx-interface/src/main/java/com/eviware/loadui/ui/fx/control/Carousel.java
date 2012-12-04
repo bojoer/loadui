@@ -4,6 +4,8 @@ import javafx.beans.DefaultProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ObjectPropertyBase;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -81,25 +83,31 @@ public class Carousel<E extends Node> extends Control
 	{
 		getStyleClass().setAll( DEFAULT_STYLE_CLASS );
 
+		label.getStyleClass().add( "list-title" );
+
 		items.addListener( new ListChangeListener<E>()
 		{
 			@Override
 			public void onChanged( ListChangeListener.Change<? extends E> change )
 			{
 				final E selected = getSelected();
-				if( selected == null )
-				{
-					return;
-				}
 
 				if( items.isEmpty() )
 				{
 					setSelected( null );
+					return;
 				}
-				else if( !items.contains( selected ) )
+
+				while( change.next() )
 				{
-					while( change.next() )
+
+					if( change.wasAdded() )
 					{
+						setSelected( change.getAddedSubList().get( 0 ) );
+					}
+					else if( !items.contains( selected ) )
+					{
+						System.out.print( "*" );
 						if( change.getRemoved().contains( selected ) )
 						{
 							setSelected( items.get( Math.max( 0, change.getFrom() - 1 ) ) );
@@ -107,6 +115,7 @@ public class Carousel<E extends Node> extends Control
 						}
 					}
 				}
+
 			}
 		} );
 	}
@@ -152,5 +161,22 @@ public class Carousel<E extends Node> extends Control
 	public ObservableList<E> getItems()
 	{
 		return items;
+	}
+
+	private final StringProperty placeholderText = new SimpleStringProperty( this, "placeholderText", "No items" );
+
+	public StringProperty placeholderTextProperty()
+	{
+		return placeholderText;
+	}
+
+	public String getPlaceholderText()
+	{
+		return placeholderText.get();
+	}
+
+	public void setPlaceholderText( String value )
+	{
+		placeholderText.set( value );
 	}
 }

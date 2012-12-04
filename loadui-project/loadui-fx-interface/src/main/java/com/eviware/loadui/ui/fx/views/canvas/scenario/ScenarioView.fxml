@@ -13,8 +13,7 @@
 <?import java.net.URL?>
 
 <fx:root type="javafx.scene.layout.StackPane" xmlns:fx="http://javafx.com/fxml">
-	<VBox spacing="3">
-		<MiniScenarioPlaybackPanel fx:id="playbackPanel" />
+	<VBox spacing="3" fx:id="vBox">
 		<Region style="-fx-background-color: red;" minHeight="100" />
 	</VBox>
 </fx:root>

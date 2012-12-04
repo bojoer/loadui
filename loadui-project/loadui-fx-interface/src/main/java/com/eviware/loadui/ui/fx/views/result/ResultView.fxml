@@ -2,7 +2,6 @@
 
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
@@ -11,17 +10,24 @@
 <?import javafx.scene.shape.Circle?>
 <?import javafx.geometry.Insets?>
 <?import java.net.URL?>
+<?import com.eviware.loadui.ui.fx.control.PageList?>
 
 <fx:root type="javafx.scene.layout.StackPane" xmlns:fx="http://javafx.com/fxml">
-	<VBox xmlns:fx="http://javafx.com/fxml" styleClass="result-view" spacing="10">
+	<VBox xmlns:fx="http://javafx.com/fxml" styleClass="result-view"
+		spacing="10">
 		<stylesheets>
 			<URL value="@ResultView.css" />
 		</stylesheets>
 		<Label styleClass="title" text="Results" />
-		<ListView fx:id="resultNodeList" orientation="horizontal" maxHeight="180">
-			<VBox.margin>
-				<Insets top="10" right="10" bottom="10" left="10" />
-			</VBox.margin>
-		</ListView>
+
+		<HBox>
+			<PageList fx:id="currentResultNode" id="current-result"/>
+			<PageList fx:id="resultNodeList" maxHeight="260"
+				widthPerItem="110" spacing="10">
+				<VBox.margin>
+					<Insets top="10" right="10" bottom="10" left="10" />
+				</VBox.margin>
+			</PageList>
+		</HBox>
 	</VBox>
 </fx:root>

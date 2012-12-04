@@ -3,5 +3,16 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans   
        http://www.springframework.org/schema/beans/spring-beans.xsd">
-
+       
+	<bean id="eventLogInspector" class="com.eviware.loadui.ui.fx.views.eventlog.EventLogInspector">
+		<constructor-arg ref="executionManager" />
+		<constructor-arg ref="testEventManager" />
+	</bean>
+	<bean id="systemLogInspector" class="com.eviware.loadui.ui.fx.views.syslog.SystemLogInspector" />
+	<bean id="assertionInspector" class="com.eviware.loadui.ui.fx.views.assertions.AssertionInspector" >
+		<constructor-arg ref="statisticsManager" />
+	</bean>
+	<bean id="distributionInspector" class="com.eviware.loadui.ui.fx.views.distribution.DistributionInspector" />
+	
+	<bean id="coreImageResolver" class="com.eviware.loadui.ui.fx.util.CoreImageResolver" />
 </beans>

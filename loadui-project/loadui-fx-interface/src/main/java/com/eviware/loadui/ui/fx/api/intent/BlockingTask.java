@@ -61,9 +61,9 @@ public class BlockingTask
 
 								Runnable runnable = event.getArg();
 
+								final TaskProgressIndicator taskProgressIndicator = new TaskProgressIndicator( runnable );
 								final Stage dialog = StageBuilder.create().style( StageStyle.UNDECORATED )
-										.scene( SceneBuilder.create().root( new TaskProgressIndicator( runnable ) ).build() )
-										.build();
+										.scene( SceneBuilder.create().root( taskProgressIndicator ).build() ).build();
 								dialog.initModality( Modality.APPLICATION_MODAL );
 								root.setEffect( blur );
 								new Timeline( new KeyFrame( new Duration( 500 ), new KeyValue( blur.radiusProperty(), 10,
@@ -86,6 +86,7 @@ public class BlockingTask
 											public void run()
 											{
 												dialog.hide();
+												taskProgressIndicator.dispose();
 												if( root.getEffect() == blur )
 												{
 													root.setEffect( null );

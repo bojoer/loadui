@@ -35,11 +35,14 @@ public class StatisticPageImpl implements StatisticPage
 	private StatisticsPageConfig config;
 	private final OrderedCollectionSupport<ChartGroup> collectionSupport;
 	private final EventSupport eventSupport = new EventSupport( this );
+	private String label;
 
 	public StatisticPageImpl( StatisticPagesImpl parent, StatisticsPageConfig config )
 	{
 		this.parent = parent;
 		this.config = config;
+
+		label = config.isSetTitle() ? config.getTitle() : "";
 
 		collectionSupport = new OrderedCollectionSupport<>( this );
 
@@ -86,15 +89,17 @@ public class StatisticPageImpl implements StatisticPage
 	}
 
 	@Override
-	public String getTitle()
+	public String getLabel()
 	{
-		return config.isSetTitle() ? config.getTitle() : "";
+		return label;
 	}
 
 	@Override
-	public void setTitle( String title )
+	public void setLabel( String value )
 	{
-		config.setTitle( title );
+		label = value;
+		config.setTitle( value );
+		fireEvent( new BaseEvent( this, LABEL ) );
 	}
 
 	@Override

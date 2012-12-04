@@ -1,5 +1,7 @@
 package com.eviware.loadui.ui.fx.control.skin;
 
+import static com.google.common.base.Objects.firstNonNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +16,8 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
@@ -23,6 +27,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBuilder;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Separator;
@@ -37,6 +42,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.StackPaneBuilder;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.VBoxBuilder;
 import javafx.scene.shape.RectangleBuilder;
@@ -55,9 +61,11 @@ public class CarouselSkin<E extends Node> extends SkinBase<Carousel<E>, Behavior
 	private final Pager<Node> pager = new Pager<>();
 	private final IntegerProperty depth = new SimpleIntegerProperty( this, "depth", 2 );
 
-	private static Node createPlaceholder()
+	private final StackPane placeholder;
+
+	private static Node createPadderNode()
 	{
-		return RectangleBuilder.create().id( "placeholder" ).build();
+		return RectangleBuilder.create().id( "padder" ).build();
 	}
 
 	public CarouselSkin( final Carousel<E> carousel )
@@ -65,6 +73,10 @@ public class CarouselSkin<E extends Node> extends SkinBase<Carousel<E>, Behavior
 		super( carousel, new BehaviorBase<>( carousel ) );
 
 		this.carousel = carousel;
+
+		Label placeholderLabel = new Label();
+		placeholderLabel.textProperty().bind( carousel.placeholderTextProperty() );
+		placeholder = StackPaneBuilder.create().styleClass( "placeholder" ).children( placeholderLabel ).build();
 
 		pager.setFluentMode( true );
 		pager.itemsPerPageProperty().bind( depth.multiply( 2 ).add( 1 ) );
@@ -77,12 +89,20 @@ public class CarouselSkin<E extends Node> extends SkinBase<Carousel<E>, Behavior
 				List<Node> nodes = new ArrayList<>();
 				for( int i = depth.get(); i > 0; i-- )
 				{
-					nodes.add( createPlaceholder() );
+					nodes.add( createPadderNode() );
 				}
-				nodes.addAll( carousel.getItems() );
+
+				if( carousel.getItems().isEmpty() )
+				{
+					nodes.add( placeholder );
+				}
+				else
+				{
+					nodes.addAll( carousel.getItems() );
+				}
 				for( int i = depth.get(); i > 0; i-- )
 				{
-					nodes.add( createPlaceholder() );
+					nodes.add( createPadderNode() );
 				}
 
 				pager.getItems().setAll( nodes );
@@ -107,7 +127,7 @@ public class CarouselSkin<E extends Node> extends SkinBase<Carousel<E>, Behavior
 		carousel.getItems().addListener( updatePage );
 		updatePage.invalidated( null );
 
-		ComboBox<E> comboBox = new ComboBox<>();
+		final ComboBox<E> comboBox = new ComboBox<>();
 		comboBox.setMaxWidth( Double.MAX_VALUE );
 		Callback<ListView<E>, ListCell<E>> cellFactory = new Callback<ListView<E>, ListCell<E>>()
 		{
@@ -129,12 +149,59 @@ public class CarouselSkin<E extends Node> extends SkinBase<Carousel<E>, Behavior
 		comboBox.setButtonCell( cellFactory.call( null ) );
 		comboBox.setCellFactory( cellFactory );
 		comboBox.setItems( carousel.getItems() );
-		comboBox.valueProperty().bindBidirectional( carousel.selectedProperty() );
+		/// comboBox.valueProperty().bindBidirectional( carousel.selectedProperty() );
+
+		comboBox.valueProperty().addListener( new ChangeListener<E>()
+		{
+
+			@Override
+			public void changed( ObservableValue<? extends E> arg0, E oldNode, E newNode )
+			{
+
+				if( newNode == null && !comboBox.getItems().isEmpty() )
+				{
+					comboBox.valueProperty().set( firstNonNull( oldNode, comboBox.getItems().get( 0 ) ) );
+				}
+				else if( carousel.selectedProperty().getValue() != newNode )
+				{
+					carousel.setSelected( newNode );
+				}
+
+			}
+
+		} );
 
 		CarouselDisplay carouselDisplay = new CarouselDisplay();
 		VBox.setVgrow( carouselDisplay, Priority.SOMETIMES );
 		VBox vbox = VBoxBuilder.create().styleClass( "vbox" )
 				.children( carouselDisplay, new Separator(), carousel.getLabel(), comboBox ).build();
+
+		E AgentNode = carousel.selectedProperty().get();
+		if( AgentNode != null )
+		{
+			AgentNode.getStyleClass().add( "selected" );
+			comboBox.valueProperty().setValue( AgentNode );
+		}
+
+		carousel.selectedProperty().addListener( new ChangeListener<E>()
+		{
+
+			@Override
+			public void changed( ObservableValue<? extends E> arg0, E oldNode, E newNode )
+			{
+
+				if( oldNode != null )
+					oldNode.getStyleClass().remove( "selected" );
+
+				if( newNode != null )
+				{
+					newNode.getStyleClass().add( "selected" );
+					comboBox.valueProperty().setValue( newNode );
+				}
+
+			}
+
+		} );
 
 		getChildren().setAll( vbox );
 	}
@@ -159,8 +226,8 @@ public class CarouselSkin<E extends Node> extends SkinBase<Carousel<E>, Behavior
 
 	private class CarouselDisplay extends StackPane
 	{
-		private final Button prevButton = ButtonBuilder.create().styleClass( "nav", "left" ).build();
-		private final Button nextButton = ButtonBuilder.create().styleClass( "nav", "right" ).build();
+		private final Button prevButton = ButtonBuilder.create().styleClass( "nav", "prev", "left" ).build();
+		private final Button nextButton = ButtonBuilder.create().styleClass( "nav", "next", "right" ).build();
 
 		private CarouselDisplay()
 		{

@@ -1,13 +1,12 @@
 package com.eviware.loadui.ui.fx.views.canvas.component;
 
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.concurrent.ExecutorService;
 
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
@@ -15,19 +14,18 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBuilder;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.LabelBuilder;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
 import javafx.scene.control.Separator;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TooltipBuilder;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBoxBuilder;
-import javafx.util.Callback;
-import javafx.util.converter.NumberStringConverter;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tbee.javafx.scene.layout.MigPane;
 
 import com.eviware.loadui.api.layout.ActionLayoutComponent;
@@ -41,13 +39,20 @@ import com.eviware.loadui.api.layout.TableLayoutComponent;
 import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.impl.layout.OptionsProviderImpl;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
+import com.eviware.loadui.ui.fx.control.Knob;
+import com.eviware.loadui.ui.fx.control.OptionsSlider;
 import com.eviware.loadui.ui.fx.util.Properties;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.layout.FormattedString;
+import com.google.common.base.Objects;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 public class ComponentLayoutUtils
 {
+	protected static final Logger log = LoggerFactory.getLogger( ComponentLayoutUtils.class );
+
+	@SuppressWarnings( "unchecked" )
 	public static Node instantiateLayout( LayoutComponent component )
 	{
 		//Legacy rules that we need, that pre-emp anything else
@@ -65,6 +70,44 @@ public class ComponentLayoutUtils
 					pane.add( instantiateLayout( child ), child.getConstraints() );
 				}
 				return pane;
+			}
+			else if( "selectorWidget".equals( component.get( "widget" ) ) )
+			{
+
+				Iterable<String> options = ( Iterable<String> )component.get( "labels" );
+
+				boolean showLabels = ( boolean )Objects.firstNonNull( component.get( "showLabels" ), true );
+				OptionsSlider slider = new OptionsSlider( Iterables.filter( options, String.class ) );
+				slider.setShowLabels( showLabels );
+
+				if( component.has( "images" ) )
+				{
+					List<ImageView> images = Lists.newArrayList();
+					Iterable<String> imageNames = ( Iterable<String> )component.get( "images" );
+
+					for( String imageName : imageNames )
+					{
+						ImageView image = new ImageView( new Image( ComponentLayoutUtils.class.getClassLoader()
+								.getResource( "images/options/" + imageName ).toExternalForm() ) );
+						images.add( image );
+					}
+					slider.getImages().setAll( images );
+				}
+
+				Property<String> loadUiProperty = ( Property<String> )component.get( "selected" );
+				slider.selectedProperty().bindBidirectional( Properties.convert( loadUiProperty ) );
+
+				Label propertyLabel = LabelBuilder.create().text( ( String )component.get( "label" ) ).build();
+
+				return VBoxBuilder.create().children( propertyLabel, slider ).build();
+			}
+		}
+		else if( component.has( "component" ) )
+		{
+			Object c = component.get( "component" );
+			if( c instanceof Node )
+			{
+				return ( Node )c;
 			}
 		}
 		else if( component.has( "fString" ) )
@@ -169,7 +212,6 @@ public class ComponentLayoutUtils
 		}
 		else if( property.has( "options" ) )
 		{
-			ComboBox<Object> comboBox = new ComboBox<>();
 			Object opts = property.get( "options" );
 			OptionsProvider<Object> options;
 			if( opts instanceof OptionsProvider<?> )
@@ -184,34 +226,20 @@ public class ComponentLayoutUtils
 			{
 				options = new OptionsProviderImpl<>( opts );
 			}
-			final OptionsProvider<Object> finalOptions = options;
 
-			ObservableList<Object> observableList = FXCollections.observableArrayList( Lists.newArrayList( options
-					.iterator() ) );
-
-			Callback<ListView<Object>, ListCell<Object>> cellFactory = new Callback<ListView<Object>, ListCell<Object>>()
+			OptionsSlider slider;
+			if( options.iterator().next() instanceof String )
 			{
-				@Override
-				public ListCell<Object> call( ListView<Object> listView )
-				{
-					return new ListCell<Object>()
-					{
-						@Override
-						protected void updateItem( Object item, boolean empty )
-						{
-							super.updateItem( item, empty );
-							setText( finalOptions.labelFor( item ) );
-						}
-					};
-				}
-			};
-			comboBox.setButtonCell( cellFactory.call( null ) );
-			comboBox.setCellFactory( cellFactory );
-			comboBox.setItems( observableList );
-			comboBox.valueProperty().bindBidirectional(
-					( javafx.beans.property.Property<Object> )Properties.convert( property.getProperty() ) );
+				slider = new OptionsSlider( Lists.newArrayList( Iterables.filter( options, String.class ) ) );
+				slider.selectedProperty().bindBidirectional(
+						( javafx.beans.property.Property<String> )Properties.convert( property.getProperty() ) );
+				slider.setSelected( property.getProperty().getStringValue() );
+				log.debug( " slider.getSelected(): " + slider.getSelected() );
+			}
+			else
+				throw new RuntimeException( "options just supports sliders at the moment" );
 
-			return VBoxBuilder.create().children( propertyLabel, comboBox ).build();
+			return VBoxBuilder.create().children( propertyLabel, slider ).build();
 		}
 		else if( type == String.class )
 		{
@@ -222,11 +250,26 @@ public class ComponentLayoutUtils
 		}
 		else if( Number.class.isAssignableFrom( type ) )
 		{
-			TextField textField = new TextField();
-			textField.textProperty().bindBidirectional( Properties.convert( ( Property<Number> )property.getProperty() ),
-					new NumberStringConverter() );
-			textField.setMaxWidth( 50 );
-			return VBoxBuilder.create().children( propertyLabel, textField ).build();
+			Knob knob = new Knob( property.getLabel() );
+			knob.valueProperty().bindBidirectional( Properties.convert( ( Property<Number> )property.getProperty() ) );
+			if( property.has( "min" ) )
+			{
+				knob.setMin( ( ( Number )property.get( "min" ) ).doubleValue() );
+			}
+			if( property.has( "max" ) )
+			{
+				knob.setMax( ( ( Number )property.get( "max" ) ).doubleValue() );
+			}
+			if( property.has( "step" ) )
+			{
+				knob.setStep( ( ( Number )property.get( "step" ) ).doubleValue() );
+			}
+			if( property.has( "span" ) )
+			{
+				knob.setSpan( ( ( Number )property.get( "span" ) ).doubleValue() );
+			}
+
+			return knob;
 		}
 		else if( type == Boolean.class )
 		{

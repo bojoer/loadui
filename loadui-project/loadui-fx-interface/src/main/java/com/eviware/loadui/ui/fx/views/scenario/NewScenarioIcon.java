@@ -3,14 +3,15 @@ package com.eviware.loadui.ui.fx.views.scenario;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.RectangleBuilder;
 
 import com.eviware.loadui.api.model.ProjectItem;
+import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.control.DragNode;
+import com.eviware.loadui.ui.fx.util.UIUtils;
 
 public class NewScenarioIcon extends Label
 {
@@ -20,6 +21,9 @@ public class NewScenarioIcon extends Label
 
 		setGraphic( createIcon() );
 		setText( "VU Scenario" );
+
+		setMaxHeight( 80 );
+		setMinHeight( 80 );
 
 		addEventFilter( MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>()
 		{
@@ -38,7 +42,7 @@ public class NewScenarioIcon extends Label
 
 	private static Node createIcon()
 	{
-		return RectangleBuilder.create().width( 65 ).height( 40 ).fill( Color.DEEPPINK ).build();
+		return new ImageView( UIUtils.getImageFor( SceneItem.class ) );
 	}
 
 	@Override

@@ -79,6 +79,16 @@ public class Dialog extends Stage
 		} );
 	}
 
+	protected void addStyleClass( String styleClass )
+	{
+		rootPane.getStyleClass().add( styleClass );
+	}
+
+	protected Node lookup( String selector )
+	{
+		return rootPane.lookup( selector );
+	}
+
 	private double getCenterYOfParentWindow()
 	{
 		return parentWindow.getY() + parentWindow.getHeight() / 2;

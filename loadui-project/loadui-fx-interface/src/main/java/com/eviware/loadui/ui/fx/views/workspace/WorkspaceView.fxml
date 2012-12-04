@@ -29,7 +29,7 @@
 		<URL value="@WorkspaceView.css" />
 	</stylesheets>
 	<VBox alignment="top_left" spacing="10" snapToPixel="true">
-		<ToolBar minHeight="60" id="topToolBar">
+		<ToolBar minHeight="60" id="topToolBar" styleClass="header">
 			<Label minWidth="60" />
 			<MenuButton fx:id="workspaceButton" id="workspaceButton">
 				<items>
@@ -42,12 +42,12 @@
 			</MenuButton>
 			<BorderPane HBox.hgrow="ALWAYS">
 				<right>
-					<Button id="helpButton" text="?" BorderPane.alignment="CENTER_RIGHT" onAction="#openHelpPage" />
+					<Button fx:id="openHelpPageButton" id="openHelpPageButton" styleClass="styleable-graphic, toolbar-button"  BorderPane.alignment="CENTER_RIGHT" onAction="#openHelpPage" />
 				</right>
 			</BorderPane>
 		</ToolBar>
-		<HBox spacing="15" snapToPixel="true">
-			<ToolBox>
+		<HBox spacing="15" snapToPixel="true" fillHeight="false">
+			<ToolBox heightPerItem="110">
 				<categoryComparator>
 					<ExplicitOrdering>
 						<String fx:value="Projects"/>
@@ -59,9 +59,11 @@
 			</ToolBox>
 			<VBox spacing="15">
 				<Carousel fx:id="projectRefCarousel" text="Projects" prefWidth="320" prefHeight="220" />
-				<Carousel fx:id="agentCarousel" text="Agents" prefWidth="320" prefHeight="220" />
+				<Carousel fx:id="agentCarousel" text="Agents" prefWidth="320" prefHeight="220" maxHeight= "320" />
 			</VBox>
-			<WebView fx:id="webView" prefWidth="634" prefHeight="562" />
+			<StackPane styleClass="web-container">
+				<WebView fx:id="webView" prefWidth="580" prefHeight="562" />
+			</StackPane>
 		</HBox>
 	</VBox>
 </fx:root>

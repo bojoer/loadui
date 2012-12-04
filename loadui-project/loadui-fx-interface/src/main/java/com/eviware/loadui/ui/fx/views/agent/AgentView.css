@@ -1,9 +1,116 @@
-.agent-view {
-	-fx-background-color: black, darkgrey;
+.agent-view 
+{
+	-fx-base-color: #d3d3d3;
+	-fx-header-color: #9A9A9A;
+	
+	-fx-padding: 10;
+	-fx-background-color:
+		black,
+		-fx-header-color,
+		-fx-base-color,
+		rgba(255,255,255,0.6),
+		rgba(0,0,0,0.2),
+		-fx-header-color,
+		-fx-base-color,
+		linear-gradient(from 0 0 to 0 20, white, rgba(255,255,255,0)),
+		#dbdbdb;
+	-fx-background-radius:
+		8,
+		6,
+		0 0 6 6,
+		6 0 0 0,
+		0 0 6 0,
+		6,
+		0 0 6 6,
+		6 6 0 0,
+		0;
+	-fx-background-insets:
+		0,
+		2,
+		30 2 2 2,
+		2 9 9 2,
+		9 2 2 9,
+		4,
+		30 4 4 4,
+		2,
+		30 4 14 4;	
+}
+
+.agent-view .scrollable-list
+{
+	-fx-background-color: 
+		#666666
+		#ABABAB,
+		linear-gradient(to bottom, #E0E1E2, #B5B5B5);
+	
+	-fx-background-insets: 
+		0, 
+		0.5 0.2 0.2 0.8,
+		3;
+
+	-fx-background-radius: 3;
+	
+}
+
+.agent-view .item-box {
+	-fx-padding: 0 0 0 0;
+}
+.agent-view .box {
+	-fx-padding: 0 0 0 0;
+}
+
+.placeholder {
+	-fx-padding: 0;
+	-fx-opacity: 0.8;
+}
+
+.nav.button {
+	-fx-skin: "com.eviware.loadui.ui.fx.control.skin.StyleableGraphicButtonSkin";
+	-fx-shape: null;
+	-base-gradient: linear-gradient(to bottom, derive(#E3E3E3, 60%), derive(#BCBCBC, 60%) );
+	-base-border: #B3B3B3;
+	-fx-background-radius: 0;
+	-fx-padding: 3 35;
+	
+	-fx-background-insets: 
+		0, 
+		1;
+	-fx-background-color: 
+		-base-border, 
+		-base-gradient;
+
+}
+
+.nav.button:hover {
+	-base-gradient: linear-gradient(to bottom, derive(#E3E3E3, 80%), derive(#BCBCBC, 80%) );
+
+}
+
+.nav.button:disabled {
+	-fx-opacity: 0.3;
+
+}
+
+.nav.button .graphic {
+	-fx-padding: -2 14;
+	-fx-background-color: derive(gray, 40%);
+}
+
+.nav.button:disabled .graphic {
+	-fx-opacity: 0.4;
+	-fx-background-color: derive(gray, -100%);
+}
+.nav.button.up .graphic {
+	-fx-shape: -fx-shape-navigation-up;
+}
+
+.nav.button.down .graphic {
+	-fx-shape: -fx-shape-navigation-down;
+}
+
+
+.dots {
 	-fx-background-image: url("dot-pattern.png");
 	-fx-background-repeat: repeat;
-	-fx-background-insets: 0, 2;
-	-fx-background-radius: 5;
-	-fx-padding: 5;
-	-fx-spacing: 5;
+	-fx-padding: 10;	
 }

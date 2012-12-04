@@ -75,14 +75,14 @@ public class StatisticPagesImpl implements StatisticPages
 	}
 
 	@Override
-	public StatisticPage createPage( String title )
+	public StatisticPage createPage( String label )
 	{
 		for( StatisticPage page : getChildren() )
-			if( title.equals( page.getTitle() ) )
-				throw new IllegalArgumentException( "Non-unique title given for StatisticPage!" );
+			if( label.equals( page.getLabel() ) )
+				throw new IllegalArgumentException( "Non-unique label given for StatisticPage: " + label );
 
 		StatisticsPageConfig statisticPageConfig = config.addNewPage();
-		statisticPageConfig.setTitle( title );
+		statisticPageConfig.setTitle( label );
 		StatisticPageImpl statisticPage = new StatisticPageImpl( this, statisticPageConfig );
 		collectionSupport.addChild( statisticPage );
 		return statisticPage;

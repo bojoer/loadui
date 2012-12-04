@@ -103,16 +103,21 @@ def runningSamples = ([] as Set).asSynchronized()
 runAction = null
 
 def dummyUrl = "http://GoSpamYourself.com"
-
+def validUrl = ""
 validateUrl = {
-	if( url.value && !( url.value.toLowerCase().startsWith( "http://" ) || url.value.toLowerCase().startsWith( "https://" ) ) ) {
-		url.value = "http://" + url.value
+	def cleanUrl = url.value
+	if( !(cleanUrl ==~ "https?://.*") ) {
+		cleanUrl = 'http://'+cleanUrl
 	}
 	
-	if( url.value =~ /https?:\/\/(www\.)?(eviware\.com|(soapui|loadui)\.org)(\/.*)?/ ) url.value = dummyUrl
+	if( cleanUrl =~ /https?:\/\/(www\.)?(eviware\.com|(soapui|loadui)\.org)(\/.*)?/ ) {
+		url.value = dummyUrl
+		setInvalid( true )
+		return
+	}
 	
 	// extract possible username and password from username:password@domain syntax
-	matcher = url.value?.replace( "http://", "" ) =~ /([^:]+):([^@]+)@(.+)/
+	matcher = cleanUrl?.replace( "http://", "" ) =~ /([^:]+):([^@]+)@(.+)/
 	if ( matcher ) {
 		inlineUrlAuthUsername = matcher[0][1]
 		inlineUrlAuthPassword = matcher[0][2]
@@ -122,13 +127,14 @@ validateUrl = {
 	updateAuth()
 	
 	try {
-		new URI( url.value )
+		new URI( cleanUrl )
 		setInvalid( !url.value || url.value == dummyUrl )
 	} catch( e ) {
 		setInvalid( true )
 	}
 	
 	runAction?.enabled = !isInvalid()
+	validUrl = cleanUrl
 }
 
 updateProxy = {
@@ -177,7 +183,7 @@ discardResetValue = 0
 failedResetValue = 0
 
 sample = { message, sampleId ->
-	def uri = message['url'] ?: url.value
+	def uri = message['url'] ?: validUrl
 	if( uri ) {
 		def get = new HttpGet( uri )
 		message['ID'] = uri
@@ -284,8 +290,7 @@ layout {
 	box( layout:'wrap 2, ins 0' ) {
 		property( property:url, label:'Web Page Address', constraints: 'w 300!, spanx 2', style: '-fx-font-size: 17pt' )
 		action( label:'Open in Browser', constraints:'spanx 2', action: {
-			if( url.value != null && url.value.startsWith( "http" ) )
-				java.awt.Desktop.desktop.browse( new java.net.URI( url.value ) )
+			java.awt.Desktop.desktop.browse( new java.net.URI( validUrl ) )
 		} )
 		runAction = action( label:'Run Once', action: { triggerAction( 'SAMPLE' ) } )
 		action( label:'Abort Running Pages', action: { triggerAction( 'CANCEL' ) } )

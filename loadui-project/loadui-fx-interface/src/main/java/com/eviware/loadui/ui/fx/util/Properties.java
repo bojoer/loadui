@@ -7,12 +7,13 @@ import javafx.beans.Observable;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.LongProperty;
+import javafx.beans.property.ObjectPropertyBase;
 import javafx.beans.property.Property;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.property.ReadOnlyLongProperty;
 import javafx.beans.property.ReadOnlyStringProperty;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.property.adapter.JavaBeanBooleanPropertyBuilder;
 import javafx.beans.property.adapter.JavaBeanDoublePropertyBuilder;
@@ -23,8 +24,6 @@ import javafx.beans.property.adapter.ReadOnlyJavaBeanDoublePropertyBuilder;
 import javafx.beans.property.adapter.ReadOnlyJavaBeanLongPropertyBuilder;
 import javafx.beans.property.adapter.ReadOnlyJavaBeanProperty;
 import javafx.beans.property.adapter.ReadOnlyJavaBeanStringPropertyBuilder;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 
 import javax.annotation.Nonnull;
 
@@ -35,8 +34,6 @@ import com.eviware.loadui.api.events.PropertyEvent;
 import com.eviware.loadui.api.events.WeakEventHandler;
 import com.eviware.loadui.api.traits.Describable;
 import com.eviware.loadui.api.traits.Labeled;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 
 /**
  * Utility methods for working with JavaFX Properties.
@@ -45,8 +42,8 @@ import com.google.common.cache.CacheBuilder;
  */
 public class Properties
 {
-	//Used to keep weak listeners alive as long as the key object is in use.
-	private static final Cache<Object, EventHandler<?>> listeners = CacheBuilder.newBuilder().weakKeys().build();
+	public final static ReadOnlyBooleanProperty TRUE = new SimpleBooleanProperty( true );
+	public final static ReadOnlyBooleanProperty FALSE = new SimpleBooleanProperty( false );
 
 	/**
 	 * Creates an ReadOnlyStringProperty for a Labeled. If the Labeled is
@@ -63,19 +60,21 @@ public class Properties
 			return labeled instanceof Labeled.Mutable ? stringProperty( eventFirer, "label", Labeled.LABEL )
 					: readOnlyStringProperty( eventFirer, "label", Labeled.LABEL );
 		}
-		else
+		try
 		{
-			try
-			{
-				return labeled instanceof Labeled.Mutable ? JavaBeanStringPropertyBuilder.create().bean( labeled )
-						.name( "label" ).build() : ReadOnlyJavaBeanStringPropertyBuilder.create().bean( labeled )
-						.name( "label" ).build();
-			}
-			catch( NoSuchMethodException e )
-			{
-				throw new IllegalArgumentException( e );
-			}
+			return labeled instanceof Labeled.Mutable ? JavaBeanStringPropertyBuilder.create().bean( labeled )
+					.name( "label" ).build() : ReadOnlyJavaBeanStringPropertyBuilder.create().bean( labeled ).name( "label" )
+					.build();
 		}
+		catch( NoSuchMethodException e )
+		{
+			throw new IllegalArgumentException( e );
+		}
+	}
+
+	public static StringProperty forLabel( @Nonnull Labeled.Mutable labeled )
+	{
+		return ( StringProperty )forLabel( ( Labeled )labeled );
 	}
 
 	/**
@@ -93,19 +92,21 @@ public class Properties
 			return describable instanceof Describable.Mutable ? stringProperty( eventFirer, "description",
 					Describable.DESCRIPTION ) : readOnlyStringProperty( eventFirer, "description", Describable.DESCRIPTION );
 		}
-		else
+		try
 		{
-			try
-			{
-				return describable instanceof Describable.Mutable ? JavaBeanStringPropertyBuilder.create()
-						.bean( describable ).name( "description" ).build() : ReadOnlyJavaBeanStringPropertyBuilder.create()
-						.bean( describable ).name( "description" ).build();
-			}
-			catch( NoSuchMethodException e )
-			{
-				throw new IllegalArgumentException( e );
-			}
+			return describable instanceof Describable.Mutable ? JavaBeanStringPropertyBuilder.create().bean( describable )
+					.name( "description" ).build() : ReadOnlyJavaBeanStringPropertyBuilder.create().bean( describable )
+					.name( "description" ).build();
 		}
+		catch( NoSuchMethodException e )
+		{
+			throw new IllegalArgumentException( e );
+		}
+	}
+
+	public static StringProperty forDescription( @Nonnull Describable.Mutable describable )
+	{
+		return ( StringProperty )forDescription( ( Describable )describable );
 	}
 
 	/**
@@ -117,37 +118,7 @@ public class Properties
 	 */
 	public static <T> Property<T> convert( final com.eviware.loadui.api.property.Property<T> loadUIProperty )
 	{
-		final SimpleObjectProperty<T> property = new SimpleObjectProperty<>( loadUIProperty.getOwner(),
-				loadUIProperty.getKey(), loadUIProperty.getValue() );
-		loadUIProperty.getOwner().addEventListener( PropertyEvent.class, new EventHandler<PropertyEvent>()
-		{
-			@Override
-			public void handleEvent( PropertyEvent event )
-			{
-				if( event.getProperty() == loadUIProperty )
-				{
-					Platform.runLater( new Runnable()
-					{
-						@Override
-						public void run()
-						{
-							property.set( loadUIProperty.getValue() );
-						}
-					} );
-				}
-			}
-		} );
-
-		property.addListener( new ChangeListener<T>()
-		{
-			@Override
-			public void changed( ObservableValue<? extends T> arg0, T oldValue, T newValue )
-			{
-				loadUIProperty.setValue( newValue );
-			}
-		} );
-
-		return property;
+		return new LoadUIPropertyAdapter<>( loadUIProperty );
 	}
 
 	/**
@@ -376,22 +347,72 @@ public class Properties
 
 	private static <T extends ReadOnlyJavaBeanProperty<?>> T withListener( T property, EventFirer bean, String eventKey )
 	{
-		EventHandler<BaseEvent> eventListener = new BaseEventListener( property, eventKey );
+		EventHandler<BaseEvent> eventListener = new BaseEventListener( property, eventKey, bean );
 		bean.addEventListener( BaseEvent.class, eventListener );
-		listeners.put( property, eventListener );
 
 		return property;
 	}
 
-	private static final class BaseEventListener implements WeakEventHandler<BaseEvent>
+	private static final class LoadUIPropertyAdapter<T> extends ObjectPropertyBase<T>
+	{
+		private final com.eviware.loadui.api.property.Property<T> loadUIProperty;
+		private final EventHandler<PropertyEvent> eventHandler = new WeakEventHandler<PropertyEvent>()
+		{
+			@Override
+			public void handleEvent( PropertyEvent event )
+			{
+				if( event.getProperty() == loadUIProperty )
+				{
+					Platform.runLater( new Runnable()
+					{
+						@Override
+						public void run()
+						{
+							setValue( loadUIProperty.getValue() );
+						}
+					} );
+				}
+			}
+		};
+
+		private LoadUIPropertyAdapter( com.eviware.loadui.api.property.Property<T> loadUIProperty )
+		{
+			this.loadUIProperty = loadUIProperty;
+			loadUIProperty.getOwner().addEventListener( PropertyEvent.class, eventHandler );
+			super.set( loadUIProperty.getValue() );
+		}
+
+		@Override
+		public void set( T value )
+		{
+			super.set( value );
+			loadUIProperty.setValue( value );
+		}
+
+		@Override
+		public Object getBean()
+		{
+			return loadUIProperty.getOwner();
+		}
+
+		@Override
+		public String getName()
+		{
+			return loadUIProperty.getKey();
+		}
+	}
+
+	private static final class BaseEventListener implements EventHandler<BaseEvent>
 	{
 		private final String eventKey;
+		private final EventFirer eventFirer;
 		private final WeakReference<ReadOnlyJavaBeanProperty<?>> ref;
 
-		private BaseEventListener( ReadOnlyJavaBeanProperty<?> property, String eventKey )
+		private BaseEventListener( ReadOnlyJavaBeanProperty<?> property, String eventKey, EventFirer eventFirer )
 		{
 			ref = new WeakReference<ReadOnlyJavaBeanProperty<?>>( property );
 			this.eventKey = eventKey;
+			this.eventFirer = eventFirer;
 		}
 
 		@Override
@@ -410,6 +431,10 @@ public class Properties
 							property.fireValueChangedEvent();
 						}
 					} );
+				}
+				else
+				{
+					eventFirer.removeEventListener( BaseEvent.class, this );
 				}
 			}
 		}

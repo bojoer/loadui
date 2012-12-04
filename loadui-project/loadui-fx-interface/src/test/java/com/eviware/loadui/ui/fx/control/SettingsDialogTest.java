@@ -1,21 +1,26 @@
 package com.eviware.loadui.ui.fx.control;
 
+import static javafx.beans.binding.Bindings.when;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 import java.util.concurrent.TimeUnit;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.GroupBuilder;
 import javafx.scene.SceneBuilder;
 import javafx.scene.control.Button;
+import javafx.scene.control.Tab;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
@@ -23,14 +28,16 @@ import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.test.categories.GUITest;
-import com.eviware.loadui.ui.fx.control.SettingsDialog.SettingsTab;
-import com.eviware.loadui.ui.fx.control.SettingsDialog.SettingsTabBuilder;
+import com.eviware.loadui.ui.fx.control.SettingsTab.Builder;
+import com.eviware.loadui.ui.fx.util.StylingUtils;
 import com.eviware.loadui.ui.fx.util.TestingProperty;
 import com.eviware.loadui.ui.fx.util.test.FXScreenController;
 import com.eviware.loadui.ui.fx.util.test.FXTestUtils;
 import com.eviware.loadui.ui.fx.util.test.TestFX;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.SettableFuture;
+
+//import com.javafx.experiments.scenicview.ScenicView;
 
 @Category( GUITest.class )
 public class SettingsDialogTest
@@ -74,10 +81,10 @@ public class SettingsDialogTest
 		booleanProperty.setValue( INIT_BOOLEAN );
 		longProperty.setValue( INIT_LONG );
 		longProperty2.setValue( INIT_LONG );
-		generalTab = SettingsTabBuilder.create( "General" ).id( "general-tab" ).field( "My string", stringProperty )
+		generalTab = Builder.create( "General" ).id( "general-tab" ).field( "My string", stringProperty )
 				.field( "My boolean", booleanProperty ).build();
-		otherTab = SettingsTabBuilder.create( "Other" ).field( "My long", longProperty )
-				.field( "My other long", longProperty2 ).build();
+		otherTab = Builder.create( "Other" ).field( "My long", longProperty ).field( "My other long", longProperty2 )
+				.build();
 
 		FXTestUtils.invokeAndWait( new Runnable()
 		{
@@ -97,7 +104,10 @@ public class SettingsDialogTest
 			}
 		}, 1000 );
 
+		StylingUtils.applyLoaduiStyling( settingsDialog.getScene() );
+
 		controller.click( openDialogButton );
+
 		controller.click( "#general-tab" );
 	}
 
@@ -141,6 +151,25 @@ public class SettingsDialogTest
 		controller.click( "#my-other-long" ).press( KeyCode.CONTROL, KeyCode.A ).release( KeyCode.CONTROL, KeyCode.A )
 				.sleep( 100 ).type( "7" ).click( "#default" );
 		assertEquals( false, settingsDialog.isShowing() );
+	}
+
+	@Ignore
+	@Test
+	public void singleTab_should_notDisplayTabPane() throws Exception
+	{
+		final Tab t = generalTab.getTabPane().getTabs().remove( 1 );
+		controller.sleep( 2500 );
+		final Region tabHeader = ( Region )generalTab.getTabPane().lookup( ".tab-header-area" );
+		assertEquals( tabHeader.getHeight(), 0.0, 0.005 );
+		Platform.runLater( new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				generalTab.getTabPane().getTabs().add( t );
+			}
+		} );
+		controller.sleep( 500 );
 	}
 
 	public static class SettingsDialogTestApp extends Application

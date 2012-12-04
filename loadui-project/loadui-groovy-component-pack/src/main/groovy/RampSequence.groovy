@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit
 createProperty( 'rampLength', Long, 10 ) { calculateAcceleration() }
 createProperty( 'peakRate', Long, 10 ) { calculateAcceleration() }
 createProperty( 'peakLength', Long, 10 )
-createProperty( 'peakRateUnit', String, 'sec' ) { calculateAcceleration(); redraw() }
+createProperty( 'peakRateUnit', String, 'sec' ) { calculateAcceleration() }
 
 future = null
 cancellingFuture = null
@@ -89,20 +89,17 @@ def getT0() {
 	return relativeTime
 }
 
-def redraw() {
-	layout {
-		property( property:rampLength, label:'Ramp Duration\n(sec)', min:1 )
-		property( property:peakLength, label:'Peak Duration\n(sec)', min:0 )
-		separator( vertical:true )
-		property( property:peakRate, label:'Peak Rate\n(VU/' + peakRateUnit.value + ')', min:1 )
-		property( property:peakRateUnit, label:'Unit', options:['sec','min'] )
-		separator( vertical:true )
-		box( widget:'display' ) {
-			node( label:'Rate', content: { if( getT0() > 0 ) String.format( '%7.1f', peakRateUnit.value == 'sec' ? a*getT0() : a*getT0()*60 ) else 0 }, constraints:'w 45!' )
-		}
+layout {
+	property( property:rampLength, label:'Ramp Duration\n(sec)', min:1 )
+	property( property:peakLength, label:'Peak Duration\n(sec)', min:0 )
+	separator( vertical:true )
+	property( property:peakRate, label:'Peak Rate\n(VU/' + peakRateUnit.value + ')', min:1 )
+	property( property:peakRateUnit, label:'Unit', options:['sec','min'] )
+	separator( vertical:true )
+	box( widget:'display' ) {
+		node( label:'Rate', content: { if( getT0() > 0 ) String.format( '%7.1f', peakRateUnit.value == 'sec' ? a*getT0() : a*getT0()*60 ) else 0 }, constraints:'w 45!' )
 	}
 }
-redraw()
 
 compactLayout {
 	box( widget:'display' ) {

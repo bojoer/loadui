@@ -31,6 +31,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
+import javafx.application.Platform;
+
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 
@@ -88,6 +90,7 @@ import com.eviware.soapui.model.support.ModelSupport;
 import com.eviware.soapui.model.support.TestRunListenerAdapter;
 import com.eviware.soapui.model.testsuite.LoadTestRunListener;
 import com.eviware.soapui.model.testsuite.SamplerTestStep;
+import com.eviware.soapui.model.testsuite.TestCase;
 import com.eviware.soapui.model.testsuite.TestCaseRunContext;
 import com.eviware.soapui.model.testsuite.TestCaseRunner;
 import com.eviware.soapui.model.testsuite.TestRunner;
@@ -141,7 +144,7 @@ public class SoapUISamplerComponent extends RunnerBase
 	public static final String PROJECT_RELATIVE_PATH = "projectRelativePath";
 
 	public static final String SOAPUI_CONTEXT_PARAM = "soapui_context";
-	
+
 	public static final String PROPERTIES = SoapUISamplerComponent.class.getSimpleName() + "_properties";
 	private static final String DISABLED_TESTSTEPS = "disabledTestSteps";
 	public static final String TYPE = SoapUISamplerComponent.class.getName();
@@ -237,7 +240,7 @@ public class SoapUISamplerComponent extends RunnerBase
 		ProjectItem project = context.getCanvas().getProject();
 		loaduiProjectFolder = project.getProjectFile().getParentFile();
 
-		testStepsTableModel = TestStepsTableModel.newInstance( this );
+		testStepsTableModel = new TestStepsTableModel( this );
 		generalSettings = GeneralSettings.newInstance( context, runner );
 		projectSelector = SoapUiProjectSelector.newInstance( this, context, runner );
 
@@ -273,7 +276,7 @@ public class SoapUISamplerComponent extends RunnerBase
 		box.add( projectSelector.buildLayout() );
 
 		layout.add( box );
-		layout.add( new SeparatorLayoutComponentImpl( false, "" ) );
+		layout.add( new SeparatorLayoutComponentImpl( false, "newline, growx, spanx" ) );
 
 		box = new LayoutContainerImpl( "wrap 3, ins 0", "", "align top", "" );
 
@@ -321,7 +324,7 @@ public class SoapUISamplerComponent extends RunnerBase
 		box.add( abortRunningAction );
 
 		layout.add( box );
-		layout.add( new SeparatorLayoutComponentImpl( true, "" ) );
+		layout.add( new SeparatorLayoutComponentImpl( true, "growy" ) );
 
 		LayoutContainer wrapperBox = new LayoutContainerImpl( "wrap, ins 0", "", "align top", "" );
 
@@ -474,45 +477,25 @@ public class SoapUISamplerComponent extends RunnerBase
 		responseSizeVariableMap.clear();
 	}
 
-	public int getTestStepInvocationCount( int index )
+	public int getTestStepInvocationCount( TestStep step )
 	{
-		if( index >= soapuiTestCase.getTestStepCount() )
-			return 0;
-
-		try
-		{
-			return ( int )( totalValues.get( soapuiTestCase.getTestStepAt( index ).getName() ).getValue().longValue() % 100000 );
-		}
-		catch( Exception e )
-		{
-			log.error( "Error getting run count for testStep with index: " + index, e );
-			return 0;
-		}
+		return ( int )( totalValues.get( step.getName() ).getValue().longValue() % 100000 );
 	}
 
-	public void setTestStepIsDisabled( int index, boolean isDisabled )
+	public void setTestStepIsDisabled( TestStep step, boolean isDisabled )
 	{
-		try
-		{
-			testSteps_isDisabled_Map.put( Integer.toString( index ), Boolean.toString( isDisabled ) );
-			testSteps_isDisabled.setValue( mapJoiner.join( testSteps_isDisabled_Map ) );
-		}
-		catch( Exception e )
-		{
-			log.debug( "Exception: ", e );
-		}
+		testSteps_isDisabled_Map.put( escapeTestStepName( step.getName() ), Boolean.toString( isDisabled ) );
+		testSteps_isDisabled.setValue( mapJoiner.join( testSteps_isDisabled_Map ) );
+	}
+
+	private static String escapeTestStepName( String name )
+	{
+		return name.replace( '=', '!' ).replace( ',', '*' );
 	}
 
 	public void setDisableSoapUIAssertions( boolean areDisabled )
 	{
 		generalSettings.setDisableSoapUIAssertions( areDisabled );
-	}
-
-	public synchronized boolean getTestStepIsDisabled( int index )
-	{
-		if( index >= soapuiTestCase.getTestStepCount() )
-			return false;
-		return soapuiTestCase.getTestStepAt( index ).isDisabled();
 	}
 
 	private void unsetProject()
@@ -852,6 +835,7 @@ public class SoapUISamplerComponent extends RunnerBase
 
 		private void reloadProject( File projectFile2 )
 		{
+			log.debug( "reloadProject()" );
 			final SoapUIClassLoaderState state = SoapUIExtensionClassLoader.ensure();
 			try
 			{
@@ -885,7 +869,7 @@ public class SoapUISamplerComponent extends RunnerBase
 			}
 		}
 
-		public void setTestSuite( String testSuiteName )
+		public void setTestSuite( final String testSuiteName )
 		{
 			if( project == null || testSuiteName == null )
 			{
@@ -908,7 +892,6 @@ public class SoapUISamplerComponent extends RunnerBase
 				{
 					projectSelector.setTestCases( testCases );
 				}
-				log.debug( "projectSelector.getTestCase(): " + projectSelector.getTestCase() );
 				if( testSuite.getTestCaseByName( projectSelector.getTestCase() ) == null )
 				{
 					log.debug( "testCases[0]: " + testCases[0] );
@@ -919,6 +902,7 @@ public class SoapUISamplerComponent extends RunnerBase
 					log.debug( "Reloading testCase, because setTestSuite was called." );
 					reloadTestCase();
 				}
+
 			}
 			catch( Exception e )
 			{
@@ -1029,7 +1013,6 @@ public class SoapUISamplerComponent extends RunnerBase
 		private synchronized void applyDisabledStateToTestSteps()
 		{
 			testSteps_isDisabled_Map.putAll( mapSplitter.split( testSteps_isDisabled.getValue() ) );
-
 			for( TestStep step : soapuiTestCase.getTestStepList() )
 			{
 				WsdlTestStep wsdlStep = ( WsdlTestStep )step;
@@ -1039,14 +1022,9 @@ public class SoapUISamplerComponent extends RunnerBase
 
 		private boolean shouldTestStepBeDisabled( @Nonnull final TestStep step )
 		{
-			String isDisabledBySoapUIRunner = testSteps_isDisabled_Map.get( Integer.toString( soapuiTestCase
-					.getIndexOfTestStep( step ) ) );
-			if( isDisabledBySoapUIRunner != null )
+			if( testSteps_isDisabled_Map.containsKey( escapeTestStepName( step.getName() ) ) )
 			{
-				if( isDisabledBySoapUIRunner.equals( "true" ) )
-					return true;
-				else if( isDisabledBySoapUIRunner.equals( "false" ) )
-					return false;
+				return Boolean.parseBoolean( testSteps_isDisabled_Map.get( escapeTestStepName( step.getName() ) ) );
 			}
 			return step.isDisabled();
 		}
@@ -1163,6 +1141,7 @@ public class SoapUISamplerComponent extends RunnerBase
 
 		private void initProject()
 		{
+			log.debug( "initProject()" );
 			String[] testSuites = ModelSupport.getNames( project.getTestSuiteList() );
 			if( testSuites.length == 0 )
 			{
@@ -1172,6 +1151,7 @@ public class SoapUISamplerComponent extends RunnerBase
 			}
 			else
 			{
+				log.debug( "setTestSuites()" );
 				projectSelector.setTestSuites( testSuites );
 			}
 			String current = projectSelector.getTestSuite();

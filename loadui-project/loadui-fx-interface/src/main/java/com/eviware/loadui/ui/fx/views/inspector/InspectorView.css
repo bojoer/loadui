@@ -1,9 +1,35 @@
-.tab-header-area {
-	/* This seems to be a bug in the implementation (JavaFX 2.2). The spec says to use v-resize, but the implementation fails unless v_resize is used! */
-	-fx-cursor: v_resize;
-	-fx-padding: 0 5 0 5;
+.inspector {
+	-fx-background-color: #6f6f6f;
+}
+
+.tab-header-background {
+	-fx-background-color: #555555;
+	-fx-cursor: V_RESIZE;
 }
 
 .tab {
-	-fx-cursor: default;
+	/* height 21 m border, padding 16 */
+	-fx-cursor: hand;
 }
+
+.tab .tab-label {
+	-fx-text-fill: #e6e6e6;
+}
+
+.tab:hover {
+	-color-gradient: linear-gradient(to bottom, #737373, #404040);
+	-color-border: #404040;
+} 
+
+.tab:pressed {
+	-color-gradient: linear-gradient(to bottom, #1a1a1a, #404040);	
+	-color-border: #404040;
+}
+
+.tab:selected {
+	-color-gradient: linear-gradient(to bottom, #252525, #505050);	
+	-color-border: #404040;
+}
+
+
+

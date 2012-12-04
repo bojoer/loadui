@@ -11,23 +11,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 
 public class MultiMovable
 {
 	protected static final Logger log = LoggerFactory.getLogger( MultiMovable.class );
 
-	private static final LoadingCache<Movable, MoveAlongNodesHandler> moveAlongNodesHandlers = CacheBuilder.newBuilder()
-			.weakKeys().build( new CacheLoader<Movable, MoveAlongNodesHandler>()
-			{
-				@Override
-				public MoveAlongNodesHandler load( Movable movable ) throws Exception
-				{
-					return new MoveAlongNodesHandler( movable );
-				}
-			} );
+	private static final String MOVA_ALONG_NODES_HANDLER_PROP_KEY = MultiMovable.class.getName()
+			+ "MOVA_ALONG_NODES_HANDLER";
+
 	private static final EventHandler<MouseEvent> UPDATE_COORDINATES_HANDLER = new EventHandler<MouseEvent>()
 	{
 		@Override
@@ -89,16 +80,20 @@ public class MultiMovable
 		Preconditions.checkArgument( Movable.isMovable( node ), "The node must already be Movable." );
 
 		final Movable movable = Movable.getMovable( node );
-		node.addEventHandler( DraggableEvent.DRAGGABLE_DRAGGED, moveAlongNodesHandlers.getUnchecked( movable ) );
+		MoveAlongNodesHandler handler = new MoveAlongNodesHandler( movable );
+		node.getProperties().put( MOVA_ALONG_NODES_HANDLER_PROP_KEY, handler );
+		node.addEventHandler( DraggableEvent.DRAGGABLE_DRAGGED, handler );
 		node.addEventHandler( MouseEvent.MOUSE_RELEASED, UPDATE_COORDINATES_HANDLER );
 	}
 
+	@SuppressWarnings( "unchecked" )
 	public static void uninstall( @Nonnull final Region selectionArea, @Nonnull final Node node )
 	{
 		if( Movable.isMovable( node ) )
 		{
 			final Movable movable = Movable.getMovable( node );
-			node.removeEventHandler( DraggableEvent.DRAGGABLE_DRAGGED, moveAlongNodesHandlers.getUnchecked( movable ) );
+			node.removeEventHandler( DraggableEvent.DRAGGABLE_DRAGGED, ( EventHandler<DraggableEvent> )node
+					.getProperties().get( MOVA_ALONG_NODES_HANDLER_PROP_KEY ) );
 		}
 		node.removeEventHandler( MouseEvent.MOUSE_RELEASED, UPDATE_COORDINATES_HANDLER );
 	}

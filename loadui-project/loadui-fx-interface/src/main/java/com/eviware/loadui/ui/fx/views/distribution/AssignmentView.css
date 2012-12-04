@@ -1,0 +1,15 @@
+.assignment-view {
+	-fx-opacity: 1;
+}
+
+.dragging {
+	-fx-opacity: 0.3;
+}
+
+.assignment-view:focused {
+	-fx-background-color: blue;
+}
+
+#menubutton {
+	-fx-cursor: default;
+}

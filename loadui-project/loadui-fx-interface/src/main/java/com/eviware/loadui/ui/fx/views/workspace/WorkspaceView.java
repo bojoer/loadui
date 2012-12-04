@@ -1,5 +1,8 @@
 package com.eviware.loadui.ui.fx.views.workspace;
 
+import static com.eviware.loadui.ui.fx.util.ObservableLists.bindSorted;
+import static javafx.beans.binding.Bindings.bindContent;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -54,7 +57,8 @@ import com.google.common.io.Files;
 
 public class WorkspaceView extends StackPane
 {
-	private static final Logger LOG = LoggerFactory.getLogger( WorkspaceView.class );
+	protected static final Logger log = LoggerFactory.getLogger( WorkspaceView.class );
+
 	private static final String LATEST_DIRECTORY = "gui.latestDirectory";
 	private static final ExtensionFilter XML_EXTENSION_FILTER = new FileChooser.ExtensionFilter( "loadUI project file",
 			"*.xml" );
@@ -63,7 +67,9 @@ public class WorkspaceView extends StackPane
 
 	private final WorkspaceItem workspace;
 	private final ObservableList<ProjectRef> projectRefList;
+	private final ObservableList<ProjectRefView> projectRefViews;
 	private final ObservableList<AgentItem> agentList;
+	private final ObservableList<AgentView> agentViews;
 
 	@FXML
 	private MenuButton workspaceButton;
@@ -76,14 +82,32 @@ public class WorkspaceView extends StackPane
 
 	@FXML
 	private WebView webView;
+	private ObservableList<Observable> labelProperties;
 
 	public WorkspaceView( final WorkspaceItem workspace )
 	{
 		this.workspace = workspace;
-		this.projectRefList = ObservableLists.fx( ObservableLists.ofCollection( workspace, WorkspaceItem.PROJECT_REFS,
+		projectRefList = ObservableLists.fx( ObservableLists.ofCollection( workspace, WorkspaceItem.PROJECT_REFS,
 				ProjectRef.class, workspace.getProjectRefs() ) );
-		this.agentList = ObservableLists.fx( ObservableLists.ofCollection( workspace, WorkspaceItem.AGENTS,
-				AgentItem.class, workspace.getAgents() ) );
+		projectRefViews = ObservableLists.transform( projectRefList, new Function<ProjectRef, ProjectRefView>()
+		{
+			@Override
+			public ProjectRefView apply( ProjectRef projectRef )
+			{
+				return new ProjectRefView( projectRef );
+			}
+		} );
+
+		agentList = ObservableLists.fx( ObservableLists.ofCollection( workspace, WorkspaceItem.AGENTS, AgentItem.class,
+				workspace.getAgents() ) );
+		agentViews = ObservableLists.transform( agentList, new Function<AgentItem, AgentView>()
+		{
+			@Override
+			public AgentView apply( AgentItem agent )
+			{
+				return new AgentView( agent );
+			}
+		} );
 
 		FXMLUtils.load( this );
 	}
@@ -136,7 +160,7 @@ public class WorkspaceView extends StackPane
 		}
 		catch( IOException e )
 		{
-			LOG.warn( "Unable to load resource file 'application.properties!'", e );
+			log.warn( "Unable to load resource file 'application.properties!'", e );
 		}
 
 		webView.getEngine().load( props.getProperty( "starter.page.url" ) );
@@ -189,15 +213,7 @@ public class WorkspaceView extends StackPane
 
 	private void initAgentCarousel()
 	{
-		ObservableLists.bindSorted( agentCarousel.getItems(),
-				ObservableLists.transform( agentList, new Function<AgentItem, AgentView>()
-				{
-					@Override
-					public AgentView apply( AgentItem agent )
-					{
-						return new AgentView( agent );
-					}
-				} ), Ordering.usingToString() );
+		ObservableLists.bindSorted( agentCarousel.getItems(), agentViews, Ordering.usingToString() );
 
 		agentCarousel.setSelected( Iterables.getFirst( agentCarousel.getItems(), null ) );
 
@@ -206,51 +222,51 @@ public class WorkspaceView extends StackPane
 			@Override
 			public void handle( DraggableEvent event )
 			{
-				if( event.getEventType() == DraggableEvent.DRAGGABLE_ENTERED && event.getData() instanceof NewAgentIcon )
+				if( event.getData() instanceof NewAgentIcon )
 				{
-					event.accept();
-				}
-				else if( event.getEventType() == DraggableEvent.DRAGGABLE_DROPPED )
-				{
-					fireEvent( IntentEvent.create( IntentEvent.INTENT_CREATE, AgentItem.class ) );
+					if( event.getEventType() == DraggableEvent.DRAGGABLE_ENTERED )
+					{
+						event.accept();
+					}
+					else if( event.getEventType() == DraggableEvent.DRAGGABLE_DROPPED )
+					{
+						fireEvent( IntentEvent.create( IntentEvent.INTENT_CREATE, AgentItem.class ) );
+					}
 				}
 			}
 		} );
 
-		agentCarousel.setContextMenu( ContextMenuBuilder.create()
-				.items( MenuItemBuilder.create().text( "Add Agent" ).onAction( new EventHandler<ActionEvent>()
-				{
-					@Override
-					public void handle( ActionEvent arg0 )
-					{
-						fireEvent( IntentEvent.create( IntentEvent.INTENT_CREATE, AgentItem.class ) );
-					}
-				} ).build() ).build() );
+		agentCarousel.setContextMenu( ContextMenuBuilder
+				.create()
+				.items(
+						MenuItemBuilder.create().text( "Add Agent" ).id( "add-agent-menu-button" )
+								.onAction( new EventHandler<ActionEvent>()
+								{
+									@Override
+									public void handle( ActionEvent arg0 )
+									{
+										fireEvent( IntentEvent.create( IntentEvent.INTENT_CREATE, AgentItem.class ) );
+									}
+								} ).build() ).build() );
 	}
 
 	private void initProjectRefCarousel()
 	{
 		final Observables.Group group = Observables.group();
 
-		ObservableLists.bindSorted( projectRefCarousel.getItems(),
-				ObservableLists.transform( projectRefList, new Function<ProjectRef, ProjectRefView>()
-				{
-					@Override
-					public ProjectRefView apply( ProjectRef projectRef )
-					{
-						return new ProjectRefView( projectRef );
-					}
-				} ), Ordering.usingToString(), group );
+		bindSorted( projectRefCarousel.getItems(), projectRefViews, Ordering.usingToString(), group );
 
-		Bindings.bindContent( group.getObservables(),
-				ObservableLists.transform( projectRefCarousel.getItems(), new Function<ProjectRefView, Observable>()
+		labelProperties = ObservableLists.transform( projectRefCarousel.getItems(),
+				new Function<ProjectRefView, Observable>()
 				{
 					@Override
 					public Observable apply( ProjectRefView projectRefView )
 					{
 						return projectRefView.labelProperty();
 					}
-				} ) );
+				} );
+
+		bindContent( group.getObservables(), labelProperties );
 
 		final String lastProject = workspace.getAttribute( "lastOpenProject", "" );
 		projectRefCarousel.setSelected( Iterables.find( projectRefCarousel.getItems(), new Predicate<ProjectRefView>()

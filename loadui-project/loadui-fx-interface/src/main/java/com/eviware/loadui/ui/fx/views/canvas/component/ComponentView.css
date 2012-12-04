@@ -1,9 +1,7 @@
-.display {
-	-fx-background-color: darkgrey, black;
+.component-view #content {
+	-fx-background-color:
+		#acacac,
+		linear-gradient(to bottom, #dedede 0%, #c9c9c9 40%, #b5b5b5 100%);
 	-fx-background-insets: 0, 1;
-	-fx-padding: 5;
-}
-
-.display .label {
-	-fx-text-fill: green;
+	-fx-background-radius: 8;
 }
