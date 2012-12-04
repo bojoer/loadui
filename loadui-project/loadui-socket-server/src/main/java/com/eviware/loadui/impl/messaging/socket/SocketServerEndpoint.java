@@ -59,7 +59,7 @@ final public class SocketServerEndpoint implements ServerEndpoint, Releasable
 		int port = Integer.parseInt( System.getProperty( LoadUI.HTTPS_PORT, "8443" ) );
 		serverSocket = ( SSLServerSocket )server.createServerSocket( port );
 
-		log.info( "*** Agent listening for incoming connections on port {} ***", port );
+		log.info( "*** AGENT STARTED! LISTENING FOR CONNECTIONS ON PORT {} ***", port );
 
 		new Thread( new ConnectionAccepter(), "SockerServerEndpoint connection accepter" ).start();
 	}

@@ -21,7 +21,7 @@
 							<mainClass>com.javafx.main.Main</mainClass>
 						</manifest>
 						<manifestEntries>
-							<JavaFX-Version>2.1</JavaFX-Version>
+							<JavaFX-Version>2.2</JavaFX-Version>
 							<JavaFX-Application-Class>com.eviware.loadui.launcher.LoadUIFXLauncher</JavaFX-Application-Class>
 						</manifestEntries>
 					</archive>

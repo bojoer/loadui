@@ -67,45 +67,51 @@ public class LoadUIFXLauncher extends LoadUILauncher
 		public void start( final Stage stage ) throws Exception
 		{
 			File workingDir = new File( System.getProperty( "loadui.working", "." ) ).getAbsoluteFile();
-			Scene splashScene;
-			try
-			{
-				splashScene = FXMLLoader.load( new File( workingDir, "res/loadui-splash.fxml" ).toURI().toURL() );
-			}
-			catch( IOException e )
-			{
-				splashScene = SceneBuilder.create().width( 600 ).height( 320 ).fill( Color.DARKGRAY )
-						.root( LabelBuilder.create().text( System.getProperty( LOADUI_NAME, "loadUI" ) ).build() ).build();
-			}
 
-			Image[] icons = new Image[0];
-			try
+			final String noFx = getParameters().getNamed().get( NOFX_OPTION );
+			if( !"true".equals( noFx ) )
 			{
-				icons = new Image[] { new Image( new File( workingDir, "res/icon_64x64.png" ).toURI().toURL().toString() ),
-						new Image( new File( workingDir, "res/icon_32x32.png" ).toURI().toURL().toString() ) };
-			}
-			catch( Exception e )
-			{
-				//e.printStackTrace();
-			}
-
-			final Stage splash = StageBuilder.create().style( StageStyle.TRANSPARENT ).scene( splashScene ).icons( icons )
-					.build();
-			splash.initModality( Modality.APPLICATION_MODAL );
-			splash.centerOnScreen();
-			splash.show();
-			splash.toFront();
-
-			stage.getIcons().addAll( icons );
-			stage.setOnShown( new EventHandler<WindowEvent>()
-			{
-				@Override
-				public void handle( WindowEvent event )
+				Scene splashScene;
+				try
 				{
-					System.out.println( "closing splash!" );
-					splash.close();
+					splashScene = FXMLLoader.load( new File( workingDir, "res/loadui-splash.fxml" ).toURI().toURL() );
 				}
-			} );
+				catch( IOException e )
+				{
+					splashScene = SceneBuilder.create().width( 600 ).height( 320 ).fill( Color.DARKGRAY )
+							.root( LabelBuilder.create().text( System.getProperty( LOADUI_NAME, "loadUI" ) ).build() ).build();
+				}
+
+				Image[] icons = new Image[0];
+				try
+				{
+					icons = new Image[] {
+							new Image( new File( workingDir, "res/icon_64x64.png" ).toURI().toURL().toString() ),
+							new Image( new File( workingDir, "res/icon_32x32.png" ).toURI().toURL().toString() ) };
+				}
+				catch( Exception e )
+				{
+					//e.printStackTrace();
+				}
+
+				final Stage splash = StageBuilder.create().style( StageStyle.TRANSPARENT ).scene( splashScene )
+						.icons( icons ).build();
+				splash.initModality( Modality.APPLICATION_MODAL );
+				splash.centerOnScreen();
+				splash.show();
+				splash.toFront();
+
+				stage.getIcons().addAll( icons );
+				stage.setOnShown( new EventHandler<WindowEvent>()
+				{
+					@Override
+					public void handle( WindowEvent event )
+					{
+						System.out.println( "closing splash!" );
+						splash.close();
+					}
+				} );
+			}
 
 			System.out.println( "start called!" );
 
@@ -120,8 +126,11 @@ public class LoadUIFXLauncher extends LoadUILauncher
 					launcher.init();
 					launcher.start();
 
-					launcher.framework.getBundleContext().registerService( Stage.class, stage,
-							new Hashtable<String, Object>() );
+					if( !"true".equals( noFx ) )
+					{
+						launcher.framework.getBundleContext().registerService( Stage.class, stage,
+								new Hashtable<String, Object>() );
+					}
 					return null;
 				}
 			};
