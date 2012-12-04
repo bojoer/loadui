@@ -91,19 +91,23 @@ public class Carousel<E extends Node> extends Control
 			public void onChanged( ListChangeListener.Change<? extends E> change )
 			{
 				final E selected = getSelected();
-				if( selected == null )
-				{
-					return;
-				}
 
 				if( items.isEmpty() )
 				{
 					setSelected( null );
+					return;
 				}
-				else if( !items.contains( selected ) )
+
+				while( change.next() )
 				{
-					while( change.next() )
+
+					if( change.wasAdded() )
 					{
+						setSelected( change.getAddedSubList().get( 0 ) );
+					}
+					else if( !items.contains( selected ) )
+					{
+						System.out.print( "*" );
 						if( change.getRemoved().contains( selected ) )
 						{
 							setSelected( items.get( Math.max( 0, change.getFrom() - 1 ) ) );
@@ -111,6 +115,7 @@ public class Carousel<E extends Node> extends Control
 						}
 					}
 				}
+
 			}
 		} );
 	}

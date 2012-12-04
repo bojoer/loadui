@@ -1,5 +1,7 @@
 package com.eviware.loadui.ui.fx.control.skin;
 
+import static com.google.common.base.Objects.firstNonNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +16,8 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
@@ -123,7 +127,7 @@ public class CarouselSkin<E extends Node> extends SkinBase<Carousel<E>, Behavior
 		carousel.getItems().addListener( updatePage );
 		updatePage.invalidated( null );
 
-		ComboBox<E> comboBox = new ComboBox<>();
+		final ComboBox<E> comboBox = new ComboBox<>();
 		comboBox.setMaxWidth( Double.MAX_VALUE );
 		Callback<ListView<E>, ListCell<E>> cellFactory = new Callback<ListView<E>, ListCell<E>>()
 		{
@@ -145,12 +149,59 @@ public class CarouselSkin<E extends Node> extends SkinBase<Carousel<E>, Behavior
 		comboBox.setButtonCell( cellFactory.call( null ) );
 		comboBox.setCellFactory( cellFactory );
 		comboBox.setItems( carousel.getItems() );
-		comboBox.valueProperty().bindBidirectional( carousel.selectedProperty() );
+		/// comboBox.valueProperty().bindBidirectional( carousel.selectedProperty() );
+
+		comboBox.valueProperty().addListener( new ChangeListener<E>()
+		{
+
+			@Override
+			public void changed( ObservableValue<? extends E> arg0, E oldNode, E newNode )
+			{
+
+				if( newNode == null && !comboBox.getItems().isEmpty() )
+				{
+					comboBox.valueProperty().set( firstNonNull( oldNode, comboBox.getItems().get( 0 ) ) );
+				}
+				else if( carousel.selectedProperty().getValue() != newNode )
+				{
+					carousel.setSelected( newNode );
+				}
+
+			}
+
+		} );
 
 		CarouselDisplay carouselDisplay = new CarouselDisplay();
 		VBox.setVgrow( carouselDisplay, Priority.SOMETIMES );
 		VBox vbox = VBoxBuilder.create().styleClass( "vbox" )
 				.children( carouselDisplay, new Separator(), carousel.getLabel(), comboBox ).build();
+
+		E AgentNode = carousel.selectedProperty().get();
+		if( AgentNode != null )
+		{
+			AgentNode.getStyleClass().add( "selected" );
+			comboBox.valueProperty().setValue( AgentNode );
+		}
+
+		carousel.selectedProperty().addListener( new ChangeListener<E>()
+		{
+
+			@Override
+			public void changed( ObservableValue<? extends E> arg0, E oldNode, E newNode )
+			{
+
+				if( oldNode != null )
+					oldNode.getStyleClass().remove( "selected" );
+
+				if( newNode != null )
+				{
+					newNode.getStyleClass().add( "selected" );
+					comboBox.valueProperty().setValue( newNode );
+				}
+
+			}
+
+		} );
 
 		getChildren().setAll( vbox );
 	}
