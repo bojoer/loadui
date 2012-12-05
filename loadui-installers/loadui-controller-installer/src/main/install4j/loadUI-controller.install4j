@@ -1013,7 +1013,7 @@ return f.exists();</condition>
         <content />
       </installerScript>
     </unixInstaller>
-    <unixInstaller name="Unix 64-bit Installer" id="1239" customizedId="" mediaFileName="loadUI-${compiler:version}-64bit" installDir="SmartBear/loadUI-${compiler:version}" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="macosx-amd64-1.7.0_09" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" downloadURL="">
+    <unixInstaller name="Unix 64-bit Installer" id="1239" customizedId="" mediaFileName="loadUI-${compiler:version}-64bit" installDir="SmartBear/loadUI-${compiler:version}" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="linux-amd64-1.7.0_09" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" downloadURL="">
       <excludedLaunchers>
         <launcher id="24" />
         <launcher id="225" />
