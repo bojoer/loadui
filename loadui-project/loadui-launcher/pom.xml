@@ -22,7 +22,7 @@
 						</manifest>
 						<manifestEntries>
 							<JavaFX-Version>2.2</JavaFX-Version>
-							<JavaFX-Application-Class>com.eviware.loadui.launcher.LoadUIFXLauncher</JavaFX-Application-Class>
+							<JavaFX-Application-Class>com.eviware.loadui.launcher.LoadUILauncher</JavaFX-Application-Class>
 						</manifestEntries>
 					</archive>
 				</configuration>

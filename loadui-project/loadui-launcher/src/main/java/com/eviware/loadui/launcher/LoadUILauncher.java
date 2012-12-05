@@ -29,10 +29,16 @@ import java.nio.channels.FileLock;
 import java.nio.channels.OverlappingFileLockException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
+
+import javafx.application.Application;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -48,6 +54,8 @@ import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 import org.osgi.framework.launch.Framework;
 
+import com.eviware.loadui.launcher.LoadUICommandLineLauncher.CommandApplication;
+import com.eviware.loadui.launcher.LoadUIFXLauncher.FXApplication;
 import com.eviware.loadui.launcher.api.OSGiUtils;
 import com.eviware.loadui.launcher.util.BndUtils;
 
@@ -76,13 +84,30 @@ public class LoadUILauncher
 
 	public static void main( String[] args )
 	{
-		System.setSecurityManager( null );
+		for( String arg : args )
+		{
+			System.out.println( "LoadUILauncher arg: " + arg );
+			if( arg.contains( "cmd" ) )
+			{
+				List<String> argList = new ArrayList<>( Arrays.asList( args ) );
+				argList.remove( arg );
+				String[] newArgs = argList.toArray( new String[argList.size()] );
+				Application.launch( CommandApplication.class, newArgs );
+				return;
+			}
+		}
 
-		LoadUILauncher launcher = new LoadUILauncher( args );
-		launcher.init();
-		launcher.start();
+		Application.launch( FXApplication.class, args );
 
-		new Thread( new LauncherWatchdog( launcher.framework, 20000 ), "loadUI Launcher Watchdog" ).start();
+		// Is the below just old legacy code from JavaFX 1?
+
+		//		System.setSecurityManager( null );
+		//
+		//		LoadUILauncher launcher = new LoadUILauncher( args );
+		//		launcher.init();
+		//		launcher.start();
+		//
+		//		new Thread( new LauncherWatchdog( launcher.framework, 20000 ), "loadUI Launcher Watchdog" ).start();
 	}
 
 	private static void loadPropertiesFile()
@@ -100,7 +125,7 @@ public class LoadUILauncher
 		}
 	}
 
-	protected Framework framework;
+	protected static Framework framework;
 	protected final Properties configProps;
 	protected final String[] argv;
 	private final Options options;
@@ -173,7 +198,7 @@ public class LoadUILauncher
 		{
 			System.err.print( "Error parsing commandline args: " + e.getMessage() + "\n" );
 			HelpFormatter formatter = new HelpFormatter();
-			formatter.printHelp( "loadUILauncher", options );
+			formatter.printHelp( "", options );
 
 			exitInError();
 			throw new RuntimeException();

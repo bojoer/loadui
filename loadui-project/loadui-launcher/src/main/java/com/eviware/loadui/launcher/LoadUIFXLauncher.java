@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Hashtable;
+import java.util.Map.Entry;
 
 import javafx.application.Application;
 import javafx.concurrent.Task;
@@ -26,6 +27,8 @@ public class LoadUIFXLauncher extends LoadUILauncher
 {
 	public static void main( String[] args )
 	{
+		for( String a : args )
+			System.out.println( "arg: " + a );
 		Application.launch( FXApplication.class, args );
 	}
 
@@ -67,33 +70,36 @@ public class LoadUIFXLauncher extends LoadUILauncher
 		public void start( final Stage stage ) throws Exception
 		{
 			File workingDir = new File( System.getProperty( "loadui.working", "." ) ).getAbsoluteFile();
+			Scene splashScene;
+			try
+			{
+				splashScene = FXMLLoader.load( new File( workingDir, "res/loadui-splash.fxml" ).toURI().toURL() );
+			}
+			catch( IOException e )
+			{
+				splashScene = SceneBuilder.create().width( 600 ).height( 320 ).fill( Color.DARKGRAY )
+						.root( LabelBuilder.create().text( System.getProperty( LOADUI_NAME, "loadUI" ) ).build() ).build();
+			}
+
+			Image[] icons = new Image[0];
+			try
+			{
+				icons = new Image[] { new Image( new File( workingDir, "res/icon_64x64.png" ).toURI().toURL().toString() ),
+						new Image( new File( workingDir, "res/icon_32x32.png" ).toURI().toURL().toString() ) };
+			}
+			catch( Exception e )
+			{
+				//e.printStackTrace();
+			}
+
+			for( Entry<String, String> e : getParameters().getNamed().entrySet() )
+				System.out.println( "para: " + e.getKey() + "=" + e.getValue() );
 
 			final String noFx = getParameters().getNamed().get( NOFX_OPTION );
+			System.out.println( "noFx: " + noFx );
+
 			if( !"true".equals( noFx ) )
 			{
-				Scene splashScene;
-				try
-				{
-					splashScene = FXMLLoader.load( new File( workingDir, "res/loadui-splash.fxml" ).toURI().toURL() );
-				}
-				catch( IOException e )
-				{
-					splashScene = SceneBuilder.create().width( 600 ).height( 320 ).fill( Color.DARKGRAY )
-							.root( LabelBuilder.create().text( System.getProperty( LOADUI_NAME, "loadUI" ) ).build() ).build();
-				}
-
-				Image[] icons = new Image[0];
-				try
-				{
-					icons = new Image[] {
-							new Image( new File( workingDir, "res/icon_64x64.png" ).toURI().toURL().toString() ),
-							new Image( new File( workingDir, "res/icon_32x32.png" ).toURI().toURL().toString() ) };
-				}
-				catch( Exception e )
-				{
-					//e.printStackTrace();
-				}
-
 				final Stage splash = StageBuilder.create().style( StageStyle.TRANSPARENT ).scene( splashScene )
 						.icons( icons ).build();
 				splash.initModality( Modality.APPLICATION_MODAL );
