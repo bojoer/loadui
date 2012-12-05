@@ -8,6 +8,7 @@
 	<name>loadUI Installers</name>
 	<description>This project builds the loadUI installers</description>
 	<properties>
+		<devenv.install4jc>${env.INSTALL4J5_HOME}/bin/install4jc.exe</devenv.install4jc>
 		<install4jFileName>loadUI.install4j</install4jFileName>
 		<maven.build.timestamp.format>yyyy/MM/dd HH\:mm</maven.build.timestamp.format>
 		<loadui.build.date>${maven.build.timestamp}</loadui.build.date>
