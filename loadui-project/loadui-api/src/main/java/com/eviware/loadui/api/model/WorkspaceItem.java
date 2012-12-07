@@ -47,6 +47,9 @@ public interface WorkspaceItem extends ModelItem
 	public final static String LOADUI_CAJO_PORT_PROPERTY = WorkspaceItem.class.getSimpleName() + ".loadUICajoPort";
 
 	public final static String STATISTIC_RESULTS_PATH = WorkspaceItem.class.getSimpleName() + ".statisticResultsPath";
+	public static final String STATISTIC_NUMBER_OF_AUTOSAVES = ProjectItem.class.getSimpleName()
+			+ ".statisticNumberOfAutosaves";
+	
 	public final static String IGNORED_VERSION_UPDATE = WorkspaceItem.class.getSimpleName() + ".ignoredVersionUpdate";
 
 	/**
@@ -182,4 +185,21 @@ public interface WorkspaceItem extends ModelItem
 	 * @param localMode
 	 */
 	public void setLocalMode( boolean localMode );
+	
+	/**
+	 * Gets the maximum number of executions for all projects that are
+	 * automatically saved before the oldest one is deleted.
+	 * 
+	 * @return
+	 */
+	long getNumberOfAutosaves();
+
+	/**
+	 * Sets the maximum number of executions for all projects that are
+	 * automatically saved before the oldest one is deleted.
+	 * 
+	 * @return
+	 */
+	void setNumberOfAutosaves( long n );
+	
 }

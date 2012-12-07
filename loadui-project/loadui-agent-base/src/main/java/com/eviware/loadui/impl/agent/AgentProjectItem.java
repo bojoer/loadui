@@ -527,18 +527,6 @@ public class AgentProjectItem implements ProjectItem
 	}
 
 	@Override
-	public long getNumberOfAutosaves()
-	{
-		return 0;
-	}
-
-	@Override
-	public void setNumberOfAutosaves( long n )
-	{
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
 	public Set<Statistic.Descriptor> getDefaultStatistics()
 	{
 		return ImmutableSet.of();

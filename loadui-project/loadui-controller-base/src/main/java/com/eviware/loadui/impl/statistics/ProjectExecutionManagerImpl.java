@@ -224,6 +224,8 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager, Rel
 			case POST_STOP :
 				stopExecution( runningProject );
 				break;
+			default:
+				break;
 			}
 		}
 
@@ -258,7 +260,8 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager, Rel
 
 			// remove the oldest autosaved execution if needed
 			Set<Execution> executions = getExecutions( runningProject, true, false );
-			while( executions.size() > runningProject.getNumberOfAutosaves() && runningProject.getNumberOfAutosaves() > 0 )
+			long autoSaves = workspaceProvider.getWorkspace().getNumberOfAutosaves();
+			while( executions.size() > autoSaves && autoSaves > 0 )
 			{
 				Execution oldestExecution = executionManager.getCurrentExecution();
 				for( Execution e : executions )
