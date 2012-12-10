@@ -38,8 +38,6 @@ public interface ProjectItem extends CanvasItem
 	public static final String SAVE_REPORT_PROPERTY = ModelItem.class.getSimpleName() + ".saveReport";
 	public static final String REPORT_FOLDER_PROPERTY = ModelItem.class.getSimpleName() + ".reportFolder";
 	public static final String REPORT_FORMAT_PROPERTY = ModelItem.class.getSimpleName() + ".reportFormat";
-	public static final String STATISTIC_NUMBER_OF_AUTOSAVES = ProjectItem.class.getSimpleName()
-			+ ".statisticNumberOfAutosaves";
 
 	/**
 	 * Gets the File for this ProjectItem.
@@ -225,19 +223,5 @@ public interface ProjectItem extends CanvasItem
 	 */
 	public void cancelScenes( boolean linkedOnly );
 
-	/**
-	 * Gets the maximum number of executions of this project that are
-	 * automatically saved before the oldest one is deleted.
-	 * 
-	 * @return
-	 */
-	long getNumberOfAutosaves();
 
-	/**
-	 * Sets the maximum number of executions of this project that are
-	 * automatically saved before the oldest one is deleted.
-	 * 
-	 * @return
-	 */
-	void setNumberOfAutosaves( long n );
 }
