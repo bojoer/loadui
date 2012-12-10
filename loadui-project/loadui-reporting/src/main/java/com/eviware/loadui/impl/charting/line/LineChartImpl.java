@@ -76,6 +76,7 @@ final public class LineChartImpl extends Chart implements LineChart, Releasable
 	private ZoomLevel zoomLevel = null;
 	private boolean follow = true;
 
+	@Deprecated
 	public LineChartImpl( LineChartView chartView )
 	{
 		this.chartView = chartView;
