@@ -9,6 +9,8 @@ import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.component.ComponentCreationException;
 import com.eviware.loadui.api.component.categories.FlowCategory;
@@ -21,6 +23,9 @@ import com.google.common.base.Joiner;
 
 public class SplitterTest
 {
+	
+	private static final Logger log = LoggerFactory.getLogger( SplitterTest.class );
+	
 	private ComponentItem component;
 
 	@BeforeClass
@@ -55,20 +60,22 @@ public class SplitterTest
 	{
 		// 2 outputs: Change one, sum is 100%.
 		component.getProperty( "numOutputs" ).setValue( 2 );
+		log.info( "Setting value of prob0 to 60" );
 		component.getProperty( "probability0" ).setValue( 60 );
 		TestUtils.awaitEvents( component );
-		assertThat( ( Integer )component.getProperty( "probability1" ).getValue(), is( 40 ) );
+		assertThat( getProbabilityForOutput( 1 ), is( 40 ) );
 
 		// 3 outputs: New output has probability 0 .
 		component.getProperty( "numOutputs" ).setValue( 3 );
 		TestUtils.awaitEvents( component );
-		assertThat( ( Integer )component.getProperty( "probability2" ).getValue(), is( 0 ) );
+		assertThat( getProbabilityForOutput( 2 ), is( 0 ) );
 
+		log.info( "Setting value of prob2 to 50" );
 		// 3 outputs: Increasing one should decrease the others, starting with the least recently changed non-zero output.
 		component.getProperty( "probability2" ).setValue( 50 );
 		TestUtils.awaitEvents( component );
-		assertThat( ( Integer )component.getProperty( "probability0" ).getValue(), is( 50 ) );
-		assertThat( ( Integer )component.getProperty( "probability1" ).getValue(), is( 0 ) );
+		assertThat( getProbabilityForOutput( 0 ), is( 50 ) );
+		assertThat( getProbabilityForOutput( 1 ), is( 0 ) );
 
 		// 2 outputs: Sum is 100%.
 		component.getProperty( "numOutputs" ).setValue( 2 );
@@ -121,7 +128,11 @@ public class SplitterTest
 	}
 
 	@Test
+<<<<<<< Updated upstream
 	public void changingKnobValueShouldCausePreviouslyChangedKnobToCompensate() throws Exception
+=======
+	public void changingKnobValueShouldCausePreviouslyUnChangedKnobToCompensate() throws Exception
+>>>>>>> Stashed changes
 	{
 		final int knobsCount = 4;
 		component.getProperty( "numOutputs" ).setValue( knobsCount );
@@ -136,6 +147,11 @@ public class SplitterTest
 		// change one of them, should take off the value of the first knob
 		component.getProperty( "probability1" ).setValue( 50 );
 		TestUtils.awaitEvents( component );
+<<<<<<< Updated upstream
+=======
+		
+		//Thread.sleep( 150 );
+>>>>>>> Stashed changes
 
 		// change a second one, should take off the value from the previously changed one
 		component.getProperty( "probability2" ).setValue( 25 );
@@ -143,20 +159,38 @@ public class SplitterTest
 
 		printValues();
 
+<<<<<<< Updated upstream
 		// after setting p2 to 25, should take this 25 from last changed which was p1
 		assertThat( getProbabilityForOutput( 0 ), is( 50 ) );
 		assertThat( getProbabilityForOutput( 1 ), is( 25 ) );
 		assertThat( getProbabilityForOutput( 2 ), is( 25 ) );
 		assertThat( getProbabilityForOutput( 3 ), is( 0 ) );
 
+=======
+		// after setting p2 to 25, should take this 25 from the first knob which was never modified, p0
+		assertThat( getProbabilityForOutput( 0 ), is( 25 ) );
+		assertThat( getProbabilityForOutput( 1 ), is( 50 ) );
+		assertThat( getProbabilityForOutput( 2 ), is( 25 ) );
+		assertThat( getProbabilityForOutput( 3 ), is( 0 ) );
+
+		//Thread.sleep( 150 );
+		
+>>>>>>> Stashed changes
 		// now, setting p3 to 40 should cause the two previously changed knobs to go down
 		component.getProperty( "probability3" ).setValue( 40 );
 		TestUtils.awaitEvents( component );
 
+<<<<<<< Updated upstream
 		// after setting p3 to 40, p2 should go down from 25 to 0, p1 should go down from 25 to 10
 		assertThat( getProbabilityForOutput( 0 ), is( 50 ) );
 		assertThat( getProbabilityForOutput( 1 ), is( 10 ) );
 		assertThat( getProbabilityForOutput( 2 ), is( 0 ) );
+=======
+		// after setting p3 to 40, p0 should go down to 0 and p1 to 35
+		assertThat( getProbabilityForOutput( 0 ), is( 0 ) );
+		assertThat( getProbabilityForOutput( 1 ), is( 35 ) );
+		assertThat( getProbabilityForOutput( 2 ), is( 25 ) );
+>>>>>>> Stashed changes
 		assertThat( getProbabilityForOutput( 3 ), is( 40 ) );
 
 	}
@@ -164,7 +198,11 @@ public class SplitterTest
 	@Test
 	public void changingAKnobToMoreThan100ShouldNotBePossible() throws Exception
 	{
+<<<<<<< Updated upstream
 		component.getProperty( "numOutputs" ).setValue( 1 );
+=======
+		component.getProperty( "numOutputs" ).setValue( 2 );
+>>>>>>> Stashed changes
 		TestUtils.awaitEvents( component );
 
 		// pre-condition
@@ -175,12 +213,20 @@ public class SplitterTest
 		TestUtils.awaitEvents( component );
 
 		assertThat( getProbabilityForOutput( 0 ), is( 100 ) );
+<<<<<<< Updated upstream
+=======
+		assertThat( getProbabilityForOutput( 1 ), is( 0 ) );
+>>>>>>> Stashed changes
 
 		// set an invalid value
 		component.getProperty( "probability0" ).setValue( 98712 );
 		TestUtils.awaitEvents( component );
 
 		assertThat( getProbabilityForOutput( 0 ), is( 100 ) );
+<<<<<<< Updated upstream
+=======
+		assertThat( getProbabilityForOutput( 1 ), is( 0 ) );
+>>>>>>> Stashed changes
 
 	}
 
@@ -216,6 +262,7 @@ public class SplitterTest
 
 		// set knobs to absurd values
 		component.getProperty( "probability0" ).setValue( 50 );
+<<<<<<< Updated upstream
 		component.getProperty( "probability1" ).setValue( 20 );
 		component.getProperty( "probability2" ).setValue( 20 );
 		component.getProperty( "probability3" ).setValue( 80 );
@@ -232,6 +279,30 @@ public class SplitterTest
 		assertThat( getProbabilityForOutput( 4 ), is( 0 ) );
 		assertThat( getProbabilityForOutput( 5 ), is( 0 ) );
 		assertThat( getProbabilityForOutput( 6 ), is( 0 ) );
+=======
+		TestUtils.awaitEvents( component );
+		component.getProperty( "probability1" ).setValue( 20 );
+		TestUtils.awaitEvents( component );
+		component.getProperty( "probability2" ).setValue( 20 );
+		TestUtils.awaitEvents( component );
+		component.getProperty( "probability3" ).setValue( 80 );
+		TestUtils.awaitEvents( component );
+		component.getProperty( "probability4" ).setValue( 60 );
+		TestUtils.awaitEvents( component );
+		component.getProperty( "probability5" ).setValue( 30 );
+		TestUtils.awaitEvents( component );
+		component.getProperty( "probability6" ).setValue( 2333333 );
+		TestUtils.awaitEvents( component );
+
+		// the latest set value should be set to a maximum value
+		assertThat( getProbabilityForOutput( 0 ), is( 0 ) );
+		assertThat( getProbabilityForOutput( 1 ), is( 0 ) );
+		assertThat( getProbabilityForOutput( 2 ), is( 0 ) );
+		assertThat( getProbabilityForOutput( 3 ), is( 0 ) );
+		assertThat( getProbabilityForOutput( 4 ), is( 0 ) );
+		assertThat( getProbabilityForOutput( 5 ), is( 0 ) );
+		assertThat( getProbabilityForOutput( 6 ), is( 100 ) );
+>>>>>>> Stashed changes
 
 	}
 
@@ -242,6 +313,7 @@ public class SplitterTest
 		component.getProperty( "numOutputs" ).setValue( knobsCount );
 		TestUtils.awaitEvents( component );
 
+<<<<<<< Updated upstream
 		// set knobs to absurd values
 		component.getProperty( "probability0" ).setValue( 50 );
 		component.getProperty( "probability1" ).setValue( 10 );
@@ -249,6 +321,21 @@ public class SplitterTest
 		component.getProperty( "probability3" ).setValue( 10 );
 		component.getProperty( "probability4" ).setValue( 10 );
 		component.getProperty( "probability5" ).setValue( 5 );
+=======
+		// set knobs to good values
+		component.getProperty( "probability0" ).setValue( 50 );
+		TestUtils.awaitEvents( component );
+		component.getProperty( "probability1" ).setValue( 10 );
+		TestUtils.awaitEvents( component );
+		component.getProperty( "probability2" ).setValue( 10 );
+		TestUtils.awaitEvents( component );
+		component.getProperty( "probability3" ).setValue( 10 );
+		TestUtils.awaitEvents( component );
+		component.getProperty( "probability4" ).setValue( 10 );
+		TestUtils.awaitEvents( component );
+		component.getProperty( "probability5" ).setValue( 5 );
+		TestUtils.awaitEvents( component );
+>>>>>>> Stashed changes
 		component.getProperty( "probability6" ).setValue( 5 );
 		TestUtils.awaitEvents( component );
 
@@ -263,6 +350,7 @@ public class SplitterTest
 
 		// try to change knobs to invalid values
 		component.getProperty( "probability0" ).setValue( 80 );
+<<<<<<< Updated upstream
 		component.getProperty( "probability3" ).setValue( 30 );
 		component.getProperty( "probability5" ).setValue( 50 );
 		TestUtils.awaitEvents( component );
@@ -276,6 +364,23 @@ public class SplitterTest
 		assertThat( getProbabilityForOutput( 5 ), is( 5 ) );
 		assertThat( getProbabilityForOutput( 6 ), is( 5 ) );
 
+=======
+		TestUtils.awaitEvents( component );
+		component.getProperty( "probability3" ).setValue( 30 );
+		TestUtils.awaitEvents( component );
+		component.getProperty( "probability5" ).setValue( 50 );
+		TestUtils.awaitEvents( component );
+		
+		// ensure invalid values were NOT accepted
+		assertThat( getProbabilityForOutput( 0 ), is( 20 ) );
+		assertThat( getProbabilityForOutput( 1 ), is( 0 ) );
+		assertThat( getProbabilityForOutput( 2 ), is( 0 ) );
+		assertThat( getProbabilityForOutput( 3 ), is( 30 ) );
+		assertThat( getProbabilityForOutput( 4 ), is( 0 ) );
+		assertThat( getProbabilityForOutput( 5 ), is( 50 ) );
+		assertThat( getProbabilityForOutput( 6 ), is( 0 ) );
+		
+>>>>>>> Stashed changes
 	}
 
 	@Test
