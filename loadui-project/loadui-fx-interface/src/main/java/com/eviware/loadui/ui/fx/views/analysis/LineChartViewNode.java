@@ -1,6 +1,5 @@
 package com.eviware.loadui.ui.fx.views.analysis;
 
-import static com.eviware.loadui.ui.fx.util.ObservableLists.concat;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.fromExpression;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.fx;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.ofCollection;
@@ -16,6 +15,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.concurrent.Callable;
 
+import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.property.LongProperty;
@@ -34,6 +34,7 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.ScrollBar;
+import javafx.scene.control.Toggle;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Line;
@@ -42,6 +43,7 @@ import javafx.scene.shape.LineBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.eviware.loadui.api.charting.line.ZoomLevel;
 import com.eviware.loadui.api.statistics.DataPoint;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticVariable;
@@ -63,7 +65,6 @@ import com.google.common.base.Function;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.google.common.collect.Iterables;
 
 public class LineChartViewNode extends VBox
 {
@@ -116,6 +117,9 @@ public class LineChartViewNode extends VBox
 
 	@FXML
 	private HBox buttonBar;
+
+	@FXML
+	private ZoomMenuButton zoomMenuButton;
 
 	public LineChartViewNode( final ObservableValue<Execution> executionProperty, LineChartView chartView,
 			Observable poll )
@@ -174,6 +178,45 @@ public class LineChartViewNode extends VBox
 		bindContent( segments.getChildren(), segmentViews );
 
 		shownSpan.bind( xAxis.widthProperty().multiply( 30 ) );
+
+		ZoomLevel level;
+		try
+		{
+			level = ZoomLevel.valueOf( chartView.getAttribute(
+					com.eviware.loadui.api.charting.line.LineChart.ZOOM_LEVEL_ATTRIBUTE, "SECONDS" ) );
+			log.debug( " ZoomLevel already set to:" + level.toString() );
+		}
+		catch( IllegalArgumentException e )
+		{
+			level = ZoomLevel.SECONDS;
+			log.debug( " New chart - default ZoomLevel:" + level.toString() );
+		}
+		setZoomLevel( level );
+
+		zoomMenuButton.setSelected( level );
+
+		zoomMenuButton.getToggleGroup().selectedToggleProperty().addListener( new ChangeListener<Toggle>()
+		{
+
+			@Override
+			public void changed( ObservableValue<? extends Toggle> arg0, Toggle oldToggle, final Toggle newToggle )
+			{
+				Platform.runLater( new Runnable()
+				{
+
+					@Override
+					public void run()
+					{
+						if( newToggle != null )
+						{
+							setZoomLevel( ( ZoomLevel )newToggle.getUserData() );
+						}
+
+					}
+				} );
+			}
+
+		} );
 	}
 
 	private String seriesToColor( Series<?, ?> series )
@@ -335,4 +378,13 @@ public class LineChartViewNode extends VBox
 				holders.add( ( StatisticHolder )chart.getOwner() );
 		return holders;
 	}
+
+	private void setZoomLevel( ZoomLevel zoomLevel )
+	{
+		//this.zoomLevel = zoomLevel;
+		chartView.setAttribute( com.eviware.loadui.api.charting.line.LineChart.ZOOM_LEVEL_ATTRIBUTE, zoomLevel.name() );
+
+		log.debug( "Zoom Level set to: " + zoomLevel.toString() );
+	}
+
 }
