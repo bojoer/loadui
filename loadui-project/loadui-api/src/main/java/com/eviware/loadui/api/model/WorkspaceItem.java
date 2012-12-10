@@ -47,7 +47,7 @@ public interface WorkspaceItem extends ModelItem
 	public final static String LOADUI_CAJO_PORT_PROPERTY = WorkspaceItem.class.getSimpleName() + ".loadUICajoPort";
 
 	public final static String STATISTIC_RESULTS_PATH = WorkspaceItem.class.getSimpleName() + ".statisticResultsPath";
-	public static final String STATISTIC_NUMBER_OF_AUTOSAVES = ProjectItem.class.getSimpleName()
+	public static final String STATISTIC_NUMBER_OF_AUTOSAVES = WorkspaceItem.class.getSimpleName()
 			+ ".statisticNumberOfAutosaves";
 	
 	public final static String IGNORED_VERSION_UPDATE = WorkspaceItem.class.getSimpleName() + ".ignoredVersionUpdate";
