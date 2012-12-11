@@ -6,6 +6,7 @@ import static com.eviware.loadui.ui.fx.util.ObservableLists.fx;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.ofCollection;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.ofServices;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.transform;
+import static com.google.common.collect.Sets.newHashSet;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -517,8 +518,8 @@ public class CanvasView extends StackPane
 			{
 				if( change.wasRemoved() )
 				{
-					Set<CanvasObjectView> actuallyRemoved = Sets.difference( Sets.newHashSet( change.getRemoved() ),
-							Sets.newHashSet( change.getAddedSubList() ) );
+					Set<CanvasObjectView> actuallyRemoved = Sets.difference( newHashSet( change.getRemoved() ),
+							newHashSet( change.getAddedSubList() ) );
 					log.debug( "ACTUALLY REMOVED: " + actuallyRemoved.size() );
 
 					for( CanvasObjectView component : actuallyRemoved )
