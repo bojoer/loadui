@@ -18,6 +18,7 @@ import javafx.scene.layout.VBox;
 
 import javax.annotation.Nullable;
 
+import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.statistics.model.Chart;
 import com.eviware.loadui.api.statistics.model.Chart.Owner;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
@@ -47,29 +48,31 @@ public class StatisticTab extends Tab
 		return group;
 	}
 
-	private final Function<ChartGroup, ChartGroupView> CHART_GROUP_TO_VIEW = new Function<ChartGroup, ChartGroupView>()
+	private final Function<ChartGroup, ChartGroupView> chartGroupToView = new Function<ChartGroup, ChartGroupView>()
 	{
 		@Override
 		public ChartGroupView apply( ChartGroup chartGroup )
 		{
-			return new ChartGroupView( chartGroup, execution, poll );
+			return new ChartGroupView( chartGroup, execution, project, poll );
 		}
 	};
 
 	private final StatisticPage page;
 	private final ObservableValue<Execution> execution;
+	private final ProjectItem project;
 	private final Observable poll;
 	private final ObservableList<ChartGroupView> chartGroupViews;
 
 	@FXML
 	private VBox chartList;
 
-	public StatisticTab( StatisticPage page, ObservableValue<Execution> execution, Observable poll )
+	public StatisticTab( StatisticPage page, ObservableValue<Execution> execution, ProjectItem project, Observable poll )
 	{
 		this.page = page;
 		this.execution = execution;
+		this.project = project;
 		this.poll = poll;
-		chartGroupViews = transform( fx( ofCollection( page ) ), CHART_GROUP_TO_VIEW );
+		chartGroupViews = transform( fx( ofCollection( page ) ), chartGroupToView );
 
 		FXMLUtils.load( this );
 	}

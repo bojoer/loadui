@@ -1,6 +1,5 @@
 package com.eviware.loadui.ui.fx.views.analysis;
 
-import static com.eviware.loadui.ui.fx.util.ObservableLists.concat;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.fromExpression;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.fx;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.ofCollection;
@@ -63,7 +62,6 @@ import com.google.common.base.Function;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.google.common.collect.Iterables;
 
 public class LineChartViewNode extends VBox
 {
