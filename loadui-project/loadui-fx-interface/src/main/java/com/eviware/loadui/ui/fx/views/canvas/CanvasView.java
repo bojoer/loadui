@@ -8,6 +8,8 @@ import static com.eviware.loadui.ui.fx.util.ObservableLists.ofServices;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.transform;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 import javafx.application.Platform;
@@ -80,6 +82,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
+import com.google.common.collect.Sets;
 
 public class CanvasView extends StackPane
 {
@@ -514,8 +517,13 @@ public class CanvasView extends StackPane
 			{
 				if( change.wasRemoved() )
 				{
-					for( CanvasObjectView component : change.getRemoved() )
+					Set<CanvasObjectView> actuallyRemoved = Sets.difference( Sets.newHashSet( change.getRemoved() ),
+							Sets.newHashSet( change.getAddedSubList() ) );
+					log.debug( "ACTUALLY REMOVED: " + actuallyRemoved.size() );
+
+					for( CanvasObjectView component : actuallyRemoved )
 					{
+						log.debug( "UNINSTALL" );
 						Movable.uninstall( component );
 						//Selectable.uninstall( component );
 						MultiMovable.uninstall( CanvasView.this, component );

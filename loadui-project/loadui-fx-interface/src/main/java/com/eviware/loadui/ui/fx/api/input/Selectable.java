@@ -36,10 +36,10 @@ import com.google.common.collect.Iterables;
 public class Selectable
 {
 	protected static final Logger log = LoggerFactory.getLogger( Selectable.class );
-	private static final String SELECTABLE_PROP_KEY = Selectable.class.getName();
-	private static final PressToSelectHandler PRESS_TO_SELECT_HANDLER = new PressToSelectHandler();
-	private static final ClickToDeselectHandler CLICK_TO_DESELECT_HANDLER = new ClickToDeselectHandler();
-	private static final Set<Selectable> CURRENTLY_SELECTED = Collections
+	private static final String selectablePropertyKey = Selectable.class.getName();
+	private static final PressToSelectHandler pressToSelectHandler = new PressToSelectHandler();
+	private static final ClickToDeselectHandler clickToDeselectHandler = new ClickToDeselectHandler();
+	private static final Set<Selectable> currentlySelected = Collections
 			.newSetFromMap( new WeakHashMap<Selectable, Boolean>() );
 	@Nonnull
 	private static SelectionRectangle SELECTION_RECTANGLE = new SelectionRectangle();
@@ -66,18 +66,20 @@ public class Selectable
 	public static Selectable installSelectable( @Nonnull Node node )
 	{
 		Selectable selectable = new Selectable( node );
-		node.addEventHandler( MouseEvent.MOUSE_PRESSED, PRESS_TO_SELECT_HANDLER );
+		node.addEventHandler( MouseEvent.MOUSE_PRESSED, pressToSelectHandler );
 		node.addEventHandler( MouseEvent.MOUSE_RELEASED, HIDE_SELECTION_RECTANGLE );
-		node.getProperties().put( SELECTABLE_PROP_KEY, selectable );
+		node.getProperties().put( selectablePropertyKey, selectable );
 		SELECTABLE_NODES.add( node );
 		return selectable;
 	}
 
 	public static void uninstallSelectable( @Nonnull Node node )
 	{
-		node.removeEventHandler( MouseEvent.MOUSE_PRESSED, PRESS_TO_SELECT_HANDLER );
+		log.debug( "uninstall selectable" );
+
+		node.removeEventHandler( MouseEvent.MOUSE_PRESSED, pressToSelectHandler );
 		node.removeEventHandler( MouseEvent.MOUSE_RELEASED, HIDE_SELECTION_RECTANGLE );
-		node.getProperties().remove( SELECTABLE_PROP_KEY );
+		node.getProperties().remove( selectablePropertyKey );
 		SELECTABLE_NODES.remove( node );
 	}
 
@@ -102,12 +104,12 @@ public class Selectable
 
 	public static boolean isSelectable( Node node )
 	{
-		return node.getProperties().containsKey( SELECTABLE_PROP_KEY );
+		return node.getProperties().containsKey( selectablePropertyKey );
 	}
 
 	public static Selectable get( @Nonnull final Node node )
 	{
-		return ( Selectable )node.getProperties().get( SELECTABLE_PROP_KEY );
+		return ( Selectable )node.getProperties().get( selectablePropertyKey );
 	}
 
 	private ReadOnlyBooleanWrapper selectedProperty;
@@ -144,13 +146,13 @@ public class Selectable
 
 	public void select()
 	{
-		CURRENTLY_SELECTED.add( this );
+		currentlySelected.add( this );
 		setSelected( true );
 	}
 
 	public void deselect()
 	{
-		CURRENTLY_SELECTED.remove( this );
+		currentlySelected.remove( this );
 		setSelected( false );
 	}
 
@@ -164,7 +166,7 @@ public class Selectable
 
 	public static ImmutableSet<Selectable> getSelected()
 	{
-		return ImmutableSet.copyOf( CURRENTLY_SELECTED );
+		return ImmutableSet.copyOf( currentlySelected );
 	}
 
 	public static void installDragToSelectArea( @Nonnull final Region selectionArea )
@@ -196,7 +198,7 @@ public class Selectable
 		} );
 
 		selectionArea.addEventHandler( MouseEvent.MOUSE_RELEASED, HIDE_SELECTION_RECTANGLE );
-		selectionArea.addEventHandler( MouseEvent.MOUSE_RELEASED, CLICK_TO_DESELECT_HANDLER );
+		selectionArea.addEventHandler( MouseEvent.MOUSE_RELEASED, clickToDeselectHandler );
 	}
 
 	private static void selectAll( Collection<Selectable> selectables )
@@ -207,7 +209,7 @@ public class Selectable
 
 	private static void deselectAll()
 	{
-		for( Iterator<Selectable> i = CURRENTLY_SELECTED.iterator(); i.hasNext(); )
+		for( Iterator<Selectable> i = currentlySelected.iterator(); i.hasNext(); )
 		{
 			Selectable s = i.next();
 			s.setSelected( false );
@@ -217,7 +219,7 @@ public class Selectable
 
 	private static Selectable nodeToSelectable( Node source )
 	{
-		return ( Selectable )source.getProperties().get( SELECTABLE_PROP_KEY );
+		return ( Selectable )source.getProperties().get( selectablePropertyKey );
 	}
 
 	private static final class HideSelectionRectangle implements EventHandler<MouseEvent>
@@ -225,6 +227,8 @@ public class Selectable
 		@Override
 		public void handle( final MouseEvent event )
 		{
+			log.debug( "hide selection rectangle" );
+
 			Platform.runLater( new Runnable()
 			{
 				@Override
@@ -251,17 +255,19 @@ public class Selectable
 		@Override
 		public void handle( MouseEvent event )
 		{
+			log.debug( "press selectable" );
+
 			Node source = ( Node )event.getSource();
 			Selectable selectable = nodeToSelectable( source );
 
 			if( event.isShiftDown() )
 			{
-				if( CURRENTLY_SELECTED.contains( selectable ) )
+				if( currentlySelected.contains( selectable ) )
 					selectable.deselect();
 				else
 					selectable.select();
 			}
-			else if( CURRENTLY_SELECTED.contains( selectable ) && CURRENTLY_SELECTED.size() > 1 )
+			else if( currentlySelected.contains( selectable ) && currentlySelected.size() > 1 )
 			{
 				//System.out.println( "Waiting for multidrag..." );
 			}
@@ -309,7 +315,7 @@ public class Selectable
 
 		void startSelection( MouseEvent e )
 		{
-			selectedAtSelectionStart = ImmutableList.copyOf( CURRENTLY_SELECTED );
+			selectedAtSelectionStart = ImmutableList.copyOf( currentlySelected );
 			this.startX = e.getScreenX();
 			this.startY = e.getScreenY();
 		}

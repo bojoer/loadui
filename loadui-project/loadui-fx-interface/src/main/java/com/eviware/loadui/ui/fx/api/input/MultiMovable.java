@@ -89,6 +89,7 @@ public class MultiMovable
 	@SuppressWarnings( "unchecked" )
 	public static void uninstall( @Nonnull final Region selectionArea, @Nonnull final Node node )
 	{
+		log.debug( "uninstall multimovable" );
 		if( Movable.isMovable( node ) )
 		{
 			final Movable movable = Movable.getMovable( node );
