@@ -103,6 +103,8 @@ public class LineChartViewNode extends VBox
 	private final ObservableList<XYChart.Series<Number, Number>> seriesList;
 	private final ObservableList<SegmentView> segmentViews;
 
+	private ZoomLevel zoomLevel = ZoomLevel.SECONDS;
+
 	@FXML
 	private VBox segments;
 
@@ -269,8 +271,8 @@ public class LineChartViewNode extends VBox
 				{
 					return transform(
 							segment.getStatistic().getPeriod( position.longValue() - 2000,
-									position.longValue() + shownSpan.get() + 2000, 0, executionProperty.getValue() ),
-							DATAPOINT_TO_CHARTDATA );
+									position.longValue() + shownSpan.get() + 2000, zoomLevel.getLevel(),
+									executionProperty.getValue() ), DATAPOINT_TO_CHARTDATA );
 				}
 			}, observableArrayList( executionProperty, position, shownSpan, poll ) ) );
 
@@ -383,8 +385,27 @@ public class LineChartViewNode extends VBox
 	{
 		//this.zoomLevel = zoomLevel;
 		chartView.setAttribute( com.eviware.loadui.api.charting.line.LineChart.ZOOM_LEVEL_ATTRIBUTE, zoomLevel.name() );
+		this.zoomLevel = zoomLevel;
+
+		//		chartView.setAttribute( com.eviware.loadui.api.charting.line.LineChart.TIME_SPAN_ATTRIBUTE,
+		//				String.valueOf( timeSpan ) );
+		//		shownSpan.setValue( zoomLevel.getInterval() );
+
+		//		int level = zoomLevel == ZoomLevel.ALL ? ZoomLevel.forSpan( getMaxTime() / 1000 ).getLevel() : zoomLevel
+		//				.getLevel();
+		//		
+		//				
+		//		for( LineSegmentChartModel lineModel : lines.values() )
+		//		{
+		//			lineModel.clearPoints();
+		//			lineModel.setLevel( level );
+		//		}
+		//		for( TestEventSegmentModel eventModel : testEventSegments.values() )
+		//		{
+		//			eventModel.clearPoints();
+		//			eventModel.setLevel( level );
+		//		}
 
 		log.debug( "Zoom Level set to: " + zoomLevel.toString() );
 	}
-
 }
