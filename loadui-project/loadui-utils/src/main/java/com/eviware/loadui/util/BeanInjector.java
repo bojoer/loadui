@@ -56,7 +56,7 @@ public enum BeanInjector
 	{
 		try
 		{
-			return getBeanFuture( cls ).get( 5, TimeUnit.SECONDS );
+			return getBeanFuture( cls ).get( 8, TimeUnit.SECONDS );
 		}
 		catch( ExecutionException | InterruptedException | TimeoutException e )
 		{

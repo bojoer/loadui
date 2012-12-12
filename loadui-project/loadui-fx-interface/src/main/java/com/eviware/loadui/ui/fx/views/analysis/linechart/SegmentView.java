@@ -1,16 +1,17 @@
 package com.eviware.loadui.ui.fx.views.analysis.linechart;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.scene.control.ContextMenuBuilder;
+import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.scene.control.MenuItemBuilder;
+import javafx.scene.layout.HBox;
 
 import com.eviware.loadui.api.statistics.model.chart.line.Segment;
 
-public abstract class SegmentView<T extends Segment> extends Label
+public abstract class SegmentView<T extends Segment> extends HBox
 {
 	protected final T segment;
+
+	@FXML
+	protected Label segmentLabel;
 
 	public SegmentView( T segment )
 	{
@@ -22,19 +23,9 @@ public abstract class SegmentView<T extends Segment> extends Label
 		setStyle( "-fx-background-color: " + color + ";" );
 	}
 
-	protected void createContextMenu()
+	@FXML
+	protected void delete()
 	{
-		if( segment instanceof Segment.Removable )
-		{
-			setContextMenu( ContextMenuBuilder.create()
-					.items( MenuItemBuilder.create().text( "Remove" ).onAction( new EventHandler<ActionEvent>()
-					{
-						@Override
-						public void handle( ActionEvent _ )
-						{
-							( ( Segment.Removable )segment ).remove();
-						}
-					} ).build() ).build() );
-		}
+		( ( Segment.Removable )segment ).remove();
 	}
 }
