@@ -10,8 +10,10 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.event.EventHandler;
+import javafx.scene.Group;
 import javafx.scene.GroupBuilder;
 import javafx.scene.Node;
 import javafx.scene.SceneBuilder;
@@ -32,6 +34,7 @@ import com.eviware.loadui.ui.fx.util.test.TestFX;
 import com.eviware.loadui.ui.fx.util.test.TestFX.MouseMotion;
 import com.eviware.loadui.ui.fx.util.test.FXScreenController;
 import com.eviware.loadui.ui.fx.util.test.FXTestUtils;
+import com.eviware.loadui.util.test.TestUtils;
 import com.google.common.util.concurrent.SettableFuture;
 
 @Category( GUITest.class )
@@ -41,6 +44,7 @@ public class MovableTest
 	private static Movable movable;
 	private static Stage stage;
 	private static TestFX controller;
+	private static Group group;
 
 	public static class MovableTestApp extends Application
 	{
@@ -56,8 +60,9 @@ public class MovableTest
 			dropRect.fillProperty().bind(
 					Bindings.when( movable.acceptableProperty() ).then( Color.GREEN ).otherwise( Color.RED ) );
 
-			primaryStage.setScene( SceneBuilder.create().width( 300 ).height( 200 )
-					.root( GroupBuilder.create().children( dropRect, dragRect ).build() ).build() );
+			group = GroupBuilder.create().children( dropRect, dragRect ).build();
+
+			primaryStage.setScene( SceneBuilder.create().width( 300 ).height( 200 ).root( group ).build() );
 
 			primaryStage.show();
 
@@ -101,6 +106,24 @@ public class MovableTest
 
 		assertEquals( 100.0, movableNode.getLayoutX(), 1.0 );
 		assertEquals( 50.0, movableNode.getLayoutY(), 1.0 );
+	}
+
+	@Test
+	public void oldNodesShouldMove_after_newNodesHaveBeenAdded() throws Throwable
+	{
+		Platform.runLater( new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				group.getChildren().add(
+						RectangleBuilder.create().id( "newrect" ).width( 15 ).height( 15 ).layoutX( 40 ).fill( Color.GRAY )
+								.build() );
+			}
+		} );
+		FXTestUtils.awaitEvents();
+
+		shouldMove();
 	}
 
 	@Test

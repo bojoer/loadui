@@ -4,23 +4,17 @@ import javafx.scene.image.Image;
 
 import javax.annotation.Nullable;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.eviware.loadui.api.assertion.AssertionItem;
 import com.eviware.loadui.api.component.ComponentRegistry;
 import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.SceneItem;
-import com.eviware.loadui.ui.fx.MainWindow;
 import com.eviware.loadui.ui.fx.api.ImageResolver;
 import com.eviware.loadui.util.BeanInjector;
 
 public class CoreImageResolver implements ImageResolver
 {
-	protected static final Logger log = LoggerFactory.getLogger( CoreImageResolver.class );
-
 	public final static String TOOLBOX_IMAGES_PATH = "/com/eviware/loadui/ui/fx/toolboxIcons/";
 
 	@Override
@@ -56,7 +50,6 @@ public class CoreImageResolver implements ImageResolver
 
 	private static String root( String fileName )
 	{
-		log.debug( "getResource   " + MainWindow.class.getResource( TOOLBOX_IMAGES_PATH + fileName ) );
 		return CoreImageResolver.class.getResource( TOOLBOX_IMAGES_PATH + fileName ).toExternalForm();
 	}
 }

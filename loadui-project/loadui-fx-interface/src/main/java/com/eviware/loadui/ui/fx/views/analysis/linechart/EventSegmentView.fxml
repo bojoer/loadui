@@ -9,5 +9,6 @@
 <?import javafx.scene.chart.NumberAxis?>
 <?import java.net.URL?>
 
-<fx:root type="javafx.scene.control.Label" xmlns:fx="http://javafx.com/fxml" styleClass="slim-icon" maxWidth="600">
+<fx:root type="javafx.scene.layout.HBox" xmlns:fx="http://javafx.com/fxml"
+	styleClass="slim-icon" maxWidth="600">
 </fx:root>

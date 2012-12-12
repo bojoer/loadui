@@ -43,11 +43,7 @@ public class JavaFXActivator implements BundleActivator
 					new MainWindow( BeanInjector.getBeanFuture( Stage.class ).get(), BeanInjector.getBeanFuture(
 							WorkspaceProvider.class ).get() ).show();
 				}
-				catch( InterruptedException e )
-				{
-					e.printStackTrace();
-				}
-				catch( ExecutionException e )
+				catch( InterruptedException | ExecutionException e )
 				{
 					e.printStackTrace();
 				}

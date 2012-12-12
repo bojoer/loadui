@@ -1,5 +1,8 @@
 package com.eviware.loadui.ui.fx.api.input;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
@@ -10,6 +13,7 @@ import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
 import com.eviware.loadui.ui.fx.util.NodeUtils;
+import com.eviware.loadui.ui.fx.views.canvas.CanvasView;
 
 /**
  * Adds the ability to move a Node by dragging and dropping with the mouse.
@@ -19,6 +23,8 @@ import com.eviware.loadui.ui.fx.util.NodeUtils;
  */
 public class Movable implements Draggable
 {
+	protected static final Logger log = LoggerFactory.getLogger( Movable.class );
+
 	private static final String MOVABLE_PROP_KEY = Movable.class.getName();
 
 	private static final MovableBehavior BEHAVIOR = new MovableBehavior();
@@ -171,11 +177,13 @@ public class Movable implements Draggable
 		private double lastDraggedX = Double.NaN;
 		private double lastDraggedY = Double.NaN;
 
-		private final EventHandler<MouseEvent> PRESSED_HANDLER = new EventHandler<MouseEvent>()
+		private final EventHandler<MouseEvent> pressedHandler = new EventHandler<MouseEvent>()
 		{
 			@Override
 			public void handle( MouseEvent event )
 			{
+				log.debug( "pressedHandler" );
+
 				Node source = ( Node )event.getSource();
 				Movable movable = ( Movable )source.getProperties().get( MOVABLE_PROP_KEY );
 				if( movable != null )
@@ -186,11 +194,13 @@ public class Movable implements Draggable
 			}
 		};
 
-		private final EventHandler<MouseEvent> DRAGGED_HANDLER = new EventHandler<MouseEvent>()
+		private final EventHandler<MouseEvent> draggedHandler = new EventHandler<MouseEvent>()
 		{
 			@Override
 			public void handle( MouseEvent event )
 			{
+				log.debug( "draggedHandler" );
+
 				Node source = ( Node )event.getSource();
 				final Movable movable = ( Movable )source.getProperties().get( MOVABLE_PROP_KEY );
 				if( movable != null && movable.isDragging() )
@@ -240,11 +250,13 @@ public class Movable implements Draggable
 			}
 		};
 
-		private final EventHandler<MouseEvent> RELEASED_HANDLER = new EventHandler<MouseEvent>()
+		private final EventHandler<MouseEvent> releasedHandler = new EventHandler<MouseEvent>()
 		{
 			@Override
 			public void handle( MouseEvent event )
 			{
+				log.debug( "releasedHandler" );
+
 				Node source = ( Node )event.getSource();
 				Movable movable = ( Movable )source.getProperties().get( MOVABLE_PROP_KEY );
 				if( movable != null && movable.isDragging() )
@@ -282,9 +294,9 @@ public class Movable implements Draggable
 			node.getProperties().put( MOVABLE_PROP_KEY, movable );
 			handle.getProperties().put( MOVABLE_PROP_KEY, movable );
 
-			handle.addEventHandler( MouseEvent.MOUSE_PRESSED, PRESSED_HANDLER );
-			handle.addEventHandler( MouseEvent.MOUSE_DRAGGED, DRAGGED_HANDLER );
-			handle.addEventHandler( MouseEvent.MOUSE_RELEASED, RELEASED_HANDLER );
+			handle.addEventHandler( MouseEvent.MOUSE_PRESSED, pressedHandler );
+			handle.addEventHandler( MouseEvent.MOUSE_DRAGGED, draggedHandler );
+			handle.addEventHandler( MouseEvent.MOUSE_RELEASED, releasedHandler );
 
 			return movable;
 		}
@@ -295,9 +307,9 @@ public class Movable implements Draggable
 			if( movable != null )
 			{
 				Node handle = movable.getHandle();
-				handle.removeEventHandler( MouseEvent.MOUSE_PRESSED, PRESSED_HANDLER );
-				handle.removeEventHandler( MouseEvent.MOUSE_DRAGGED, DRAGGED_HANDLER );
-				handle.removeEventHandler( MouseEvent.MOUSE_RELEASED, RELEASED_HANDLER );
+				handle.removeEventHandler( MouseEvent.MOUSE_PRESSED, pressedHandler );
+				handle.removeEventHandler( MouseEvent.MOUSE_DRAGGED, draggedHandler );
+				handle.removeEventHandler( MouseEvent.MOUSE_RELEASED, releasedHandler );
 				handle.getProperties().remove( MOVABLE_PROP_KEY );
 			}
 		}

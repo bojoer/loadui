@@ -9,25 +9,30 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollBar?>
 <?import javafx.scene.control.MenuButton?>
-
 <?import java.net.URL?>
-
 <?import com.eviware.loadui.ui.fx.views.analysis.ZoomMenuButton?>
 
-<fx:root type="javafx.scene.layout.VBox" xmlns:fx="http://javafx.com/fxml" styleClass="chart-view-node, line-chart-view-node">
+<fx:root type="javafx.scene.layout.VBox" xmlns:fx="http://javafx.com/fxml"
+	styleClass="chart-view-node, line-chart-view-node">
 	<Label fx:id="chartViewLabel" />
 	<HBox>
 		<VBox fx:id="segments" fillWidth="true" />
 		<VBox HBox.hgrow="ALWAYS">
-			<LineChart fx:id="lineChart" animated="false" createSymbols="true" legendVisible="false">
-		        <xAxis><NumberAxis fx:id="xAxis" autoRanging="false" minorTickCount="10" tickUnit="10000"/></xAxis>
-		        <yAxis><NumberAxis fx:id="yAxis" /></yAxis>
-		    </LineChart>
+			<LineChart fx:id="lineChart" animated="false"
+				createSymbols="true" legendVisible="false">
+				<xAxis>
+					<NumberAxis fx:id="xAxis" autoRanging="false"
+						minorTickCount="10" tickUnit="10000" />
+				</xAxis>
+				<yAxis>
+					<NumberAxis fx:id="yAxis" />
+				</yAxis>
+			</LineChart>
 			<ScrollBar fx:id="scrollBar" />
 		</VBox>
 	</HBox>
 	<HBox fx:id="buttonBar" >
 		<Button text="Add Statistic..." onAction="#addStatistic" />
-		<ZoomMenuButton fx:id= "zoomMenuButton" text="Zoom"/>
+		<ZoomMenuButton fx:id="zoomMenuButton" text="Zoom"/>
 	</HBox>
 </fx:root>

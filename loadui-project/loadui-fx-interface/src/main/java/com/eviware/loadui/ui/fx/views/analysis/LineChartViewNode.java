@@ -219,6 +219,7 @@ public class LineChartViewNode extends VBox
 			}
 
 		} );
+
 	}
 
 	private String seriesToColor( Series<?, ?> series )
@@ -408,4 +409,5 @@ public class LineChartViewNode extends VBox
 
 		log.debug( "Zoom Level set to: " + zoomLevel.toString() );
 	}
+
 }

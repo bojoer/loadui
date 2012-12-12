@@ -61,6 +61,7 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 	private final ProjectListener projectListener = new ProjectListener();
 	private final AgentListener agentListener = new AgentListener();
 	private final Property<Boolean> localMode;
+	private final Property<Long> numberOfAutosaves;
 
 	public static WorkspaceItemImpl loadWorkspace( File workspaceFile ) throws XmlException, IOException
 	{
@@ -94,6 +95,7 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 		createProperty( STATISTIC_RESULTS_PATH, File.class,
 				new File( System.getProperty( LoadUI.LOADUI_HOME ), "results" ) );
 		createProperty( IGNORED_VERSION_UPDATE, String.class, "" );
+		numberOfAutosaves = createProperty( STATISTIC_NUMBER_OF_AUTOSAVES, Long.class, 5L );
 	}
 
 	@Override
@@ -368,6 +370,18 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 			}
 			this.localMode.setValue( localMode );
 		}
+	}
+	
+	@Override
+	public long getNumberOfAutosaves()
+	{
+		return numberOfAutosaves.getValue();
+	}
+
+	@Override
+	public void setNumberOfAutosaves( long n )
+	{
+		numberOfAutosaves.setValue( n );
 	}
 
 	private class ProjectListener implements EventHandler<BaseEvent>

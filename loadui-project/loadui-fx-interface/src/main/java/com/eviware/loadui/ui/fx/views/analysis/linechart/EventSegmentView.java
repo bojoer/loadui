@@ -17,8 +17,6 @@ public class EventSegmentView extends SegmentView<TestEventSegment>
 	@FXML
 	private void initialize()
 	{
-		setText( segment.getTypeLabel() + " " + segment.getSourceLabel() );
-
-		createContextMenu();
+		segmentLabel.setText( segment.getTypeLabel() + " " + segment.getSourceLabel() );
 	}
 }

@@ -16,10 +16,8 @@ public class LineSegmentView extends SegmentView<LineSegment>
 	@FXML
 	private void initialize()
 	{
-		setText( segment.getStatisticHolder().getLabel() + " " + segment.getVariableName() + " "
+		segmentLabel.setText( segment.getStatisticHolder().getLabel() + " " + segment.getVariableName() + " "
 				+ segment.getStatisticName() );
-
-		createContextMenu();
 	}
 
 }
