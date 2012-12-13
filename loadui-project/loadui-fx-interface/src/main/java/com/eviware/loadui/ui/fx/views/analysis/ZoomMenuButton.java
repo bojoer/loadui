@@ -1,5 +1,12 @@
 package com.eviware.loadui.ui.fx.views.analysis;
 
+import javafx.application.Platform;
+import javafx.beans.InvalidationListener;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ObjectPropertyBase;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableBooleanValue;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.RadioMenuItemBuilder;
@@ -11,6 +18,22 @@ import com.eviware.loadui.api.charting.line.ZoomLevel;
 public class ZoomMenuButton extends MenuButton
 {
 	final private ToggleGroup toggleGroup = new ToggleGroup();
+
+	private final ObjectProperty<ZoomLevel> selectedProperty = new ObjectPropertyBase<ZoomLevel>()
+	{
+		@Override
+		public Object getBean()
+		{
+			return ZoomMenuButton.this;
+		}
+
+		@Override
+		public String getName()
+		{
+			return "selected";
+		}
+
+	};
 
 	public ZoomMenuButton()
 	{
@@ -25,23 +48,108 @@ public class ZoomMenuButton extends MenuButton
 			this.getItems().add( added );
 		}
 
+		toggleGroup.selectedToggleProperty().addListener( new ChangeListener<Toggle>()
+		{
+
+			@Override
+			public void changed( ObservableValue<? extends Toggle> arg0, Toggle arg1, final Toggle newToggle )
+			{
+				Platform.runLater( new Runnable()
+				{
+
+					@Override
+					public void run()
+					{
+						if( newToggle != null )
+						{
+							selectedProperty.setValue( ( ZoomLevel )newToggle.getUserData() );
+						}
+
+					}
+				} );
+
+			}
+
+		} );
+
+	}
+
+	public ObjectProperty<ZoomLevel> selectedProperty()
+	{
+		return selectedProperty;
+	}
+
+	public ObservableBooleanValue isAll()
+	{
+		return new ObservableBooleanValue()
+		{
+
+			@Override
+			public void addListener( ChangeListener<? super Boolean> arg0 )
+			{
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public Boolean getValue()
+			{
+				return selectedProperty.getValue() == ZoomLevel.ALL;
+			}
+
+			@Override
+			public void removeListener( ChangeListener<? super Boolean> arg0 )
+			{
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void addListener( InvalidationListener arg0 )
+			{
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void removeListener( InvalidationListener arg0 )
+			{
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public boolean get()
+			{
+				// TODO Auto-generated method stub
+				return false;
+			}
+
+		};
+	}
+
+	public ZoomLevel getSelected()
+	{
+		return selectedProperty.get();
+	}
+
+	public void setSelected( ZoomLevel selected )
+	{
+		for( Toggle t : getToggleGroup().getToggles() )
+		{
+			if( ( ( ZoomLevel )t.getUserData() ).name().equals( selected.name() ) )
+			{
+				selectedProperty.set( selected );
+				getToggleGroup().selectToggle( t );
+				break;
+			}
+		}
+
 	}
 
 	public ToggleGroup getToggleGroup()
 	{
 		return toggleGroup;
-	}
-
-	public void setSelected( ZoomLevel z )
-	{
-		for( Toggle t : getToggleGroup().getToggles() )
-		{
-			if( ( ( ZoomLevel )t.getUserData() ).name().equals( z.name() ) )
-			{
-				getToggleGroup().selectToggle( t );
-				break;
-			}
-		}
 	}
 
 }
