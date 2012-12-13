@@ -1,22 +1,22 @@
-// 
+//
 // Copyright 2011 SmartBear Software
-// 
+//
 // Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
 // versions of the EUPL (the "Licence");
 // You may not use this work except in compliance with the Licence.
 // You may obtain a copy of the Licence at:
-// 
+//
 // http://ec.europa.eu/idabc/eupl5
-// 
+//
 // Unless required by applicable law or agreed to in writing, software distributed under the Licence is
 // distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
 // express or implied. See the Licence for the specific language governing permissions and limitations
 // under the Licence.
-// 
+//
 
 /**
  * Sends an HTTP request
- * 
+ *
  * @id com.eviware.WebRunner
  * @help http://www.loadui.org/Runners/web-page-runner-component.html
  * @name Web Page Runner
@@ -25,7 +25,7 @@
  * @dependency org.apache.httpcomponents:httpclient:4.1.1
  */
 
-import org.apache.http.* 
+import org.apache.http.*
 import org.apache.http.client.*
 import org.apache.http.auth.*
 import org.apache.http.conn.params.*
@@ -58,17 +58,31 @@ import java.util.HashMap
 import java.util.Map
 import java.util.concurrent.TimeUnit
 
+import org.apache.http.conn.ssl.X509HostnameVerifier
+import javax.net.ssl.SSLSocket
+import javax.net.ssl.SSLException
+import javax.net.ssl.SSLSession
+
+
 //SSL support, trust all certificates and hostnames.
 class NaiveTrustManager implements X509TrustManager {
 	void checkClientTrusted ( X509Certificate[] cert, String authType ) throws CertificateException {}
 	void checkServerTrusted ( X509Certificate[] cert, String authType ) throws CertificateException {}
 	X509Certificate[] getAcceptedIssuers () { null }
 }
+class AllowAllHostNamesVerifier implements X509HostnameVerifier {
+	void verify(String host, SSLSocket ssl) throws IOException {}
+	void verify(String host, X509Certificate cert) throws SSLException {}
+	void verify(String host, String[] cns, String[] subjectAlts) throws SSLException {}
+	boolean verify(String hostname, SSLSession session) {}
+}
+
 def sslContext = SSLContext.getInstance("SSL")
 TrustManager[] tms = [ new NaiveTrustManager() ]
 sslContext.init( new KeyManager[0], tms, new SecureRandom() )
-def sslSocketFactory = new SSLSocketFactory( sslContext )
-sslSocketFactory.hostnameVerifier = SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER
+
+def sslSocketFactory = new SSLSocketFactory( sslContext, new AllowAllHostNamesVerifier() )
+
 
 def sr = new SchemeRegistry()
 sr.register( new Scheme( "http", PlainSocketFactory.socketFactory, 80 ) )
@@ -103,21 +117,16 @@ def runningSamples = ([] as Set).asSynchronized()
 runAction = null
 
 def dummyUrl = "http://GoSpamYourself.com"
-def validUrl = ""
+
 validateUrl = {
-	def cleanUrl = url.value
-	if( !(cleanUrl ==~ "https?://.*") ) {
-		cleanUrl = 'http://'+cleanUrl
+	if( url.value && !( url.value.toLowerCase().startsWith( "http://" ) || url.value.toLowerCase().startsWith( "https://" ) ) ) {
+		url.value = "http://" + url.value
 	}
 	
-	if( cleanUrl =~ /https?:\/\/(www\.)?(eviware\.com|(soapui|loadui)\.org)(\/.*)?/ ) {
-		url.value = dummyUrl
-		setInvalid( true )
-		return
-	}
+	if( url.value =~ /https?:\/\/(www\.)?(eviware\.com|(soapui|loadui)\.org)(\/.*)?/ ) url.value = dummyUrl
 	
 	// extract possible username and password from username:password@domain syntax
-	matcher = cleanUrl?.replace( "http://", "" ) =~ /([^:]+):([^@]+)@(.+)/
+	matcher = url.value?.replace( "http://", "" ) =~ /([^:]+):([^@]+)@(.+)/
 	if ( matcher ) {
 		inlineUrlAuthUsername = matcher[0][1]
 		inlineUrlAuthPassword = matcher[0][2]
@@ -127,14 +136,13 @@ validateUrl = {
 	updateAuth()
 	
 	try {
-		new URI( cleanUrl )
+		new URI( url.value )
 		setInvalid( !url.value || url.value == dummyUrl )
 	} catch( e ) {
 		setInvalid( true )
 	}
 	
 	runAction?.enabled = !isInvalid()
-	validUrl = cleanUrl
 }
 
 updateProxy = {
@@ -144,7 +152,7 @@ updateProxy = {
 		
 		if( proxyUsername.value?.trim() && proxyPassword.value ) {
 			http.credentialsProvider.setCredentials(
-				new AuthScope( proxyHost.value, (int)proxyPort.value ), 
+				new AuthScope( proxyHost.value, (int)proxyPort.value ),
 				new UsernamePasswordCredentials( proxyUsername.value, proxyPassword.value )
 			)
 		} else {
@@ -168,7 +176,7 @@ updateAuth = {
 	
 	if( username && password ) {
 		http.credentialsProvider.setCredentials(
-			new AuthScope( AuthScope.ANY ), 
+			new AuthScope( AuthScope.ANY ),
 			new UsernamePasswordCredentials( username, password )
 		)
 	}
@@ -183,7 +191,7 @@ discardResetValue = 0
 failedResetValue = 0
 
 sample = { message, sampleId ->
-	def uri = message['url'] ?: validUrl
+	def uri = message['url'] ?: url.value
 	if( uri ) {
 		def get = new HttpGet( uri )
 		message['ID'] = uri
@@ -290,7 +298,8 @@ layout {
 	box( layout:'wrap 2, ins 0' ) {
 		property( property:url, label:'Web Page Address', constraints: 'w 300!, spanx 2', style: '-fx-font-size: 17pt' )
 		action( label:'Open in Browser', constraints:'spanx 2', action: {
-			java.awt.Desktop.desktop.browse( new java.net.URI( validUrl ) )
+			if( url.value != null && url.value.startsWith( "http" ) )
+				java.awt.Desktop.desktop.browse( new java.net.URI( url.value ) )
 		} )
 		runAction = action( label:'Run Once', action: { triggerAction( 'SAMPLE' ) } )
 		action( label:'Abort Running Pages', action: { triggerAction( 'CANCEL' ) } )
