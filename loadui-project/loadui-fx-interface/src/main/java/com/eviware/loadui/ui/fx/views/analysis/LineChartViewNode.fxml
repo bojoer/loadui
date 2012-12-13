@@ -30,7 +30,8 @@
 			<ScrollBar fx:id="scrollBar" />
 		</VBox>
 	</HBox>
-	<HBox fx:id="buttonBar">
+	<HBox>
 		<Button text="Add Statistic..." onAction="#addStatistic" />
+		<Label text="Not set" fx:id="timer" />
 	</HBox>
 </fx:root>

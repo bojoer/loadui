@@ -32,12 +32,15 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Series;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollBar;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.LineBuilder;
 
+import org.joda.time.Period;
+import org.joda.time.format.PeriodFormatter;
+import org.joda.time.format.PeriodFormatterBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,6 +69,10 @@ import com.google.common.cache.LoadingCache;
 public class LineChartViewNode extends VBox
 {
 	protected static final Logger log = LoggerFactory.getLogger( LineChartViewNode.class );
+
+	private static final PeriodFormatter timeFormatter = new PeriodFormatterBuilder().printZeroNever().appendWeeks()
+			.appendSuffix( "w" ).appendSeparator( " " ).appendDays().appendSuffix( "d" ).appendSeparator( " " )
+			.appendHours().appendSuffix( "h" ).appendSeparator( " " ).appendMinutes().appendSuffix( "m" ).toFormatter();
 
 	private static final Function<DataPoint<?>, XYChart.Data<Number, Number>> DATAPOINT_TO_CHARTDATA = new Function<DataPoint<?>, XYChart.Data<Number, Number>>()
 	{
@@ -113,7 +120,7 @@ public class LineChartViewNode extends VBox
 	private ScrollBar scrollBar;
 
 	@FXML
-	private HBox buttonBar;
+	private Label timer;
 
 	public LineChartViewNode( final ObservableValue<Execution> executionProperty, LineChartView chartView,
 			Observable poll )
@@ -141,6 +148,22 @@ public class LineChartViewNode extends VBox
 	@FXML
 	private void initialize()
 	{
+		position.addListener( new InvalidationListener()
+		{
+			@Override
+			public void invalidated( Observable arg0 )
+			{
+				long millis = position.getValue();
+				log.debug( "millis: " + millis );
+				Period period = new Period( millis );
+				String formattedTime = timeFormatter.print( period.normalizedStandard() );
+				log.debug( "formattedTime: " + formattedTime );
+				timer.setText( formattedTime );
+				log.debug( "timer.getText(): " + timer.getText() );
+
+			}
+		} );
+
 		scrollBar.visibleAmountProperty().bind( shownSpan );
 		scrollBar.blockIncrementProperty().bind( shownSpan );
 		scrollBar.maxProperty().bind( max( 0, length.subtract( shownSpan ) ) );
