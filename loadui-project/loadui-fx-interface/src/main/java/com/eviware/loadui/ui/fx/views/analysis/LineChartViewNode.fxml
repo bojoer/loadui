@@ -32,6 +32,7 @@
 	</HBox>
 	<HBox>
 		<Button text="Add Statistic..." onAction="#addStatistic" />
+		<ZoomMenuButton fx:id="zoomMenuButton" text="Zoom"/>
 		<Label text="Not set" fx:id="timer" />
 	</HBox>
 </fx:root>

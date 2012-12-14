@@ -120,6 +120,22 @@
 	-fx-spacing: 4;
 }
 
+/**
+ * General menu styles
+ */
+
+.radio-menu-item:checked .radio {
+    -fx-background-color: pink;
+    -fx-shape: null;
+    -fx-scale-shape: false;
+}
+
+.radio-menu-item:checked {
+	-fx-background-color: darkgray, lightgray;
+	-fx-background-insets: 0, 1;	
+	-fx-background-radius: 6, 5;
+}
+
 
 /**
  * General button styles
