@@ -1,5 +1,7 @@
 package com.eviware.loadui.ui.fx.util;
 
+import static javafx.beans.binding.Bindings.when;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -17,7 +19,8 @@ import javafx.scene.control.ButtonBuilder;
 import javafx.scene.control.SplitPaneBuilder;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextAreaBuilder;
-import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleButtonBuilder;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
@@ -41,19 +44,25 @@ public class StyleTester extends Application
 		ZoomMenuButton zmb1 = new ZoomMenuButton();
 		ZoomMenuButton zmb2 = new ZoomMenuButton();
 
-		zmb1.getToggleGroup().selectedToggleProperty().addListener( new ChangeListener<Toggle>()
-		{
+		//		zmb1.getToggleGroup().selectedToggleProperty().addListener( new ChangeListener<Toggle>()
+		//		{
+		//
+		//			@Override
+		//			public void changed( ObservableValue<? extends Toggle> arg0, Toggle arg1, Toggle newToggle )
+		//			{
+		//				System.out.println( "Trying to set ZoomLevel to: " + newToggle );
+		//
+		//			}
+		//
+		//		} );
 
-			@Override
-			public void changed( ObservableValue<? extends Toggle> arg0, Toggle arg1, Toggle newToggle )
-			{
-				System.out.println( "Trying to set ZoomLevel to: " + newToggle );
+		ToggleButton b = ToggleButtonBuilder.create().text( "toggle" ).build();
 
-			}
+		box.styleProperty().bind(
+				when( b.selectedProperty() ).then( "-fx-background-color: pink;" ).otherwise(
+						"-fx-background-color: yellow;" ) );
 
-		} );
-
-		box.getChildren().addAll( zmb1, zmb2 );
+		box.getChildren().addAll( zmb1, zmb2, b );
 
 		return box;
 	}
