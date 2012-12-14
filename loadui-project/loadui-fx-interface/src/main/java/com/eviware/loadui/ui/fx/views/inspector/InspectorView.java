@@ -111,6 +111,7 @@ public class InspectorView extends AnchorPane
 
 	private void init()
 	{
+		//TODO: tabHeaderArea can be null here, causing an unrecoverable NPE at startup
 		tabHeaderArea = ( StackPane )tabPane.lookup( ".tab-header-area" );
 		tabHeaderArea.addEventHandler( MouseEvent.ANY, dragBehavior );
 
