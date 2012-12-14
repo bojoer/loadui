@@ -1,11 +1,9 @@
 package com.eviware.loadui.ui.fx.views.analysis;
 
 import javafx.application.Platform;
-import javafx.beans.InvalidationListener;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ObjectPropertyBase;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableBooleanValue;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.RadioMenuItem;
@@ -43,6 +41,10 @@ public class ZoomMenuButton extends MenuButton
 		for( int i = values.length - 1; i >= 0; i-- )
 		{
 			ZoomLevel z = values[i];
+
+			if( z == ZoomLevel.ALL )
+				continue;
+
 			RadioMenuItem added = RadioMenuItemBuilder.create().text( z.name() ).userData( z ).build();
 			added.setToggleGroup( toggleGroup );
 			this.getItems().add( added );
@@ -79,55 +81,6 @@ public class ZoomMenuButton extends MenuButton
 		return selectedProperty;
 	}
 
-	public ObservableBooleanValue isAll()
-	{
-		return new ObservableBooleanValue()
-		{
-
-			@Override
-			public void addListener( ChangeListener<? super Boolean> arg0 )
-			{
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public Boolean getValue()
-			{
-				return selectedProperty.getValue() == ZoomLevel.ALL;
-			}
-
-			@Override
-			public void removeListener( ChangeListener<? super Boolean> arg0 )
-			{
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void addListener( InvalidationListener arg0 )
-			{
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void removeListener( InvalidationListener arg0 )
-			{
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public boolean get()
-			{
-				// TODO Auto-generated method stub
-				return false;
-			}
-
-		};
-	}
-
 	public ZoomLevel getSelected()
 	{
 		return selectedProperty.get();
@@ -135,21 +88,15 @@ public class ZoomMenuButton extends MenuButton
 
 	public void setSelected( ZoomLevel selected )
 	{
-		for( Toggle t : getToggleGroup().getToggles() )
+		for( Toggle t : toggleGroup.getToggles() )
 		{
 			if( ( ( ZoomLevel )t.getUserData() ).name().equals( selected.name() ) )
 			{
-				selectedProperty.set( selected );
-				getToggleGroup().selectToggle( t );
+				toggleGroup.selectToggle( t );
 				break;
 			}
 		}
 
-	}
-
-	public ToggleGroup getToggleGroup()
-	{
-		return toggleGroup;
 	}
 
 }

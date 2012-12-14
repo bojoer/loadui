@@ -21,8 +21,7 @@
 			<LineChart fx:id="lineChart" animated="false"
 				createSymbols="true" legendVisible="false">
 				<xAxis>
-					<NumberAxis fx:id="xAxis" autoRanging="false"
-						minorTickCount="10" tickUnit="10000" />
+					<NumberAxis fx:id="xAxis" />
 				</xAxis>
 				<yAxis>
 					<NumberAxis fx:id="yAxis" />
