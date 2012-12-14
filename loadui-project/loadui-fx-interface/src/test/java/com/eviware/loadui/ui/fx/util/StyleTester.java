@@ -1,48 +1,35 @@
 package com.eviware.loadui.ui.fx.util;
 
+import static javafx.beans.binding.Bindings.when;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.SceneBuilder;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBuilder;
-import javafx.scene.control.Label;
-import javafx.scene.control.LabelBuilder;
 import javafx.scene.control.SplitPaneBuilder;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextAreaBuilder;
-import javafx.scene.layout.HBoxBuilder;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleButtonBuilder;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.RegionBuilder;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.VBoxBuilder;
 import javafx.stage.Stage;
 
-import com.eviware.loadui.api.property.Property;
-import com.eviware.loadui.ui.fx.control.OptionsSlider;
-import com.eviware.loadui.ui.fx.control.SettingsTab;
-import com.eviware.loadui.ui.fx.control.SettingsTab.Builder;
-import com.eviware.loadui.ui.fx.control.Wizard;
+import com.eviware.loadui.ui.fx.views.analysis.ZoomMenuButton;
 import com.google.common.base.Charsets;
-import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 
 //import com.javafx.experiments.scenicview.ScenicView;
@@ -53,24 +40,31 @@ public class StyleTester extends Application
 
 	private Node createTestNode()
 	{
-		final TabPane pane = new TabPane();
-		pane.getTabs().setAll( new Tab( "hej" ), new Tab( "heeej" ) );
+		final HBox box = new HBox();
+		ZoomMenuButton zmb1 = new ZoomMenuButton();
+		ZoomMenuButton zmb2 = new ZoomMenuButton();
 
-		Tab plus = new Tab( "+" );
-		pane.getTabs().add( plus );
+		//		zmb1.getToggleGroup().selectedToggleProperty().addListener( new ChangeListener<Toggle>()
+		//		{
+		//
+		//			@Override
+		//			public void changed( ObservableValue<? extends Toggle> arg0, Toggle arg1, Toggle newToggle )
+		//			{
+		//				System.out.println( "Trying to set ZoomLevel to: " + newToggle );
+		//
+		//			}
+		//
+		//		} );
 
-		plus.setOnSelectionChanged( new EventHandler<Event>()
-		{
-			@Override
-			public void handle( Event e )
-			{
-				Tab t = new Tab( "new" );
-				pane.getTabs().add( t );
-				pane.getSelectionModel().select( t );
-			}
-		} );
+		ToggleButton b = ToggleButtonBuilder.create().text( "toggle" ).build();
 
-		return pane;
+		box.styleProperty().bind(
+				when( b.selectedProperty() ).then( "-fx-background-color: pink;" ).otherwise(
+						"-fx-background-color: yellow;" ) );
+
+		box.getChildren().addAll( zmb1, zmb2, b );
+
+		return box;
 	}
 
 	@Override
@@ -161,7 +155,7 @@ public class StyleTester extends Application
 		//		final Wizard dialog = new Wizard( panel, "sdad", tabs );
 		//		dialog.show();
 
-		//		ScenicView.show( primaryStage.getScene() );
+		// ScenicView.show( primaryStage.getScene() );
 	}
 
 	public static void main( String[] args )
