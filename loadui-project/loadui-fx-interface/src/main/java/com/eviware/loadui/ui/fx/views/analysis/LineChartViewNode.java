@@ -18,9 +18,8 @@ import java.util.concurrent.Callable;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.property.LongProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.ObjectPropertyBase;
 import javafx.beans.property.SimpleLongProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
@@ -123,22 +122,8 @@ public class LineChartViewNode extends VBox
 	//private ZoomLevel tickZoomLevel = ZoomLevel.ALL;
 	//private ZoomLevel selectedZoomLevel = ZoomLevel.ALL;
 
-	private final ObjectProperty<ZoomLevel> tickZoomLevelProperty = new ObjectPropertyBase<ZoomLevel>()
-	{
-		@Override
-		public Object getBean()
-		{
-			return LineChartViewNode.this;
-		}
-
-		@Override
-		public String getName()
-		{
-			return "tick zoom level";
-		}
-
-	};
-
+	private final SimpleObjectProperty<ZoomLevel> tickZoomLevelProperty = new SimpleObjectProperty<ZoomLevel>(
+			LineChartViewNode.this, "tick zoom level", ZoomLevel.SECONDS );
 	@FXML
 	private VBox segments;
 
@@ -175,8 +160,6 @@ public class LineChartViewNode extends VBox
 			}
 		}, executionProperty, poll ) );
 
-		tickZoomLevelProperty.set( ZoomLevel.SECONDS );
-
 		FXMLUtils.load( this );
 	}
 
@@ -186,7 +169,7 @@ public class LineChartViewNode extends VBox
 		segmentsList = fx( ofCollection( chartView, LineChartView.SEGMENTS, Segment.class, chartView.getSegments() ) );
 		seriesList = transform( segmentsList, segmentToSeries );
 		segmentViews = transform( segmentsList, segmentToView );
-	
+
 		position.addListener( new InvalidationListener()
 		{
 			@Override
@@ -199,7 +182,6 @@ public class LineChartViewNode extends VBox
 				log.debug( "formattedTime: " + formattedTime );
 				timer.setText( formattedTime );
 				log.debug( "timer.getText(): " + timer.getText() );
-
 			}
 		} );
 
@@ -323,29 +305,6 @@ public class LineChartViewNode extends VBox
 
 			}
 		} );
-
-		//		zoomMenuButton.selectedToggleProperty().addListener( new ChangeListener<Toggle>()
-		//		{
-		//
-		//			@Override
-		//			public void changed( ObservableValue<? extends Toggle> arg0, Toggle oldToggle, final Toggle newToggle )
-		//			{
-		//				Platform.runLater( new Runnable()
-		//				{
-		//
-		//					@Override
-		//					public void run()
-		//					{
-		//						if( newToggle != null )
-		//						{
-		//							setZoomLevel( ( ZoomLevel )newToggle.getUserData() );
-		//						}
-		//
-		//					}
-		//				} );
-		//			}
-		//
-		//		} );
 
 	}
 

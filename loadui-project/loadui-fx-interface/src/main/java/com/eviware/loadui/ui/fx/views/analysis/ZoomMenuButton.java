@@ -42,9 +42,6 @@ public class ZoomMenuButton extends MenuButton
 		{
 			ZoomLevel z = values[i];
 
-			if( z == ZoomLevel.ALL )
-				continue;
-
 			RadioMenuItem added = RadioMenuItemBuilder.create().text( z.name() ).userData( z ).build();
 			added.setToggleGroup( toggleGroup );
 			this.getItems().add( added );
