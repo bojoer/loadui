@@ -58,17 +58,30 @@ import java.util.HashMap
 import java.util.Map
 import java.util.concurrent.TimeUnit
 
+import org.apache.http.conn.ssl.X509HostnameVerifier
+import javax.net.ssl.SSLSocket
+import javax.net.ssl.SSLException
+import javax.net.ssl.SSLSession
+
 //SSL support, trust all certificates and hostnames.
 class NaiveTrustManager implements X509TrustManager {
 	void checkClientTrusted ( X509Certificate[] cert, String authType ) throws CertificateException {}
 	void checkServerTrusted ( X509Certificate[] cert, String authType ) throws CertificateException {}
 	X509Certificate[] getAcceptedIssuers () { null }
 }
+
+class AllowAllHostNamesVerifier implements X509HostnameVerifier {
+	void verify(String host, SSLSocket ssl) throws IOException {}
+	void verify(String host, X509Certificate cert) throws SSLException {}
+	void verify(String host, String[] cns, String[] subjectAlts) throws SSLException {}
+	boolean verify(String hostname, SSLSession session) {}
+}
+
 def sslContext = SSLContext.getInstance("SSL")
 TrustManager[] tms = [ new NaiveTrustManager() ]
 sslContext.init( new KeyManager[0], tms, new SecureRandom() )
-def sslSocketFactory = new SSLSocketFactory( sslContext )
-sslSocketFactory.hostnameVerifier = SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER
+
+def sslSocketFactory = new SSLSocketFactory( sslContext, new AllowAllHostNamesVerifier() )
 
 def sr = new SchemeRegistry()
 sr.register( new Scheme( "http", PlainSocketFactory.socketFactory, 80 ) )
