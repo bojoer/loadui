@@ -7,7 +7,6 @@ import com.eviware.loadui.ui.fx.util.FXMLUtils;
 
 public class EventSegmentView extends SegmentView<TestEventSegment>
 {
-
 	public EventSegmentView( TestEventSegment segment )
 	{
 		super( segment );

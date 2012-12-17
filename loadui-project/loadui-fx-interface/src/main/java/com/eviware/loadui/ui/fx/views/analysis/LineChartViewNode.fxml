@@ -10,6 +10,7 @@
 <?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import java.net.URL?>
+<?import com.eviware.loadui.ui.fx.views.analysis.ZoomMenuButton?>
 
 <fx:root type="javafx.scene.layout.VBox" xmlns:fx="http://javafx.com/fxml"
 	styleClass="chart-view-node, line-chart-view-node">
@@ -20,8 +21,7 @@
 			<LineChart fx:id="lineChart" animated="false"
 				createSymbols="true" legendVisible="false">
 				<xAxis>
-					<NumberAxis fx:id="xAxis" autoRanging="false"
-						minorTickCount="10" tickUnit="10000" />
+					<NumberAxis fx:id="xAxis" autoRanging="false"/>
 				</xAxis>
 				<yAxis>
 					<NumberAxis fx:id="yAxis" />
@@ -30,7 +30,9 @@
 			<ScrollBar fx:id="scrollBar" />
 		</VBox>
 	</HBox>
-	<HBox fx:id="buttonBar">
+	<HBox>
 		<Button text="Add Statistic..." onAction="#addStatistic" />
+		<ZoomMenuButton fx:id="zoomMenuButton" text="Zoom"/>
+		<Label text="Not set" fx:id="timer" />
 	</HBox>
 </fx:root>

@@ -48,6 +48,7 @@ import com.jidesoft.chart.axis.DefaultNumericTickCalculator;
 import com.jidesoft.chart.axis.NumericAxis;
 import com.jidesoft.chart.model.ChartModel;
 
+@Deprecated
 final public class LineChartImpl extends Chart implements LineChart, Releasable
 {
 	private static final String ERROR_REMOVING_LINE_SEGMENT = "Error removing LineSegment";
@@ -76,6 +77,7 @@ final public class LineChartImpl extends Chart implements LineChart, Releasable
 	private ZoomLevel zoomLevel = null;
 	private boolean follow = true;
 
+	@Deprecated
 	public LineChartImpl( LineChartView chartView )
 	{
 		this.chartView = chartView;
