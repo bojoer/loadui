@@ -23,6 +23,10 @@ public class ProjectLoadedState extends TestState
 	{
 		super( "Project Loaded", ProjectCreatedState.STATE );
 	}
+	
+	protected ProjectLoadedState( String name, TestState parent ) {
+		super( name, parent );
+	}
 
 	public ProjectItem getProject()
 	{
