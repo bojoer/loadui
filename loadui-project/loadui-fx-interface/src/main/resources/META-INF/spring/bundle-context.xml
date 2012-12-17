@@ -14,5 +14,4 @@
 	<bean id="assertionInspector" class="com.eviware.loadui.ui.fx.views.assertions.AssertionInspector" >
 		<constructor-arg ref="statisticsManager" />
 	</bean>
-	<bean id="distributionInspector" class="com.eviware.loadui.ui.fx.views.distribution.DistributionInspector" />
 </beans>

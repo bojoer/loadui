@@ -55,11 +55,9 @@
 					</ExplicitOrdering>
 				</categoryComparator>
 				<NewProjectIcon id="newProjectIcon" ToolBox.category="Projects" />
-				<NewAgentIcon id="newAgentIcon" ToolBox.category="Agents" />
 			</ToolBox>
 			<VBox spacing="15">
 				<Carousel fx:id="projectRefCarousel" text="Projects" prefWidth="320" prefHeight="220" />
-				<Carousel fx:id="agentCarousel" text="Agents" prefWidth="320" prefHeight="220" maxHeight= "320" />
 			</VBox>
 			<StackPane styleClass="web-container">
 				<WebView fx:id="webView" prefWidth="580" prefHeight="562" />
