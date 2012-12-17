@@ -112,6 +112,7 @@ public class LineChartViewNode extends VBox
 
 	private final LongProperty position = new SimpleLongProperty( 0 );
 	private final LongProperty length = new SimpleLongProperty( 0 );
+	private final LongProperty maxScrollbarValue = new SimpleLongProperty( 0 );
 	private final LongProperty shownSpan = new SimpleLongProperty( 60000 );
 	private final LongProperty xScale = new SimpleLongProperty( 1 );
 	private ObservableList<Segment> segmentsList;
@@ -178,9 +179,11 @@ public class LineChartViewNode extends VBox
 			}
 		} );
 
+		maxScrollbarValue.bind( length.subtract( shownSpan ) );
+
 		scrollBar.visibleAmountProperty().bind( shownSpan );
 		scrollBar.blockIncrementProperty().bind( shownSpan );
-		scrollBar.maxProperty().bind( length.subtract( shownSpan ) );
+		scrollBar.maxProperty().bind( maxScrollbarValue.add( 2000d ) );
 		position.bindBidirectional( scrollBar.valueProperty() );
 
 		xAxis.lowerBoundProperty().bind( scrollBar.valueProperty() );

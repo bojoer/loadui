@@ -1,13 +1,12 @@
 package com.eviware.loadui.ui.fx.util;
 
-import static javafx.beans.binding.Bindings.when;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -16,19 +15,19 @@ import javafx.scene.Node;
 import javafx.scene.SceneBuilder;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBuilder;
+import javafx.scene.control.Label;
+import javafx.scene.control.LabelBuilder;
+import javafx.scene.control.ScrollBar;
+import javafx.scene.control.Slider;
 import javafx.scene.control.SplitPaneBuilder;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextAreaBuilder;
-import javafx.scene.control.ToggleButton;
-import javafx.scene.control.ToggleButtonBuilder;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.VBoxBuilder;
 import javafx.stage.Stage;
 
-import com.eviware.loadui.ui.fx.views.analysis.ZoomMenuButton;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
@@ -40,31 +39,38 @@ public class StyleTester extends Application
 
 	private Node createTestNode()
 	{
-		final HBox box = new HBox();
-		ZoomMenuButton zmb1 = new ZoomMenuButton();
-		ZoomMenuButton zmb2 = new ZoomMenuButton();
+		final int span = 30;
 
-		//		zmb1.getToggleGroup().selectedToggleProperty().addListener( new ChangeListener<Toggle>()
-		//		{
-		//
-		//			@Override
-		//			public void changed( ObservableValue<? extends Toggle> arg0, Toggle arg1, Toggle newToggle )
-		//			{
-		//				System.out.println( "Trying to set ZoomLevel to: " + newToggle );
-		//
-		//			}
-		//
-		//		} );
+		final VBox vbox = new VBox();
+		final VBox svbox = new VBox();
+		final ScrollBar sb = new ScrollBar();
+		Slider l = new Slider();
 
-		ToggleButton b = ToggleButtonBuilder.create().text( "toggle" ).build();
+		l.setMax( 100 - span );
 
-		box.styleProperty().bind(
-				when( b.selectedProperty() ).then( "-fx-background-color: pink;" ).otherwise(
-						"-fx-background-color: yellow;" ) );
+		Label sl = new Label();
+		sl.textProperty().bind( l.valueProperty().asString() );
+		Label mp = new Label();
+		mp.textProperty().bind( sb.maxProperty().asString().concat( " maxp" ) );
+		Label v = new Label( "not set" );
+		v.textProperty().bind( sb.valueProperty().asString().concat( " valuep" ) );
+		Label a = new Label( "not set" );
+		a.textProperty().bind( Bindings.max( 0d, sb.valueProperty().subtract( span ) ).asString().concat( " v-s" ) );
+		Label vs = new Label( "not set" );
+		vs.textProperty().bind( sb.visibleAmountProperty().asString().concat( " visible" ) );
 
-		box.getChildren().addAll( zmb1, zmb2, b );
+		sb.setVisibleAmount( span );
 
-		return box;
+		//l.valueProperty().a
+
+		sb.maxProperty().bind( l.valueProperty() );
+
+		svbox.getChildren().addAll( l, sl );
+
+		vbox.getChildren().addAll( svbox, sb, mp, v, a, LabelBuilder.create().text( sb.getVisibleAmount() + "" ).build(),
+				vs );
+
+		return vbox;
 	}
 
 	@Override
