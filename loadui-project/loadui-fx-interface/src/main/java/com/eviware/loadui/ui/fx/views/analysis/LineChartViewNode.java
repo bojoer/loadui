@@ -172,18 +172,15 @@ public class LineChartViewNode extends VBox
 			public void invalidated( Observable arg0 )
 			{
 				long millis = position.getValue();
-				log.debug( "millis: " + millis );
 				Period period = new Period( millis );
 				String formattedTime = timeFormatter.print( period.normalizedStandard() );
-				log.debug( "formattedTime: " + formattedTime );
 				timer.setText( formattedTime );
-				log.debug( "timer.getText(): " + timer.getText() );
 			}
 		} );
 
 		scrollBar.visibleAmountProperty().bind( shownSpan );
 		scrollBar.blockIncrementProperty().bind( shownSpan );
-		scrollBar.maxProperty().bind( length );
+		scrollBar.maxProperty().bind( length.subtract( shownSpan ) );
 		position.bindBidirectional( scrollBar.valueProperty() );
 
 		xAxis.lowerBoundProperty().bind( scrollBar.valueProperty() );
@@ -253,6 +250,19 @@ public class LineChartViewNode extends VBox
 
 		shownSpan.bind( xAxis.widthProperty().multiply( xScale ) );
 
+		scrollBar.valueProperty().addListener( new ChangeListener<Number>()
+		{
+
+			@Override
+			public void changed( ObservableValue<? extends Number> arg0, Number arg1, Number arg2 )
+			{
+				log.debug( "maxProperty: " + scrollBar.maxProperty().getValue() + " lenght: " + length.doubleValue()
+						+ " - showspan: " + shownSpan.doubleValue() + " ValueProperty: "
+						+ scrollBar.valueProperty().getValue() );
+
+			}
+		} );
+
 		length.addListener( new ChangeListener<Number>()
 		{
 
@@ -263,9 +273,6 @@ public class LineChartViewNode extends VBox
 				{
 					setZoomLevel( zoomMenuButton.selectedProperty().getValue() );
 				}
-
-				// follow logic
-
 			}
 
 		} );
