@@ -75,10 +75,12 @@
 			<systemPath>${env.JAVAFX2_HOME}/jre/lib/jfxrt.jar</systemPath>
 			<scope>system</scope>
 		</dependency>
-		<dependency>
-			<groupId>com.eviware.loadui</groupId>
-			<artifactId>loadui-fx-interface</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>com.eviware.loadui</groupId> -->
+<!-- 			<artifactId>loadui-fx-interface</artifactId> -->
+<!-- 			<version>${project.parent.version}</version> -->
+<!-- 			<scope>provided</scope> -->
+<!-- 			<optional /> -->
+<!-- 		</dependency> -->
 	</dependencies>
 </project>

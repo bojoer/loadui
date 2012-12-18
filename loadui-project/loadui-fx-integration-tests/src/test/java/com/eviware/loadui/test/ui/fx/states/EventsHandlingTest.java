@@ -15,9 +15,13 @@
  */
 package com.eviware.loadui.test.ui.fx.states;
 
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
 
@@ -30,6 +34,7 @@ import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.test.categories.IntegrationTest;
 import com.eviware.loadui.test.ui.fx.GUI;
 import com.eviware.loadui.ui.fx.util.test.TestFX;
@@ -62,8 +67,6 @@ public class EventsHandlingTest
 	};
 
 	private static TestFX controller;
-
-	private static ArrayList<Node> knobs;
 
 	@BeforeClass
 	public static void enterState() throws Exception
@@ -102,20 +105,45 @@ public class EventsHandlingTest
 		Node component = TestFX.find( ".component-view" );
 		assertNotNull( component );
 
-		log.info( "CHECKING IF THERE IS ANY KNOB AROUND" );
-		knobs = new ArrayList<>( TestFX.findAll( ".knob", component ) );
+		ArrayList<Node> knobs = new ArrayList<>( TestFX.findAll( ".knob", component ) );
 
 		assertFalse( knobs.isEmpty() );
 
 		Node knob = knobs.get( 0 );
 
+		assertThat( knob.getClass().getSimpleName(), is( "Knob" ) );
+
+		ComponentItem cItem = ProjectLoadedWithoutAgentsState.STATE.getProject().getComponentByLabel( "Fixed Rate" );
+
+		// using reflection to get value of a knob because dependency problems are making impossible
+		// to add loadui-fx-interface as a dependency and consequently get access to the knob class
+		Method getValue = knob.getClass().getMethod( "getValue" );
+
+		// initial value should be the same
+		assertThat( getRate( cItem ), is( getKnobValue( knob, getValue ) ) );
+
+		controller.drag( knob ).by( 0, 20 ).drop();
+		TestUtils.awaitEvents( cItem );
+		assertThat( getRate( cItem ), is( getKnobValue( knob, getValue ) ) );
+
 		controller.drag( knob ).by( 0, -100 ).drop();
+		TestUtils.awaitEvents( cItem );
+		assertThat( getRate( cItem ), is( getKnobValue( knob, getValue ) ) );
 
-//		Knob theKnob = ( Knob )knob;
-		System.out.println( "Knob class: " + knob.getClass().getName() );
+		controller.drag( knob ).by( 0, 100 ).by( 0, -200 ).by( 0, 200 ).by( 0, -200 ).by( 0, 205 ).drop();
+		TestUtils.awaitEvents( cItem );
+		assertThat( getRate( cItem ), is( getKnobValue( knob, getValue ) ) );
 
-//		System.out.println( "Knob's value: " + theKnob.getValue() );
+	}
 
+	private double getKnobValue( Node knob, Method getValue ) throws IllegalAccessException, InvocationTargetException
+	{
+		return ( double )getValue.invoke( knob );
+	}
+
+	private double getRate( ComponentItem cItem )
+	{
+		return Double.parseDouble( cItem.getProperty( "rate" ).getStringValue() );
 	}
 
 }
