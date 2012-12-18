@@ -16,6 +16,7 @@ import java.util.concurrent.Callable;
 
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -112,7 +113,6 @@ public class LineChartViewNode extends VBox
 
 	private final LongProperty position = new SimpleLongProperty( 0 );
 	private final LongProperty length = new SimpleLongProperty( 0 );
-	private final LongProperty maxScrollbarValue = new SimpleLongProperty( 0 );
 	private final LongProperty shownSpan = new SimpleLongProperty( 60000 );
 	private final LongProperty xScale = new SimpleLongProperty( 1 );
 	private ObservableList<Segment> segmentsList;
@@ -179,32 +179,15 @@ public class LineChartViewNode extends VBox
 			}
 		} );
 
-		maxScrollbarValue.bind( length.subtract( shownSpan ) );
-
 		scrollBar.visibleAmountProperty().bind( shownSpan );
 		scrollBar.blockIncrementProperty().bind( shownSpan );
-		scrollBar.maxProperty().bind( maxScrollbarValue.add( 2000d ) );
-		position.bindBidirectional( scrollBar.valueProperty() );
+		scrollBar.maxProperty().bind( length );
 
-		xAxis.lowerBoundProperty().bind( scrollBar.valueProperty() );
-		xAxis.upperBoundProperty().bind( scrollBar.valueProperty().add( shownSpan ) );
-
-		//		xAxis.upperBoundProperty().bind(
-		//				Bindings.when( zoomMenuButton.selectedProperty().isEqualTo( ZoomLevel.ALL ) ).then( length.doubleValue() )
-		//						.otherwise( scrollBar.valueProperty().add( shownSpan ) ) );
-
-		xAxis.autoRangingProperty().bind( zoomMenuButton.selectedProperty().isEqualTo( ZoomLevel.ALL ) );
-
-		xAxis.tickUnitProperty().addListener( new ChangeListener<Number>()
-		{
-
-			@Override
-			public void changed( ObservableValue<? extends Number> arg0, Number arg1, Number arg2 )
-			{
-				log.debug( "new major tic unit: " + arg2 );
-			}
-
-		} );
+		position.bind( scrollBar.valueProperty().multiply(
+				Bindings.max(
+						0,
+						scrollBar.maxProperty().subtract( shownSpan.subtract( 2000d ) )
+								.divide( Bindings.max( 1, scrollBar.maxProperty() ) ) ) ) );
 
 		xAxis.autoRangingProperty().addListener( new ChangeListener<Boolean>()
 		{
@@ -212,22 +195,29 @@ public class LineChartViewNode extends VBox
 			@Override
 			public void changed( ObservableValue<? extends Boolean> arg0, Boolean arg1, Boolean newValue )
 			{
+				log.debug( "AutoRanging: " + newValue );
+
 				if( newValue )
 				{
 					xAxis.lowerBoundProperty().unbind();
 					xAxis.upperBoundProperty().unbind();
-
-					xAxis.lowerBoundProperty().set( 0 );
+					shownSpan.bind( length );
 				}
 				else
 				{
-					xAxis.lowerBoundProperty().bind( scrollBar.valueProperty() );
-					xAxis.upperBoundProperty().bind( scrollBar.valueProperty().add( shownSpan ) );
+					xAxis.lowerBoundProperty().bind( position );
+					xAxis.upperBoundProperty().bind( position.add( shownSpan ) );
+
+					shownSpan.bind( xAxis.widthProperty().multiply( xScale ) );
 				}
 
 			}
 
 		} );
+
+		// to get it to always fire event
+		xAxis.autoRangingProperty().set( true );
+		xAxis.autoRangingProperty().bind( zoomMenuButton.selectedProperty().isEqualTo( ZoomLevel.ALL ) );
 
 		lineChart.titleProperty().bind( Properties.forLabel( chartView ) );
 
@@ -251,20 +241,18 @@ public class LineChartViewNode extends VBox
 		bindContent( lineChart.getData(), seriesList );
 		bindContent( segments.getChildren(), segmentViews );
 
-		shownSpan.bind( xAxis.widthProperty().multiply( xScale ) );
-
-		scrollBar.valueProperty().addListener( new ChangeListener<Number>()
-		{
-
-			@Override
-			public void changed( ObservableValue<? extends Number> arg0, Number arg1, Number arg2 )
-			{
-				log.debug( "maxProperty: " + scrollBar.maxProperty().getValue() + " lenght: " + length.doubleValue()
-						+ " - showspan: " + shownSpan.doubleValue() + " ValueProperty: "
-						+ scrollBar.valueProperty().getValue() );
-
-			}
-		} );
+		//		scrollBar.valueProperty().addListener( new ChangeListener<Number>()
+		//		{
+		//
+		//			@Override
+		//			public void changed( ObservableValue<? extends Number> arg0, Number arg1, Number arg2 )
+		//			{
+		//				log.debug( "l: " + xAxis.lowerBoundProperty().getValue() + " u: " + xAxis.upperBoundProperty().getValue()
+		//						+ "  pos: " + position.getValue() + "  sbval: " + scrollBar.getValue() + "  length: "
+		//						+ length.getValue() );
+		//
+		//			}
+		//		} );
 
 		length.addListener( new ChangeListener<Number>()
 		{
@@ -272,9 +260,15 @@ public class LineChartViewNode extends VBox
 			@Override
 			public void changed( ObservableValue<? extends Number> arg0, Number oldValue, Number newValue )
 			{
+
 				if( zoomMenuButton.selectedProperty().getValue() == ZoomLevel.ALL )
 				{
-					setZoomLevel( zoomMenuButton.selectedProperty().getValue() );
+					ZoomLevel tickLevel = ZoomLevel.forSpan( length.get() / 1000 );
+
+					if( tickLevel != tickZoomLevelProperty.get() )
+					{
+						setTickMode( tickLevel );
+					}
 				}
 			}
 
@@ -468,26 +462,27 @@ public class LineChartViewNode extends VBox
 
 	private void setZoomLevel( ZoomLevel zoomLevel )
 	{
-		log.debug( "setZoom called: " + zoomLevel.toString() );
+		log.debug( "ZoomLevel set to: " + zoomLevel.name() );
 
 		zoomLevel = zoomLevel == ZoomLevel.ALL ? ZoomLevel.forSpan( length.get() / 1000 ) : zoomLevel;
 		xScale.setValue( ( 1000.0 * zoomLevel.getInterval() ) / zoomLevel.getUnitWidth() );
 
-		tickZoomLevelProperty.set( zoomLevel );
-		log.debug( "tickZoomLevel set to: " + tickZoomLevelProperty.getValue().toString() );
+		setTickMode( zoomLevel );
+		log.debug( "xScale is now: " + xScale.getValue() );
+		chartView.setAttribute( ZOOM_LEVEL_ATTRIBUTE, zoomLevel.name() );
 
-		int minorTickCount = tickZoomLevelProperty.getValue().getMajorTickInterval()
-				/ tickZoomLevelProperty.getValue().getInterval();
+	}
+
+	private void setTickMode( ZoomLevel level )
+	{
+		tickZoomLevelProperty.set( level );
+
+		int minorTickCount = level.getMajorTickInterval() / level.getInterval();
 
 		// major tick interval
-		xAxis.setTickUnit( ( 1000.0 * tickZoomLevelProperty.getValue().getInterval() * minorTickCount ) );
+		xAxis.setTickUnit( ( 1000.0 * level.getInterval() * minorTickCount ) );
 		xAxis.setMinorTickCount( minorTickCount == 1 ? 0 : minorTickCount );
 
 		log.debug( "major tick set to: " + xAxis.getTickUnit() + " minorTickCount set to: " + xAxis.getMinorTickCount() );
-
-		//chartView.setAttribute( TIME_SPAN_ATTRIBUTE, String.valueOf( shownSpan.getValue() ) );
-
-		chartView.setAttribute( ZOOM_LEVEL_ATTRIBUTE, zoomLevel.name() );
-
 	}
 }
