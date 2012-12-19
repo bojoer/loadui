@@ -16,7 +16,6 @@ import java.util.concurrent.Callable;
 
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -176,18 +175,23 @@ public class LineChartViewNode extends VBox
 				Period period = new Period( millis );
 				String formattedTime = timeFormatter.print( period.normalizedStandard() );
 				timer.setText( formattedTime );
+				log.debug( "position = " + millis );
 			}
 		} );
 
 		scrollBar.visibleAmountProperty().bind( shownSpan );
-		scrollBar.blockIncrementProperty().bind( shownSpan );
+		scrollBar.blockIncrementProperty().bind( shownSpan.divide( 2 ) );
+		scrollBar.unitIncrementProperty().bind( shownSpan.divide( 40 ) );
 		scrollBar.maxProperty().bind( length );
 
-		position.bind( scrollBar.valueProperty().multiply(
-				Bindings.max(
-						0,
-						scrollBar.maxProperty().subtract( shownSpan.subtract( 2000d ) )
-								.divide( Bindings.max( 1, scrollBar.maxProperty() ) ) ) ) );
+		scrollBar.valueProperty().addListener( new InvalidationListener()
+		{
+			@Override
+			public void invalidated( Observable arg0 )
+			{
+				calculatePosition( scrollBar.valueProperty().get(), length.getValue(), shownSpan.getValue() );
+			}
+		} );
 
 		xAxis.autoRangingProperty().addListener( new ChangeListener<Boolean>()
 		{
@@ -201,13 +205,13 @@ public class LineChartViewNode extends VBox
 				{
 					xAxis.lowerBoundProperty().unbind();
 					xAxis.upperBoundProperty().unbind();
+
 					shownSpan.bind( length );
 				}
 				else
 				{
 					xAxis.lowerBoundProperty().bind( position );
 					xAxis.upperBoundProperty().bind( position.add( shownSpan ) );
-
 					shownSpan.bind( xAxis.widthProperty().multiply( xScale ) );
 				}
 
@@ -215,9 +219,21 @@ public class LineChartViewNode extends VBox
 
 		} );
 
-		// to get it to always fire event
+		// to get it to always fire event initially
 		xAxis.autoRangingProperty().set( true );
+
 		xAxis.autoRangingProperty().bind( zoomMenuButton.selectedProperty().isEqualTo( ZoomLevel.ALL ) );
+
+		//		shownSpan.addListener( new InvalidationListener()
+		//		{
+		//
+		//			@Override
+		//			public void invalidated( Observable arg0 )
+		//			{
+		//				log.debug( "showspan = " + shownSpan.getValue() );
+		//
+		//			}
+		//		} );
 
 		lineChart.titleProperty().bind( Properties.forLabel( chartView ) );
 
@@ -240,19 +256,6 @@ public class LineChartViewNode extends VBox
 
 		bindContent( lineChart.getData(), seriesList );
 		bindContent( segments.getChildren(), segmentViews );
-
-		//		scrollBar.valueProperty().addListener( new ChangeListener<Number>()
-		//		{
-		//
-		//			@Override
-		//			public void changed( ObservableValue<? extends Number> arg0, Number arg1, Number arg2 )
-		//			{
-		//				log.debug( "l: " + xAxis.lowerBoundProperty().getValue() + " u: " + xAxis.upperBoundProperty().getValue()
-		//						+ "  pos: " + position.getValue() + "  sbval: " + scrollBar.getValue() + "  length: "
-		//						+ length.getValue() );
-		//
-		//			}
-		//		} );
 
 		length.addListener( new ChangeListener<Number>()
 		{
@@ -291,8 +294,8 @@ public class LineChartViewNode extends VBox
 			@Override
 			public void changed( ObservableValue<? extends ZoomLevel> arg0, ZoomLevel arg1, ZoomLevel newZoomLevel )
 			{
-				log.debug( "selectedproperty was changed! :" + newZoomLevel.name() );
 				setZoomLevel( newZoomLevel );
+				calculatePosition( scrollBar.valueProperty().get(), length.getValue(), shownSpan.getValue() );
 			}
 		} );
 
@@ -325,6 +328,19 @@ public class LineChartViewNode extends VBox
 		}
 
 		throw new RuntimeException( "This is mathematically impossible!" );
+	}
+
+	private final void calculatePosition( double newPosition, double dataLenght, double span )
+	{
+		double margin = 2000d;
+
+		log.debug( "Transform| newPos: " + newPosition + " data: " + dataLenght + " span: " + span );
+
+		double factor = Math.max( 0, dataLenght - span + margin ) / Math.max( 1, dataLenght );
+
+		position.set( ( long )( newPosition * factor ) );
+
+		log.debug( "result: " + position.getValue() );
 	}
 
 	private final class SegmentToSeriesFunction implements Function<Segment, XYChart.Series<Number, Number>>
