@@ -356,6 +356,8 @@ public class Properties
 	private static final class LoadUIPropertyAdapter<T> extends ObjectPropertyBase<T>
 	{
 		private final com.eviware.loadui.api.property.Property<T> loadUIProperty;
+		private final Runnable setValueRunnable;
+		
 		private final EventHandler<PropertyEvent> eventHandler = new WeakEventHandler<PropertyEvent>()
 		{
 			@Override
@@ -363,14 +365,7 @@ public class Properties
 			{
 				if( event.getProperty() == loadUIProperty )
 				{
-					Platform.runLater( new Runnable()
-					{
-						@Override
-						public void run()
-						{
-							setValue( loadUIProperty.getValue() );
-						}
-					} );
+					Platform.runLater( setValueRunnable );
 				}
 			}
 		};
@@ -380,6 +375,14 @@ public class Properties
 			this.loadUIProperty = loadUIProperty;
 			loadUIProperty.getOwner().addEventListener( PropertyEvent.class, eventHandler );
 			super.set( loadUIProperty.getValue() );
+			setValueRunnable = new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					setValue( LoadUIPropertyAdapter.this.loadUIProperty.getValue() );
+				}
+			};
 		}
 
 		@Override
