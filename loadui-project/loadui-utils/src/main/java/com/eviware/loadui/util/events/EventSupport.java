@@ -105,29 +105,38 @@ public class EventSupport implements EventFirer, Releasable
 	@Override
 	public void fireEvent( final EventObject event )
 	{
-		for( ListenerEntry<?> listenerEntry : new HashSet<>( listeners ) )
+		offerToEventQueue( new Runnable()
 		{
-			if( listenerEntry.type.isInstance( event ) )
+			@Override
+			public void run()
 			{
-				if( listenerEntry.listener != null )
+				for( ListenerEntry<?> listenerEntry : new HashSet<>( listeners ) )
 				{
-					queuePendingEvent( event, listenerEntry.listener );
-				}
-				else
-				{
-					EventHandler<?> listener = listenerEntry.weakListener.get();
-					if( listener != null )
+					if( listenerEntry.type.isInstance( event ) )
 					{
-						queuePendingEvent( event, listener );
+						if( listenerEntry.listener != null )
+						{
+							queuePendingEvent( event, listenerEntry.listener );
+						}
+						else
+						{
+							EventHandler<?> listener = listenerEntry.weakListener.get();
+							if( listener != null )
+							{
+								queuePendingEvent( event, listener );
+							}
+							else
+							{
+								log.debug( "Weak listener reference garbage collected" );
+								listeners.remove( listenerEntry );
+							}
+						}
 					}
-					else
-					{
-						log.debug( "Weak listener reference garbage collected" );
-						listeners.remove( listenerEntry );
-					}
-				}
+				}		
 			}
-		}
+		}, "Cannot fire event, queue is full!" );
+		
+		
 
 	}
 

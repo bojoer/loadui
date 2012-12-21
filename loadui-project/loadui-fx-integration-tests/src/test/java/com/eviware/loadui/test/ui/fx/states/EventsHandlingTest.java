@@ -59,7 +59,6 @@ public class EventsHandlingTest
 		{
 			if( input.getClass().getSimpleName().equals( "ComponentDescriptorView" ) )
 			{
-				System.out.println( "^^^^^^^^^^^^^^^^^^^^^^^^^FOUND ComponentDescriptorView: " + input.toString() );
 				return input.toString().equals( "Fixed Rate" );
 			}
 			return false;
