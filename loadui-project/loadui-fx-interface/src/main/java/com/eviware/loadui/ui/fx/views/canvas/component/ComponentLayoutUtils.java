@@ -199,88 +199,130 @@ public class ComponentLayoutUtils
 				.style( "-fx-background-color: red;" ).maxWidth( 80 ).build();
 	}
 
-	@SuppressWarnings( "unchecked" )
-	public static Node createPropertyNode( PropertyLayoutComponent<?> property )
+	public static Node createPropertyNode( PropertyLayoutComponent<?> propLayoutComp )
 	{
-		Class<?> type = property.getProperty().getType();
-		Label propertyLabel = LabelBuilder.create().text( property.getLabel() ).build();
-		if( property.isReadOnly() )
+		Class<?> type = propLayoutComp.getProperty().getType();
+		Label propertyLabel = LabelBuilder.create().text( propLayoutComp.getLabel() ).build();
+		if( propLayoutComp.isReadOnly() )
 		{
-			Label label = new Label();
-			label.textProperty().bind( Bindings.convert( Properties.convert( property.getProperty() ) ) );
-			return VBoxBuilder.create().children( propertyLabel, label ).build();
+			return createLabel(propLayoutComp, propertyLabel);
 		}
-		else if( property.has( "options" ) )
+		else if( propLayoutComp.has( "options" ) )
 		{
-			Object opts = property.get( "options" );
-			OptionsProvider<Object> options;
-			if( opts instanceof OptionsProvider<?> )
-			{
-				options = ( OptionsProvider<Object> )opts;
-			}
-			else if( opts instanceof Iterable<?> )
-			{
-				options = new OptionsProviderImpl<>( ( Iterable<Object> )opts );
-			}
-			else
-			{
-				options = new OptionsProviderImpl<>( opts );
-			}
-
-			OptionsSlider slider;
-			if( options.iterator().next() instanceof String )
-			{
-				slider = new OptionsSlider( Lists.newArrayList( Iterables.filter( options, String.class ) ) );
-				slider.selectedProperty().bindBidirectional(
-						( javafx.beans.property.Property<String> )Properties.convert( property.getProperty() ) );
-				slider.setSelected( property.getProperty().getStringValue() );
-				log.debug( " slider.getSelected(): " + slider.getSelected() );
-			}
-			else
-				throw new RuntimeException( "options just supports sliders at the moment" );
-
-			return VBoxBuilder.create().children( propertyLabel, slider ).build();
+			return createOptionsNode( propLayoutComp, propertyLabel );
 		}
 		else if( type == String.class )
 		{
-			TextField textField = new TextField();
-			textField.textProperty().bindBidirectional( Properties.convert( ( Property<String> )property.getProperty() ) );
-			return VBoxBuilder.create().children( propertyLabel, textField ).build();
+			return createTextNode( propLayoutComp, propertyLabel );
 
 		}
 		else if( Number.class.isAssignableFrom( type ) )
 		{
-			Knob knob = new Knob( property.getLabel() );
-			knob.valueProperty().bindBidirectional( Properties.convert( ( Property<Number> )property.getProperty() ) );
-			if( property.has( "min" ) )
-			{
-				knob.setMin( ( ( Number )property.get( "min" ) ).doubleValue() );
-			}
-			if( property.has( "max" ) )
-			{
-				knob.setMax( ( ( Number )property.get( "max" ) ).doubleValue() );
-			}
-			if( property.has( "step" ) )
-			{
-				knob.setStep( ( ( Number )property.get( "step" ) ).doubleValue() );
-			}
-			if( property.has( "span" ) )
-			{
-				knob.setSpan( ( ( Number )property.get( "span" ) ).doubleValue() );
-			}
-
-			return knob;
+			return createKnob( propLayoutComp );
 		}
 		else if( type == Boolean.class )
 		{
-			CheckBox checkBox = new CheckBox( property.getLabel() );
-			checkBox.selectedProperty().bindBidirectional(
-					Properties.convert( ( Property<Boolean> )property.getProperty() ) );
-			return checkBox;
+			return createCheckBox( propLayoutComp );
 		}
 
-		return LabelBuilder.create().text( "Unhandled: " + property )
-				.tooltip( TooltipBuilder.create().text( property.toString() ).build() )
+		return LabelBuilder.create().text( "Unhandled: " + propLayoutComp )
+				.tooltip( TooltipBuilder.create().text( propLayoutComp.toString() ).build() )
 				.style( "-fx-background-color: red;" ).maxWidth( 80 ).build();
 	}
+
+	@SuppressWarnings( "unchecked" )
+	private static Node createCheckBox( PropertyLayoutComponent<?> propLayoutComp )
+	{
+		CheckBox checkBox = new CheckBox( propLayoutComp.getLabel() );
+		javafx.beans.property.Property<Boolean> jfxProp = Properties.convert( ( Property<Boolean> )propLayoutComp.getProperty() );
+		checkBox.selectedProperty().bindBidirectional( jfxProp );
+		return nodeWithProperty( checkBox, jfxProp );
+	}
+
+	@SuppressWarnings( "unchecked" )
+	private static Node createKnob( PropertyLayoutComponent<?> propLayoutComp )
+	{
+		Knob knob = new Knob( propLayoutComp.getLabel() );
+		javafx.beans.property.Property<Number> jfxProp = Properties.convert( ( Property<Number> )propLayoutComp.getProperty() );
+		knob.valueProperty().bindBidirectional( jfxProp );
+		if( propLayoutComp.has( "min" ) )
+		{
+			knob.setMin( ( ( Number )propLayoutComp.get( "min" ) ).doubleValue() );
+		}
+		if( propLayoutComp.has( "max" ) )
+		{
+			knob.setMax( ( ( Number )propLayoutComp.get( "max" ) ).doubleValue() );
+		}
+		if( propLayoutComp.has( "step" ) )
+		{
+			knob.setStep( ( ( Number )propLayoutComp.get( "step" ) ).doubleValue() );
+		}
+		if( propLayoutComp.has( "span" ) )
+		{
+			knob.setSpan( ( ( Number )propLayoutComp.get( "span" ) ).doubleValue() );
+		}
+
+		return nodeWithProperty( knob, jfxProp );
+	}
+
+	@SuppressWarnings( "unchecked" )
+	private static Node createTextNode( PropertyLayoutComponent<?> propLayoutComp, Label propertyLabel )
+	{
+		TextField textField = new TextField();
+		javafx.beans.property.Property<String> jfxProp = Properties.convert( ( Property<String> )propLayoutComp.getProperty() );
+		textField.textProperty().bindBidirectional( jfxProp );
+		return nodeWithProperty( VBoxBuilder.create().children( propertyLabel, textField ).build(), jfxProp );
+	}
+
+	@SuppressWarnings( "unchecked" )
+	private static Node createOptionsNode( PropertyLayoutComponent<?> propLayoutComp, Label propertyLabel )
+	{
+		Object opts = propLayoutComp.get( "options" );
+		OptionsProvider<Object> options;
+		if( opts instanceof OptionsProvider<?> )
+		{
+			options = ( OptionsProvider<Object> )opts;
+		}
+		else if( opts instanceof Iterable<?> )
+		{
+			options = new OptionsProviderImpl<>( ( Iterable<Object> )opts );
+		}
+		else
+		{
+			options = new OptionsProviderImpl<>( opts );
+		}
+
+		OptionsSlider slider;
+		javafx.beans.property.Property<String> jfxProp;
+		
+		if( options.iterator().next() instanceof String )
+		{
+			slider = new OptionsSlider( Lists.newArrayList( Iterables.filter( options, String.class ) ) );
+			jfxProp = ( javafx.beans.property.Property<String> )Properties.convert( propLayoutComp.getProperty() );
+			slider.selectedProperty().bindBidirectional( jfxProp );
+			slider.setSelected( propLayoutComp.getProperty().getStringValue() );
+			log.debug( " slider.getSelected(): " + slider.getSelected() );
+		}
+		else
+			throw new RuntimeException( "options just supports sliders at the moment" );
+
+		return nodeWithProperty( VBoxBuilder.create().children( propertyLabel, slider ).build(), jfxProp );
+	}
+	
+	private static Node createLabel( PropertyLayoutComponent<?> propLayoutComp, Label propertyLabel )
+	{
+		Label label = new Label();
+		javafx.beans.property.Property<?> jfxProp = Properties.convert( propLayoutComp.getProperty() );
+		label.textProperty().bind( Bindings.convert( jfxProp ) );
+		return nodeWithProperty(VBoxBuilder.create().children( propertyLabel, label ).build(), jfxProp);
+	}
+
+	private static Node nodeWithProperty( Node node, javafx.beans.property.Property<?> jfxProp )
+	{
+		// it is necessary to keep a strong reference to the property so it won't be garbage collected
+		// taking the handlers bound to it with it
+		node.getProperties().put( "_KEEP_STRONG_REF_TO_JFX_PROPERTY_", jfxProp );
+		return node;
+	}
+	
 }

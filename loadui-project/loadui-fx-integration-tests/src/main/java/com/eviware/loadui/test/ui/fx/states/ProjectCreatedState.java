@@ -19,6 +19,10 @@ public class ProjectCreatedState extends TestState
 	{
 		super( "Project Created", AgentsCreatedState.STATE );
 	}
+	
+	protected ProjectCreatedState( String name, TestState parent ) {
+		super( name, parent );
+	}
 
 	// This method randomly throws an IndexOutOfBoundsException which breaks the test.
 	// TODO: We should look into it once the source code for ObservableList is released.

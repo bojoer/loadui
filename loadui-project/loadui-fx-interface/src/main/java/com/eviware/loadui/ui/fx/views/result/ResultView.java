@@ -25,10 +25,13 @@ public class ResultView extends StackPane
 
 	@FXML
 	private PageList<ExecutionView> resultNodeList;
-
+	
 	@FXML
 	private PageList<ExecutionView> currentResultNode;
 
+	@FXML
+	private PageList<ExecutionView> archiveNodeList;
+	
 	private final Property<Execution> currentExecution;
 	private final ObservableList<Execution> executionList;
 	private ObservableList<ExecutionView> executionViews;

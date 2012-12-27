@@ -39,6 +39,7 @@ public class JavaFXActivator implements BundleActivator
 			{
 				try
 				{
+					BeanInjector.getBean( CoreImageResolver.class );
 					new MainWindow( BeanInjector.getBeanFuture( Stage.class ).get(), BeanInjector.getBeanFuture(
 							WorkspaceProvider.class ).get() ).show();
 				}
