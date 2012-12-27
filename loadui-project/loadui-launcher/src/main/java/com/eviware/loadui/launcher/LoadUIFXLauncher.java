@@ -96,7 +96,9 @@ public class LoadUIFXLauncher extends LoadUILauncher
 				System.out.println( "para: " + e.getKey() + "=" + e.getValue() );
 
 			final String noFx = getParameters().getNamed().get( NOFX_OPTION );
-			System.out.println( "noFx: " + noFx );
+			final String agent = getParameters().getNamed().get( "agent" );
+			if( "true".equals( noFx ) )
+				setDefaultSystemProperty( "loadui.instance", "agent" );
 
 			if( !"true".equals( noFx ) )
 			{
