@@ -19,9 +19,11 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ContextMenuBuilder;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItemBuilder;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -42,12 +44,14 @@ import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.ui.fx.api.input.DraggableEvent;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.control.Carousel;
+import com.eviware.loadui.ui.fx.control.ToolBox;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.ObservableLists;
 import com.eviware.loadui.ui.fx.util.Observables;
 import com.eviware.loadui.ui.fx.util.Properties;
 import com.eviware.loadui.ui.fx.util.UIUtils;
 import com.eviware.loadui.ui.fx.views.projectref.ProjectRefView;
+import com.eviware.loadui.util.BeanInjector;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
@@ -70,6 +74,12 @@ public class WorkspaceView extends StackPane
 
 	@FXML
 	private MenuButton workspaceButton;
+
+	@FXML
+	private VBox carouselArea;
+
+	@FXML
+	private ToolBox<Label> toolbox;
 
 	@FXML
 	private Carousel<ProjectRefView> projectRefCarousel;
@@ -96,7 +106,7 @@ public class WorkspaceView extends StackPane
 	}
 
 	@FXML
-	private void initialize()
+	protected void initialize()
 	{
 		addEventHandler( IntentEvent.ANY, new EventHandler<IntentEvent<? extends Object>>()
 		{
@@ -114,11 +124,6 @@ public class WorkspaceView extends StackPane
 					if( event.getArg() == ProjectItem.class )
 					{
 						new CreateNewProjectDialog( workspace, WorkspaceView.this ).show();
-						event.consume();
-					}
-					else if( event.getArg() == AgentItem.class )
-					{
-						new CreateNewAgentDialog( workspace, WorkspaceView.this ).show();
 						event.consume();
 					}
 				}
@@ -193,6 +198,11 @@ public class WorkspaceView extends StackPane
 		}
 	}
 
+	public ToolBox<Label> getToolbox()
+	{
+		return toolbox;
+	}
+
 	private void initProjectRefCarousel()
 	{
 		final Observables.Group group = Observables.group();
@@ -261,6 +271,16 @@ public class WorkspaceView extends StackPane
 			workspace.setAttribute( LATEST_DIRECTORY, file.getParentFile().getAbsolutePath() );
 			fireEvent( IntentEvent.create( IntentEvent.INTENT_RUN_BLOCKING, new ImportProjectTask( workspace, file ) ) );
 		}
+	}
+
+	public VBox getCarouselArea()
+	{
+		return carouselArea;
+	}
+
+	public WorkspaceItem getWorkspace()
+	{
+		return workspace;
 	}
 
 	@FXML

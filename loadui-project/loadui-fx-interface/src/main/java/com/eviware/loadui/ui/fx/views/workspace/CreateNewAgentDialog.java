@@ -211,7 +211,7 @@ public class CreateNewAgentDialog extends ConfirmationDialog
 				}
 				else if( !validateUnique( filteredUrl ) )
 				{
-					new ErrorDialog( owner, "Agent already existis",
+					new ErrorDialog( owner, "Agent already exists",
 							"The given URL: '%s' points to an Agent that has already been added.", filteredUrl ).show();
 				}
 				else

@@ -356,9 +356,12 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 	@Override
 	public boolean isLocalMode()
 	{
-		return localMode.getValue();
+		if( Boolean.parseBoolean( System.getProperty( "loadui.pro" ) ) )
+			return localMode.getValue();
+		return false;
 	}
 
+	//TODO: Remove and make the distribution mode selector disabled when running instead?
 	@Override
 	public void setLocalMode( boolean localMode )
 	{
@@ -371,7 +374,7 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 			this.localMode.setValue( localMode );
 		}
 	}
-	
+
 	@Override
 	public long getNumberOfAutosaves()
 	{
@@ -411,5 +414,11 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 						AgentItem.SET_MAX_THREADS, ( ( PropertyEvent )event ).getProperty().getStringValue() ) );
 			}
 		}
+	}
+
+	@Override
+	public Property<Boolean> localModeProperty()
+	{
+		return localMode;
 	}
 }

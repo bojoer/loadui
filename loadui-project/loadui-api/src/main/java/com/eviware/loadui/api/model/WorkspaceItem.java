@@ -22,6 +22,7 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 
 import com.eviware.loadui.api.discovery.AgentDiscovery.AgentReference;
+import com.eviware.loadui.api.property.Property;
 
 /**
  * A loadUI workspace. It holds references to projects and agents.
@@ -49,7 +50,7 @@ public interface WorkspaceItem extends ModelItem
 	public final static String STATISTIC_RESULTS_PATH = WorkspaceItem.class.getSimpleName() + ".statisticResultsPath";
 	public static final String STATISTIC_NUMBER_OF_AUTOSAVES = WorkspaceItem.class.getSimpleName()
 			+ ".statisticNumberOfAutosaves";
-	
+
 	public final static String IGNORED_VERSION_UPDATE = WorkspaceItem.class.getSimpleName() + ".ignoredVersionUpdate";
 
 	/**
@@ -169,6 +170,11 @@ public interface WorkspaceItem extends ModelItem
 	public void removeAgent( AgentItem agent );
 
 	/**
+	 * Gets the localMode property.
+	 */
+	public Property<Boolean> localModeProperty();
+
+	/**
 	 * Gets the localMode property value.
 	 * 
 	 * @return
@@ -185,7 +191,7 @@ public interface WorkspaceItem extends ModelItem
 	 * @param localMode
 	 */
 	public void setLocalMode( boolean localMode );
-	
+
 	/**
 	 * Gets the maximum number of executions for all projects that are
 	 * automatically saved before the oldest one is deleted.
@@ -201,5 +207,5 @@ public interface WorkspaceItem extends ModelItem
 	 * @return
 	 */
 	void setNumberOfAutosaves( long n );
-	
+
 }

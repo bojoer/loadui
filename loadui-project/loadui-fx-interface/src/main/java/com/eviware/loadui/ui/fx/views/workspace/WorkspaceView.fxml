@@ -47,7 +47,7 @@
 			</BorderPane>
 		</ToolBar>
 		<HBox spacing="15" snapToPixel="true" fillHeight="false">
-			<ToolBox heightPerItem="110">
+			<ToolBox fx:id="toolbox" heightPerItem="110">
 				<categoryComparator>
 					<ExplicitOrdering>
 						<String fx:value="Projects"/>
@@ -56,7 +56,7 @@
 				</categoryComparator>
 				<NewProjectIcon id="newProjectIcon" ToolBox.category="Projects" />
 			</ToolBox>
-			<VBox spacing="15">
+			<VBox fx:id="carouselArea" spacing="15">
 				<Carousel fx:id="projectRefCarousel" text="Projects" prefWidth="320" prefHeight="220" />
 			</VBox>
 			<StackPane styleClass="web-container">

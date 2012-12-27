@@ -437,6 +437,7 @@ public class LoadUILauncher
 		Options newOptions = new Options();
 		newOptions.addOption( SYSTEM_PROPERTY_OPTION, true, "Sets system property with name=value" );
 		newOptions.addOption( NOFX_OPTION, false, "Do not include or require the JavaFX runtime" );
+		newOptions.addOption( "agent", false, "Run in Agent mode" );
 		newOptions.addOption( HELP_OPTION, "help", false, "Prints this message" );
 		newOptions.addOption( IGNORE_CURRENTLY_RUNNING_OPTION, false, "Disable lock file" );
 
@@ -544,7 +545,7 @@ public class LoadUILauncher
 		}
 	}
 
-	protected void setDefaultSystemProperty( String property, String value )
+	protected static void setDefaultSystemProperty( String property, String value )
 	{
 		if( System.getProperty( property ) == null )
 		{
