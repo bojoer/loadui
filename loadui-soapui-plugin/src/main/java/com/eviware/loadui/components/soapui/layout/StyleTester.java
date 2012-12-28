@@ -12,7 +12,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.GroupBuilder;
 import javafx.scene.Node;
 import javafx.scene.SceneBuilder;
 import javafx.scene.control.Button;
@@ -23,7 +22,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.SplitPaneBuilder;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextAreaBuilder;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBoxBuilder;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
@@ -31,7 +29,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.layout.VBoxBuilder;
 import javafx.stage.Stage;
 
-import com.eviware.loadui.components.soapui.testStepsTable.TestStepsTableModel;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 

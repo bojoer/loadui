@@ -1,4 +1,4 @@
-package com.eviware.loadui.ui.fx.util;
+package com.eviware.loadui.components.soapui.layout;
 
 import java.lang.ref.WeakReference;
 

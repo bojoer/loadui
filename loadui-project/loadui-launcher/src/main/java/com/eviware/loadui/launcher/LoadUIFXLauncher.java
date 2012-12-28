@@ -97,11 +97,13 @@ public class LoadUIFXLauncher extends LoadUILauncher
 
 			final String noFx = getParameters().getNamed().get( NOFX_OPTION );
 			final String agent = getParameters().getNamed().get( "agent" );
-			if( "true".equals( noFx ) )
+
+			if( "true".equals( agent ) )
 				setDefaultSystemProperty( "loadui.instance", "agent" );
 
 			if( !"true".equals( noFx ) )
 			{
+				setDefaultSystemProperty( "loadui.headless", "true" );
 				final Stage splash = StageBuilder.create().style( StageStyle.TRANSPARENT ).scene( splashScene )
 						.icons( icons ).build();
 				splash.initModality( Modality.APPLICATION_MODAL );

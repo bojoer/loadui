@@ -1,7 +1,6 @@
 package com.eviware.loadui.components.soapui.layout;
 
 import java.io.File;
-import java.lang.reflect.Array;
 import java.util.concurrent.CountDownLatch;
 
 import javafx.application.Platform;
@@ -33,6 +32,7 @@ import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.component.ComponentContext;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.PropertyEvent;
@@ -41,9 +41,6 @@ import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.components.soapui.SoapUISamplerComponent;
 import com.eviware.loadui.components.soapui.SoapUISamplerComponent.SoapUITestCaseRunner;
 import com.eviware.loadui.impl.layout.LayoutComponentImpl;
-import com.eviware.loadui.ui.fx.control.FilePicker;
-import com.eviware.loadui.ui.fx.util.Properties;
-import com.eviware.loadui.ui.fx.util.SelectionModelUtils;
 import com.eviware.loadui.util.BeanInjector;
 import com.google.common.collect.ImmutableMap;
 import com.sun.javafx.Utils;
@@ -106,8 +103,12 @@ public class SoapUiProjectSelector
 				new ProjectSelector( menuButton ).display();
 			}
 		} );
-		BeanInjector.getBean( Stage.class ).getScene().getStylesheets()
-				.add( SoapUiProjectSelector.class.getResource( "loadui-soapui-plugin-style.css" ).toExternalForm() );
+
+		if( !LoadUI.isHeadless() )
+		{
+			BeanInjector.getBean( Stage.class ).getScene().getStylesheets()
+					.add( SoapUiProjectSelector.class.getResource( "loadui-soapui-plugin-style.css" ).toExternalForm() );
+		}
 
 		grid.add( menuButton, 0, 0 );
 		grid.add( new Label( "TestSuite" ), 1, 0 );

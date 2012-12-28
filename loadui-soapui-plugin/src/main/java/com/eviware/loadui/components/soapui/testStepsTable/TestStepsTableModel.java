@@ -2,7 +2,6 @@ package com.eviware.loadui.components.soapui.testStepsTable;
 
 import java.awt.image.BufferedImage;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
