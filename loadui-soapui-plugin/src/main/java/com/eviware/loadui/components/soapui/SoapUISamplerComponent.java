@@ -31,8 +31,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
-import javafx.application.Platform;
-
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 
@@ -90,7 +88,6 @@ import com.eviware.soapui.model.support.ModelSupport;
 import com.eviware.soapui.model.support.TestRunListenerAdapter;
 import com.eviware.soapui.model.testsuite.LoadTestRunListener;
 import com.eviware.soapui.model.testsuite.SamplerTestStep;
-import com.eviware.soapui.model.testsuite.TestCase;
 import com.eviware.soapui.model.testsuite.TestCaseRunContext;
 import com.eviware.soapui.model.testsuite.TestCaseRunner;
 import com.eviware.soapui.model.testsuite.TestRunner;
@@ -198,7 +195,7 @@ public class SoapUISamplerComponent extends RunnerBase
 	private final GeneralSettings generalSettings;
 
 	private final ScheduledExecutorService executor;
-	private final File loaduiProjectFolder;
+	private File loaduiProjectFolder;
 	private final Map<String, StatisticVariable.Mutable> timeTakenVariableMap = new HashMap<>();
 	private final Map<String, StatisticVariable.Mutable> responseSizeVariableMap = new HashMap<>();
 
@@ -238,7 +235,6 @@ public class SoapUISamplerComponent extends RunnerBase
 		testSteps_isDisabled = context.createProperty( DISABLED_TESTSTEPS, String.class, "" );
 
 		ProjectItem project = context.getCanvas().getProject();
-		loaduiProjectFolder = project.getProjectFile().getParentFile();
 
 		testStepsTableModel = new TestStepsTableModel( this );
 		generalSettings = GeneralSettings.newInstance( context, runner );
@@ -246,15 +242,16 @@ public class SoapUISamplerComponent extends RunnerBase
 
 		SoapUiProjectUtils.registerJdbcDrivers();
 
-		// if on controller, set working copy of the project file. this does not
+		// If on controller, set working copy of the project file. This does not
 		// make sense on agents since projectFileWorkingCopy is propagated from
-		// the controller
+		// the controller.
 		if( context.isController() )
 		{
+			loaduiProjectFolder = project.getProjectFile().getParentFile();
 			if( generalSettings.getUseProjectRelativePath() )
 			{
-				// if relative path is used, calculate real (absolute) path and set
-				// it
+				// If relative path is used, calculate real (absolute) path and set
+				// it.
 				File relativeFile = new File( loaduiProjectFolder, projectRelativePath.getValue() );
 				if( relativeFile.exists() )
 					projectSelector.setProjectFile( relativeFile );

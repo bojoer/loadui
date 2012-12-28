@@ -66,7 +66,7 @@
 					<instructions>
 						<Bundle-Activator>com.eviware.loadui.components.soapui.SoapUIComponentActivator</Bundle-Activator>
 						<Embed-Dependency>*;scope=provided</Embed-Dependency>
-						<Import-Package>!org.apache.commons.httpclient.*,!org.apache.tools.*,!org.fusesource.*,!org.apache.log,!org.apache.ivy.*,!org.apache.bsf.*,!org.apache.batik.*,!javax.xml.rpc.*,!jline,!org.apache.xml.resolver.*,!org.apache.axis.*,!org.apache.crimson.*;!org.mozilla.*,!com.sun.javadoc,!com.sun.tools.javadoc,!com.teamdev.jxbrowser*,!com.teamdev.xpcom.*,!javax.servlet.jsp,!groovyjarjarasm.asm.util,!groovyjarjarasm.asm.tree.analysis,!org.dom4j.*,!org.apache.avalon.framework.logger,!org.apache.oro.text.regex,!com.sun.jdmk.comm,!com.sun.org.apache.xerces.internal.*,!com.sun.net.ssl.*,!com.sun.crypto.provider,!com.sun.java.swing.plaf.windows.*,!sun.io,!sun.misc,!sun.reflect.generics.reflectiveObjects,!org.jgroups*,!com.adbs*,!hermes*,!com.eviware.soapui.coverage*,!com.toedter.calendar*,!net.infonode.docking*,!net.infonode.properties.gui.util*,!net.infonode.tabbedpanel*,!net.infonode.util*,!*net.sf.jasperreports*,!org.jfree.util*,!com.jniwrapper*,!net.sf.cglib.proxy*,!org.codehaus.jettison*,!org.jdom*,!org.xmlpull.mxp1*,!org.xmlpull.v1*,!sun.reflect*,!net.sf.saxon.xpath,!org.apache.http*,!com.jp.protection*,!net.jcip.annotations*,!com.werken.xpath*,!org.apache.log.*,!org.apache.oro*,!org.owasp.*,*</Import-Package>
+						<Import-Package>!com.eviware.loadui.api.charting.line,!com.eviware.loadui.api.reporting,!org.tbee.javafx.scene.layout,!org.apache.commons.httpclient.*,!org.apache.tools.*,!org.fusesource.*,!org.apache.log,!org.apache.ivy.*,!org.apache.bsf.*,!org.apache.batik.*,!javax.xml.rpc.*,!jline,!org.apache.xml.resolver.*,!org.apache.axis.*,!org.apache.crimson.*;!org.mozilla.*,!com.sun.javadoc,!com.sun.tools.javadoc,!com.teamdev.jxbrowser*,!com.teamdev.xpcom.*,!javax.servlet.jsp,!groovyjarjarasm.asm.util,!groovyjarjarasm.asm.tree.analysis,!org.dom4j.*,!org.apache.avalon.framework.logger,!org.apache.oro.text.regex,!com.sun.jdmk.comm,!com.sun.org.apache.xerces.internal.*,!com.sun.net.ssl.*,!com.sun.crypto.provider,!com.sun.java.swing.plaf.windows.*,!sun.io,!sun.misc,!sun.reflect.generics.reflectiveObjects,!org.jgroups*,!com.adbs*,!hermes*,!com.eviware.soapui.coverage*,!com.toedter.calendar*,!net.infonode.docking*,!net.infonode.properties.gui.util*,!net.infonode.tabbedpanel*,!net.infonode.util*,!*net.sf.jasperreports*,!org.jfree.util*,!com.jniwrapper*,!net.sf.cglib.proxy*,!org.codehaus.jettison*,!org.jdom*,!org.xmlpull.mxp1*,!org.xmlpull.v1*,!sun.reflect*,!net.sf.saxon.xpath,!org.apache.http*,!com.jp.protection*,!net.jcip.annotations*,!com.werken.xpath*,!org.apache.log.*,!org.apache.oro*,!org.owasp.*,*</Import-Package>
 					</instructions>
 				</configuration>
 			</plugin>
@@ -234,6 +234,7 @@
 			<groupId>com.eviware.loadui</groupId>
 			<artifactId>loadui-fx-interface</artifactId>
 			<version>${loadUIVersion}</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.eviware.loadui</groupId>

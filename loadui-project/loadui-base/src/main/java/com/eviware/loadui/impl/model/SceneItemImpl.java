@@ -136,7 +136,7 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 	protected void init()
 	{
 		super.init();
-		if( project != null )
+		if( LoadUI.isController() )
 		{
 			project.addEventListener( ActionEvent.class, projectListener );
 			project.getWorkspace().addEventListener( PropertyEvent.class, workspaceListener );
@@ -183,7 +183,7 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 	@Override
 	public void release()
 	{
-		if( project != null )
+		if( LoadUI.isController() )
 		{
 			project.removeEventListener( ActionEvent.class, projectListener );
 			project.getWorkspace().removeEventListener( PropertyEvent.class, workspaceListener );
@@ -469,6 +469,7 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 		return agents;
 	}
 
+	@Override
 	public boolean isAffectedByExecutionTask( TestExecution execution )
 	{
 		CanvasItem startedCanvas = execution.getCanvas();

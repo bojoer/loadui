@@ -35,6 +35,8 @@ public class LoadUI
 	public static final String CONTROLLER = "controller";
 	public static final String AGENT = "agent";
 
+	public static final String HEADLESS = "loadui.headless";
+
 	public static final String NAME = "loadui.name";
 	public static final String BUILD_NUMBER = "loadui.build.number";
 	public static final String BUILD_DATE = "loadui.build.date";
@@ -55,6 +57,11 @@ public class LoadUI
 	public static boolean isController()
 	{
 		return CONTROLLER.equals( System.getProperty( INSTANCE ) );
+	}
+
+	public static boolean isHeadless()
+	{
+		return "true".equals( System.getProperty( HEADLESS ) );
 	}
 
 	/**
