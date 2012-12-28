@@ -278,6 +278,7 @@ public class ExecutionImpl implements Execution, Releasable
 		{
 			setAttribute( KEY_ARCHIVED, Boolean.TRUE.toString() );
 			fireEvent( new BaseEvent( this, ARCHIVED ) );
+			manager.archiveExecution( getId() );
 		}
 	}
 
