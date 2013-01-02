@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<?import java.net.URL?>
-
-<fx:root type="javafx.scene.control.Label" xmlns:fx="http://javafx.com/fxml" styleClass="scenario-toolbox-item">
-	<stylesheets>
-		<URL value="@ScenarioToolboxItem.css" />
-	</stylesheets>
-</fx:root>

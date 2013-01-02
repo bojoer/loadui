@@ -19,9 +19,11 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ContextMenuBuilder;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItemBuilder;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -42,13 +44,14 @@ import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.ui.fx.api.input.DraggableEvent;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.control.Carousel;
+import com.eviware.loadui.ui.fx.control.ToolBox;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.ObservableLists;
 import com.eviware.loadui.ui.fx.util.Observables;
 import com.eviware.loadui.ui.fx.util.Properties;
 import com.eviware.loadui.ui.fx.util.UIUtils;
-import com.eviware.loadui.ui.fx.views.agent.AgentView;
 import com.eviware.loadui.ui.fx.views.projectref.ProjectRefView;
+import com.eviware.loadui.util.BeanInjector;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
@@ -68,17 +71,18 @@ public class WorkspaceView extends StackPane
 	private final WorkspaceItem workspace;
 	private final ObservableList<ProjectRef> projectRefList;
 	private final ObservableList<ProjectRefView> projectRefViews;
-	private final ObservableList<AgentItem> agentList;
-	private final ObservableList<AgentView> agentViews;
 
 	@FXML
 	private MenuButton workspaceButton;
 
 	@FXML
-	private Carousel<ProjectRefView> projectRefCarousel;
+	private VBox carouselArea;
 
 	@FXML
-	private Carousel<Node> agentCarousel;
+	private ToolBox<Label> toolbox;
+
+	@FXML
+	private Carousel<ProjectRefView> projectRefCarousel;
 
 	@FXML
 	private WebView webView;
@@ -98,22 +102,11 @@ public class WorkspaceView extends StackPane
 			}
 		} );
 
-		agentList = ObservableLists.fx( ObservableLists.ofCollection( workspace, WorkspaceItem.AGENTS, AgentItem.class,
-				workspace.getAgents() ) );
-		agentViews = ObservableLists.transform( agentList, new Function<AgentItem, AgentView>()
-		{
-			@Override
-			public AgentView apply( AgentItem agent )
-			{
-				return new AgentView( agent );
-			}
-		} );
-
 		FXMLUtils.load( this );
 	}
 
 	@FXML
-	private void initialize()
+	protected void initialize()
 	{
 		addEventHandler( IntentEvent.ANY, new EventHandler<IntentEvent<? extends Object>>()
 		{
@@ -133,11 +126,6 @@ public class WorkspaceView extends StackPane
 						new CreateNewProjectDialog( workspace, WorkspaceView.this ).show();
 						event.consume();
 					}
-					else if( event.getArg() == AgentItem.class )
-					{
-						new CreateNewAgentDialog( workspace, WorkspaceView.this ).show();
-						event.consume();
-					}
 				}
 				else if( event.getEventType() == IntentEvent.INTENT_OPEN && event.getArg() instanceof ProjectRef )
 				{
@@ -150,7 +138,6 @@ public class WorkspaceView extends StackPane
 		workspaceButton.textProperty().bind( Bindings.format( "Workspace: %s", Properties.forLabel( workspace ) ) );
 
 		initProjectRefCarousel();
-		initAgentCarousel();
 
 		java.util.Properties props = new java.util.Properties();
 
@@ -211,43 +198,9 @@ public class WorkspaceView extends StackPane
 		}
 	}
 
-	private void initAgentCarousel()
+	public ToolBox<Label> getToolbox()
 	{
-		ObservableLists.bindSorted( agentCarousel.getItems(), agentViews, Ordering.usingToString() );
-
-		agentCarousel.setSelected( Iterables.getFirst( agentCarousel.getItems(), null ) );
-
-		agentCarousel.addEventHandler( DraggableEvent.ANY, new EventHandler<DraggableEvent>()
-		{
-			@Override
-			public void handle( DraggableEvent event )
-			{
-				if( event.getData() instanceof NewAgentIcon )
-				{
-					if( event.getEventType() == DraggableEvent.DRAGGABLE_ENTERED )
-					{
-						event.accept();
-					}
-					else if( event.getEventType() == DraggableEvent.DRAGGABLE_DROPPED )
-					{
-						fireEvent( IntentEvent.create( IntentEvent.INTENT_CREATE, AgentItem.class ) );
-					}
-				}
-			}
-		} );
-
-		agentCarousel.setContextMenu( ContextMenuBuilder
-				.create()
-				.items(
-						MenuItemBuilder.create().text( "Add Agent" ).id( "add-agent-menu-button" )
-								.onAction( new EventHandler<ActionEvent>()
-								{
-									@Override
-									public void handle( ActionEvent arg0 )
-									{
-										fireEvent( IntentEvent.create( IntentEvent.INTENT_CREATE, AgentItem.class ) );
-									}
-								} ).build() ).build() );
+		return toolbox;
 	}
 
 	private void initProjectRefCarousel()
@@ -318,6 +271,16 @@ public class WorkspaceView extends StackPane
 			workspace.setAttribute( LATEST_DIRECTORY, file.getParentFile().getAbsolutePath() );
 			fireEvent( IntentEvent.create( IntentEvent.INTENT_RUN_BLOCKING, new ImportProjectTask( workspace, file ) ) );
 		}
+	}
+
+	public VBox getCarouselArea()
+	{
+		return carouselArea;
+	}
+
+	public WorkspaceItem getWorkspace()
+	{
+		return workspace;
 	}
 
 	@FXML

@@ -111,13 +111,12 @@ public class ResultView extends StackPane
 					
 					if( event.getEventType() == DraggableEvent.DRAGGABLE_ENTERED )
 					{
-						log.debug( "Draggable entered!!!!!!!!!!" );
 						if (!executionView.getExecution().isArchived())
 							event.accept();
 					}
 					else if( event.getEventType() == DraggableEvent.DRAGGABLE_DROPPED )
 					{
-						log.debug( "Draggable DROPPED%%%%%%%%%%%%%%%%%%%%%" );
+						log.info( "Archiving test run results" );
 						executionView.getExecution().archive();
 					}
 				}

@@ -13,6 +13,7 @@ import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyProperty;
@@ -20,17 +21,21 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.LabelBuilder;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
 import com.eviware.loadui.api.assertion.AssertionItem;
+import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.WorkspaceItem;
@@ -45,7 +50,9 @@ import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.testevents.TestEvent;
 import com.eviware.loadui.api.testevents.TestEventRegistry;
+import com.eviware.loadui.ui.fx.api.PostActionEvent;
 import com.eviware.loadui.ui.fx.api.input.DraggableEvent;
+import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.InspectorHelpers;
 import com.eviware.loadui.ui.fx.util.ObservableLists;
@@ -89,6 +96,7 @@ public class ChartGroupView extends VBox
 	}
 
 	private final ChartGroup chartGroup;
+
 	private final ObservableValue<Execution> executionProperty;
 	private final ProjectItem project;
 	private final Observable poll;
@@ -98,21 +106,16 @@ public class ChartGroupView extends VBox
 
 	@FXML
 	private ToggleButton componentGroupToggle;
-
 	@FXML
-	private ToggleButton agentGroupToggle;
+	private HBox buttonBar;
 
 	@FXML
 	private VBox componentGroup;
-	@FXML
-	private VBox agentGroup;
 
 	@FXML
 	private StackPane chartView;
 
 	private final ObservableList<LineChartViewNode> componentSubcharts;
-
-	private final ObservableList<LineChartViewNode> agentSubcharts;
 
 	public ChartGroupView( ChartGroup chartGroup, ObservableValue<Execution> executionProperty, ProjectItem project,
 			Observable poll )
@@ -125,27 +128,33 @@ public class ChartGroupView extends VBox
 		componentSubcharts = transform( fx( transform( ofCollection( chartGroup ), chartToChartView ) ),
 				chartViewToChartViewHolder );
 
-		agentSubcharts = transform(
-				fx( transform( ObservableLists.filter(
-						ofCollection( project.getWorkspace(), WorkspaceItem.AGENTS, AgentItem.class, project.getWorkspace()
-								.getAgents() ), chartGroupHasAgent ), agentToChartView ) ), chartViewToChartViewHolder );
-
 		FXMLUtils.load( this );
+
+		log.debug( "Chart CREATED event fired." );
+		log.debug( "Parent is: " + getParent() );
+
+		final InvalidationListener fireCreatedEvent = new InvalidationListener()
+		{
+			@Override
+			public void invalidated( Observable _ )
+			{
+				fireEvent( PostActionEvent.create( PostActionEvent.WAS_CREATED, ChartGroupView.this ) );
+				//TODO: remove this eventlistener since it's not used anymore.
+			}
+		};
+
+		parentProperty().addListener( fireCreatedEvent );
 	}
 
 	@FXML
 	private void initialize()
 	{
-		ToggleGroup chartGroupToggleGroup = new ToggleGroup();
+		chartGroupToggleGroup = new ToggleGroup();
 		componentGroupToggle.setToggleGroup( chartGroupToggleGroup );
-		agentGroupToggle.setToggleGroup( chartGroupToggleGroup );
-		agentGroupToggle.disableProperty().bind( isEmpty( agentSubcharts ) );
 
 		componentGroup.visibleProperty().bind( componentGroupToggle.selectedProperty() );
-		agentGroup.visibleProperty().bind( agentGroupToggle.selectedProperty() );
 
 		bindContent( componentGroup.getChildren(), componentSubcharts );
-		bindContent( agentGroup.getChildren(), agentSubcharts );
 
 		chartGroupLabel.textProperty().bind( forLabel( chartGroup ) );
 		chartView.getChildren().setAll( createChart( chartGroup.getType() ) );
@@ -174,6 +183,16 @@ public class ChartGroupView extends VBox
 		} );
 	}
 
+	public ToggleGroup getChartGroupToggleGroup()
+	{
+		return chartGroupToggleGroup;
+	}
+
+	public HBox getButtonBar()
+	{
+		return buttonBar;
+	}
+
 	private Node createChart( String type )
 	{
 		if( Objects.equal( type, LineChartView.class.getName() ) )
@@ -183,7 +202,12 @@ public class ChartGroupView extends VBox
 		return LabelBuilder.create().text( "Unsupported chart type: " + type ).build();
 	}
 
-	private static void applyChartViewDefaults( ChartView subChartView )
+	public ChartGroup getChartGroup()
+	{
+		return chartGroup;
+	}
+
+	public static void applyChartViewDefaults( ChartView subChartView )
 	{
 		if( !"true".equals( subChartView.getAttribute( "saved", "false" ) ) )
 		{
@@ -205,27 +229,7 @@ public class ChartGroupView extends VBox
 		}
 	};
 
-	private final Function<AgentItem, ChartView> agentToChartView = new Function<AgentItem, ChartView>()
-	{
-		@Override
-		public ChartView apply( AgentItem agent )
-		{
-			ChartView subChartView = chartGroup.getChartViewForSource( agent.getLabel() );
-			applyChartViewDefaults( subChartView );
-			return subChartView;
-		}
-	};
-
-	private final Predicate<AgentItem> chartGroupHasAgent = new Predicate<AgentItem>()
-	{
-		@Override
-		public boolean apply( AgentItem agent )
-		{
-			return chartGroup.getSources().contains( agent.getLabel() );
-		}
-	};
-
-	private final Function<ChartView, LineChartViewNode> chartViewToChartViewHolder = new Function<ChartView, LineChartViewNode>()
+	public final Function<ChartView, LineChartViewNode> chartViewToChartViewHolder = new Function<ChartView, LineChartViewNode>()
 	{
 		@Override
 		public LineChartViewNode apply( ChartView _chartView )
@@ -233,4 +237,6 @@ public class ChartGroupView extends VBox
 			return new LineChartViewNode( executionProperty, ( LineChartView )_chartView, poll );
 		}
 	};
+
+	private ToggleGroup chartGroupToggleGroup;
 }

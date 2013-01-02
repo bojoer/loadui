@@ -18,6 +18,9 @@ import javafx.scene.layout.VBox;
 
 import javax.annotation.Nullable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.statistics.model.Chart;
 import com.eviware.loadui.api.statistics.model.Chart.Owner;
@@ -27,16 +30,19 @@ import com.eviware.loadui.api.statistics.model.StatisticPages;
 import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.ui.fx.api.input.DraggableEvent;
+import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.UIUtils;
+import com.eviware.loadui.ui.fx.views.project.ProjectView;
 import com.google.common.base.Function;
 
 public class StatisticTab extends Tab
 {
+	private static final Logger log = LoggerFactory.getLogger( StatisticTab.class );
+
 	public final static StatisticPage createStatisticPage( StatisticPages pages, @Nullable String label )
 	{
 		StatisticPage page = pages.createPage( isNullOrEmpty( label ) ? "Page " + ( pages.getChildCount() + 1 ) : label );
-
 		return page;
 	}
 
