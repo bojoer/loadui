@@ -221,19 +221,7 @@ public class LineChartViewNode extends VBox
 
 		// to get it to always fire event initially
 		xAxis.autoRangingProperty().set( true );
-
 		xAxis.autoRangingProperty().bind( zoomMenuButton.selectedProperty().isEqualTo( ZoomLevel.ALL ) );
-
-		//		shownSpan.addListener( new InvalidationListener()
-		//		{
-		//
-		//			@Override
-		//			public void invalidated( Observable arg0 )
-		//			{
-		//				log.debug( "showspan = " + shownSpan.getValue() );
-		//
-		//			}
-		//		} );
 
 		lineChart.titleProperty().bind( Properties.forLabel( chartView ) );
 
@@ -301,6 +289,17 @@ public class LineChartViewNode extends VBox
 
 		zoomMenuButton.setSelected( level );
 
+		executionProperty.addListener( new InvalidationListener()
+		{
+
+			@Override
+			public void invalidated( Observable arg0 )
+			{
+				position.set( 0l );
+				scrollBar.valueProperty().set( 0d );
+			}
+		} );
+
 	}
 
 	private String seriesToColor( Series<?, ?> series )
@@ -337,7 +336,6 @@ public class LineChartViewNode extends VBox
 		log.debug( "Transform| newPos: " + newPosition + " data: " + dataLenght + " span: " + span );
 
 		double factor = Math.max( 0, dataLenght - span + margin ) / Math.max( 1, dataLenght );
-
 		position.set( ( long )( newPosition * factor ) );
 
 		log.debug( "result: " + position.getValue() );
@@ -436,6 +434,7 @@ public class LineChartViewNode extends VBox
 		}
 	}
 
+	@FXML
 	public void addStatistic()
 	{
 		final Collection<Chart> charts = chartView.getChartGroup().getChildren();
