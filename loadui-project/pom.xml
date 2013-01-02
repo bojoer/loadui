@@ -43,7 +43,6 @@
 		<module>loadui-fx-interface</module>
 		<module>loadui-fx-test-utils</module>
 		<module>loadui-fx-integration-tests</module>
-		<module>loadui-remote</module>
 	</modules>
 	<repositories>
 		<repository>
