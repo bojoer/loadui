@@ -29,10 +29,15 @@ import com.eviware.loadui.api.testevents.TestEvent;
 public interface ExecutionManager extends EventFirer
 {
 	/**
-	 * CollectionEvent key for Executions.
+	 * CollectionEvent key for recent Executions.
 	 */
-	public static final String EXECUTIONS = ExecutionManager.class.getName() + "@executions";
+	public static final String RECENT_EXECUTIONS = ExecutionManager.class.getName() + "@recentexecutions";
 
+	/**
+	 * CollectionEvent key for archived Executions.
+	 */
+	public static final String ARCHIVE_EXECUTIONS = ExecutionManager.class.getName() + "@archivedexecutions";
+	
 	/**
 	 * Gets the current Execution. Returns null if no Execution is currently
 	 * running.

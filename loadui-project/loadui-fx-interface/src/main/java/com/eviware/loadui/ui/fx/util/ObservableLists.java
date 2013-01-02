@@ -678,17 +678,16 @@ public class ObservableLists
 			{
 				if( collectionName.equals( event.getKey() ) )
 				{
-					if( event.getEvent() == CollectionEvent.Event.ADDED )
+					switch( event.getEvent() )
 					{
+					case ADDED:
 						Object element = event.getElement();
 						if( type.isInstance( element ) )
-						{
 							list.add( type.cast( event.getElement() ) );
-						}
-					}
-					else
-					{
+						break;
+					case REMOVED:
 						list.remove( event.getElement() );
+						break;
 					}
 				}
 			}

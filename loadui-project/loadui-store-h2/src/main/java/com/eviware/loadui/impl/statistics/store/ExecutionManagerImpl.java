@@ -456,7 +456,6 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 			if( !executionMap.containsKey( execution.getId() ) )
 			{
 				executionMap.put( execution.getId(), execution );
-				fireEvent( new CollectionEvent( this, EXECUTIONS, CollectionEvent.Event.ADDED, execution ) );
 			}
 		}
 
@@ -1173,7 +1172,8 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 		{
 			FileUtil.deleteDirectory( execution.getExecutionDir() );
 		}
-		fireEvent( new CollectionEvent( this, EXECUTIONS, CollectionEvent.Event.REMOVED, execution ) );
+		String listName = execution.isArchived() ? ARCHIVE_EXECUTIONS : RECENT_EXECUTIONS;
+		fireEvent( new CollectionEvent( this, listName, CollectionEvent.Event.REMOVED, execution ) );
 	}
 
 	public void release( String executionId )
@@ -1225,9 +1225,17 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 			currentExecution.flushLength();
 			latestEntries.clear();
 			ecs.fireExecutionStopped( oldState );
-			fireEvent( new CollectionEvent( this, EXECUTIONS, CollectionEvent.Event.ADDED, currentExecution ) );
+			fireEvent( new CollectionEvent( this, RECENT_EXECUTIONS, CollectionEvent.Event.ADDED, currentExecution ) );
 			log.debug( "State changed: " + oldState.name() + " -> STOPPED " );
 		}
+	}
+	
+	public void archiveExecution( String executionId ) {
+		ExecutionImpl execution = getExecution( executionId );
+		if( execution == null )
+			return;
+		fireEvent( new CollectionEvent( this, RECENT_EXECUTIONS, CollectionEvent.Event.REMOVED, execution ) );
+		fireEvent( new CollectionEvent( this, ARCHIVE_EXECUTIONS, CollectionEvent.Event.ADDED, execution ) );
 	}
 
 	@Override
