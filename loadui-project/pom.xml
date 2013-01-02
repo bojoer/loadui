@@ -11,7 +11,6 @@
 		<mavenBundlePluginVersion>2.3.7</mavenBundlePluginVersion>
 		<jettyVersion>7.5.4.v20111024</jettyVersion>
 		<groovyVersion>1.8.5</groovyVersion>
-		<cometdVersion>2.4.0.RC1</cometdVersion>
 		<changelog.start.date>2011-06-13</changelog.start.date>
 		<osgiVersion>4.3.0</osgiVersion>
 		<osgiCompendiumVersion>4.2.0</osgiCompendiumVersion>
@@ -73,9 +72,6 @@
 			<url>http://oss.sonatype.org/content/repositories/releases</url>
 		</repository>
 	</repositories>
-	<scm>
-		<connection>scm:svn:svn://svn.eviware.com/loadui/trunk/loadui-project</connection>
-	</scm>
 	<profiles>
 		<profile>
 			<id>install</id>
