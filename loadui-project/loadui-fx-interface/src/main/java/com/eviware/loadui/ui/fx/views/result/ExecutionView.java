@@ -11,12 +11,14 @@ import javafx.scene.control.Label;
 import javafx.scene.control.LabelBuilder;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import javafx.scene.layout.VBoxBuilder;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.RectangleBuilder;
 
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
+import com.eviware.loadui.ui.fx.control.DragNode;
 import com.eviware.loadui.ui.fx.util.Properties;
 
 public class ExecutionView extends Region
@@ -53,31 +55,43 @@ public class ExecutionView extends Region
 			}
 		} );
 
-		getChildren().add(
-				VBoxBuilder
-						.create()
-						.padding( new Insets( 5 ) )
-						.spacing( 5 )
-						.alignment( Pos.CENTER_RIGHT )
-						.children(
-								ButtonBuilder.create().text( "X" ).onAction( new EventHandler<ActionEvent>()
+		getChildren().add( createIcon( executionLabel, loadAndOpenExecution ) );
+		DragNode.install( this, createIcon( executionLabel, loadAndOpenExecution ) ).setData( this );
+
+	}
+
+	private VBox createIcon( Label executionLabel, final Task<Void> loadAndOpenExecution )
+	{
+		return VBoxBuilder
+				.create()
+				.padding( new Insets( 5 ) )
+				.spacing( 5 )
+				.alignment( Pos.CENTER_RIGHT )
+				.children(
+						ButtonBuilder.create().text( "X" ).onAction( new EventHandler<ActionEvent>()
+						{
+							@Override
+							public void handle( ActionEvent arg0 )
+							{
+								ExecutionView.this.execution.delete();
+							}
+						} ).build(),
+						executionLabel,
+						RectangleBuilder.create().width( 100 ).height( 75 ).fill( Color.LEMONCHIFFON )
+								.onMouseClicked( new EventHandler<MouseEvent>()
 								{
 									@Override
-									public void handle( ActionEvent arg0 )
+									public void handle( MouseEvent event )
 									{
-										ExecutionView.this.execution.delete();
+										ExecutionView.this.fireEvent( IntentEvent.create( IntentEvent.INTENT_RUN_BLOCKING,
+												loadAndOpenExecution ) );
 									}
-								} ).build(),
-								executionLabel,
-								RectangleBuilder.create().width( 100 ).height( 75 ).fill( Color.LEMONCHIFFON )
-										.onMouseClicked( new EventHandler<MouseEvent>()
-										{
-											@Override
-											public void handle( MouseEvent event )
-											{
-												ExecutionView.this.fireEvent( IntentEvent.create( IntentEvent.INTENT_RUN_BLOCKING,
-														loadAndOpenExecution ) );
-											}
-										} ).build() ).build() );
+								} ).build() ).build();
 	}
+
+	public Execution getExecution()
+	{
+		return execution;
+	}
+
 }

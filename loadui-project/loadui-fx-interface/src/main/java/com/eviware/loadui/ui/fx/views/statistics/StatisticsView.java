@@ -6,16 +6,14 @@ import static com.eviware.loadui.ui.fx.util.ObservableLists.ofCollection;
 import static com.google.common.base.Objects.equal;
 
 import java.lang.ref.WeakReference;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.concurrent.Callable;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.animation.TimelineBuilder;
 import javafx.application.Platform;
-import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
 import javafx.beans.property.Property;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleObjectProperty;
@@ -24,6 +22,9 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.statistics.ProjectExecutionManager;
@@ -36,47 +37,49 @@ import com.eviware.loadui.ui.fx.views.analysis.AnalysisView;
 import com.eviware.loadui.ui.fx.views.result.ResultView;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.statistics.ExecutionListenerAdapter;
-import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
 
 public class StatisticsView extends StackPane
 {
 	protected static final Logger log = LoggerFactory.getLogger( StatisticsView.class );
 
-	private final ProjectItem project;
-	private final ObservableList<Execution> executionList;
+	private final ObservableList<Execution> recentExecutions;
+	private final ObservableList<Execution> archivedExecutions;
 	private final Property<Execution> currentExecution = new SimpleObjectProperty<>( this, "currentExecution" );
 	private final ManualObservable poll = new ManualObservable();
 
 	public StatisticsView( final ProjectItem project )
 	{
-		this.project = project;
-
-		ExecutionManager executionManager = BeanInjector.getBean( ExecutionManager.class );
+		final ExecutionManager executionManager = BeanInjector.getBean( ExecutionManager.class );
 		final ProjectExecutionManager projectExecutionManager = BeanInjector.getBean( ProjectExecutionManager.class );
 
 		executionManager.addExecutionListener( new CurrentExecutionListener( executionManager, this ) );
 
-		//		currentExecution.addListener( new InvalidationListener()
-		//		{
-		//			@Override
-		//			public void invalidated( Observable arg0 )
-		//			{
-		//				log.debug( "currentExecution.getName(): " + currentExecution.getName() );
-		//			}
-		//		} );
-
-		executionList = fx( filter(
-				ofCollection( executionManager, ExecutionManager.EXECUTIONS, Execution.class,
-						executionManager.getExecutions() ), new Predicate<Execution>()
+		final Collection<Execution> executions = executionManager.getExecutions();
+		
+		recentExecutions = fx( filter(
+				ofCollection( executionManager, ExecutionManager.RECENT_EXECUTIONS, Execution.class, executions ),
+				new Predicate<Execution>()
 				{
 					@Override
 					public boolean apply( Execution input )
 					{
-						return equal( projectExecutionManager.getProjectId( input ), project.getId() );
+						return equal( projectExecutionManager.getProjectId( input ), project.getId() ) && !input.isArchived();
 					}
 				} ) );
 
+		archivedExecutions = fx( filter(
+				ofCollection( executionManager, ExecutionManager.ARCHIVE_EXECUTIONS, Execution.class, executions ),
+				new Predicate<Execution>()
+				{
+					@Override
+					public boolean apply( Execution input )
+					{
+						return equal( projectExecutionManager.getProjectId( input ), project.getId() ) && input.isArchived();
+					}
+				} ) );
+
+		
 		addEventHandler( IntentEvent.ANY, new EventHandler<IntentEvent<?>>()
 		{
 			@Override
@@ -91,21 +94,21 @@ public class StatisticsView extends StackPane
 							currentExecution.setValue( ( Execution )event.getArg() );
 						}
 
-						AnalysisView analysisView = new AnalysisView( project, executionList, poll );
+						AnalysisView analysisView = new AnalysisView( project, recentExecutions, poll );
 						analysisView.currentExecutionProperty().bind( currentExecution );
 						getChildren().setAll( analysisView );
 						event.consume();
 					}
 					else if( event.getEventType() == IntentEvent.INTENT_CLOSE )
 					{
-						getChildren().setAll( new ResultView( currentExecution, executionList ) );
+						getChildren().setAll( new ResultView( currentExecution, recentExecutions, archivedExecutions ) );
 						event.consume();
 					}
 				}
 			}
 		} );
 
-		getChildren().setAll( new ResultView( currentExecution, executionList ) );
+		getChildren().setAll( new ResultView( currentExecution, recentExecutions, archivedExecutions ) );
 	}
 
 	private final static class CurrentExecutionListener extends ExecutionListenerAdapter
@@ -190,4 +193,5 @@ public class StatisticsView extends StackPane
 			super.fireInvalidation();
 		}
 	}
+
 }
