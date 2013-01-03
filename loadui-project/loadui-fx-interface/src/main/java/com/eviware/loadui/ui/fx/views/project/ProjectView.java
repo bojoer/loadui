@@ -69,6 +69,13 @@ public class ProjectView extends AnchorPane
 
 	private final Observable projectReleased;
 
+	public ProjectPlaybackPanel getPlaybackPanel()
+	{
+		return playbackPanel;
+	}
+
+	private ProjectPlaybackPanel playbackPanel;
+
 	public ProjectView( ProjectItem projectIn )
 	{
 		this.project = Preconditions.checkNotNull( projectIn );
@@ -80,7 +87,7 @@ public class ProjectView extends AnchorPane
 	@FXML
 	private void initialize()
 	{
-		ProjectPlaybackPanel playbackPanel = new ProjectPlaybackPanel( project );
+		playbackPanel = new ProjectPlaybackPanel( project );
 		AnchorPane.setTopAnchor( playbackPanel, 14.0 );
 		AnchorPane.setLeftAnchor( playbackPanel, 440.0 );
 		getChildren().add( playbackPanel );
@@ -196,6 +203,11 @@ public class ProjectView extends AnchorPane
 				BeanInjector.getBean( TestRunner.class ).unregisterTask( testExecutionTask, Phase.values() );
 			}
 		} );
+	}
+
+	public ProjectItem getProject()
+	{
+		return project;
 	}
 
 	@FXML

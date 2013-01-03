@@ -123,9 +123,9 @@ public class MainWindowView extends StackPane
 										@Override
 										public void run()
 										{
-											container.getChildren().setAll( new ProjectView( project ) );
-											MainWindowView.this.fireEvent( new PerspectiveEvent(
-													PerspectiveEvent.PERSPECTIVE_PROJECT ) );
+											ProjectView projectView = new ProjectView( project );
+											container.getChildren().setAll( projectView );
+											PerspectiveEvent.fireEvent( PerspectiveEvent.PERSPECTIVE_PROJECT, projectView );
 										}
 									} );
 								}
@@ -205,8 +205,10 @@ public class MainWindowView extends StackPane
 
 	public void showWorkspace()
 	{
-		container.getChildren().setAll( new WorkspaceView( workspaceProvider.getWorkspace() ) );
-		fireEvent( new PerspectiveEvent( PerspectiveEvent.PERSPECTIVE_WORKSPACE ) );
+		WorkspaceView workspaceView = new WorkspaceView( workspaceProvider.getWorkspace() );
+		container.getChildren().setAll( workspaceView );
+		//		fireEvent( new PerspectiveEvent( PerspectiveEvent.PERSPECTIVE_WORKSPACE ) );
+		PerspectiveEvent.fireEvent( PerspectiveEvent.PERSPECTIVE_WORKSPACE, workspaceView );
 	}
 
 	public void settings()
@@ -251,7 +253,7 @@ public class MainWindowView extends StackPane
 	{
 		inspectorView.setPerspective( PerspectiveEvent.PERSPECTIVE_WORKSPACE );
 
-		addEventHandler( PerspectiveEvent.ANY, new EventHandler<PerspectiveEvent>()
+		PerspectiveEvent.addEventHandler( PerspectiveEvent.ANY, new EventHandler<PerspectiveEvent>()
 		{
 			@Override
 			public void handle( PerspectiveEvent event )

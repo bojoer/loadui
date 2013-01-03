@@ -16,17 +16,19 @@ import com.sun.javafx.PlatformUtil;
 
 public class UIUtils
 {
-	public static final Logger LOG = LoggerFactory.getLogger( UIUtils.class );
+	protected static final Logger log = LoggerFactory.getLogger( UIUtils.class );
 
 	public static Image getImageFor( Object object )
 	{
 		for( ImageResolver resolver : ObservableLists.ofServices( ImageResolver.class ) )
 		{
+			log.debug( "ImageResolver: " + resolver.getClass().getName() );
 			Image image = resolver.resolveImageFor( object );
 			if( image != null )
 				return image;
 		}
-		throw new RuntimeException( "No image found for resource of class " + object.getClass().getName() );
+		throw new RuntimeException( "No image found for resource "
+				+ ( object instanceof Class ? object : "of class " + object.getClass().getName() ) );
 	}
 
 	public static String toCssId( String label )
@@ -44,7 +46,7 @@ public class UIUtils
 			}
 			catch( IOException | URISyntaxException e )
 			{
-				LOG.error( "Unable to launch browser with url in external browser!", e );
+				log.error( "Unable to launch browser with url in external browser!", e );
 			}
 			return;
 		}
@@ -63,7 +65,7 @@ public class UIUtils
 					}
 					catch( IOException e )
 					{
-						LOG.error( "Unable to fork native browser with url in external browser!", e );
+						log.error( "Unable to fork native browser with url in external browser!", e );
 					}
 				}
 			} );
@@ -71,7 +73,7 @@ public class UIUtils
 		}
 		catch( Exception e )
 		{
-			LOG.error( "unable to display url!", e );
+			log.error( "unable to display url!", e );
 		}
 	}
 

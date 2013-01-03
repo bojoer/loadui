@@ -11,10 +11,8 @@
 	xmlns:fx="http://javafx.com/fxml" styleClass="chart-group-list-cell">
 	<Label fx:id="chartGroupLabel" />
 	<StackPane fx:id="chartView" HBox.hgrow="ALWAYS" />
-	<HBox>
+	<HBox fx:id="buttonBar">
 		<ToggleButton fx:id="componentGroupToggle" text="Components" />
-		<ToggleButton fx:id="agentGroupToggle" text="Agents" />
 	</HBox>
 	<VBox fx:id="componentGroup" />
-	<VBox fx:id="agentGroup" />
 </fx:root>

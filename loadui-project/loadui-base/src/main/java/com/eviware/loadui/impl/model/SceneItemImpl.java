@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 
 import org.slf4j.Logger;
@@ -80,6 +81,7 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 
 	public static SceneItemImpl newInstance( ProjectItem project, SceneItemConfig config )
 	{
+		log.debug( "Got project: " + project );
 		SceneItemImpl object = new SceneItemImpl( project, config );
 		object.init();
 		object.postInit();
@@ -89,7 +91,10 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 
 	private final static String INCREMENT_VERSION = "incrementVersion";
 
+	//On agents, this field is null.
+	@CheckForNull
 	private final ProjectItem project;
+
 	private final ProjectListener projectListener;
 	private final WorkspaceListener workspaceListener;
 	private final TerminalHolderSupport terminalHolderSupport;
