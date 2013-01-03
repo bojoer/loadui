@@ -11,6 +11,7 @@
 <?import javafx.scene.chart.NumberAxis?>
 <?import java.net.URL?>
 <?import com.eviware.loadui.ui.fx.views.analysis.ZoomMenuButton?>
+<?import com.eviware.loadui.ui.fx.views.analysis.ChartScrollBar?>
 
 <fx:root type="javafx.scene.layout.VBox" xmlns:fx="http://javafx.com/fxml"
 	styleClass="chart-view-node, line-chart-view-node">
@@ -27,7 +28,7 @@
 					<NumberAxis fx:id="yAxis" />
 				</yAxis>
 			</LineChart>
-			<ScrollBar fx:id="scrollBar" />
+			<ChartScrollBar fx:id="scrollBar" />
 		</VBox>
 	</HBox>
 	<HBox>

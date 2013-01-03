@@ -33,7 +33,6 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollBar;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.LineBuilder;
@@ -130,7 +129,7 @@ public class LineChartViewNode extends VBox
 	private NumberAxis xAxis;
 
 	@FXML
-	private ScrollBar scrollBar;
+	private ChartScrollBar scrollBar;
 
 	@FXML
 	private Label timer;
@@ -175,7 +174,6 @@ public class LineChartViewNode extends VBox
 				Period period = new Period( millis );
 				String formattedTime = timeFormatter.print( period.normalizedStandard() );
 				timer.setText( formattedTime );
-				log.debug( "position = " + millis );
 			}
 		} );
 
@@ -184,14 +182,7 @@ public class LineChartViewNode extends VBox
 		scrollBar.unitIncrementProperty().bind( shownSpan.divide( 40 ) );
 		scrollBar.maxProperty().bind( length );
 
-		scrollBar.valueProperty().addListener( new InvalidationListener()
-		{
-			@Override
-			public void invalidated( Observable arg0 )
-			{
-				calculatePosition( scrollBar.valueProperty().get(), length.getValue(), shownSpan.getValue() );
-			}
-		} );
+		position.bind( scrollBar.leftSidePositionProperty() );
 
 		xAxis.autoRangingProperty().addListener( new ChangeListener<Boolean>()
 		{
@@ -211,7 +202,7 @@ public class LineChartViewNode extends VBox
 				else
 				{
 					xAxis.lowerBoundProperty().bind( position );
-					xAxis.upperBoundProperty().bind( position.add( shownSpan ) );
+					xAxis.upperBoundProperty().bind( position.add( shownSpan ).add( 2000d ) );
 					shownSpan.bind( xAxis.widthProperty().multiply( xScale ) );
 				}
 
@@ -283,7 +274,7 @@ public class LineChartViewNode extends VBox
 			public void changed( ObservableValue<? extends ZoomLevel> arg0, ZoomLevel arg1, ZoomLevel newZoomLevel )
 			{
 				setZoomLevel( newZoomLevel );
-				calculatePosition( scrollBar.valueProperty().get(), length.getValue(), shownSpan.getValue() );
+				//calculatePosition( scrollBar.valueProperty().get(), length.getValue(), shownSpan.getValue() );
 			}
 		} );
 
@@ -295,8 +286,8 @@ public class LineChartViewNode extends VBox
 			@Override
 			public void invalidated( Observable arg0 )
 			{
-				position.set( 0l );
-				scrollBar.valueProperty().set( 0d );
+				//sets the position to 0 when there is a new excecution
+				scrollBar.setLeftSidePosition( 0d );
 			}
 		} );
 
@@ -327,18 +318,6 @@ public class LineChartViewNode extends VBox
 		}
 
 		throw new RuntimeException( "This is mathematically impossible!" );
-	}
-
-	private final void calculatePosition( double newPosition, double dataLenght, double span )
-	{
-		double margin = 2000d;
-
-		log.debug( "Transform| newPos: " + newPosition + " data: " + dataLenght + " span: " + span );
-
-		double factor = Math.max( 0, dataLenght - span + margin ) / Math.max( 1, dataLenght );
-		position.set( ( long )( newPosition * factor ) );
-
-		log.debug( "result: " + position.getValue() );
 	}
 
 	private final class SegmentToSeriesFunction implements Function<Segment, XYChart.Series<Number, Number>>
@@ -498,6 +477,10 @@ public class LineChartViewNode extends VBox
 		xAxis.setTickUnit( ( 1000.0 * level.getInterval() * minorTickCount ) );
 		xAxis.setMinorTickCount( minorTickCount == 1 ? 0 : minorTickCount );
 
+		scrollBar.setLeftSidePosition( position.doubleValue() );
 		log.debug( "major tick set to: " + xAxis.getTickUnit() + " minorTickCount set to: " + xAxis.getMinorTickCount() );
+		log.debug( "sbmin: " + scrollBar.getMin() + " sbmax: " + scrollBar.getMax() + " span: " + shownSpan.get()
+				+ " sbvalue:" + scrollBar.getValue() + " pos: " + position.get() );
+
 	}
 }

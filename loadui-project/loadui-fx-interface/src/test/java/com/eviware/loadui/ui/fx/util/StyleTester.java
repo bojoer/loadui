@@ -6,18 +6,21 @@ import java.net.MalformedURLException;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.SceneBuilder;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBuilder;
+import javafx.scene.control.Label;
+import javafx.scene.control.LabelBuilder;
+import javafx.scene.control.Slider;
 import javafx.scene.control.SplitPaneBuilder;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextAreaBuilder;
 import javafx.scene.layout.Priority;
@@ -26,6 +29,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.layout.VBoxBuilder;
 import javafx.stage.Stage;
 
+import com.eviware.loadui.ui.fx.views.analysis.ChartScrollBar;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
@@ -37,24 +41,93 @@ public class StyleTester extends Application
 
 	private Node createTestNode()
 	{
-		final TabPane pane = new TabPane();
-		pane.getTabs().setAll( new Tab( "hej" ), new Tab( "heeej" ) );
+		//final int //span = 30;
 
-		Tab plus = new Tab( "+" );
-		pane.getTabs().add( plus );
+		int maxval = 130000;
 
-		plus.setOnSelectionChanged( new EventHandler<Event>()
-		{
-			@Override
-			public void handle( Event e )
-			{
-				Tab t = new Tab( "new" );
-				pane.getTabs().add( t );
-				pane.getSelectionModel().select( t );
-			}
-		} );
+		final DoubleProperty position = new SimpleDoubleProperty();
 
-		return pane;
+		final VBox vbox = new VBox();
+		final VBox svbox = new VBox();
+		final ChartScrollBar csb = new ChartScrollBar();
+		final Slider l = new Slider( 0d, maxval, 0d );
+		Slider actual1 = new Slider( 0d, maxval, 0d );
+		Slider actual2 = new Slider( 0d, maxval, 0d );
+		final Slider span = new Slider( 0d, maxval, 0d );
+		Slider val = new Slider( 0d, maxval, 0d );
+		actual1.disableProperty().set( true );
+		actual2.disableProperty().set( true );
+		val.disableProperty().set( true );
+		span.setValue( 30 );
+
+		//l.setMax( 100 - span );
+
+		Label sl = new Label();
+		sl.textProperty().bind( l.valueProperty().asString() );
+		Label mp = new Label();
+		mp.textProperty().bind( csb.maxProperty().asString().concat( " maxp" ) );
+		Label v = new Label( "not set" );
+		v.textProperty().bind( csb.valueProperty().asString().concat( " valuep" ) );
+		Label a = new Label( "not set" );
+		a.textProperty().bind(
+				Bindings.max( 0d, csb.valueProperty().subtract( span.valueProperty() ) ).asString().concat( " v-s" ) );
+		Label vs = new Label( "not set" );
+		vs.textProperty().bind( csb.visibleAmountProperty().asString().concat( " visible" ) );
+		Label a1 = new Label( "not set" );
+		a1.textProperty().bind( actual1.valueProperty().asString() );
+		Label a2 = new Label( "not set" );
+		a2.textProperty().bind( actual2.valueProperty().asString() );
+		Label s = new Label( "not set" );
+		s.textProperty().bind( span.valueProperty().asString().concat( " visible" ) );
+
+		csb.blockIncrementProperty().bind( span.valueProperty().divide( 2 ) );
+		csb.unitIncrementProperty().bind( span.valueProperty().divide( 40 ) );
+
+		//		sb.valueProperty().addListener( new InvalidationListener()
+		//		{
+		//
+		//			@Override
+		//			public void invalidated( Observable arg0 )
+		//			{
+		//				double newPosition = sb.valueProperty().get();
+		//				double dataLenght = sb.maxProperty().get();
+		//				double span2 = span.valueProperty().get();
+		//				double margin = 2000d;
+		//
+		//				double factor = Math.max( 0, dataLenght - span2 + margin ) / Math.max( 1, dataLenght );
+		//
+		//				position.set( ( long )( newPosition * factor ) );
+		//
+		//			}
+		//		} );
+
+		//		DoubleBinding transform = sb.valueProperty().multiply(
+		//				Bindings.max( 0,
+		//						sb.maxProperty().subtract( span.valueProperty() ).divide( Bindings.max( 1, sb.maxProperty() ) ) ) );
+
+		position.bind( csb.leftSidePositionProperty() );
+
+		actual1.valueProperty().bind( position );
+		actual2.valueProperty().bind( position.add( span.valueProperty().add( 2000d ) ) );
+
+		actual1.maxProperty().bind( l.valueProperty() );
+		actual2.maxProperty().bind( l.valueProperty() );
+
+		csb.visibleAmountProperty().bind( span.valueProperty() );
+
+		//l.valueProperty().a
+
+		csb.maxProperty().bind( l.valueProperty() );
+		//sb.setMin( span );
+		val.valueProperty().bind( csb.valueProperty() );
+		val.maxProperty().bind( l.valueProperty() );
+
+		svbox.getChildren().addAll( l, sl );
+
+		vbox.getChildren().addAll( span, s, svbox, csb, mp, actual1, a1, actual2, a2, val, v, a,
+				LabelBuilder.create().text( csb.getVisibleAmount() + "" ).build(), vs );
+
+		return vbox;
 	}
 
 	@Override
