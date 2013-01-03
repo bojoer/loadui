@@ -40,7 +40,8 @@ public class ChartScrollBar extends ScrollBar
 	{
 		if( position + getVisibleAmount() > getMax() )
 		{
-			valueProperty().set( 0d );
+			double maximumValue = getMax() - getVisibleAmount();
+			valueProperty().set( maximumValue > 0 ? maximumValue : 0 );
 		}
 		else
 		{
