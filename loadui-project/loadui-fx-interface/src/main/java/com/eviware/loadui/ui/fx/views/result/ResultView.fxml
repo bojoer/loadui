@@ -30,9 +30,7 @@
 				</VBox.margin>
 			</PageList>
 		</HBox>
-		
-		
-		
+
 		<HBox>
 			<PageList fx:id="archiveNodeList" maxHeight="260"
 				text="ARCHIVED RESULTS" widthPerItem="110" spacing="10">

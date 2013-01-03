@@ -23,6 +23,18 @@ import com.google.common.base.Function;
 
 public class ResultView extends StackPane
 {
+	enum ExecutionState
+	{
+		CURRENT( "current" ), RECENT( "result" ), ARCHIVED( "archive" );
+
+		private String idPrefix;
+
+		private ExecutionState( String idPrefix )
+		{
+			this.idPrefix = idPrefix;
+		}
+	};
+
 	protected static final Logger log = LoggerFactory.getLogger( ResultView.class );
 
 	@FXML
@@ -60,14 +72,15 @@ public class ResultView extends StackPane
 			@Override
 			public void invalidated( Observable _ )
 			{
-				currentResultNode.getItems().setAll( new ExecutionView( currentExecution.getValue() ) );
+				currentResultNode.getItems().setAll(
+						new ExecutionView( currentExecution.getValue(), ExecutionState.CURRENT ) );
 			}
 		} );
 
-		recentExViews = createExecutionViewsFor( recentExList, "result" );
+		recentExViews = createExecutionViewsFor( recentExList, ExecutionState.RECENT );
 		bindContent( resultNodeList.getItems(), recentExViews );
 
-		archivedExViews = createExecutionViewsFor( archivedExList, "archive" );
+		archivedExViews = createExecutionViewsFor( archivedExList, ExecutionState.ARCHIVED );
 		bindContent( archiveNodeList.getItems(), archivedExViews );
 
 		initArchiveNodeList();
@@ -75,14 +88,14 @@ public class ResultView extends StackPane
 	}
 
 	private ObservableList<ExecutionView> createExecutionViewsFor( ObservableList<Execution> executions,
-			final String idPrefix )
+			final ExecutionState state )
 	{
 		final ObservableList<ExecutionView> result = fx( transform( executions, new Function<Execution, ExecutionView>()
 		{
 			@Override
 			public ExecutionView apply( Execution e )
 			{
-				return new ExecutionView( e );
+				return new ExecutionView( e, state );
 			}
 		} ) );
 
@@ -92,7 +105,7 @@ public class ResultView extends StackPane
 			public void onChanged( Change<? extends ExecutionView> c )
 			{
 				for( ExecutionView e : result )
-					e.setId( idPrefix + "-" + Integer.toString( result.indexOf( e ) ) );
+					e.setId( state.idPrefix + "-" + Integer.toString( result.indexOf( e ) ) );
 			}
 		} );
 		return result;
@@ -105,19 +118,19 @@ public class ResultView extends StackPane
 			@Override
 			public void handle( DraggableEvent event )
 			{
-				if( event.getData() instanceof ExecutionView )
+				if( event.getData() instanceof Execution )
 				{
-					ExecutionView executionView = ( ExecutionView )event.getData();
-					
+					Execution execution = ( Execution )event.getData();
+
 					if( event.getEventType() == DraggableEvent.DRAGGABLE_ENTERED )
 					{
-						if (!executionView.getExecution().isArchived())
+						if( !execution.isArchived() )
 							event.accept();
 					}
 					else if( event.getEventType() == DraggableEvent.DRAGGABLE_DROPPED )
 					{
 						log.info( "Archiving test run results" );
-						executionView.getExecution().archive();
+						execution.archive();
 					}
 				}
 			}
