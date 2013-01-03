@@ -21,8 +21,16 @@ public class ChartScrollBar extends ScrollBar
 			@Override
 			public void invalidated( Observable arg0 )
 			{
+				// length of the axis
 				double lenght = getMax() - getMin();
+				// where the current value is on the axis in percent
 				double percentage = getValue() / lenght;
+				/*
+				 * Equation to get the left point of the scrollBar "thumb". The
+				 * value position in the axis reflects where it is on the "thumb".
+				 * This equation just subtracts the the length it is inside the
+				 * "thumb" to get the left point position of the "thumb"
+				 */
 				double leftside = getValue() - ( getVisibleAmount() * percentage );
 
 				leftPositionProperty.set( leftside );
@@ -40,16 +48,18 @@ public class ChartScrollBar extends ScrollBar
 	{
 		if( position + getVisibleAmount() > getMax() )
 		{
-			double maximumValue = getMax() - getVisibleAmount();
-			valueProperty().set( maximumValue > 0 ? maximumValue : 0 );
-		}
-		else
-		{
-			double lenght = getMax() - getMin();
-			double value = -lenght * position / ( getVisibleAmount() - lenght );
-
-			valueProperty().set( value );
+			double validValue = getMax() - getVisibleAmount() - 1;
+			position = validValue > 0 ? validValue : 0;
 		}
 
+		double lenght = getMax() - getMin();
+		/*
+		 * This is another version of the equation to in the constructor to get
+		 * the correct value from an desired position of the left point on the
+		 * "thumb".
+		 */
+		double value = -lenght * position / ( getVisibleAmount() - lenght );
+
+		valueProperty().set( value );
 	}
 }
