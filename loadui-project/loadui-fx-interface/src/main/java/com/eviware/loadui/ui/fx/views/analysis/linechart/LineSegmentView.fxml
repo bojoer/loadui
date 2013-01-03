@@ -10,14 +10,23 @@
 <?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import java.net.URL?>
+<?import javafx.scene.control.Slider?>
 
 <fx:root type="javafx.scene.layout.HBox" xmlns:fx="http://javafx.com/fxml"
 	styleClass="slim-icon" maxWidth="600">
-	<Label fx:id="segmentLabel" text="Label" maxWidth="120"
-		HBox.hgrow="ALWAYS" />
-	<MenuButton>
-		<items>
-			<MenuItem text="Delete" onAction="#delete" />
-		</items>
-	</MenuButton>
+	<StackPane>
+		<HBox>
+			<Label fx:id="segmentLabel" text="Label" maxWidth="120"
+				HBox.hgrow="ALWAYS" />
+			<MenuButton fx:id="menuButton">
+				<items>
+					<MenuItem text="Scale" onAction="#enableScaling" />
+					<MenuItem text="Delete" onAction="#delete" />
+				</items>
+			</MenuButton>
+		</HBox>
+		<HBox>
+			<Slider fx:id="slider"/>
+		</HBox>
+	</StackPane>
 </fx:root>
