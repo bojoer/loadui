@@ -82,6 +82,12 @@ public interface ExecutionManager extends EventFirer
 	 * @return
 	 */
 	public void stopExecution();
+	
+	/**
+	 * Archive the execution with the given id.
+	 * @param executionId
+	 */
+	public void archiveExecution( String executionId );
 
 	/**
 	 * Registers a TrackDescriptor, providing the structure of a Track.
@@ -229,4 +235,5 @@ public interface ExecutionManager extends EventFirer
 	 * Return current state of ExecutionManager
 	 */
 	public State getState();
+
 }

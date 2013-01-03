@@ -23,7 +23,7 @@
 		<HBox>
 			<PageList fx:id="currentResultNode" id="current-result"
 				text="RECENT RESULTS"/>
-			<PageList fx:id="resultNodeList" maxHeight="260"
+			<PageList fx:id="resultNodeList" id="result-node-list" maxHeight="260"
 				widthPerItem="110" spacing="10">
 				<VBox.margin>
 					<Insets top="10" right="10" bottom="10" left="10" />
@@ -32,7 +32,7 @@
 		</HBox>
 
 		<HBox>
-			<PageList fx:id="archiveNodeList" maxHeight="260"
+			<PageList fx:id="archiveNodeList" id="archive-node-list" maxHeight="260"
 				text="ARCHIVED RESULTS" widthPerItem="110" spacing="10">
 				<VBox.margin>
 					<Insets top="10" right="10" bottom="10" left="10" />

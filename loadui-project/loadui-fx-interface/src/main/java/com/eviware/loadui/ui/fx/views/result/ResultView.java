@@ -87,7 +87,7 @@ public class ResultView extends StackPane
 
 	}
 
-	private ObservableList<ExecutionView> createExecutionViewsFor( ObservableList<Execution> executions,
+	private ObservableList<ExecutionView> createExecutionViewsFor( final ObservableList<Execution> executions,
 			final ExecutionState state )
 	{
 		final ObservableList<ExecutionView> result = fx( transform( executions, new Function<Execution, ExecutionView>()
@@ -95,7 +95,9 @@ public class ResultView extends StackPane
 			@Override
 			public ExecutionView apply( Execution e )
 			{
-				return new ExecutionView( e, state );
+				ExecutionView view = new ExecutionView( e, state );
+				view.setId( idFor( state, executions.indexOf( e ) ) );
+				return view;
 			}
 		} ) );
 
@@ -105,10 +107,16 @@ public class ResultView extends StackPane
 			public void onChanged( Change<? extends ExecutionView> c )
 			{
 				for( ExecutionView e : result )
-					e.setId( state.idPrefix + "-" + Integer.toString( result.indexOf( e ) ) );
+					e.setId( idFor( state, result.indexOf( e ) ) );
 			}
+
 		} );
 		return result;
+	}
+
+	private static String idFor( final ExecutionState state, int index )
+	{
+		return state.idPrefix + "-" + index;
 	}
 
 	private void initArchiveNodeList()
