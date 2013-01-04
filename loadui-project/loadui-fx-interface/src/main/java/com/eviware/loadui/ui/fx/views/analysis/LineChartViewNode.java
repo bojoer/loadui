@@ -5,7 +5,6 @@ import static com.eviware.loadui.ui.fx.util.ObservableLists.fx;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.ofCollection;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.transform;
 import static com.google.common.base.Objects.firstNonNull;
-import static com.google.common.collect.Iterables.transform;
 import static javafx.beans.binding.Bindings.bindContent;
 import static javafx.beans.binding.Bindings.createLongBinding;
 import static javafx.collections.FXCollections.observableArrayList;
@@ -28,12 +27,9 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.chart.LineChart;
-import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollBar;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.LineBuilder;
@@ -66,6 +62,7 @@ import com.google.common.base.Function;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.collect.Iterables;
 
 public class LineChartViewNode extends VBox
 {
@@ -110,27 +107,17 @@ public class LineChartViewNode extends VBox
 	private final Observable poll;
 	private final LineChartView chartView;
 
-	private final LongProperty position = new SimpleLongProperty( 0 );
 	private final LongProperty length = new SimpleLongProperty( 0 );
-	private final LongProperty shownSpan = new SimpleLongProperty( 60000 );
-	private final LongProperty xScale = new SimpleLongProperty( 1 );
+
 	private ObservableList<Segment> segmentsList;
 	private ObservableList<XYChart.Series<Number, Number>> seriesList;
 	private ObservableList<SegmentView> segmentViews;
 
 	private final SimpleObjectProperty<ZoomLevel> tickZoomLevelProperty = new SimpleObjectProperty<ZoomLevel>(
 			LineChartViewNode.this, "tick zoom level", ZoomLevel.SECONDS );
-	@FXML
-	private VBox segments;
 
 	@FXML
-	private LineChart<Number, Number> lineChart;
-
-	@FXML
-	private NumberAxis xAxis;
-
-	@FXML
-	private ScrollBar scrollBar;
+	private ScrollableLineChart scrollableLineChart;
 
 	@FXML
 	private Label timer;
@@ -166,78 +153,33 @@ public class LineChartViewNode extends VBox
 		seriesList = transform( segmentsList, segmentToSeries );
 		segmentViews = transform( segmentsList, segmentToView );
 
-		position.addListener( new InvalidationListener()
+		scrollableLineChart.maxProperty().bind( length );
+		scrollableLineChart.titleProperty().bind( Properties.forLabel( chartView ) );
+
+		scrollableLineChart.positionProperty().addListener( new InvalidationListener()
 		{
 			@Override
 			public void invalidated( Observable arg0 )
 			{
-				long millis = position.getValue();
+				long millis = ( long )scrollableLineChart.getPosition();
 				Period period = new Period( millis );
 				String formattedTime = timeFormatter.print( period.normalizedStandard() );
 				timer.setText( formattedTime );
-				log.debug( "position = " + millis );
 			}
 		} );
 
-		scrollBar.visibleAmountProperty().bind( shownSpan );
-		scrollBar.blockIncrementProperty().bind( shownSpan.divide( 2 ) );
-		scrollBar.unitIncrementProperty().bind( shownSpan.divide( 40 ) );
-		scrollBar.maxProperty().bind( length );
-
-		scrollBar.valueProperty().addListener( new InvalidationListener()
+		tickZoomLevelProperty.addListener( new InvalidationListener()
 		{
+
 			@Override
 			public void invalidated( Observable arg0 )
 			{
-				calculatePosition( scrollBar.valueProperty().get(), length.getValue(), shownSpan.getValue() );
+				scrollableLineChart.setTickMode( tickZoomLevelProperty.get() );
+
 			}
 		} );
 
-		xAxis.autoRangingProperty().addListener( new ChangeListener<Boolean>()
-		{
-
-			@Override
-			public void changed( ObservableValue<? extends Boolean> arg0, Boolean arg1, Boolean newValue )
-			{
-				log.debug( "AutoRanging: " + newValue );
-
-				if( newValue )
-				{
-					xAxis.lowerBoundProperty().unbind();
-					xAxis.upperBoundProperty().unbind();
-
-					shownSpan.bind( length );
-				}
-				else
-				{
-					xAxis.lowerBoundProperty().bind( position );
-					xAxis.upperBoundProperty().bind( position.add( shownSpan ) );
-					shownSpan.bind( xAxis.widthProperty().multiply( xScale ) );
-				}
-
-			}
-
-		} );
-
-		// to get it to always fire event initially
-		xAxis.autoRangingProperty().set( true );
-
-		xAxis.autoRangingProperty().bind( zoomMenuButton.selectedProperty().isEqualTo( ZoomLevel.ALL ) );
-
-		//		shownSpan.addListener( new InvalidationListener()
-		//		{
-		//
-		//			@Override
-		//			public void invalidated( Observable arg0 )
-		//			{
-		//				log.debug( "showspan = " + shownSpan.getValue() );
-		//
-		//			}
-		//		} );
-
-		lineChart.titleProperty().bind( Properties.forLabel( chartView ) );
-
-		segments.getChildren().addListener( new InvalidationListener()
+		scrollableLineChart.getSegments().getChildren().addListener( new InvalidationListener()
 		{
 			@Override
 			public void invalidated( Observable _ )
@@ -254,25 +196,25 @@ public class LineChartViewNode extends VBox
 			}
 		} );
 
-		bindContent( lineChart.getData(), seriesList );
-		bindContent( segments.getChildren(), segmentViews );
+		bindContent( scrollableLineChart.getLineChart().getData(), seriesList );
+		bindContent( scrollableLineChart.getSegments().getChildren(), segmentViews );
 
-		length.addListener( new ChangeListener<Number>()
+		length.addListener( new InvalidationListener()
 		{
 
 			@Override
-			public void changed( ObservableValue<? extends Number> arg0, Number oldValue, Number newValue )
+			public void invalidated( Observable arg0 )
 			{
-
 				if( zoomMenuButton.selectedProperty().getValue() == ZoomLevel.ALL )
 				{
 					ZoomLevel tickLevel = ZoomLevel.forSpan( length.get() / 1000 );
 
 					if( tickLevel != tickZoomLevelProperty.get() )
 					{
-						setTickMode( tickLevel );
+						tickZoomLevelProperty.set( tickLevel );
 					}
 				}
+
 			}
 
 		} );
@@ -295,11 +237,21 @@ public class LineChartViewNode extends VBox
 			public void changed( ObservableValue<? extends ZoomLevel> arg0, ZoomLevel arg1, ZoomLevel newZoomLevel )
 			{
 				setZoomLevel( newZoomLevel );
-				calculatePosition( scrollBar.valueProperty().get(), length.getValue(), shownSpan.getValue() );
 			}
 		} );
 
 		zoomMenuButton.setSelected( level );
+
+		executionProperty.addListener( new InvalidationListener()
+		{
+
+			@Override
+			public void invalidated( Observable arg0 )
+			{
+				//sets the position to 0 when there is a new excecution
+				scrollableLineChart.setPosition( 0d );
+			}
+		} );
 
 	}
 
@@ -330,19 +282,6 @@ public class LineChartViewNode extends VBox
 		throw new RuntimeException( "This is mathematically impossible!" );
 	}
 
-	private final void calculatePosition( double newPosition, double dataLenght, double span )
-	{
-		double margin = 2000d;
-
-		log.debug( "Transform| newPos: " + newPosition + " data: " + dataLenght + " span: " + span );
-
-		double factor = Math.max( 0, dataLenght - span + margin ) / Math.max( 1, dataLenght );
-
-		position.set( ( long )( newPosition * factor ) );
-
-		log.debug( "result: " + position.getValue() );
-	}
-
 	private final class SegmentToSeriesFunction implements Function<Segment, XYChart.Series<Number, Number>>
 	{
 		@Override
@@ -359,17 +298,23 @@ public class LineChartViewNode extends VBox
 			XYChart.Series<Number, Number> series = new XYChart.Series<>();
 			series.setName( segment.getStatisticName() );
 
-			series.setData( fromExpression( new Callable<Iterable<XYChart.Data<Number, Number>>>()
-			{
-				@Override
-				public Iterable<XYChart.Data<Number, Number>> call() throws Exception
-				{
-					return transform(
-							segment.getStatistic().getPeriod( position.longValue() - 2000,
-									position.longValue() + shownSpan.get() + 2000, tickZoomLevelProperty.getValue().getLevel(),
-									executionProperty.getValue() ), DATAPOINT_TO_CHARTDATA );
-				}
-			}, observableArrayList( executionProperty, position, shownSpan, poll, tickZoomLevelProperty ) ) );
+			series.setData( fromExpression(
+					new Callable<Iterable<XYChart.Data<Number, Number>>>()
+					{
+						@Override
+						public Iterable<XYChart.Data<Number, Number>> call() throws Exception
+						{
+							return Iterables.transform(
+									segment.getStatistic().getPeriod(
+											scrollableLineChart.positionProperty().longValue() - 2000,
+											scrollableLineChart.positionProperty().longValue()
+													+ scrollableLineChart.getSpan().longValue() + 2000,
+											tickZoomLevelProperty.getValue().getLevel(), executionProperty.getValue() ),
+									DATAPOINT_TO_CHARTDATA );
+						}
+					},
+					observableArrayList( executionProperty, scrollableLineChart.positionProperty(),
+							scrollableLineChart.getSpan(), poll, tickZoomLevelProperty ) ) );
 
 			return series;
 		}
@@ -379,29 +324,33 @@ public class LineChartViewNode extends VBox
 			final XYChart.Series<Number, Number> series = new XYChart.Series<>();
 			series.setName( segment.getTypeLabel() );
 
-			series.setData( fromExpression( new Callable<Iterable<XYChart.Data<Number, Number>>>()
-			{
-				@Override
-				public Iterable<XYChart.Data<Number, Number>> call() throws Exception
-				{
-					return transform(
-							segment.getTestEventsInRange( executionProperty.getValue(), position.longValue() - 2000,
-									position.longValue() + shownSpan.get() + 2000, tickZoomLevelProperty.getValue().getLevel() ),
-							new Function<TestEvent, XYChart.Data<Number, Number>>()
-							{
-								@Override
-								public XYChart.Data<Number, Number> apply( TestEvent event )
-								{
-									XYChart.Data<Number, Number> data = new XYChart.Data<Number, Number>( event.getTimestamp(),
-											10.0 );
-									Line eventLine = LineBuilder.create().endY( 600 ).managed( false ).build();
-									eventLine.styleProperty().bind( eventSeriesStyles.getUnchecked( series ) );
-									data.setNode( eventLine );
-									return data;
-								}
-							} );
-				}
-			}, observableArrayList( executionProperty, position, shownSpan, poll ) ) );
+			series.setData( fromExpression(
+					new Callable<Iterable<XYChart.Data<Number, Number>>>()
+					{
+						@Override
+						public Iterable<XYChart.Data<Number, Number>> call() throws Exception
+						{
+							return Iterables.transform( segment.getTestEventsInRange( executionProperty.getValue(),
+									scrollableLineChart.positionProperty().longValue() - 2000, scrollableLineChart
+											.positionProperty().longValue() + scrollableLineChart.getSpan().longValue() + 2000,
+									tickZoomLevelProperty.getValue().getLevel() ),
+									new Function<TestEvent, XYChart.Data<Number, Number>>()
+									{
+										@Override
+										public XYChart.Data<Number, Number> apply( TestEvent event )
+										{
+											XYChart.Data<Number, Number> data = new XYChart.Data<Number, Number>( event
+													.getTimestamp(), 10.0 );
+											Line eventLine = LineBuilder.create().endY( 600 ).managed( false ).build();
+											eventLine.styleProperty().bind( eventSeriesStyles.getUnchecked( series ) );
+											data.setNode( eventLine );
+											return data;
+										}
+									} );
+						}
+					},
+					observableArrayList( executionProperty, scrollableLineChart.positionProperty(),
+							scrollableLineChart.getSpan(), poll ) ) );
 
 			series.nodeProperty().addListener( new ChangeListener<Node>()
 			{
@@ -436,6 +385,7 @@ public class LineChartViewNode extends VBox
 		}
 	}
 
+	@FXML
 	public void addStatistic()
 	{
 		final Collection<Chart> charts = chartView.getChartGroup().getChildren();
@@ -478,27 +428,9 @@ public class LineChartViewNode extends VBox
 
 	private void setZoomLevel( ZoomLevel zoomLevel )
 	{
-		log.debug( "ZoomLevel set to: " + zoomLevel.name() );
-
-		zoomLevel = zoomLevel == ZoomLevel.ALL ? ZoomLevel.forSpan( length.get() / 1000 ) : zoomLevel;
-		xScale.setValue( ( 1000.0 * zoomLevel.getInterval() ) / zoomLevel.getUnitWidth() );
-
-		setTickMode( zoomLevel );
-		log.debug( "xScale is now: " + xScale.getValue() );
+		ZoomLevel tickMode = scrollableLineChart.setZoomLevel( zoomLevel );
+		tickZoomLevelProperty.set( tickMode );
 		chartView.setAttribute( ZOOM_LEVEL_ATTRIBUTE, zoomLevel.name() );
-
 	}
 
-	private void setTickMode( ZoomLevel level )
-	{
-		tickZoomLevelProperty.set( level );
-
-		int minorTickCount = level.getMajorTickInterval() / level.getInterval();
-
-		// major tick interval
-		xAxis.setTickUnit( ( 1000.0 * level.getInterval() * minorTickCount ) );
-		xAxis.setMinorTickCount( minorTickCount == 1 ? 0 : minorTickCount );
-
-		log.debug( "major tick set to: " + xAxis.getTickUnit() + " minorTickCount set to: " + xAxis.getMinorTickCount() );
-	}
 }

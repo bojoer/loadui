@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import java.net.URL?>
+<?import com.eviware.loadui.ui.fx.control.PageList?>
+
+<fx:root type="javafx.scene.layout.Pane" xmlns:fx="http://javafx.com/fxml">
+	<stylesheets>
+		<URL value="@ExecutionView.css" />
+	</stylesheets>
+
+	<VBox styleClass="execution-view">
+		<HBox styleClass="topExecMenu">
+			<MenuButton fx:id="menuButton" />
+		</HBox>
+		<Rectangle fx:id="graphArea" onMouseClicked="#openExecution" width="100"
+			height="75" styleClass="execution-background" />
+	</VBox>
+
+</fx:root>

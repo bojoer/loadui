@@ -6,9 +6,7 @@ import static com.eviware.loadui.ui.fx.util.ObservableLists.ofCollection;
 import static com.google.common.base.Objects.equal;
 
 import java.lang.ref.WeakReference;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.concurrent.Callable;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -32,7 +30,6 @@ import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.util.ObservableBase;
-import com.eviware.loadui.ui.fx.util.ObservableLists;
 import com.eviware.loadui.ui.fx.views.analysis.AnalysisView;
 import com.eviware.loadui.ui.fx.views.result.ResultView;
 import com.eviware.loadui.util.BeanInjector;
@@ -56,7 +53,7 @@ public class StatisticsView extends StackPane
 		executionManager.addExecutionListener( new CurrentExecutionListener( executionManager, this ) );
 
 		final Collection<Execution> executions = executionManager.getExecutions();
-		
+
 		recentExecutions = fx( filter(
 				ofCollection( executionManager, ExecutionManager.RECENT_EXECUTIONS, Execution.class, executions ),
 				new Predicate<Execution>()
@@ -79,7 +76,6 @@ public class StatisticsView extends StackPane
 					}
 				} ) );
 
-		
 		addEventHandler( IntentEvent.ANY, new EventHandler<IntentEvent<?>>()
 		{
 			@Override
