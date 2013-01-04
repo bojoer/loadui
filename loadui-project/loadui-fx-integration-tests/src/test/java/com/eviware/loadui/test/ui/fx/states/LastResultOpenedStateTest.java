@@ -1,5 +1,7 @@
 package com.eviware.loadui.test.ui.fx.states;
 
+import static org.junit.Assert.*;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -26,6 +28,11 @@ public class LastResultOpenedStateTest
 	@Test
 	public void shouldHaveAnalysisView() throws Exception
 	{
-		TestFX.find( ".analysis-view" );
+		try {
+			TestFX.find( ".analysis-view" );
+		} catch (NullPointerException npe) {
+			npe.printStackTrace();
+			fail("Analysis view not created");
+		}
 	}
 }

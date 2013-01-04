@@ -14,7 +14,7 @@ import org.junit.experimental.categories.Category;
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.WorkspaceProvider;
 import com.eviware.loadui.test.categories.IntegrationTest;
-import com.eviware.loadui.test.ui.fx.states.ProjectLoadedState;
+import com.eviware.loadui.test.ui.fx.states.ProjectLoadedWithoutAgentsState;
 import com.eviware.loadui.ui.fx.util.test.TestFX;
 import com.eviware.loadui.util.BeanInjector;
 
@@ -26,14 +26,14 @@ public class ProjectPlaybackTest
 	@BeforeClass
 	public static void enterState() throws Exception
 	{
-		ProjectLoadedState.STATE.enter();
+		ProjectLoadedWithoutAgentsState.STATE.enter();
 		controller = GUI.getController();
 	}
 
 	@AfterClass
 	public static void leaveState() throws Exception
 	{
-		ProjectLoadedState.STATE.getParent().enter();
+		ProjectLoadedWithoutAgentsState.STATE.getParent().enter();
 	}
 
 	@Test
@@ -53,7 +53,7 @@ public class ProjectPlaybackTest
 	@Test
 	public void shouldStopOnLimit() throws Exception
 	{
-		ProjectItem project = ProjectLoadedState.STATE.getProject();
+		ProjectItem project = ProjectLoadedWithoutAgentsState.STATE.getProject();
 
 		controller.click( "#set-limits" ).click( "#time-limit" ).press( KeyCode.CONTROL, KeyCode.A )
 				.release( KeyCode.CONTROL, KeyCode.A ).sleep( 100 ).type( "6" ).sleep( 100 ).click( "#default" )

@@ -15,7 +15,7 @@ public class TwoScenariosCreatedState extends TestState
 
 	private TwoScenariosCreatedState()
 	{
-		super( "Scenario Created", ProjectLoadedState.STATE );
+		super( "Scenario Created", ProjectLoadedWithoutAgentsState.STATE );
 	}
 
 	@Override

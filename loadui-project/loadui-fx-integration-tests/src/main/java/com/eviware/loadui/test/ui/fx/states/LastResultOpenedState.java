@@ -9,14 +9,15 @@ public class LastResultOpenedState extends TestState
 
 	private LastResultOpenedState()
 	{
-		super( "Last Result Opened", ProjectLoadedState.STATE );
+		super( "Last Result Opened", ProjectLoadedWithoutAgentsState.STATE );
 	}
 
 	@Override
 	protected void enterFromParent() throws Exception
 	{
 		GUI.getController().click( ".project-playback-panel #play-button" ).sleep( 5000 )
-				.click( ".project-playback-panel #play-button" ).click( "#resultTab" ).click( "#result-0" );
+				.click( ".project-playback-panel #play-button" ).click( "#resultTab" )
+				.doubleClick( "#result-0" );
 	}
 
 	@Override

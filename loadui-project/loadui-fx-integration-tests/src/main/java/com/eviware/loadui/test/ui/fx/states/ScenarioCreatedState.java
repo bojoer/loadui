@@ -19,7 +19,7 @@ public class ScenarioCreatedState extends TestState
 
 	private ScenarioCreatedState()
 	{
-		super( "Scenario Created", ProjectLoadedState.STATE );
+		super( "Scenario Created", ProjectLoadedWithoutAgentsState.STATE );
 	}
 
 	public SceneItem getScenario()
@@ -43,7 +43,7 @@ public class ScenarioCreatedState extends TestState
 			}
 		} );
 
-		ProjectItem project = ProjectLoadedState.STATE.getProject();
+		ProjectItem project = ProjectLoadedWithoutAgentsState.STATE.getProject();
 		scenario = project.getSceneByLabel( SCENARIO_NAME );
 	}
 

@@ -268,6 +268,16 @@ public class TestFX
 		move( target );
 		return click( buttons );
 	}
+	
+	public TestFX doubleClick( MouseButton... buttons )
+	{
+		return click( buttons ).click( buttons );
+	}
+	
+	public TestFX doubleClick( Object target, MouseButton... buttons )
+	{
+		return click( target, buttons ).click( target, buttons );
+	}
 
 	public MouseMotion drag( Object source, MouseButton... buttons )
 	{

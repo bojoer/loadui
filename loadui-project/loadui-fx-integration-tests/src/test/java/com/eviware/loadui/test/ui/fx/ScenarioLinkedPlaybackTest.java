@@ -11,7 +11,7 @@ import org.junit.experimental.categories.Category;
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.test.categories.IntegrationTest;
-import com.eviware.loadui.test.ui.fx.states.ProjectLoadedState;
+import com.eviware.loadui.test.ui.fx.states.ProjectLoadedWithoutAgentsState;
 import com.eviware.loadui.test.ui.fx.states.ScenarioCreatedState;
 import com.eviware.loadui.ui.fx.util.test.TestFX;
 
@@ -69,19 +69,19 @@ public class ScenarioLinkedPlaybackTest
 	@Test
 	public void shouldStopOnLimit_when_isLinked() throws Exception
 	{
-		ProjectItem project = ProjectLoadedState.STATE.getProject();
+		ProjectItem project = ProjectLoadedWithoutAgentsState.STATE.getProject();
 
 		controller.click( "#set-limits" ).click( "#time-limit" ).press( KeyCode.CONTROL, KeyCode.A )
 				.release( KeyCode.CONTROL, KeyCode.A ).sleep( 100 ).type( "6" ).sleep( 100 ).click( "#default" )
-				.sleep( 1000 ).click( ".project-playback-panel #play-button" ).sleep( 4000 );
+				.sleep( 1000 ).click( ".project-playback-panel #play-button" ).sleep( 2000 );
 		assertTrue( project.isRunning() );
 
-		controller.sleep( 9000 );
+		controller.sleep( 4000 );
 		assertTrue( !project.isRunning() );
 	}
 
 	protected void clickPlayStopButton()
 	{
-		controller.click( ".project-playback-panel #play-button" ).sleep( 4000 );
+		controller.click( ".project-playback-panel #play-button" ).sleep( 2000 );
 	}
 }

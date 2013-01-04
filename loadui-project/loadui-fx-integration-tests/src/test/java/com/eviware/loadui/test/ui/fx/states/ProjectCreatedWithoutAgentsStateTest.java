@@ -39,18 +39,18 @@ import com.google.common.collect.Iterables;
  * @author dain.nilsson
  */
 @Category( IntegrationTest.class )
-public class ProjectCreatedStateTest
+public class ProjectCreatedWithoutAgentsStateTest
 {
 	@BeforeClass
 	public static void enterState() throws Exception
 	{
-		ProjectCreatedState.STATE.enter();
+		ProjectCreatedWithoutAgentsState.STATE.enter();
 	}
 
 	@AfterClass
 	public static void leaveState() throws Exception
 	{
-		ProjectCreatedState.STATE.getParent().enter();
+		ProjectCreatedWithoutAgentsState.STATE.getParent().enter();
 	}
 
 	@Test

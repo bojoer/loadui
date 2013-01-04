@@ -9,18 +9,18 @@ import com.eviware.loadui.test.categories.IntegrationTest;
 import com.eviware.loadui.ui.fx.util.test.TestFX;
 
 @Category( IntegrationTest.class )
-public class ProjectLoadedStateTest
+public class ProjectLoadedWithoutAgentsStateTest
 {
 	@BeforeClass
 	public static void enterState() throws Exception
 	{
-		ProjectLoadedState.STATE.enter();
+		ProjectLoadedWithoutAgentsState.STATE.enter();
 	}
 
 	@AfterClass
 	public static void leaveState() throws Exception
 	{
-		ProjectLoadedState.STATE.getParent().enter();
+		ProjectLoadedWithoutAgentsState.STATE.getParent().enter();
 	}
 
 	@Test
