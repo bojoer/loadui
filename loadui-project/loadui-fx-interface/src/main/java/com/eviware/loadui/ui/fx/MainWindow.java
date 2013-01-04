@@ -73,7 +73,7 @@ public class MainWindow
 		else
 		{
 			stage.setWidth( Double.parseDouble( workspace.getAttribute( WINDOW_WIDTH, "1200" ) ) );
-			stage.setHeight( Double.parseDouble( workspace.getAttribute( WINDOW_HEIGHT, "700" ) ) );
+			stage.setHeight( Double.parseDouble( workspace.getAttribute( WINDOW_HEIGHT, "800" ) ) );
 		}
 	}
 

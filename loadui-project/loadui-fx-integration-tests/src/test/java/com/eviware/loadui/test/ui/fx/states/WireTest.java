@@ -42,7 +42,7 @@ public class WireTest
 	@BeforeClass
 	public static void enterState() throws Exception
 	{
-		ProjectLoadedState.STATE.enter();
+		ProjectLoadedWithoutAgentsState.STATE.enter();
 
 		controller = GUI.getController();
 

@@ -2,20 +2,17 @@ package com.eviware.loadui.ui.fx.util;
 
 import java.util.List;
 
-import javax.annotation.Nonnull;
-
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.BooleanPropertyBase;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.beans.value.ObservableValue;
-import javafx.beans.value.WritableBooleanValue;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+
+import javax.annotation.Nonnull;
 
 public final class NodeUtils
 {

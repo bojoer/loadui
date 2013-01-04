@@ -7,6 +7,8 @@ import java.util.concurrent.ExecutorService;
 
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
@@ -14,8 +16,11 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBuilder;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.LabelBuilder;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.control.Separator;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -23,6 +28,7 @@ import javafx.scene.control.TooltipBuilder;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBoxBuilder;
+import javafx.util.Callback;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -205,7 +211,7 @@ public class ComponentLayoutUtils
 		Label propertyLabel = LabelBuilder.create().text( propLayoutComp.getLabel() ).build();
 		if( propLayoutComp.isReadOnly() )
 		{
-			return createLabel(propLayoutComp, propertyLabel);
+			return createLabel( propLayoutComp, propertyLabel );
 		}
 		else if( propLayoutComp.has( "options" ) )
 		{
@@ -234,7 +240,8 @@ public class ComponentLayoutUtils
 	private static Node createCheckBox( PropertyLayoutComponent<?> propLayoutComp )
 	{
 		CheckBox checkBox = new CheckBox( propLayoutComp.getLabel() );
-		javafx.beans.property.Property<Boolean> jfxProp = Properties.convert( ( Property<Boolean> )propLayoutComp.getProperty() );
+		javafx.beans.property.Property<Boolean> jfxProp = Properties.convert( ( Property<Boolean> )propLayoutComp
+				.getProperty() );
 		checkBox.selectedProperty().bindBidirectional( jfxProp );
 		return nodeWithProperty( checkBox, jfxProp );
 	}
@@ -243,7 +250,8 @@ public class ComponentLayoutUtils
 	private static Node createKnob( PropertyLayoutComponent<?> propLayoutComp )
 	{
 		Knob knob = new Knob( propLayoutComp.getLabel() );
-		javafx.beans.property.Property<Number> jfxProp = Properties.convert( ( Property<Number> )propLayoutComp.getProperty() );
+		javafx.beans.property.Property<Number> jfxProp = Properties.convert( ( Property<Number> )propLayoutComp
+				.getProperty() );
 		knob.valueProperty().bindBidirectional( jfxProp );
 		if( propLayoutComp.has( "min" ) )
 		{
@@ -269,7 +277,8 @@ public class ComponentLayoutUtils
 	private static Node createTextNode( PropertyLayoutComponent<?> propLayoutComp, Label propertyLabel )
 	{
 		TextField textField = new TextField();
-		javafx.beans.property.Property<String> jfxProp = Properties.convert( ( Property<String> )propLayoutComp.getProperty() );
+		javafx.beans.property.Property<String> jfxProp = Properties.convert( ( Property<String> )propLayoutComp
+				.getProperty() );
 		textField.textProperty().bindBidirectional( jfxProp );
 		return nodeWithProperty( VBoxBuilder.create().children( propertyLabel, textField ).build(), jfxProp );
 	}
@@ -277,6 +286,8 @@ public class ComponentLayoutUtils
 	@SuppressWarnings( "unchecked" )
 	private static Node createOptionsNode( PropertyLayoutComponent<?> propLayoutComp, Label propertyLabel )
 	{
+		log.debug( "OPTIONS NODE: " + propLayoutComp );
+
 		Object opts = propLayoutComp.get( "options" );
 		OptionsProvider<Object> options;
 		if( opts instanceof OptionsProvider<?> )
@@ -292,9 +303,43 @@ public class ComponentLayoutUtils
 			options = new OptionsProviderImpl<>( opts );
 		}
 
+		if( "combobox".equalsIgnoreCase( ( String )propLayoutComp.get( "widget" ) ) )
+		{
+			final OptionsProvider<Object> finalOptions = options;
+
+			ObservableList<Object> observableList = FXCollections.observableArrayList( Lists.newArrayList( options
+					.iterator() ) );
+
+			Callback<ListView<Object>, ListCell<Object>> cellFactory = new Callback<ListView<Object>, ListCell<Object>>()
+			{
+				@Override
+				public ListCell<Object> call( ListView<Object> listView )
+				{
+					return new ListCell<Object>()
+					{
+						@Override
+						protected void updateItem( Object item, boolean empty )
+						{
+							super.updateItem( item, empty );
+							setText( finalOptions.labelFor( item ) );
+						}
+					};
+				}
+			};
+			ComboBox<Object> comboBox = new ComboBox<>();
+			comboBox.setButtonCell( cellFactory.call( null ) );
+			comboBox.setCellFactory( cellFactory );
+			comboBox.setItems( observableList );
+			javafx.beans.property.Property<Object> jfxProp = ( javafx.beans.property.Property<Object> )Properties
+					.convert( propLayoutComp.getProperty() );
+			comboBox.valueProperty().bindBidirectional( jfxProp );
+
+			return nodeWithProperty( VBoxBuilder.create().children( propertyLabel, comboBox ).build(), jfxProp );
+		}
+
 		OptionsSlider slider;
 		javafx.beans.property.Property<String> jfxProp;
-		
+
 		if( options.iterator().next() instanceof String )
 		{
 			slider = new OptionsSlider( Lists.newArrayList( Iterables.filter( options, String.class ) ) );
@@ -308,13 +353,13 @@ public class ComponentLayoutUtils
 
 		return nodeWithProperty( VBoxBuilder.create().children( propertyLabel, slider ).build(), jfxProp );
 	}
-	
+
 	private static Node createLabel( PropertyLayoutComponent<?> propLayoutComp, Label propertyLabel )
 	{
 		Label label = new Label();
 		javafx.beans.property.Property<?> jfxProp = Properties.convert( propLayoutComp.getProperty() );
 		label.textProperty().bind( Bindings.convert( jfxProp ) );
-		return nodeWithProperty(VBoxBuilder.create().children( propertyLabel, label ).build(), jfxProp);
+		return nodeWithProperty( VBoxBuilder.create().children( propertyLabel, label ).build(), jfxProp );
 	}
 
 	private static Node nodeWithProperty( Node node, javafx.beans.property.Property<?> jfxProp )
@@ -324,5 +369,5 @@ public class ComponentLayoutUtils
 		node.getProperties().put( "_KEEP_STRONG_REF_TO_JFX_PROPERTY_", jfxProp );
 		return node;
 	}
-	
+
 }
