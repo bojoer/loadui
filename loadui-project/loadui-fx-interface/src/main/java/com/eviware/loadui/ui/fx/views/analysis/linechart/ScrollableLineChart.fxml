@@ -7,8 +7,8 @@
 <?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import java.net.URL?>
-<?import com.eviware.loadui.ui.fx.views.analysis.ChartScrollBar?>
-<?import com.eviware.loadui.ui.fx.views.analysis.SegmentBox?>
+<?import com.eviware.loadui.ui.fx.views.analysis.linechart.ChartScrollBar?>
+<?import com.eviware.loadui.ui.fx.views.analysis.linechart.SegmentBox?>
 <?import javafx.scene.control.Button?>
 
 <fx:root type="javafx.scene.layout.HBox" xmlns:fx="http://javafx.com/fxml" >

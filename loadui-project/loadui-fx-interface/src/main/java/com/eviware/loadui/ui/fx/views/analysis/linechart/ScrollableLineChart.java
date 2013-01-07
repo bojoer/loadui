@@ -1,8 +1,7 @@
-package com.eviware.loadui.ui.fx.views.analysis;
+package com.eviware.loadui.ui.fx.views.analysis.linechart;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.LongProperty;
-import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyLongProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.StringProperty;
@@ -133,9 +132,9 @@ public class ScrollableLineChart extends HBox
 		return shownSpan;
 	}
 
-	public ReadOnlyBooleanProperty scaleUpdateProperty()
+	public javafx.beans.Observable scaleUpdate()
 	{
-		return segmentBox.scaleUpdateProperty();
+		return segmentBox.scaleUpdate();
 	}
 
 	public DoubleProperty maxProperty()

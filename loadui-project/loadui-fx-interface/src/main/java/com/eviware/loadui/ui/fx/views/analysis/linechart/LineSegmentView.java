@@ -14,7 +14,6 @@ import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.statistics.model.chart.line.LineSegment;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
-import com.eviware.loadui.ui.fx.views.analysis.SegmentBox;
 
 public class LineSegmentView extends SegmentView<LineSegment>
 {
@@ -83,10 +82,11 @@ public class LineSegmentView extends SegmentView<LineSegment>
 			@Override
 			public void invalidated( Observable arg0 )
 			{
+				int snappedZoom = ( int )Math.round( slider.valueProperty().doubleValue() );
 
-				if( scale != ( int )Math.round( slider.valueProperty().doubleValue() ) )
+				if( scale != snappedZoom )
 				{
-					scale = ( int )Math.round( slider.valueProperty().doubleValue() );
+					scale = snappedZoom;
 					segment.setAttribute( SCALE_ATTRIBUTE, String.valueOf( scale ) );
 					parent.updateScale();
 				}

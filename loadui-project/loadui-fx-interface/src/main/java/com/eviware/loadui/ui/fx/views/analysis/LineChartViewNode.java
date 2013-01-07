@@ -57,6 +57,7 @@ import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.Properties;
 import com.eviware.loadui.ui.fx.views.analysis.linechart.EventSegmentView;
 import com.eviware.loadui.ui.fx.views.analysis.linechart.LineSegmentView;
+import com.eviware.loadui.ui.fx.views.analysis.linechart.ScrollableLineChart;
 import com.eviware.loadui.ui.fx.views.analysis.linechart.SegmentView;
 import com.google.common.base.Function;
 import com.google.common.cache.CacheBuilder;
@@ -328,7 +329,7 @@ public class LineChartViewNode extends VBox
 					},
 					observableArrayList( executionProperty, scrollableLineChart.positionProperty(),
 							scrollableLineChart.spanProperty(), poll, tickZoomLevelProperty,
-							scrollableLineChart.scaleUpdateProperty() ) ) );
+							scrollableLineChart.scaleUpdate() ) ) );
 
 			return series;
 		}

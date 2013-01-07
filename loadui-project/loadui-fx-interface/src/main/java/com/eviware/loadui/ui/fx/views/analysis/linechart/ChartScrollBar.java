@@ -1,4 +1,4 @@
-package com.eviware.loadui.ui.fx.views.analysis;
+package com.eviware.loadui.ui.fx.views.analysis.linechart;
 
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;

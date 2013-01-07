@@ -1,9 +1,8 @@
-package com.eviware.loadui.ui.fx.views.analysis;
+package com.eviware.loadui.ui.fx.views.analysis.linechart;
 
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -13,7 +12,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBuilder;
 import javafx.scene.layout.VBox;
 
-import com.eviware.loadui.ui.fx.views.analysis.linechart.LineSegmentView;
+import com.eviware.loadui.ui.fx.util.ManualObservable;
 
 public class SegmentBox extends VBox
 {
@@ -29,7 +28,7 @@ public class SegmentBox extends VBox
 				}
 			} ).build();
 
-	private final BooleanProperty scaleUpdate = new SimpleBooleanProperty( true );
+	private final ManualObservable scaleUpdate = new ManualObservable();
 	private final BooleanProperty scaling = new SimpleBooleanProperty( false );
 
 	public SegmentBox()
@@ -90,10 +89,10 @@ public class SegmentBox extends VBox
 
 	public void updateScale()
 	{
-		scaleUpdate.set( !scaleUpdate.get() );
+		scaleUpdate.fireInvalidation();
 	}
 
-	public ReadOnlyBooleanProperty scaleUpdateProperty()
+	public Observable scaleUpdate()
 	{
 		return scaleUpdate;
 	}
