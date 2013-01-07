@@ -46,7 +46,7 @@
 }
 
 .slim-icon .thumb{
-	-fx-background-color: pink;
+	-fx-background-color: gray;
 	-fx-background-insets: -5 1;
 	-fx-background-radius: 3;
 

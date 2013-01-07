@@ -3,6 +3,7 @@ package com.eviware.loadui.ui.fx.views.analysis;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -16,8 +17,7 @@ import com.eviware.loadui.ui.fx.views.analysis.linechart.LineSegmentView;
 
 public class SegmentBox extends VBox
 {
-	private VBox segmentViewContainer = new VBox();
-
+	private final VBox segmentViewContainer = new VBox();
 	private final Button scalingCloseButton = ButtonBuilder.create().alignment( Pos.BOTTOM_RIGHT ).text( "Done" )
 			.onAction( new EventHandler<ActionEvent>()
 			{
@@ -29,7 +29,8 @@ public class SegmentBox extends VBox
 				}
 			} ).build();
 
-	private BooleanProperty scaling = new SimpleBooleanProperty( false );
+	private final BooleanProperty scaleUpdate = new SimpleBooleanProperty( true );
+	private final BooleanProperty scaling = new SimpleBooleanProperty( false );
 
 	public SegmentBox()
 	{
@@ -87,9 +88,19 @@ public class SegmentBox extends VBox
 		return segmentViewContainer;
 	}
 
-	public void setEnableScaling( boolean value )
+	public void updateScale()
 	{
-		scaling.set( value );
+		scaleUpdate.set( !scaleUpdate.get() );
+	}
+
+	public ReadOnlyBooleanProperty scaleUpdateProperty()
+	{
+		return scaleUpdate;
+	}
+
+	public void enableScaling()
+	{
+		scaling.set( true );
 	}
 
 }

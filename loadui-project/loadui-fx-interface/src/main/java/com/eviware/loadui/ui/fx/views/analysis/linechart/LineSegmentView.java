@@ -3,10 +3,7 @@ package com.eviware.loadui.ui.fx.views.analysis.linechart;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.Slider;
@@ -26,8 +23,6 @@ public class LineSegmentView extends SegmentView<LineSegment>
 	public static final String WIDTH_ATTRIBUTE = "width";
 	public static final String SCALE_ATTRIBUTE = "scale";
 
-	private BooleanProperty scaling = new SimpleBooleanProperty( true );
-
 	@FXML
 	private MenuButton menuButton;
 
@@ -38,9 +33,10 @@ public class LineSegmentView extends SegmentView<LineSegment>
 
 	private final String scalingStyleClass = "scaling";
 
-	private DoubleProperty scale = new SimpleDoubleProperty( 0d );
-
 	protected static final Logger log = LoggerFactory.getLogger( LineSegmentView.class );
+
+	private BooleanProperty scaling = new SimpleBooleanProperty( true );
+	private int scale = 0;
 
 	public LineSegmentView( LineSegment segment )
 	{
@@ -51,16 +47,10 @@ public class LineSegmentView extends SegmentView<LineSegment>
 	@FXML
 	private void initialize()
 	{
-		// for testing puropses
-		if( segment != null )
-		{
-			segmentLabel.setText( segment.getStatisticHolder().getLabel() + " " + segment.getVariableName() + " "
-					+ segment.getStatisticName() );
-		}
-		else
-		{
-			segmentLabel.setText( "Segment NULL" );
-		}
+		segmentLabel.setText( segment.getStatisticHolder().getLabel() + " " + segment.getVariableName() + " "
+				+ segment.getStatisticName() );
+
+		loadStyles();
 
 		scaling.addListener( new InvalidationListener()
 		{
@@ -93,14 +83,30 @@ public class LineSegmentView extends SegmentView<LineSegment>
 			@Override
 			public void invalidated( Observable arg0 )
 			{
-				int newScale = ( int )Math.round( slider.valueProperty().doubleValue() );
-				//				scale.set( Math.pow( 10, Math.round( slider.valueProperty().doubleValue() ) ) );
-				//
-				//				segment.setAttribute( SCALE_ATTRIBUTE, String.valueOf( newScale ) );
-				//				segment.
-				//				scale.set( Math.round( slider.valueProperty().doubleValue() ) );
+
+				if( scale != ( int )Math.round( slider.valueProperty().doubleValue() ) )
+				{
+					scale = ( int )Math.round( slider.valueProperty().doubleValue() );
+					segment.setAttribute( SCALE_ATTRIBUTE, String.valueOf( scale ) );
+					parent.updateScale();
+				}
 			}
 		} );
+
+	}
+
+	private void loadStyles()
+	{
+		int newScale = 0;
+		try
+		{
+			newScale = Integer.parseInt( segment.getAttribute( SCALE_ATTRIBUTE, "0" ) );
+		}
+		catch( NumberFormatException e )
+		{
+		}
+		scale = newScale;
+		slider.setValue( scale );
 
 	}
 
@@ -119,21 +125,17 @@ public class LineSegmentView extends SegmentView<LineSegment>
 		parent = segmentBox;
 	}
 
-	public ReadOnlyDoubleProperty scaleProperty()
-	{
-		return scale;
-	}
-
 	@FXML
 	public void enableScaling()
 	{
 		if( parent != null )
 		{
-			parent.setEnableScaling( true );
+			parent.enableScaling();
 		}
 		else
 		{
-			log.error( "label:(" + segmentLabel.getText() + ") dont have the reference to its SegmentBox" );
+			log.error( "LineSegmentView with label:(" + segmentLabel.getText()
+					+ ") dont have the reference to its SegmentBox" );
 		}
 	}
 }
