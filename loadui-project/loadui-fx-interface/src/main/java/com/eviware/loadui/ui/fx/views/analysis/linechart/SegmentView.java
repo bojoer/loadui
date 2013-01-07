@@ -2,11 +2,11 @@ package com.eviware.loadui.ui.fx.views.analysis.linechart;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 
 import com.eviware.loadui.api.statistics.model.chart.line.Segment;
 
-public abstract class SegmentView<T extends Segment> extends HBox
+public abstract class SegmentView<T extends Segment> extends StackPane
 {
 	protected final T segment;
 

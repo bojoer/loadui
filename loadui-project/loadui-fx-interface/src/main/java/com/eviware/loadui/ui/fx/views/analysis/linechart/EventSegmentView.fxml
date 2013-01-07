@@ -11,13 +11,15 @@
 <?import javafx.scene.chart.NumberAxis?>
 <?import java.net.URL?>
 
-<fx:root type="javafx.scene.layout.HBox" xmlns:fx="http://javafx.com/fxml"
+<fx:root type="javafx.scene.layout.StackPane" xmlns:fx="http://javafx.com/fxml"
 	styleClass="slim-icon" maxWidth="600">
-	<Label fx:id="segmentLabel" text="Label" maxWidth="120"
-		HBox.hgrow="ALWAYS" />
-	<MenuButton>
-		<items>
-			<MenuItem text="Delete" onAction="#delete" />
-		</items>
-	</MenuButton>
+	<HBox >
+		<Label fx:id="segmentLabel" text="Label" maxWidth="120"
+			HBox.hgrow="ALWAYS" />
+		<MenuButton>
+			<items>
+				<MenuItem text="Delete" onAction="#delete" />
+			</items>
+		</MenuButton>
+	</HBox>
 </fx:root>

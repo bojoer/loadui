@@ -26,7 +26,7 @@ public class ScrollableLineChart extends HBox
 	protected static final Logger log = LoggerFactory.getLogger( ScrollableLineChart.class );
 
 	@FXML
-	private VBox segments;
+	private SegmentBox segmentBox;
 
 	@FXML
 	private LineChart<Number, Number> lineChart;
@@ -119,7 +119,7 @@ public class ScrollableLineChart extends HBox
 
 	public VBox getSegments()
 	{
-		return segments;
+		return segmentBox.getSegmentsContainer();
 	}
 
 	public LineChart<Number, Number> getLineChart()
