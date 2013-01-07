@@ -36,3 +36,22 @@
 	-color-border: #404040;
 	-fx-padding: 0 -2 0 14;
 }
+
+/*
+ * Line Segment View Styling 
+ */
+ 
+.slim-icon .track{
+	-fx-background-color: transparent;
+}
+
+.slim-icon .thumb{
+	-fx-background-color: gray;
+	-fx-background-insets: -5 1;
+	-fx-background-radius: 3;
+
+}
+
+.scaling{
+	-fx-background-insets: 4 0;
+}

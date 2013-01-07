@@ -29,7 +29,7 @@ import com.eviware.loadui.api.statistics.ProjectExecutionManager;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
-import com.eviware.loadui.ui.fx.util.ObservableBase;
+import com.eviware.loadui.ui.fx.util.ManualObservable;
 import com.eviware.loadui.ui.fx.views.analysis.AnalysisView;
 import com.eviware.loadui.ui.fx.views.result.ResultView;
 import com.eviware.loadui.util.BeanInjector;
@@ -178,15 +178,6 @@ public class StatisticsView extends StackPane
 					}
 				}
 			} );
-		}
-	}
-
-	private class ManualObservable extends ObservableBase
-	{
-		@Override
-		public void fireInvalidation()
-		{
-			super.fireInvalidation();
 		}
 	}
 
