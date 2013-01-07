@@ -71,10 +71,6 @@ public class LineChartViewNode extends VBox
 	public static final String ZOOM_LEVEL_ATTRIBUTE = "zoomLevel";
 	public static final String FOLLOW_ATTRIBUTE = "follow";
 
-	public static final String ZOOM_LEVEL = "zoomLevel";
-	public static final String FOLLOW = "follow";
-	public static final String POSITION = "position";
-
 	protected static final Logger log = LoggerFactory.getLogger( LineChartViewNode.class );
 
 	private static final PeriodFormatter timeFormatter = new PeriodFormatterBuilder().printZeroNever().appendWeeks()
