@@ -41,13 +41,17 @@
  * Line Segment View Styling 
  */
  
-.track{
+.slim-icon .track{
 	-fx-background-color: transparent;
 }
 
-.thumb{
+.slim-icon .thumb{
 	-fx-background-color: pink;
 	-fx-background-insets: -5 1;
 	-fx-background-radius: 3;
 
+}
+
+.scaling{
+	-fx-background-insets: 4 0;
 }
