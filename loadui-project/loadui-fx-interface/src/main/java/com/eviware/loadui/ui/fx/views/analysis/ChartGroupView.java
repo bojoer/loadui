@@ -56,6 +56,7 @@ import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.InspectorHelpers;
 import com.eviware.loadui.ui.fx.util.ObservableLists;
+import com.eviware.loadui.ui.fx.views.analysis.linechart.LineChartViewNode;
 import com.eviware.loadui.util.BeanInjector;
 import com.google.common.base.Function;
 import com.google.common.base.Objects;

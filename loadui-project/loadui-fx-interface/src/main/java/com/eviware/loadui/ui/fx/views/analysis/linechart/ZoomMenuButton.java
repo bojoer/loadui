@@ -1,4 +1,4 @@
-package com.eviware.loadui.ui.fx.views.analysis;
+package com.eviware.loadui.ui.fx.views.analysis.linechart;
 
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;

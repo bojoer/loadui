@@ -1,4 +1,4 @@
-package com.eviware.loadui.ui.fx.views.analysis;
+package com.eviware.loadui.ui.fx.views.analysis.linechart;
 
 import static com.eviware.loadui.ui.fx.util.ObservableLists.fromExpression;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.fx;
@@ -29,6 +29,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Series;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Line;
@@ -55,10 +56,8 @@ import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.testevents.TestEvent;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.Properties;
-import com.eviware.loadui.ui.fx.views.analysis.linechart.EventSegmentView;
-import com.eviware.loadui.ui.fx.views.analysis.linechart.LineSegmentView;
-import com.eviware.loadui.ui.fx.views.analysis.linechart.ScrollableLineChart;
-import com.eviware.loadui.ui.fx.views.analysis.linechart.SegmentView;
+import com.eviware.loadui.ui.fx.views.analysis.AddStatisticDialog;
+import com.eviware.loadui.ui.fx.views.analysis.Selection;
 import com.google.common.base.Function;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -121,6 +120,9 @@ public class LineChartViewNode extends VBox
 
 	@FXML
 	private ZoomMenuButton zoomMenuButton;
+
+	@FXML
+	private CheckBox followCheckBox;
 
 	public LineChartViewNode( final ObservableValue<Execution> executionProperty, LineChartView chartView,
 			Observable poll )
@@ -210,6 +212,11 @@ public class LineChartViewNode extends VBox
 					{
 						tickZoomLevelProperty.set( tickLevel );
 					}
+				}
+
+				if( followCheckBox.isSelected() )
+				{
+					scrollableLineChart.setPosition( length.doubleValue() - scrollableLineChart.spanProperty().doubleValue() );
 				}
 
 			}
@@ -328,8 +335,7 @@ public class LineChartViewNode extends VBox
 						}
 					},
 					observableArrayList( executionProperty, scrollableLineChart.positionProperty(),
-							scrollableLineChart.spanProperty(), poll, tickZoomLevelProperty,
-							scrollableLineChart.scaleUpdate() ) ) );
+							scrollableLineChart.spanProperty(), poll, tickZoomLevelProperty, scrollableLineChart.scaleUpdate() ) ) );
 
 			return series;
 		}

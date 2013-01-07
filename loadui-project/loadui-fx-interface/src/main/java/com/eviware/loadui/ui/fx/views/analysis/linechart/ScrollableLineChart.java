@@ -146,4 +146,5 @@ public class ScrollableLineChart extends HBox
 	{
 		return lineChart.titleProperty();
 	}
+
 }

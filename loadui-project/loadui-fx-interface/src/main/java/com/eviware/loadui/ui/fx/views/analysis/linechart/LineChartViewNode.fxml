@@ -10,9 +10,10 @@
 <?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import java.net.URL?>
-<?import com.eviware.loadui.ui.fx.views.analysis.ZoomMenuButton?>
+<?import com.eviware.loadui.ui.fx.views.analysis.linechart.ZoomMenuButton?>
 <?import com.eviware.loadui.ui.fx.views.analysis.linechart.ChartScrollBar?>
 <?import com.eviware.loadui.ui.fx.views.analysis.linechart.ScrollableLineChart?>
+<?import javafx.scene.control.CheckBox?>
 
 <fx:root type="javafx.scene.layout.VBox" xmlns:fx="http://javafx.com/fxml"
 	styleClass="chart-view-node, line-chart-view-node">
@@ -21,6 +22,7 @@
 	<HBox>
 		<Button text="Add Statistic..." onAction="#addStatistic" />
 		<ZoomMenuButton fx:id="zoomMenuButton" text="Zoom"/>
-		<Label text="Not set" fx:id="timer" />
+		<Label  fx:id="timer" text="Not set" />
+		<CheckBox fx:id="followCheckBox" selected="true" text="follow" /> 
 	</HBox>
 </fx:root>
