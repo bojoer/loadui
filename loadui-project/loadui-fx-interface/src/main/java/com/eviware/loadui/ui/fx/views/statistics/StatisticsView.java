@@ -14,6 +14,7 @@ import javafx.animation.TimelineBuilder;
 import javafx.application.Platform;
 import javafx.beans.property.Property;
 import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.ReadOnlyProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -43,6 +44,7 @@ public class StatisticsView extends StackPane
 	private final ObservableList<Execution> recentExecutions;
 	private final ObservableList<Execution> archivedExecutions;
 	private final Property<Execution> currentExecution = new SimpleObjectProperty<>( this, "currentExecution" );
+
 	private final ManualObservable poll = new ManualObservable();
 
 	public StatisticsView( final ProjectItem project )
@@ -105,6 +107,16 @@ public class StatisticsView extends StackPane
 		} );
 
 		getChildren().setAll( new ResultView( currentExecution, recentExecutions, archivedExecutions ) );
+	}
+
+	public Execution getCurrentExecution()
+	{
+		return currentExecution.getValue();
+	}
+
+	public ReadOnlyProperty<Execution> currentExecutionProperty()
+	{
+		return currentExecution;
 	}
 
 	private final static class CurrentExecutionListener extends ExecutionListenerAdapter
@@ -189,5 +201,4 @@ public class StatisticsView extends StackPane
 			super.fireInvalidation();
 		}
 	}
-
 }

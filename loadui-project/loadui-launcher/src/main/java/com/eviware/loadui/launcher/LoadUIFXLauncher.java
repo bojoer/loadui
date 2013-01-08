@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Hashtable;
-import java.util.Map.Entry;
 
 import javafx.application.Application;
 import javafx.concurrent.Task;
@@ -27,8 +26,6 @@ public class LoadUIFXLauncher extends LoadUILauncher
 {
 	public static void main( String[] args )
 	{
-		for( String a : args )
-			System.out.println( "arg: " + a );
 		Application.launch( FXApplication.class, args );
 	}
 
@@ -91,9 +88,6 @@ public class LoadUIFXLauncher extends LoadUILauncher
 			{
 				//e.printStackTrace();
 			}
-
-			for( Entry<String, String> e : getParameters().getNamed().entrySet() )
-				System.out.println( "para: " + e.getKey() + "=" + e.getValue() );
 
 			final String noFx = getParameters().getNamed().get( NOFX_OPTION );
 			final String agent = getParameters().getNamed().get( "agent" );

@@ -9,9 +9,12 @@ import static javafx.beans.binding.Bindings.bindContent;
 import static javafx.beans.binding.Bindings.createLongBinding;
 import static javafx.collections.FXCollections.observableArrayList;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.concurrent.Callable;
+
+import javax.imageio.ImageIO;
 
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
@@ -23,16 +26,20 @@ import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.SnapshotResult;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.Label;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.LineBuilder;
+import javafx.util.Callback;
 
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatter;
@@ -433,4 +440,8 @@ public class LineChartViewNode extends VBox
 		chartView.setAttribute( ZOOM_LEVEL_ATTRIBUTE, zoomLevel.name() );
 	}
 
+	public Node getLineChart()
+	{
+		return scrollableLineChart.getLineChart();
+	}
 }

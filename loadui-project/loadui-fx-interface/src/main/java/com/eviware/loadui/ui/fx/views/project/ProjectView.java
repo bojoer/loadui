@@ -1,8 +1,14 @@
 package com.eviware.loadui.ui.fx.views.project;
 
+import java.awt.Image;
+import java.util.Collection;
+import java.util.Map;
+
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
+import javafx.beans.property.Property;
+import javafx.beans.property.ReadOnlyProperty;
 import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -27,12 +33,17 @@ import com.eviware.loadui.api.model.ProjectRef;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.reporting.ReportingManager;
+import com.eviware.loadui.api.statistics.model.StatisticPage;
+import com.eviware.loadui.api.statistics.model.StatisticPages;
+import com.eviware.loadui.api.statistics.model.chart.ChartView;
+import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.traits.Labeled;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.control.DetachableTab;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.Properties;
 import com.eviware.loadui.ui.fx.util.UIUtils;
+import com.eviware.loadui.ui.fx.views.analysis.reporting.LineChartUtils;
 import com.eviware.loadui.ui.fx.views.canvas.CanvasView;
 import com.eviware.loadui.ui.fx.views.rename.RenameDialog;
 import com.eviware.loadui.ui.fx.views.scenario.ScenarioToolbar;
@@ -278,7 +289,16 @@ public class ProjectView extends AnchorPane
 	{
 		log.info( "Open summary requested" );
 		ReportingManager reportingManager = BeanInjector.getBean( ReportingManager.class );
-		reportingManager.createReport( lastRunCanvas.getSummary() );
+
+		StatisticsView statisticsView = ( StatisticsView )resultTab.getDetachableContent();
+		ReadOnlyProperty<Execution> execution = statisticsView.currentExecutionProperty();
+		Collection<StatisticPage> pages = project.getStatisticPages().getChildren();
+
+		Map<ChartView, Image> images = LineChartUtils.createImages( pages, execution,
+				null );
+
+		reportingManager.createReport( project.getLabel(), execution.getValue(), pages, images, execution.getValue()
+				.getSummaryReport() );
 	}
 
 	private ProjectRef getProjectRef( String id )

@@ -92,7 +92,7 @@ public class ReportingManagerImpl implements ReportingManager
 
 	@Override
 	public void createReport( String label, Execution execution, Collection<StatisticPage> pages,
-			Map<Object, Image> charts, File file, String format )
+			Map<? extends Object, Image> charts, File file, String format )
 	{
 		try
 		{
@@ -107,13 +107,13 @@ public class ReportingManagerImpl implements ReportingManager
 
 	@Override
 	public void createReport( String label, Execution execution, Collection<StatisticPage> pages,
-			Map<Object, Image> charts, File jpFileToPrepend )
+			Map<? extends Object, Image> charts, File jpFileToPrepend )
 	{
 		createReport( label, execution, pages, charts, getJpFromFile( jpFileToPrepend ) );
 	}
 
 	public void createReport( String label, Execution execution, Collection<StatisticPage> pages,
-			Map<Object, Image> charts, JasperPrint jpToPrepend )
+			Map<? extends Object, Image> charts, JasperPrint jpToPrepend )
 	{
 		reportEngine.generateJasperReport( new ExecutionDataSource( label, execution, pages, charts ), RESULTS_REPORT,
 				execution.getLabel(), jpToPrepend );
@@ -121,13 +121,13 @@ public class ReportingManagerImpl implements ReportingManager
 
 	@Override
 	public void createReport( String label, Execution execution, Collection<StatisticPage> pages,
-			Map<Object, Image> charts, File file, String format, File jpFileToPrepend )
+			Map<? extends Object, Image> charts, File file, String format, File jpFileToPrepend )
 	{
 		createReport( label, execution, pages, charts, file, format, getJpFromFile( jpFileToPrepend ) );
 	}
 
 	public void createReport( String label, Execution execution, Collection<StatisticPage> pages,
-			Map<Object, Image> charts, File file, String format, JasperPrint jpToPrepend )
+			Map<? extends Object, Image> charts, File file, String format, JasperPrint jpToPrepend )
 	{
 		try
 		{

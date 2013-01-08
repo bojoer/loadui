@@ -40,6 +40,7 @@ import javafx.util.Duration;
 
 import com.eviware.loadui.ui.fx.api.Inspector;
 import com.eviware.loadui.ui.fx.api.perspective.PerspectiveEvent;
+import com.eviware.loadui.ui.fx.util.ErrorHandler;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.ObservableLists;
 import com.eviware.loadui.ui.fx.util.UIUtils;
@@ -109,10 +110,14 @@ public class InspectorView extends AnchorPane
 		return perspective.getValue();
 	}
 
+	@edu.umd.cs.findbugs.annotations.SuppressWarnings( value = "NP_NULL_ON_SOME_PATH", justification = "Execution of code will stop after ErrorHandler.promptRestart()." )
 	private void init()
 	{
-		//TODO: tabHeaderArea can be null here, causing an unrecoverable NPE at startup
 		tabHeaderArea = ( StackPane )tabPane.lookup( ".tab-header-area" );
+
+		//TODO: tabHeaderArea can be null here, causing an unrecoverable NPE at startup
+		if( tabHeaderArea == null )
+			ErrorHandler.promptRestart();
 		tabHeaderArea.addEventHandler( MouseEvent.ANY, dragBehavior );
 
 		buttonBar.setPrefHeight( tabHeaderArea.prefHeight( -1 ) );

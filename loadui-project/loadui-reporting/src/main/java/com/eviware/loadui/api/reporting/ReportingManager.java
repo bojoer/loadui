@@ -74,7 +74,7 @@ public interface ReportingManager
 	 * @param format
 	 */
 	public void createReport( String label, Execution execution, Collection<StatisticPage> pages,
-			Map<Object, Image> charts, File file, String format );
+			Map<? extends Object, Image> charts, File file, String format );
 
 	/**
 	 * Creates a Statistics Report (and prepends another report to it) using the
@@ -88,7 +88,7 @@ public interface ReportingManager
 	 * @param jpFileToPrepend
 	 */
 	public void createReport( String label, Execution execution, Collection<StatisticPage> pages,
-			Map<Object, Image> charts, File jpFileToPrepend );
+			Map<? extends Object, Image> charts, File jpFileToPrepend );
 
 	/**
 	 * Creates a Statistics Report (and prepends another report to it) using the
@@ -105,6 +105,6 @@ public interface ReportingManager
 	 * @param jpFileToPrepend
 	 */
 	public void createReport( String label, Execution execution, Collection<StatisticPage> pages,
-			Map<Object, Image> charts, File file, String format, File jpFileToPrepend );
+			Map<? extends Object, Image> charts, File file, String format, File jpFileToPrepend );
 
 }

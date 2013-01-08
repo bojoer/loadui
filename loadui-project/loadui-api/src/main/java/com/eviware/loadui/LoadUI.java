@@ -16,6 +16,7 @@
 package com.eviware.loadui;
 
 import java.io.File;
+import java.io.IOException;
 
 public class LoadUI
 {
@@ -77,5 +78,18 @@ public class LoadUI
 	public static File relativeFile( String path )
 	{
 		return new File( getWorkingDir(), path );
+	}
+
+	public static void restart()
+	{
+		try
+		{
+			Runtime.getRuntime().exec( "loadui.bat" );
+		}
+		catch( IOException e )
+		{
+			e.printStackTrace();
+		}
+		System.exit( 0 );
 	}
 }
