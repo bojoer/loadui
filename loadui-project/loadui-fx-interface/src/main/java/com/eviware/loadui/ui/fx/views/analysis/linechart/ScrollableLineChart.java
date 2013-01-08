@@ -1,4 +1,4 @@
-package com.eviware.loadui.ui.fx.views.analysis;
+package com.eviware.loadui.ui.fx.views.analysis.linechart;
 
 import java.io.File;
 
@@ -35,7 +35,7 @@ public class ScrollableLineChart extends HBox
 	protected static final Logger log = LoggerFactory.getLogger( ScrollableLineChart.class );
 
 	@FXML
-	private VBox segments;
+	private SegmentBox segmentBox;
 
 	@FXML
 	private LineChart<Number, Number> lineChart;
@@ -128,7 +128,7 @@ public class ScrollableLineChart extends HBox
 
 	public VBox getSegments()
 	{
-		return segments;
+		return segmentBox.getSegmentsContainer();
 	}
 
 	public LineChart<Number, Number> getLineChart()
@@ -136,9 +136,14 @@ public class ScrollableLineChart extends HBox
 		return lineChart;
 	}
 
-	public LongProperty getSpan()
+	public LongProperty spanProperty()
 	{
 		return shownSpan;
+	}
+
+	public javafx.beans.Observable scaleUpdate()
+	{
+		return segmentBox.scaleUpdate();
 	}
 
 	public DoubleProperty maxProperty()

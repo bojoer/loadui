@@ -72,8 +72,9 @@ public class ResultView extends StackPane
 			@Override
 			public void invalidated( Observable _ )
 			{
-				currentResultNode.getItems().setAll(
-						new ExecutionView( currentExecution.getValue(), ExecutionState.CURRENT ) );
+				ExecutionView view = new ExecutionView( currentExecution.getValue(), ExecutionState.CURRENT );
+				view.setId( idFor( ExecutionState.CURRENT, 0 ) );
+				currentResultNode.getItems().setAll( view );
 			}
 		} );
 

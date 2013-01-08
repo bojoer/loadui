@@ -64,6 +64,7 @@ import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.Properties;
 import com.eviware.loadui.ui.fx.views.analysis.linechart.EventSegmentView;
 import com.eviware.loadui.ui.fx.views.analysis.linechart.LineSegmentView;
+import com.eviware.loadui.ui.fx.views.analysis.linechart.ScrollableLineChart;
 import com.eviware.loadui.ui.fx.views.analysis.linechart.SegmentView;
 import com.google.common.base.Function;
 import com.google.common.cache.CacheBuilder;
@@ -78,17 +79,13 @@ public class LineChartViewNode extends VBox
 	public static final String ZOOM_LEVEL_ATTRIBUTE = "zoomLevel";
 	public static final String FOLLOW_ATTRIBUTE = "follow";
 
-	public static final String ZOOM_LEVEL = "zoomLevel";
-	public static final String FOLLOW = "follow";
-	public static final String POSITION = "position";
-
 	protected static final Logger log = LoggerFactory.getLogger( LineChartViewNode.class );
 
 	private static final PeriodFormatter timeFormatter = new PeriodFormatterBuilder().printZeroNever().appendWeeks()
 			.appendSuffix( "w" ).appendSeparator( " " ).appendDays().appendSuffix( "d" ).appendSeparator( " " )
 			.appendHours().appendSuffix( "h" ).appendSeparator( " " ).appendMinutes().appendSuffix( "m" ).toFormatter();
 
-	private static final Function<DataPoint<?>, XYChart.Data<Number, Number>> DATAPOINT_TO_CHARTDATA = new Function<DataPoint<?>, XYChart.Data<Number, Number>>()
+	private static final Function<DataPoint<?>, XYChart.Data<Number, Number>> datapointToChartdata = new Function<DataPoint<?>, XYChart.Data<Number, Number>>()
 	{
 		@Override
 		public XYChart.Data<Number, Number> apply( DataPoint<?> point )
@@ -311,17 +308,35 @@ public class LineChartViewNode extends VBox
 						@Override
 						public Iterable<XYChart.Data<Number, Number>> call() throws Exception
 						{
-							return Iterables.transform(
+							Iterable<XYChart.Data<Number, Number>> chartdata = Iterables.transform(
 									segment.getStatistic().getPeriod(
 											scrollableLineChart.positionProperty().longValue() - 2000,
 											scrollableLineChart.positionProperty().longValue()
-													+ scrollableLineChart.getSpan().longValue() + 2000,
+													+ scrollableLineChart.spanProperty().longValue() + 2000,
 											tickZoomLevelProperty.getValue().getLevel(), executionProperty.getValue() ),
-									DATAPOINT_TO_CHARTDATA );
+									datapointToChartdata );
+
+							final Function<XYChart.Data<Number, Number>, XYChart.Data<Number, Number>> chartdataToScaledChartdata = new Function<XYChart.Data<Number, Number>, XYChart.Data<Number, Number>>()
+							{
+								@Override
+								public XYChart.Data<Number, Number> apply( XYChart.Data<Number, Number> point )
+								{
+									double scaleValue = Math.pow( 10,
+											Integer.parseInt( segment.getAttribute( LineSegmentView.SCALE_ATTRIBUTE, "0" ) ) );
+									return new XYChart.Data<Number, Number>( point.getXValue(), point.getYValue().doubleValue()
+											* scaleValue );
+								}
+							};
+
+							// applies the scale to each point
+
+							return Iterables.transform( chartdata, chartdataToScaledChartdata );
+
 						}
 					},
 					observableArrayList( executionProperty, scrollableLineChart.positionProperty(),
-							scrollableLineChart.getSpan(), poll, tickZoomLevelProperty ) ) );
+							scrollableLineChart.spanProperty(), poll, tickZoomLevelProperty,
+							scrollableLineChart.scaleUpdate() ) ) );
 
 			return series;
 		}
@@ -339,8 +354,9 @@ public class LineChartViewNode extends VBox
 						{
 							return Iterables.transform( segment.getTestEventsInRange( executionProperty.getValue(),
 									scrollableLineChart.positionProperty().longValue() - 2000, scrollableLineChart
-											.positionProperty().longValue() + scrollableLineChart.getSpan().longValue() + 2000,
-									tickZoomLevelProperty.getValue().getLevel() ),
+											.positionProperty().longValue()
+											+ scrollableLineChart.spanProperty().longValue()
+											+ 2000, tickZoomLevelProperty.getValue().getLevel() ),
 									new Function<TestEvent, XYChart.Data<Number, Number>>()
 									{
 										@Override
@@ -357,7 +373,7 @@ public class LineChartViewNode extends VBox
 						}
 					},
 					observableArrayList( executionProperty, scrollableLineChart.positionProperty(),
-							scrollableLineChart.getSpan(), poll ) ) );
+							scrollableLineChart.spanProperty(), poll ) ) );
 
 			series.nodeProperty().addListener( new ChangeListener<Node>()
 			{

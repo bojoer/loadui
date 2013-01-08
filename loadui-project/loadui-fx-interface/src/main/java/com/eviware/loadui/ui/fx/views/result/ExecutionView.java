@@ -136,7 +136,7 @@ public class ExecutionView extends Pane
 	// set index to negative number to append menuItem as last item
 	private void addToMenuButton( int index, String label, EventHandler<ActionEvent> handler )
 	{
-		MenuItem item = MenuItemBuilder.create().text( label ).build();
+		MenuItem item = MenuItemBuilder.create().text( label ).id( "menu-" + label ).build();
 		if( index >= 0 )
 			menuButton.getItems().add( index, item );
 		else
