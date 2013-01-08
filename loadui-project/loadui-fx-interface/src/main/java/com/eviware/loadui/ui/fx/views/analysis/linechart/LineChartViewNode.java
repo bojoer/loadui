@@ -148,6 +148,8 @@ public class LineChartViewNode extends VBox
 	@FXML
 	private void initialize()
 	{
+		loadAttributes();
+
 		segmentsList = fx( ofCollection( chartView, LineChartView.SEGMENTS, Segment.class, chartView.getSegments() ) );
 		seriesList = transform( segmentsList, segmentToSeries );
 		segmentViews = transform( segmentsList, segmentToView );
@@ -213,27 +215,9 @@ public class LineChartViewNode extends VBox
 						tickZoomLevelProperty.set( tickLevel );
 					}
 				}
-
-				if( followCheckBox.isSelected() )
-				{
-					setPositionToLeft();
-				}
-
 			}
 
 		} );
-
-		ZoomLevel level;
-		try
-		{
-			level = ZoomLevel.valueOf( chartView.getAttribute( ZOOM_LEVEL_ATTRIBUTE, "SECONDS" ) );
-			log.debug( " ZoomLevel already set to:" + level.toString() );
-		}
-		catch( IllegalArgumentException e )
-		{
-			level = ZoomLevel.SECONDS;
-			log.debug( " New chart - default ZoomLevel:" + level.toString() );
-		}
 
 		zoomMenuButton.selectedProperty().addListener( new ChangeListener<ZoomLevel>()
 		{
@@ -243,8 +227,6 @@ public class LineChartViewNode extends VBox
 				setZoomLevel( newZoomLevel );
 			}
 		} );
-
-		zoomMenuButton.setSelected( level );
 
 		executionProperty.addListener( new InvalidationListener()
 		{
@@ -257,19 +239,34 @@ public class LineChartViewNode extends VBox
 			}
 		} );
 
-		//followCheckBox.selectedProperty().bind( scrollableLineChart.isScrolledToRight() );
+		followCheckBox.selectedProperty().bindBidirectional( scrollableLineChart.scrollbarFollowStateProperty() );
 
-		scrollableLineChart.scrollbarFollowStateProperty().addListener( new InvalidationListener()
+	}
+
+	private void loadAttributes()
+	{
+		ZoomLevel level;
+		try
 		{
+			level = ZoomLevel.valueOf( chartView.getAttribute( ZOOM_LEVEL_ATTRIBUTE, "SECONDS" ) );
+		}
+		catch( IllegalArgumentException e )
+		{
+			level = ZoomLevel.SECONDS;
+		}
+		zoomMenuButton.setSelected( level );
+		log.debug( "Zoomlevel: " + level.toString() );
 
-			@Override
-			public void invalidated( Observable arg0 )
-			{
-				//if( scrollableLineChart.isScrolledToRight().getValue() )
-				followCheckBox.setSelected( scrollableLineChart.scrollbarFollowStateProperty().getValue() );
-
-			}
-		} );
+		Boolean follow;
+		try
+		{
+			follow = Boolean.parseBoolean( chartView.getAttribute( FOLLOW_ATTRIBUTE, "true" ) );
+		}
+		catch( IllegalArgumentException e )
+		{
+			follow = true;
+		}
+		followCheckBox.setSelected( follow );
 
 	}
 
@@ -453,12 +450,6 @@ public class LineChartViewNode extends VBox
 		dialog.show();
 	}
 
-	@FXML
-	public void setPositionToLeft()
-	{
-		scrollableLineChart.setPosition( length.doubleValue() - scrollableLineChart.spanProperty().doubleValue() );
-	}
-
 	private static Collection<StatisticHolder> getStatisticHolders( final Collection<Chart> charts )
 	{
 		Collection<StatisticHolder> holders = new LinkedList<>();
@@ -473,6 +464,6 @@ public class LineChartViewNode extends VBox
 		ZoomLevel tickMode = scrollableLineChart.setZoomLevel( zoomLevel );
 		tickZoomLevelProperty.set( tickMode );
 		chartView.setAttribute( ZOOM_LEVEL_ATTRIBUTE, zoomLevel.name() );
-	}
 
+	}
 }

@@ -23,6 +23,6 @@
 		<Button text="Add Statistic..." onAction="#addStatistic" />
 		<ZoomMenuButton fx:id="zoomMenuButton" text="Zoom"/>
 		<Label  fx:id="timer" text="Not set" />
-		<CheckBox fx:id="followCheckBox" selected="true" text="follow" onAction="#setPositionToLeft" /> 
+		<CheckBox fx:id="followCheckBox" selected="true" text="follow" /> 
 	</HBox>
 </fx:root>

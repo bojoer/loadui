@@ -4,7 +4,6 @@ import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -14,6 +13,8 @@ public class ChartScrollBar extends ScrollBar
 {
 	private DoubleProperty leftPositionProperty = new SimpleDoubleProperty( 0d );
 	private BooleanProperty followState = new SimpleBooleanProperty();
+
+	//private boolean followStateinternal;
 
 	public ChartScrollBar()
 	{
@@ -39,9 +40,42 @@ public class ChartScrollBar extends ScrollBar
 
 				leftPositionProperty.set( leftside );
 
-				if( getVisibleAmount() < getMax() )
+				if( getVisibleAmount() < getMax() && !isDisabled() && followState.get() != ( getValue() == getMax() ) )
 				{
 					followState.set( getValue() == getMax() );
+				}
+
+			}
+		} );
+
+		maxProperty().addListener( new InvalidationListener()
+		{
+
+			@Override
+			public void invalidated( Observable arg0 )
+			{
+				if( followState.getValue() && !isDisabled() )
+				{
+					setToLeftSide();
+				}
+
+			}
+		} );
+
+		//when checkbox is pressed
+		followState.addListener( new InvalidationListener()
+		{
+
+			@Override
+			public void invalidated( Observable arg0 )
+			{
+
+				System.out.println( "FollowState is: " + followState.getValue() );
+
+				// set to true
+				if( followState.getValue() )
+				{
+					setToLeftSide();
 				}
 
 			}
@@ -54,7 +88,7 @@ public class ChartScrollBar extends ScrollBar
 		return leftPositionProperty;
 	}
 
-	public ReadOnlyBooleanProperty followStateProperty()
+	public BooleanProperty followStateProperty()
 	{
 		return followState;
 	}
@@ -63,7 +97,7 @@ public class ChartScrollBar extends ScrollBar
 	{
 		if( position + getVisibleAmount() > getMax() )
 		{
-			double validValue = getMax() - getVisibleAmount() - 1;
+			double validValue = getMax() - getVisibleAmount();
 			position = validValue > 0 ? validValue : 0;
 		}
 		else if( position < 0 )
@@ -80,5 +114,11 @@ public class ChartScrollBar extends ScrollBar
 		double value = -lenght * position / ( getVisibleAmount() - lenght );
 
 		valueProperty().set( value );
+	}
+
+	public void setToLeftSide()
+	{
+		setLeftSidePosition( getMax() - getVisibleAmount() );
+		System.out.println( "LEFTED: " + ( getMax() - getVisibleAmount() ) );
 	}
 }
