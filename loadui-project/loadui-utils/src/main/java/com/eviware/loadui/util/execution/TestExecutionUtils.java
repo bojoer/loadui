@@ -1,4 +1,4 @@
-package com.eviware.loadui.ui.fx.util;
+package com.eviware.loadui.util.execution;
 
 import java.util.List;
 
@@ -72,6 +72,12 @@ public final class TestExecutionUtils
 		return null;
 	}
 
+	public static boolean isExecutionRunning()
+	{
+		List<TestExecution> e = testRunner.getExecutionQueue();
+		return e.size() > 0 && !e.get( 0 ).isAborted();
+	}
+
 	private static TestExecution popCurrentExecution()
 	{
 		List<TestExecution> queuedExecutions = Lists.newArrayList( testRunner.getExecutionQueue() );
@@ -100,4 +106,5 @@ public final class TestExecutionUtils
 			execution.abort( "Aborting queued execution" );
 		}
 	}
+
 }

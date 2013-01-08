@@ -9,12 +9,9 @@ import static javafx.beans.binding.Bindings.bindContent;
 import static javafx.beans.binding.Bindings.createLongBinding;
 import static javafx.collections.FXCollections.observableArrayList;
 
-import java.io.File;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.concurrent.Callable;
-
-import javax.imageio.ImageIO;
 
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
@@ -26,21 +23,17 @@ import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.SnapshotResult;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
-import javafx.scene.image.WritableImage;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.LineBuilder;
-import javafx.util.Callback;
 
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatter;
@@ -155,6 +148,8 @@ public class LineChartViewNode extends VBox
 	@FXML
 	private void initialize()
 	{
+		loadAttributes();
+
 		segmentsList = fx( ofCollection( chartView, LineChartView.SEGMENTS, Segment.class, chartView.getSegments() ) );
 		seriesList = transform( segmentsList, segmentToSeries );
 		segmentViews = transform( segmentsList, segmentToView );
@@ -220,27 +215,9 @@ public class LineChartViewNode extends VBox
 						tickZoomLevelProperty.set( tickLevel );
 					}
 				}
-
-				if( followCheckBox.isSelected() )
-				{
-					scrollableLineChart.setPosition( length.doubleValue() - scrollableLineChart.spanProperty().doubleValue() );
-				}
-
 			}
 
 		} );
-
-		ZoomLevel level;
-		try
-		{
-			level = ZoomLevel.valueOf( chartView.getAttribute( ZOOM_LEVEL_ATTRIBUTE, "SECONDS" ) );
-			log.debug( " ZoomLevel already set to:" + level.toString() );
-		}
-		catch( IllegalArgumentException e )
-		{
-			level = ZoomLevel.SECONDS;
-			log.debug( " New chart - default ZoomLevel:" + level.toString() );
-		}
 
 		zoomMenuButton.selectedProperty().addListener( new ChangeListener<ZoomLevel>()
 		{
@@ -250,8 +227,6 @@ public class LineChartViewNode extends VBox
 				setZoomLevel( newZoomLevel );
 			}
 		} );
-
-		zoomMenuButton.setSelected( level );
 
 		executionProperty.addListener( new InvalidationListener()
 		{
@@ -263,6 +238,35 @@ public class LineChartViewNode extends VBox
 				scrollableLineChart.setPosition( 0d );
 			}
 		} );
+
+		followCheckBox.selectedProperty().bindBidirectional( scrollableLineChart.scrollbarFollowStateProperty() );
+
+	}
+
+	private void loadAttributes()
+	{
+		ZoomLevel level;
+		try
+		{
+			level = ZoomLevel.valueOf( chartView.getAttribute( ZOOM_LEVEL_ATTRIBUTE, "SECONDS" ) );
+		}
+		catch( IllegalArgumentException e )
+		{
+			level = ZoomLevel.SECONDS;
+		}
+		zoomMenuButton.setSelected( level );
+		log.debug( "Zoomlevel: " + level.toString() );
+
+		Boolean follow;
+		try
+		{
+			follow = Boolean.parseBoolean( chartView.getAttribute( FOLLOW_ATTRIBUTE, "true" ) );
+		}
+		catch( IllegalArgumentException e )
+		{
+			follow = true;
+		}
+		followCheckBox.setSelected( follow );
 
 	}
 

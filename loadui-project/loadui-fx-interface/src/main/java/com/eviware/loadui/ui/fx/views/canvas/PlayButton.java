@@ -20,7 +20,7 @@ import com.eviware.loadui.api.execution.TestExecution;
 import com.eviware.loadui.api.execution.TestExecutionTask;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.SceneItem;
-import com.eviware.loadui.ui.fx.util.TestExecutionUtils;
+import com.eviware.loadui.util.execution.TestExecutionUtils;
 
 public class PlayButton extends StackPane
 {

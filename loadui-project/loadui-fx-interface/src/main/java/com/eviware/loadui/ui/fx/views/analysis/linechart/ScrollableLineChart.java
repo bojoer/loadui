@@ -1,30 +1,23 @@
 package com.eviware.loadui.ui.fx.views.analysis.linechart;
 
-import java.io.File;
-
-import javax.imageio.ImageIO;
-
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.ReadOnlyLongProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.StringProperty;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
-import javafx.scene.SnapshotResult;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
-import javafx.scene.image.WritableImage;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.util.Callback;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.charting.line.ZoomLevel;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
-import com.eviware.loadui.ui.fx.util.NodeUtils;
+import com.eviware.loadui.util.execution.TestExecutionUtils;
 
 public class ScrollableLineChart extends HBox
 {
@@ -89,6 +82,19 @@ public class ScrollableLineChart extends HBox
 
 		xScale.setValue( ( 1000.0 * zoomLevel.getInterval() ) / zoomLevel.getUnitWidth() );
 
+		// resets the position after the span has changed
+		if( scrollBar.followStateProperty().get() && TestExecutionUtils.isExecutionRunning() )
+		{
+
+			setPositionToLeftSide();
+			log.debug( "Set position to: " + position.get() + " (following)" );
+		}
+		else
+		{
+			scrollBar.setLeftSidePosition( position.doubleValue() );
+			log.debug( "Set position to: " + position.get() );
+		}
+
 		setTickMode( zoomLevel );
 
 		log.debug( "ZoomLevel set to: " + zoomLevel.name() + " xScale is now: " + xScale.getValue() );
@@ -104,8 +110,6 @@ public class ScrollableLineChart extends HBox
 		// major tick interval
 		xAxis.setTickUnit( ( 1000.0 * level.getInterval() * minorTickCount ) );
 		xAxis.setMinorTickCount( minorTickCount == 1 ? 0 : minorTickCount );
-
-		scrollBar.setLeftSidePosition( position.doubleValue() );
 
 		log.debug( "TickMode set to: " + level.name() );
 
@@ -154,6 +158,16 @@ public class ScrollableLineChart extends HBox
 	public StringProperty titleProperty()
 	{
 		return lineChart.titleProperty();
+	}
+
+	public BooleanProperty scrollbarFollowStateProperty()
+	{
+		return scrollBar.followStateProperty();
+	}
+
+	public void setPositionToLeftSide()
+	{
+		scrollBar.setToLeftSide();
 	}
 
 }
