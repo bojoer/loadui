@@ -71,7 +71,7 @@ public class AnalysisView extends StackPane
 		}
 	};
 
-	private final Function<StatisticPage, Tab> STATISTIC_PAGE_TO_TAB = new Function<StatisticPage, Tab>()
+	private final Function<StatisticPage, Tab> statisticsPageToTab = new Function<StatisticPage, Tab>()
 	{
 		@Override
 		@Nullable
@@ -152,7 +152,7 @@ public class AnalysisView extends StackPane
 
 			final ObservableList<StatisticPage> statisticPages = ofCollection( pagesObject );
 
-			final ObservableList<Tab> tabs = transform( fx( statisticPages ), STATISTIC_PAGE_TO_TAB );
+			final ObservableList<Tab> tabs = transform( fx( statisticPages ), statisticsPageToTab );
 
 			plusButton = TabBuilder.create().id( "plus-button" ).text( "+" ).closable( false )
 					.onSelectionChanged( createNewTab ).styleClass( "create-new-button" ).build();

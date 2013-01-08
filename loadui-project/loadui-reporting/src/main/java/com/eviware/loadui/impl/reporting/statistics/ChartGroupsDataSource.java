@@ -29,11 +29,11 @@ import net.sf.jasperreports.engine.data.JRAbstractBeanDataSource;
 public class ChartGroupsDataSource extends JRAbstractBeanDataSource
 {
 	private final Collection<ChartGroup> chartGroups;
-	private final Map<Object, Image> charts;
+	private final Map<? extends Object, Image> charts;
 	private Iterator<ChartGroup> chartGroupIterator;
 	private ChartGroup chartGroup;
 
-	public ChartGroupsDataSource( Collection<ChartGroup> chartGroups, Map<Object, Image> charts )
+	public ChartGroupsDataSource( Collection<ChartGroup> chartGroups, Map<? extends Object, Image> charts )
 	{
 		super( true );
 

@@ -36,14 +36,14 @@ public class ExecutionDataSource extends JRAbstractBeanDataSource
 	private final String label;
 	private final Execution execution;
 	private final Collection<StatisticPage> pages;
-	private final Map<Object, Image> charts;
+	private final Map<? extends Object, Image> charts;
 	private StatisticPage page;
 	private Iterator<StatisticPage> iterator;
 	private final long startTime;
 	private final long endTime;
 
 	public ExecutionDataSource( String label, Execution execution, Collection<StatisticPage> pages,
-			Map<Object, Image> charts )
+			Map<? extends Object, Image> charts )
 	{
 		super( true );
 
@@ -65,28 +65,31 @@ public class ExecutionDataSource extends JRAbstractBeanDataSource
 	@Override
 	public Object getFieldValue( JRField field ) throws JRException
 	{
-		String fieldName = field.getName();
-		if( fieldName.equals( "loaduiVersion" ) )
+		switch( field.getName() )
+		{
+		case "loaduiVersion" :
 			return LoadUI.VERSION;
-		if( fieldName.equals( "currentTime" ) )
+		case "currentTime" :
 			return date.toString();
-		if( fieldName.equals( "projectName" ) )
+		case "projectName" :
 			return label;
-		if( fieldName.equals( "pageName" ) )
+		case "pageName" :
 			return page.getLabel();
-		if( fieldName.equals( "startTime" ) )
+		case "startTime" :
 			return new Date( startTime ).toString();
-		if( fieldName.equals( "endTime" ) )
+		case "endTime" :
 			return new Date( endTime ).toString();
-		if( fieldName.equals( "duration" ) )
+		case "duration" :
 			return FormattingUtils.formatTime( Math.round( ( endTime - startTime ) / 1000.0 ) );
-		if( fieldName.equals( "totalRequests" ) )
+		case "totalRequests" :
 			return execution.getAttribute( "totalRequests", "" );
-		if( fieldName.equals( "totalFailures" ) )
+		case "totalFailures" :
 			return execution.getAttribute( "totalFailures", "" );
-		if( fieldName.equals( "chartGroup" ) )
+		case "chartGroup" :
 			return new ChartGroupsDataSource( page.getChildren(), charts );
-		return fieldName;
+		default :
+			return field.getName();
+		}
 	}
 
 	@Override

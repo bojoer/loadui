@@ -6,5 +6,5 @@
 
 	<osgi:service interface="com.eviware.loadui.api.reporting.ReportingManager" ref="reportingManager" />
 	
-	<osgi:service interface="com.eviware.loadui.api.charting.line.LineChart$Factory" ref="lineChart.Factory" />
+	<!--  <osgi:service interface="com.eviware.loadui.api.charting.line.LineChart$Factory" ref="lineChart.Factory" />  -->
 </beans>

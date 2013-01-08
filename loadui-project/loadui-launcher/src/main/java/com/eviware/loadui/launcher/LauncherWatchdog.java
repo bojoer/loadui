@@ -15,11 +15,31 @@
  */
 package com.eviware.loadui.launcher;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.logging.Logger;
+
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBuilder;
+import javafx.scene.layout.HBoxBuilder;
+import javafx.scene.layout.VBoxBuilder;
+import javafx.scene.text.Text;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.launch.Framework;
+
+import com.eviware.loadui.launcher.util.ErrorHandler;
+import com.sun.javafx.PlatformUtil;
 
 public class LauncherWatchdog implements Runnable
 {
@@ -77,10 +97,11 @@ public class LauncherWatchdog implements Runnable
 
 				if( System.getProperty( "noclose" ) == null )
 				{
-					System.exit( -1 );
+					ErrorHandler.promptRestart();
 				}
 				break;
 			}
 		}
 	}
+
 }

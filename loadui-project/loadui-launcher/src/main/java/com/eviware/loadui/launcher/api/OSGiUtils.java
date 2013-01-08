@@ -30,6 +30,12 @@ public class OSGiUtils
 
 	public static void shutdown( int code )
 	{
+		stopFramework();
+		System.exit( code );
+	}
+
+	private static void stopFramework()
+	{
 		if( framework != null )
 		{
 			try
@@ -62,11 +68,33 @@ public class OSGiUtils
 				e.printStackTrace();
 			}
 		}
-		System.exit( code );
 	}
 
 	public static void setFramework( Framework framework )
 	{
 		OSGiUtils.framework = framework;
+	}
+
+	public static void restart()
+	{
+		stopFramework();
+		try
+		{
+			framework.waitForStop( 0 );
+		}
+		catch( InterruptedException e1 )
+		{
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		try
+		{
+			framework.start();
+		}
+		catch( BundleException e )
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

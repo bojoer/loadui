@@ -33,12 +33,12 @@ import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
 
 public class ChartGroupDataSource extends JRAbstractBeanDataSource
 {
-	private final Map<Object, Image> charts;
+	private final Map<? extends Object, Image> charts;
 	private final List<ChartView> chartViews = new ArrayList<>();
 	private ChartView currentChartView;
 	private Iterator<ChartView> chartViewIterator;
 
-	public ChartGroupDataSource( ChartGroup chartGroup, Map<Object, Image> charts )
+	public ChartGroupDataSource( ChartGroup chartGroup, Map<? extends Object, Image> charts )
 	{
 		super( true );
 
@@ -51,7 +51,7 @@ public class ChartGroupDataSource extends JRAbstractBeanDataSource
 			if( charts.containsKey( chartView ) )
 				chartViews.add( chartView );
 		}
-		ArrayList<String> sources = new ArrayList<>();
+		List<String> sources = new ArrayList<>();
 		sources.addAll( chartGroup.getSources() );
 		Collections.sort( sources );
 		for( String source : sources )
@@ -73,14 +73,17 @@ public class ChartGroupDataSource extends JRAbstractBeanDataSource
 	@Override
 	public Object getFieldValue( JRField field ) throws JRException
 	{
-		String fieldName = field.getName();
-		if( fieldName.equals( "chartName" ) )
+		switch( field.getName() )
+		{
+		case "chartName" :
 			return currentChartView.getLabel();
-		else if( fieldName.equals( "chart" ) )
+		case "chart" :
 			return charts.get( currentChartView );
-		else if( fieldName.equals( "legend" ) )
+		case "legend" :
 			return new ChartLegendDataSource( ( LineChartView )currentChartView );
-		return null;
+		default :
+			return null;
+		}
 	}
 
 	@Override

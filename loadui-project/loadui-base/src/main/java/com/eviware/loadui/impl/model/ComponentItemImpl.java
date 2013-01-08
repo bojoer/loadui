@@ -15,6 +15,7 @@
  */
 package com.eviware.loadui.impl.model;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EventObject;

@@ -1,18 +1,24 @@
 package com.eviware.loadui.ui.fx.util;
 
+import java.io.File;
 import java.util.List;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.beans.value.ObservableValue;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.SnapshotResult;
+import javafx.scene.image.WritableImage;
+import javafx.util.Callback;
 
 import javax.annotation.Nonnull;
+import javax.imageio.ImageIO;
 
 public final class NodeUtils
 {
