@@ -40,7 +40,7 @@ import com.eviware.loadui.api.statistics.model.chart.ChartView;
 import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.ui.fx.util.ObservableBase;
-import com.eviware.loadui.ui.fx.views.analysis.LineChartViewNode;
+import com.eviware.loadui.ui.fx.views.analysis.linechart.LineChartViewNode;
 import com.google.common.collect.Maps;
 
 public class LineChartUtils
