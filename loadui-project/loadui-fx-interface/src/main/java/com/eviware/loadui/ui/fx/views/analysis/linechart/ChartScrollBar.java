@@ -2,14 +2,18 @@ package com.eviware.loadui.ui.fx.views.analysis.linechart;
 
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyDoubleProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.control.ScrollBar;
 
 public class ChartScrollBar extends ScrollBar
 {
 	private DoubleProperty leftPositionProperty = new SimpleDoubleProperty( 0d );
+	private BooleanProperty followState = new SimpleBooleanProperty();
 
 	public ChartScrollBar()
 	{
@@ -34,6 +38,12 @@ public class ChartScrollBar extends ScrollBar
 				double leftside = getValue() - ( getVisibleAmount() * percentage );
 
 				leftPositionProperty.set( leftside );
+
+				if( getVisibleAmount() < getMax() )
+				{
+					followState.set( getValue() == getMax() );
+				}
+
 			}
 		} );
 
@@ -44,12 +54,21 @@ public class ChartScrollBar extends ScrollBar
 		return leftPositionProperty;
 	}
 
+	public ReadOnlyBooleanProperty followStateProperty()
+	{
+		return followState;
+	}
+
 	public void setLeftSidePosition( double position )
 	{
 		if( position + getVisibleAmount() > getMax() )
 		{
 			double validValue = getMax() - getVisibleAmount() - 1;
 			position = validValue > 0 ? validValue : 0;
+		}
+		else if( position < 0 )
+		{
+			position = 0;
 		}
 
 		double lenght = getMax() - getMin();

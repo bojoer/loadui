@@ -2,6 +2,7 @@ package com.eviware.loadui.ui.fx.views.analysis.linechart;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.LongProperty;
+import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyLongProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.StringProperty;
@@ -145,6 +146,11 @@ public class ScrollableLineChart extends HBox
 	public StringProperty titleProperty()
 	{
 		return lineChart.titleProperty();
+	}
+
+	public ReadOnlyBooleanProperty scrollbarFollowStateProperty()
+	{
+		return scrollBar.followStateProperty();
 	}
 
 }

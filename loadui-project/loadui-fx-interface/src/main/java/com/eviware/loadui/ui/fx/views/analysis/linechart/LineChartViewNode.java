@@ -216,7 +216,7 @@ public class LineChartViewNode extends VBox
 
 				if( followCheckBox.isSelected() )
 				{
-					scrollableLineChart.setPosition( length.doubleValue() - scrollableLineChart.spanProperty().doubleValue() );
+					setPositionToLeft();
 				}
 
 			}
@@ -254,6 +254,20 @@ public class LineChartViewNode extends VBox
 			{
 				//sets the position to 0 when there is a new excecution
 				scrollableLineChart.setPosition( 0d );
+			}
+		} );
+
+		//followCheckBox.selectedProperty().bind( scrollableLineChart.isScrolledToRight() );
+
+		scrollableLineChart.scrollbarFollowStateProperty().addListener( new InvalidationListener()
+		{
+
+			@Override
+			public void invalidated( Observable arg0 )
+			{
+				//if( scrollableLineChart.isScrolledToRight().getValue() )
+				followCheckBox.setSelected( scrollableLineChart.scrollbarFollowStateProperty().getValue() );
+
 			}
 		} );
 
@@ -437,6 +451,12 @@ public class LineChartViewNode extends VBox
 			}
 		} );
 		dialog.show();
+	}
+
+	@FXML
+	public void setPositionToLeft()
+	{
+		scrollableLineChart.setPosition( length.doubleValue() - scrollableLineChart.spanProperty().doubleValue() );
 	}
 
 	private static Collection<StatisticHolder> getStatisticHolders( final Collection<Chart> charts )
