@@ -29,6 +29,25 @@ public class JavaFXActivator implements BundleActivator
 			{
 				//This is needed for custom controls to be able to load their skins from this bundle.
 				//With multiple bundles this could be problematic, and should be replaced by some classloader that delegates to multiple bundles.
+
+				System.out.println("JavaFXActivator: loading Swing classes so they are visible by the licensing framework.");
+				
+				// Instantiate objects to fix Classloading problems in tablelog. Do not remove.
+				//new org.jdesktop.swingx.JXTable();
+				new javax.swing.JScrollPane();
+				new javax.swing.JRadioButton();
+				new javax.swing.JTextField();
+				new javax.swing.JComboBox<String>();
+				new javax.swing.JToolTip();
+				new javax.swing.JOptionPane();
+				new javax.swing.JEditorPane();
+				new javax.swing.JProgressBar();
+				new javax.swing.JFileChooser();
+				new javax.swing.JToggleButton();
+				new javax.swing.JCheckBox();
+				new javax.swing.JRootPane();
+				new javax.swing.JFormattedTextField();
+
 				Thread.currentThread().setContextClassLoader( bundleClassLoader );
 			}
 		} );
