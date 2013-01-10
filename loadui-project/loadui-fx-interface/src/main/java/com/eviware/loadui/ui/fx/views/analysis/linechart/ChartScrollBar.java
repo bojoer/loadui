@@ -9,6 +9,8 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.control.ScrollBar;
 
+import com.eviware.loadui.util.execution.TestExecutionUtils;
+
 public class ChartScrollBar extends ScrollBar
 {
 	private DoubleProperty leftPositionProperty = new SimpleDoubleProperty( 0d );
@@ -26,21 +28,11 @@ public class ChartScrollBar extends ScrollBar
 			@Override
 			public void invalidated( Observable arg0 )
 			{
-				// length of the axis
-				double lenght = getMax() - getMin();
-				// where the current value is on the axis in percent
-				double percentage = getValue() / lenght;
-				/*
-				 * Equation to get the left point of the scrollBar "thumb". The
-				 * value position in the axis reflects where it is on the "thumb".
-				 * This equation just subtracts the the length it is inside the
-				 * "thumb" to get the left point position of the "thumb"
-				 */
-				double leftside = getValue() - ( getVisibleAmount() * percentage );
 
-				leftPositionProperty.set( leftside );
+				updateLeftSide();
 
-				if( getVisibleAmount() < getMax() && !isDisabled() && followState.get() != ( getValue() == getMax() ) )
+				if( getVisibleAmount() < getMax() && !isDisabled()
+						&& followState.get() != ( getValue() == getMax() && TestExecutionUtils.isExecutionRunning() ) )
 				{
 					followState.set( getValue() == getMax() );
 				}
@@ -70,8 +62,6 @@ public class ChartScrollBar extends ScrollBar
 			public void invalidated( Observable arg0 )
 			{
 
-				System.out.println( "FollowState is: " + followState.getValue() );
-
 				// set to true
 				if( followState.getValue() )
 				{
@@ -80,6 +70,23 @@ public class ChartScrollBar extends ScrollBar
 
 			}
 		} );
+
+	}
+
+	public void updateLeftSide()
+	{
+		double lenght = getMax() - getMin();
+		// where the current value is on the axis in percent
+		double percentage = getValue() / lenght;
+		/*
+		 * Equation to get the left point of the scrollBar "thumb". The value
+		 * position in the axis reflects where it is on the "thumb". This equation
+		 * just subtracts the the length it is inside the "thumb" to get the left
+		 * point position of the "thumb"
+		 */
+		double leftside = getValue() - ( getVisibleAmount() * percentage );
+
+		leftPositionProperty.set( leftside );
 
 	}
 
@@ -106,6 +113,7 @@ public class ChartScrollBar extends ScrollBar
 		}
 
 		double lenght = getMax() - getMin();
+
 		/*
 		 * This is another version of the equation to in the constructor to get
 		 * the correct value from an desired position of the left point on the
@@ -119,6 +127,5 @@ public class ChartScrollBar extends ScrollBar
 	public void setToLeftSide()
 	{
 		setLeftSidePosition( getMax() - getVisibleAmount() );
-		System.out.println( "LEFTED: " + ( getMax() - getVisibleAmount() ) );
 	}
 }

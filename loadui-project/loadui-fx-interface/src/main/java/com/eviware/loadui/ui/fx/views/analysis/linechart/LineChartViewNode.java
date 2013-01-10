@@ -42,6 +42,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.charting.line.ZoomLevel;
+import com.eviware.loadui.api.execution.Phase;
+import com.eviware.loadui.api.execution.TestExecution;
+import com.eviware.loadui.api.execution.TestExecutionTask;
+import com.eviware.loadui.api.execution.TestRunner;
 import com.eviware.loadui.api.statistics.DataPoint;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticVariable;
@@ -58,6 +62,8 @@ import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.Properties;
 import com.eviware.loadui.ui.fx.views.analysis.AddStatisticDialog;
 import com.eviware.loadui.ui.fx.views.analysis.Selection;
+import com.eviware.loadui.util.BeanInjector;
+import com.eviware.loadui.util.execution.TestExecutionUtils;
 import com.google.common.base.Function;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -96,6 +102,25 @@ public class LineChartViewNode extends VBox
 				}
 			} );
 
+	private final TestExecutionTask executionTask = new TestExecutionTask()
+	{
+
+		@Override
+		public void invoke( TestExecution execution, Phase phase )
+		{
+			if( phase == Phase.START )
+			{
+				followCheckBox.setDisable( false );
+			}
+			else if( phase == Phase.STOP )
+			{
+				followCheckBox.setDisable( true );
+
+			}
+
+		}
+	};
+
 	private final Function<Segment, XYChart.Series<Number, Number>> segmentToSeries = new SegmentToSeriesFunction();
 	private final Function<Segment, SegmentView> segmentToView = new SegmentToViewFunction();
 
@@ -128,6 +153,8 @@ public class LineChartViewNode extends VBox
 			Observable poll )
 	{
 		log.debug( "new LineChartViewNode created! " );
+
+		BeanInjector.getBean( TestRunner.class ).registerTask( executionTask, Phase.START, Phase.STOP );
 
 		this.executionProperty = executionProperty;
 		this.chartView = chartView;
@@ -169,17 +196,6 @@ public class LineChartViewNode extends VBox
 			}
 		} );
 
-		tickZoomLevelProperty.addListener( new InvalidationListener()
-		{
-
-			@Override
-			public void invalidated( Observable arg0 )
-			{
-				scrollableLineChart.setTickMode( tickZoomLevelProperty.get() );
-
-			}
-		} );
-
 		scrollableLineChart.getSegments().getChildren().addListener( new InvalidationListener()
 		{
 			@Override
@@ -213,6 +229,7 @@ public class LineChartViewNode extends VBox
 					if( tickLevel != tickZoomLevelProperty.get() )
 					{
 						tickZoomLevelProperty.set( tickLevel );
+						scrollableLineChart.setTickMode( tickLevel );
 					}
 				}
 			}
@@ -234,11 +251,11 @@ public class LineChartViewNode extends VBox
 			@Override
 			public void invalidated( Observable arg0 )
 			{
-				//sets the position to 0 when there is a new excecution
+				//sets the position to 0 when there is a new execution
 				scrollableLineChart.setPosition( 0d );
 			}
 		} );
-
+		followCheckBox.setDisable( !TestExecutionUtils.isExecutionRunning() );
 		followCheckBox.selectedProperty().bindBidirectional( scrollableLineChart.scrollbarFollowStateProperty() );
 
 	}
@@ -464,6 +481,7 @@ public class LineChartViewNode extends VBox
 		ZoomLevel tickMode = scrollableLineChart.setZoomLevel( zoomLevel );
 		tickZoomLevelProperty.set( tickMode );
 		chartView.setAttribute( ZOOM_LEVEL_ATTRIBUTE, zoomLevel.name() );
+
 	}
 
 	public Node getLineChart()
