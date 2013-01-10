@@ -60,9 +60,11 @@ public class ScrollableLineChart extends HBox
 	 */
 	public ZoomLevel setZoomLevel( ZoomLevel zoomLevel )
 	{
+
 		if( zoomLevel.equals( ZoomLevel.ALL ) )
 		{
 			zoomLevel = ZoomLevel.forSpan( scrollBar.maxProperty().longValue() / 1000 );
+			xScale.setValue( ( 1000.0 * zoomLevel.getInterval() ) / zoomLevel.getUnitWidth() );
 			scrollBar.setDisable( true );
 
 			xAxis.setAutoRanging( true );
@@ -72,6 +74,7 @@ public class ScrollableLineChart extends HBox
 		}
 		else
 		{
+			xScale.setValue( ( 1000.0 * zoomLevel.getInterval() ) / zoomLevel.getUnitWidth() );
 			scrollBar.setDisable( false );
 
 			xAxis.setAutoRanging( false );
@@ -80,27 +83,20 @@ public class ScrollableLineChart extends HBox
 			shownSpan.bind( xAxis.widthProperty().multiply( xScale ) );
 		}
 
-		xScale.setValue( ( 1000.0 * zoomLevel.getInterval() ) / zoomLevel.getUnitWidth() );
-
-		// resets the position after the span has changed
-		if( scrollBar.followStateProperty().get() && TestExecutionUtils.isExecutionRunning() )
-		{
-
-			setPositionToLeftSide();
-			log.debug( "Set position to: " + position.get() + " (following)" );
-		}
-		else
-		{
-			scrollBar.setLeftSidePosition( position.doubleValue() );
-			log.debug( "Set position to: " + position.get() );
-		}
-
 		setTickMode( zoomLevel );
 
 		log.debug( "ZoomLevel set to: " + zoomLevel.name() + " xScale is now: " + xScale.getValue() );
 
-		return zoomLevel;
+		if( scrollBar.followStateProperty().get() && TestExecutionUtils.isExecutionRunning() )
+		{
+			setPositionToLeftSide();
+			log.debug( "Set position to: " + position.get() + " (following)" );
+		}
 
+		// recalculates the position after the span has changed
+		scrollBar.updateLeftSide();
+
+		return zoomLevel;
 	}
 
 	public void setTickMode( ZoomLevel level )
