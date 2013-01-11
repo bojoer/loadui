@@ -51,11 +51,6 @@
 		</dependency>
 		<dependency>
 			<groupId>com.eviware.loadui</groupId>
-			<artifactId>loadui-socket-client</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.eviware.loadui</groupId>
 			<artifactId>loadui-fx-interface</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
