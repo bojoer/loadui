@@ -22,18 +22,23 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
+import javafx.scene.chart.XYChart.Data;
 import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.LineBuilder;
+import javafx.scene.shape.Path;
+import javafx.scene.shape.PathElement;
 
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatter;
@@ -58,11 +63,14 @@ import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.Properties;
 import com.eviware.loadui.ui.fx.views.analysis.AddStatisticDialog;
 import com.eviware.loadui.ui.fx.views.analysis.Selection;
+import com.eviware.loadui.ui.fx.views.analysis.reporting.LineChartUtils;
+import com.eviware.loadui.util.statistics.ChartUtils;
 import com.google.common.base.Function;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
 public class LineChartViewNode extends VBox
 {
@@ -146,8 +154,10 @@ public class LineChartViewNode extends VBox
 	}
 
 	@FXML
-	private void initialize()
+	public void initialize()
 	{
+		log.debug( "INITIALIZE LineChartViewNode STARTED" );
+
 		loadAttributes();
 
 		segmentsList = fx( ofCollection( chartView, LineChartView.SEGMENTS, Segment.class, chartView.getSegments() ) );
@@ -160,7 +170,7 @@ public class LineChartViewNode extends VBox
 		scrollableLineChart.positionProperty().addListener( new InvalidationListener()
 		{
 			@Override
-			public void invalidated( Observable arg0 )
+			public void invalidated( Observable _ )
 			{
 				long millis = ( long )scrollableLineChart.getPosition();
 				Period period = new Period( millis );
@@ -176,7 +186,6 @@ public class LineChartViewNode extends VBox
 			public void invalidated( Observable arg0 )
 			{
 				scrollableLineChart.setTickMode( tickZoomLevelProperty.get() );
-
 			}
 		} );
 
@@ -188,9 +197,10 @@ public class LineChartViewNode extends VBox
 				int i = 0;
 				for( Series<?, ?> series : seriesList )
 				{
-					segmentViews.get( i ).setColor( seriesToColor( series ) );
+					segmentViews.get( i ).setColor( ChartUtils.lineToColor( series, seriesList ) );
 					if( segmentViews.get( i ) instanceof EventSegmentView )
-						eventSeriesStyles.getUnchecked( series ).set( "-fx-stroke: " + seriesToColor( series ) + ";" );
+						eventSeriesStyles.getUnchecked( series ).set(
+								"-fx-stroke: " + ChartUtils.lineToColor( series, seriesList ) + ";" );
 
 					i++ ;
 				}
@@ -255,6 +265,7 @@ public class LineChartViewNode extends VBox
 			level = ZoomLevel.SECONDS;
 		}
 		zoomMenuButton.setSelected( level );
+
 		log.debug( "Zoomlevel: " + level.toString() );
 
 		Boolean follow;
@@ -268,33 +279,7 @@ public class LineChartViewNode extends VBox
 		}
 		followCheckBox.setSelected( follow );
 
-	}
-
-	private String seriesToColor( Series<?, ?> series )
-	{
-		int seriesOrder = seriesList.indexOf( series );
-
-		switch( seriesOrder % 8 )
-		{
-		case 0 :
-			return "#f9d900";
-		case 1 :
-			return "#a9e200";
-		case 2 :
-			return "#22bad9";
-		case 3 :
-			return "#0181e2";
-		case 4 :
-			return "#2f357f";
-		case 5 :
-			return "#860061";
-		case 6 :
-			return "#c62b00";
-		case 7 :
-			return "#ff5700";
-		}
-
-		throw new RuntimeException( "This is mathematically impossible!" );
+		log.debug( "INITIALIZE LineChartViewNode DONE" );
 	}
 
 	private final class SegmentToSeriesFunction implements Function<Segment, XYChart.Series<Number, Number>>
@@ -304,8 +289,7 @@ public class LineChartViewNode extends VBox
 		{
 			if( segment instanceof LineSegment )
 				return lineSegmentToSeries( ( LineSegment )segment );
-			else
-				return eventSegmentToSeries( ( TestEventSegment )segment );
+			return eventSegmentToSeries( ( TestEventSegment )segment );
 		}
 
 		private Series<Number, Number> lineSegmentToSeries( final LineSegment segment )
@@ -459,14 +443,14 @@ public class LineChartViewNode extends VBox
 		return holders;
 	}
 
-	private void setZoomLevel( ZoomLevel zoomLevel )
+	public void setZoomLevel( ZoomLevel zoomLevel )
 	{
 		ZoomLevel tickMode = scrollableLineChart.setZoomLevel( zoomLevel );
 		tickZoomLevelProperty.set( tickMode );
 		chartView.setAttribute( ZOOM_LEVEL_ATTRIBUTE, zoomLevel.name() );
 	}
 
-	public Node getLineChart()
+	public LineChart<Number, Number> getLineChart()
 	{
 		return scrollableLineChart.getLineChart();
 	}

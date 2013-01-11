@@ -27,6 +27,7 @@ import net.sf.jasperreports.engine.data.JRAbstractBeanDataSource;
 import com.eviware.loadui.api.charting.ChartNamePrettifier;
 import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
 import com.eviware.loadui.api.statistics.model.chart.line.LineSegment;
+import com.eviware.loadui.util.statistics.ChartUtils;
 import com.google.common.collect.Iterators;
 
 public class ChartLegendDataSource extends JRAbstractBeanDataSource
@@ -75,7 +76,9 @@ public class ChartLegendDataSource extends JRAbstractBeanDataSource
 		if( fieldName.equals( "color" ) )
 		{
 			BufferedImage image = new BufferedImage( 12, 4, BufferedImage.TYPE_INT_RGB );
-			Color color = Color.decode( lineSegment.getAttribute( "color", "#000000" ) );
+
+			Color color = Color.decode( ChartUtils.lineToColor( lineSegment, chartView.getSegments() ) );
+			//			Color color = Color.decode( lineSegment.getAttribute( "color", "#000000" ) );
 			Graphics2D g = image.createGraphics();
 			g.setBackground( color );
 			g.clearRect( 0, 0, 12, 4 );
