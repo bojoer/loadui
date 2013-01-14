@@ -92,7 +92,7 @@ public class StatisticsView extends StackPane
 							currentExecution.setValue( ( Execution )event.getArg() );
 						}
 
-						AnalysisView analysisView = new AnalysisView( project, recentExecutions, poll );
+						AnalysisView analysisView = new AnalysisView( project, recentExecutions, archivedExecutions, poll );
 						analysisView.currentExecutionProperty().bind( currentExecution );
 						getChildren().setAll( analysisView );
 						event.consume();

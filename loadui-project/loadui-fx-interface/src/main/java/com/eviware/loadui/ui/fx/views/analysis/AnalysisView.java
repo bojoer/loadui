@@ -77,7 +77,7 @@ public class AnalysisView extends StackPane
 		@Nullable
 		public StatisticTab apply( @Nullable StatisticPage page )
 		{
-			return new StatisticTab( page, currentExecution, project, poll );
+			return new StatisticTab( page, currentExecution, comparedExecution, project, poll );
 		}
 	};
 
@@ -91,10 +91,12 @@ public class AnalysisView extends StackPane
 	private AnalysisToolBox toolBox;
 
 	private final ProjectItem project;
-	private final ObservableList<Execution> executionList;
+	private final ObservableList<Execution> recentExecutionList;
+	private final ObservableList<Execution> archivedExecutionList;
 	private final Observable poll;
 
 	private final Property<Execution> currentExecution = new SimpleObjectProperty<>( this, "currentExecution" );
+	private final Property<Execution> comparedExecution = new SimpleObjectProperty<>( this, "comparedExecution" );
 
 	private Tab plusButton;
 
@@ -117,10 +119,12 @@ public class AnalysisView extends StackPane
 		return currentExecution.getValue();
 	}
 
-	public AnalysisView( ProjectItem project, ObservableList<Execution> executionList, Observable poll )
+	public AnalysisView( ProjectItem project, ObservableList<Execution> recentExecutionList,
+			ObservableList<Execution> archivedExecutionList, Observable poll )
 	{
 		this.project = project;
-		this.executionList = executionList;
+		this.recentExecutionList = recentExecutionList;
+		this.archivedExecutionList = archivedExecutionList;
 		this.poll = poll;
 
 		FXMLUtils.load( this );
@@ -199,8 +203,15 @@ public class AnalysisView extends StackPane
 		}
 	}
 
+	@FXML
 	public void close()
 	{
 		AnalysisView.this.fireEvent( IntentEvent.create( IntentEvent.INTENT_CLOSE, getCurrentExecution() ) );
+	}
+
+	@FXML
+	public void compare()
+	{
+		comparedExecution.setValue( recentExecutionList.get( 0 ) );
 	}
 }

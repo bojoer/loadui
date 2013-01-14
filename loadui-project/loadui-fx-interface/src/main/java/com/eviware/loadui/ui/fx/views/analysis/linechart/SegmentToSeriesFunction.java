@@ -1,0 +1,141 @@
+package com.eviware.loadui.ui.fx.views.analysis.linechart;
+
+import static com.eviware.loadui.ui.fx.util.ObservableLists.fromExpression;
+
+import java.util.concurrent.Callable;
+
+import javafx.beans.Observable;
+import javafx.beans.property.StringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
+import javafx.scene.Node;
+import javafx.scene.chart.XYChart;
+import javafx.scene.chart.XYChart.Series;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.LineBuilder;
+
+import com.eviware.loadui.api.statistics.DataPoint;
+import com.eviware.loadui.api.statistics.model.chart.line.LineSegment;
+import com.eviware.loadui.api.statistics.model.chart.line.Segment;
+import com.eviware.loadui.api.statistics.model.chart.line.TestEventSegment;
+import com.eviware.loadui.api.statistics.store.Execution;
+import com.eviware.loadui.api.testevents.TestEvent;
+import com.google.common.base.Function;
+import com.google.common.cache.LoadingCache;
+import com.google.common.collect.Iterables;
+
+final class SegmentToSeriesFunction implements Function<Segment, XYChart.Series<Number, Number>>
+{
+	ObservableValue<Execution> execution;
+	ObservableList<Observable> observables;
+	ScrollableLineChart chart;
+	LoadingCache<XYChart.Series<?, ?>, StringProperty> eventSeriesStyles;
+
+	public SegmentToSeriesFunction( ObservableValue<Execution> execution, ObservableList<Observable> observables,
+			ScrollableLineChart chart, LoadingCache<XYChart.Series<?, ?>, StringProperty> eventSeriesStyles )
+	{
+		this.execution = execution;
+		this.observables = observables;
+		this.chart = chart;
+		this.eventSeriesStyles = eventSeriesStyles;
+	}
+
+	@Override
+	public XYChart.Series<Number, Number> apply( final Segment segment )
+	{
+		if( segment instanceof LineSegment )
+			return lineSegmentToSeries( ( LineSegment )segment );
+		else
+			return eventSegmentToSeries( ( TestEventSegment )segment );
+	}
+
+	private static final Function<DataPoint<?>, XYChart.Data<Number, Number>> datapointToChartdata = new Function<DataPoint<?>, XYChart.Data<Number, Number>>()
+	{
+		@Override
+		public XYChart.Data<Number, Number> apply( DataPoint<?> point )
+		{
+			return new XYChart.Data<Number, Number>( point.getTimestamp(), point.getValue() );
+		}
+	};
+
+	private Series<Number, Number> lineSegmentToSeries( final LineSegment segment )
+	{
+		XYChart.Series<Number, Number> series = new XYChart.Series<>();
+		series.setName( segment.getStatisticName() );
+
+		series.setData( fromExpression( new Callable<Iterable<XYChart.Data<Number, Number>>>()
+		{
+			@Override
+			public Iterable<XYChart.Data<Number, Number>> call() throws Exception
+			{
+				Iterable<XYChart.Data<Number, Number>> chartdata = Iterables.transform(
+						segment.getStatistic().getPeriod( ( long )chart.getPosition() - 2000,
+								( long )chart.getPosition() + chart.getSpan() + 2000, chart.getTickZoomLevel().getLevel(),
+								execution.getValue() ), datapointToChartdata );
+
+				final Function<XYChart.Data<Number, Number>, XYChart.Data<Number, Number>> chartdataToScaledChartdata = new Function<XYChart.Data<Number, Number>, XYChart.Data<Number, Number>>()
+				{
+					@Override
+					public XYChart.Data<Number, Number> apply( XYChart.Data<Number, Number> point )
+					{
+						double scaleValue = Math.pow( 10,
+								Integer.parseInt( segment.getAttribute( LineSegmentView.SCALE_ATTRIBUTE, "0" ) ) );
+						return new XYChart.Data<Number, Number>( point.getXValue(), point.getYValue().doubleValue()
+								* scaleValue );
+					}
+				};
+
+				// applies the scale to each point
+
+				return Iterables.transform( chartdata, chartdataToScaledChartdata );
+
+			}
+		}, observables ) );
+		//					observableArrayList( currentExecution, positionProperty(), spanProperty(), poll, tickZoomLevelProperty,
+		//							scaleUpdate() ) ) );
+
+		return series;
+	}
+
+	public XYChart.Series<Number, Number> eventSegmentToSeries( final TestEventSegment segment )
+	{
+		final XYChart.Series<Number, Number> series = new XYChart.Series<>();
+		series.setName( segment.getTypeLabel() );
+
+		series.setData( fromExpression( new Callable<Iterable<XYChart.Data<Number, Number>>>()
+		{
+			@Override
+			public Iterable<XYChart.Data<Number, Number>> call() throws Exception
+			{
+				return Iterables.transform(
+						segment.getTestEventsInRange( execution.getValue(), ( long )chart.getPosition() - 2000,
+								( long )chart.getPosition() + chart.getSpan() + 2000, chart.getTickZoomLevel().getLevel() ),
+						new Function<TestEvent, XYChart.Data<Number, Number>>()
+						{
+							@Override
+							public XYChart.Data<Number, Number> apply( TestEvent event )
+							{
+								XYChart.Data<Number, Number> data = new XYChart.Data<Number, Number>( event.getTimestamp(),
+										10.0 );
+								Line eventLine = LineBuilder.create().endY( 600 ).managed( false ).build();
+								eventLine.styleProperty().bind( eventSeriesStyles.getUnchecked( series ) );
+								data.setNode( eventLine );
+								return data;
+							}
+						} );
+			}
+		}, observables ) );
+		//			observableArrayList( currentExecution, positionProperty(), spanProperty(), poll ) ) );
+
+		series.nodeProperty().addListener( new ChangeListener<Node>()
+		{
+			@Override
+			public void changed( ObservableValue<? extends Node> arg0, Node arg1, Node newNode )
+			{
+				newNode.setVisible( false );
+			}
+		} );
+		return series;
+	}
+}

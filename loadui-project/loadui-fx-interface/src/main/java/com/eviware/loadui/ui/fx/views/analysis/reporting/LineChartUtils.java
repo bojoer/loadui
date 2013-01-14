@@ -26,9 +26,7 @@ import java.util.Map;
 
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
-import javafx.scene.Node;
-import javafx.scene.Scene;
-import javafx.scene.image.WritableImage;
+import javafx.scene.control.Button;
 
 import javax.imageio.ImageIO;
 import javax.swing.SwingUtilities;
@@ -39,8 +37,6 @@ import com.eviware.loadui.api.statistics.model.StatisticPage;
 import com.eviware.loadui.api.statistics.model.chart.ChartView;
 import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
 import com.eviware.loadui.api.statistics.store.Execution;
-import com.eviware.loadui.ui.fx.util.ObservableBase;
-import com.eviware.loadui.ui.fx.views.analysis.linechart.LineChartViewNode;
 import com.google.common.collect.Maps;
 
 public class LineChartUtils
@@ -102,34 +98,34 @@ public class LineChartUtils
 			ObservableValue<Execution> executionProperty, Execution comparedExecution )
 	{
 		//TODO: replace with JavaFX 2 classes
-		LineChartViewNode chartViewNode = new LineChartViewNode( executionProperty, chartView, new ObservableBase() );
+		//		LineChartViewNode chartViewNode = new LineChartViewNode( executionProperty, chartView, new ObservableBase() );
+		//
+		//		//		LineChartImpl chart = new LineChartImpl( chartView );
+		//		//		chart.setMainExecution( mainExecution );
+		//		//		chart.setComparedExecution( comparedExecution );
+		//		//		chart.setSize( new Dimension( width * printScaleFactor, height * printScaleFactor ) );
+		//
+		//		//		LineChartStyles.styleChartForPrint( chart );
+		//
+		//		//		Font font = chart.getTickFont();
+		//		//		chart.setTickFont( new Font( font.getName(), font.getStyle(), font.getSize() * printScaleFactor / 2 ) );
+		//		//		chart.setTickStroke( new BasicStroke( printScaleFactor ) );
+		//
+		//		//		for( ChartModel model : chart.getModels() )
+		//		//		{
+		//		//			ChartStyle style = chart.getStyle( model );
+		//		//			BasicStroke stroke = style.getLineStroke();
+		//		//			style.setLineStroke( new BasicStroke( printScaleFactor * stroke.getLineWidth(), stroke.getEndCap(), stroke
+		//		//					.getLineJoin() ) );
+		//		//		}
+		//
+		//		new Scene( chartViewNode );
+		//
+		//		Node node = chartViewNode.getLineChart();
 
-		//		LineChartImpl chart = new LineChartImpl( chartView );
-		//		chart.setMainExecution( mainExecution );
-		//		chart.setComparedExecution( comparedExecution );
-		//		chart.setSize( new Dimension( width * printScaleFactor, height * printScaleFactor ) );
+		//		final WritableImage writableImage = node.snapshot( null, null );
 
-		//		LineChartStyles.styleChartForPrint( chart );
-
-		//		Font font = chart.getTickFont();
-		//		chart.setTickFont( new Font( font.getName(), font.getStyle(), font.getSize() * printScaleFactor / 2 ) );
-		//		chart.setTickStroke( new BasicStroke( printScaleFactor ) );
-
-		//		for( ChartModel model : chart.getModels() )
-		//		{
-		//			ChartStyle style = chart.getStyle( model );
-		//			BasicStroke stroke = style.getLineStroke();
-		//			style.setLineStroke( new BasicStroke( printScaleFactor * stroke.getLineWidth(), stroke.getEndCap(), stroke
-		//					.getLineJoin() ) );
-		//		}
-
-		new Scene( chartViewNode );
-
-		Node node = chartViewNode.getLineChart();
-
-		final WritableImage writableImage = node.snapshot( null, null );
-
-		BufferedImage image = SwingFXUtils.fromFXImage( writableImage, null );
+		BufferedImage image = SwingFXUtils.fromFXImage( ( new Button() ).snapshot( null, null ), null );
 
 		try
 		{
