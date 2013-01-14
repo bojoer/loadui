@@ -15,7 +15,7 @@
  */
 package com.eviware.loadui.api.statistics.model.chart.line;
 
-import java.util.Collection;
+import java.util.List;
 
 import com.eviware.loadui.api.events.EventFirer;
 import com.eviware.loadui.api.statistics.model.chart.ChartView;
@@ -37,5 +37,5 @@ public interface LineChartView extends ChartView, EventFirer
 	 * 
 	 * @return
 	 */
-	public Collection<? extends Segment> getSegments();
+	public List<? extends Segment> getSegments();
 }

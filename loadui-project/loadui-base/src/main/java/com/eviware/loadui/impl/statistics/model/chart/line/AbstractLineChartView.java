@@ -15,9 +15,9 @@
  */
 package com.eviware.loadui.impl.statistics.model.chart.line;
 
-import java.util.Collection;
 import java.util.EventObject;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -100,7 +100,7 @@ public abstract class AbstractLineChartView extends AbstractChartView implements
 	protected abstract void segmentRemoved( Segment segment );
 
 	@Override
-	public Collection<Segment> getSegments()
+	public List<Segment> getSegments()
 	{
 		return ImmutableList.copyOf( segments.values() );
 	}

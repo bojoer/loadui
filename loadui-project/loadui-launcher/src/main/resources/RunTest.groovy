@@ -31,7 +31,7 @@ import com.eviware.loadui.api.statistics.ProjectExecutionManager
 import com.eviware.loadui.api.reporting.ReportingManager
 import com.eviware.loadui.util.BeanInjector
 import com.eviware.loadui.util.FormattingUtils
-import com.eviware.loadui.util.charting.LineChartUtils
+import com.eviware.loadui.ui.fx.views.analysis.reporting.LineChartUtils
 import com.google.common.io.Files
 
 def log = log //Needed for agentMessageListener to be able to reference log.

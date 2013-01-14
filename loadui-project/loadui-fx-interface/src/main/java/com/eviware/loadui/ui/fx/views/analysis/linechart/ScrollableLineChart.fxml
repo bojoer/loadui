@@ -17,10 +17,10 @@
 		<LineChart fx:id="lineChart" animated="false"
 			createSymbols="true" legendVisible="false">
 			<xAxis>
-				<NumberAxis fx:id="xAxis" autoRanging="false"/>
+				<NumberAxis fx:id="xAxis" autoRanging="false" animated="false" />
 			</xAxis>
 			<yAxis>
-				<NumberAxis fx:id="yAxis" />
+				<NumberAxis fx:id="yAxis" animated="false" />
 			</yAxis>
 		</LineChart>
 		<ChartScrollBar fx:id="scrollBar" />
