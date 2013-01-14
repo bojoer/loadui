@@ -96,7 +96,7 @@ public class StatisticsView extends StackPane
 						AnalysisView analysisView = new AnalysisView( project, recentExecutions, archivedExecutions, poll );
 						analysisView.currentExecutionProperty().bind( currentExecution );
 						getChildren().setAll( analysisView );
-						PerspectiveEvent.fireEvent( PerspectiveEvent.PERSPECTIVE_PROJECT, analysisView );
+						PerspectiveEvent.fireEvent( PerspectiveEvent.PERSPECTIVE_ANALYSIS, analysisView );
 						event.consume();
 					}
 					else if( event.getEventType() == IntentEvent.INTENT_CLOSE )
