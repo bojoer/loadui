@@ -9,7 +9,6 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 import com.eviware.loadui.api.model.WorkspaceProvider;
-import com.eviware.loadui.ui.fx.util.CoreImageResolver;
 import com.eviware.loadui.ui.fx.util.ErrorHandler;
 import com.eviware.loadui.util.BeanInjector;
 
@@ -30,8 +29,9 @@ public class JavaFXActivator implements BundleActivator
 				//This is needed for custom controls to be able to load their skins from this bundle.
 				//With multiple bundles this could be problematic, and should be replaced by some classloader that delegates to multiple bundles.
 
-				System.out.println("JavaFXActivator: loading Swing classes so they are visible by the licensing framework.");
-				
+				System.out
+						.println( "JavaFXActivator: loading Swing classes so they are visible by the licensing framework." );
+
 				// Instantiate objects to fix Classloading problems in tablelog. Do not remove.
 				//new org.jdesktop.swingx.JXTable();
 				new javax.swing.JScrollPane();
@@ -49,18 +49,9 @@ public class JavaFXActivator implements BundleActivator
 				new javax.swing.JFormattedTextField();
 
 				Thread.currentThread().setContextClassLoader( bundleClassLoader );
-			}
-		} );
 
-		new Thread( new Runnable()
-		{
-			@Override
-			public void run()
-			{
 				try
 				{
-
-					BeanInjector.getBean( CoreImageResolver.class );
 					new MainWindow( BeanInjector.getBeanFuture( Stage.class ).get(), BeanInjector.getBeanFuture(
 							WorkspaceProvider.class ).get() ).show();
 				}
@@ -69,8 +60,10 @@ public class JavaFXActivator implements BundleActivator
 					e.printStackTrace();
 					ErrorHandler.promptRestart();
 				}
+
 			}
-		} ).start();
+		} );
+
 	}
 
 	@Override
