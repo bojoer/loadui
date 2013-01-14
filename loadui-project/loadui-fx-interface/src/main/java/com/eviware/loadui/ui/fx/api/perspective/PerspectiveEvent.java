@@ -13,6 +13,7 @@ public class PerspectiveEvent extends Event
 	public static final EventType<PerspectiveEvent> ANY = new EventType<>( Event.ANY, "PERSPECTIVE" );
 	public static final EventType<PerspectiveEvent> PERSPECTIVE_WORKSPACE = new EventType<>( ANY, "WORKSPACE" );
 	public static final EventType<PerspectiveEvent> PERSPECTIVE_PROJECT = new EventType<>( ANY, "PROJECT" );
+	public static final EventType<PerspectiveEvent> PERSPECTIVE_ANALYSIS = new EventType<>( ANY, "ANALYSIS" );
 
 	private static final Node eventProxy = new Region();
 

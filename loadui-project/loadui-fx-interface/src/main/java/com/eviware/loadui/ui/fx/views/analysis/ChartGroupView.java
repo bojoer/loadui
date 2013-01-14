@@ -81,7 +81,6 @@ public class ChartGroupView extends VBox
 	private final ChartGroup chartGroup;
 
 	private final ObservableValue<Execution> currentExecution;
-	private final ObservableValue<Execution> comparedExecution;
 	private final ProjectItem project;
 	private final Observable poll;
 
@@ -101,12 +100,11 @@ public class ChartGroupView extends VBox
 
 	private final ObservableList<LineChartViewNode> componentSubcharts;
 
-	public ChartGroupView( ChartGroup chartGroup, ObservableValue<Execution> currentExecution,
-			ObservableValue<Execution> comparedExecution, ProjectItem project, Observable poll )
+	public ChartGroupView( ChartGroup chartGroup, ObservableValue<Execution> currentExecution, ProjectItem project,
+			Observable poll )
 	{
 		this.chartGroup = chartGroup;
 		this.currentExecution = currentExecution;
-		this.comparedExecution = comparedExecution;
 		this.project = project;
 		this.poll = poll;
 
@@ -182,8 +180,7 @@ public class ChartGroupView extends VBox
 	{
 		if( Objects.equal( type, LineChartView.class.getName() ) )
 		{
-			return new LineChartViewNode( currentExecution, comparedExecution, ( LineChartView )chartGroup.getChartView(),
-					poll );
+			return new LineChartViewNode( currentExecution, ( LineChartView )chartGroup.getChartView(), poll );
 		}
 		return LabelBuilder.create().text( "Unsupported chart type: " + type ).build();
 	}
@@ -220,7 +217,7 @@ public class ChartGroupView extends VBox
 		@Override
 		public LineChartViewNode apply( ChartView _chartView )
 		{
-			return new LineChartViewNode( currentExecution, comparedExecution, ( LineChartView )_chartView, poll );
+			return new LineChartViewNode( currentExecution, ( LineChartView )_chartView, poll );
 		}
 	};
 

@@ -18,10 +18,9 @@
 		<stylesheets>
 			<URL value="@AnalysisView.css" />
 		</stylesheets>
-		<HBox spacing="10" alignment="baseline_left">
+		<HBox fx:id="buttonContainer" spacing="10" alignment="baseline_left">
 			<Label fx:id="executionLabel" styleClass="title" text="No Execution" />
 			<Button text="close" id="close-analysis-view" onAction="#close" />
-			<Button text="compare" id="compare-chart-button" onAction="#compare" />
 		</HBox>
 		<AnchorPane VBox.vgrow="ALWAYS">
 			<TabPane fx:id="tabPane" AnchorPane.topAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="30" AnchorPane.leftAnchor="0" />

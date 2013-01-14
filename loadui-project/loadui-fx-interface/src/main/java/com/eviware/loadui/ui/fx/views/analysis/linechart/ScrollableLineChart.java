@@ -42,10 +42,9 @@ import com.google.common.cache.LoadingCache;
 
 public class ScrollableLineChart extends HBox
 {
-	private ObservableValue<Execution> currentExecution;
-	private ObservableValue<Execution> comparedExecution;
-	private Observable poll;
-	private LineChartView chartView;
+	//	private ObservableValue<Execution> currentExecution;
+	//	private Observable poll;
+	//	private LineChartView chartView;
 
 	private ObservableList<Segment> segmentsList;
 	private ObservableList<XYChart.Series<Number, Number>> seriesList;
@@ -225,13 +224,12 @@ public class ScrollableLineChart extends HBox
 		throw new RuntimeException( "This is mathematically impossible!" );
 	}
 
-	public void setChartProperties( final ObservableValue<Execution> currentExecution,
-			final ObservableValue<Execution> comparedExecution, LineChartView chartView, Observable poll )
+	public void setChartProperties( final ObservableValue<Execution> currentExecution, LineChartView chartView,
+			Observable poll )
 	{
-		this.currentExecution = currentExecution;
-		this.comparedExecution = comparedExecution;
-		this.chartView = chartView;
-		this.poll = poll;
+		//		this.currentExecution = currentExecution;
+		//		this.chartView = chartView;
+		//		this.poll = poll;
 
 		segmentToSeries = new SegmentToSeriesFunction( currentExecution,
 				javafx.collections.FXCollections.observableArrayList( currentExecution, positionProperty(), spanProperty(),

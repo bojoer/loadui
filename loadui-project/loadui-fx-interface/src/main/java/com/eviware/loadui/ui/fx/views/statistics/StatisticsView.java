@@ -30,6 +30,7 @@ import com.eviware.loadui.api.statistics.ProjectExecutionManager;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
+import com.eviware.loadui.ui.fx.api.perspective.PerspectiveEvent;
 import com.eviware.loadui.ui.fx.util.ManualObservable;
 import com.eviware.loadui.ui.fx.views.analysis.AnalysisView;
 import com.eviware.loadui.ui.fx.views.result.ResultView;
@@ -95,6 +96,7 @@ public class StatisticsView extends StackPane
 						AnalysisView analysisView = new AnalysisView( project, recentExecutions, archivedExecutions, poll );
 						analysisView.currentExecutionProperty().bind( currentExecution );
 						getChildren().setAll( analysisView );
+						PerspectiveEvent.fireEvent( PerspectiveEvent.PERSPECTIVE_PROJECT, analysisView );
 						event.consume();
 					}
 					else if( event.getEventType() == IntentEvent.INTENT_CLOSE )

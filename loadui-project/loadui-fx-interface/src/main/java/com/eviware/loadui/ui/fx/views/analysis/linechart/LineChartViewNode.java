@@ -76,7 +76,6 @@ public class LineChartViewNode extends VBox
 	};
 
 	private final ObservableValue<Execution> currentExecution;
-	private final ObservableValue<Execution> comparedExecution;
 	private final Observable poll;
 	private final LineChartView chartView;
 
@@ -92,15 +91,13 @@ public class LineChartViewNode extends VBox
 	@FXML
 	private CheckBox followCheckBox;
 
-	public LineChartViewNode( final ObservableValue<Execution> currentExecution,
-			final ObservableValue<Execution> comparedExecution, LineChartView chartView, Observable poll )
+	public LineChartViewNode( final ObservableValue<Execution> currentExecution, LineChartView chartView, Observable poll )
 	{
 		log.debug( "new LineChartViewNode created! " );
 
 		BeanInjector.getBean( TestRunner.class ).registerTask( executionTask, Phase.START, Phase.STOP );
 
 		this.currentExecution = currentExecution;
-		this.comparedExecution = comparedExecution;
 		this.chartView = chartView;
 		this.poll = poll;
 
@@ -112,7 +109,7 @@ public class LineChartViewNode extends VBox
 	{
 		loadAttributes();
 
-		scrollableLineChart.setChartProperties( currentExecution, comparedExecution, chartView, poll );
+		scrollableLineChart.setChartProperties( currentExecution, chartView, poll );
 
 		scrollableLineChart.titleProperty().bind( Properties.forLabel( chartView ) );
 
