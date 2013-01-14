@@ -30,10 +30,8 @@ import com.eviware.loadui.api.statistics.model.StatisticPages;
 import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.ui.fx.api.input.DraggableEvent;
-import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.UIUtils;
-import com.eviware.loadui.ui.fx.views.project.ProjectView;
 import com.google.common.base.Function;
 
 public class StatisticTab extends Tab
@@ -59,12 +57,12 @@ public class StatisticTab extends Tab
 		@Override
 		public ChartGroupView apply( ChartGroup chartGroup )
 		{
-			return new ChartGroupView( chartGroup, execution, project, poll );
+			return new ChartGroupView( chartGroup, currentExecution, project, poll );
 		}
 	};
 
 	private final StatisticPage page;
-	private final ObservableValue<Execution> execution;
+	private final ObservableValue<Execution> currentExecution;
 	private final ProjectItem project;
 	private final Observable poll;
 	private final ObservableList<ChartGroupView> chartGroupViews;
@@ -72,10 +70,11 @@ public class StatisticTab extends Tab
 	@FXML
 	private VBox chartList;
 
-	public StatisticTab( StatisticPage page, ObservableValue<Execution> execution, ProjectItem project, Observable poll )
+	public StatisticTab( StatisticPage page, ObservableValue<Execution> currentExecution, ProjectItem project,
+			Observable poll )
 	{
 		this.page = page;
-		this.execution = execution;
+		this.currentExecution = currentExecution;
 		this.project = project;
 		this.poll = poll;
 		chartGroupViews = transform( fx( ofCollection( page ) ), chartGroupToView );

@@ -19,6 +19,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabBuilder;
 import javafx.scene.control.TabPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 
 import javax.annotation.Nullable;
@@ -90,8 +91,12 @@ public class AnalysisView extends StackPane
 	@FXML
 	private AnalysisToolBox toolBox;
 
+	@FXML
+	private HBox buttonContainer;
+
 	private final ProjectItem project;
-	private final ObservableList<Execution> executionList;
+	private final ObservableList<Execution> recentExecutionList;
+	private final ObservableList<Execution> archivedExecutionList;
 	private final Observable poll;
 
 	private final Property<Execution> currentExecution = new SimpleObjectProperty<>( this, "currentExecution" );
@@ -117,10 +122,12 @@ public class AnalysisView extends StackPane
 		return currentExecution.getValue();
 	}
 
-	public AnalysisView( ProjectItem project, ObservableList<Execution> executionList, Observable poll )
+	public AnalysisView( ProjectItem project, ObservableList<Execution> recentExecutionList,
+			ObservableList<Execution> archivedExecutionList, Observable poll )
 	{
 		this.project = project;
-		this.executionList = executionList;
+		this.recentExecutionList = recentExecutionList;
+		this.archivedExecutionList = archivedExecutionList;
 		this.poll = poll;
 
 		FXMLUtils.load( this );
@@ -199,8 +206,15 @@ public class AnalysisView extends StackPane
 		}
 	}
 
+	public HBox getButtonContainer()
+	{
+		return buttonContainer;
+	}
+
+	@FXML
 	public void close()
 	{
 		AnalysisView.this.fireEvent( IntentEvent.create( IntentEvent.INTENT_CLOSE, getCurrentExecution() ) );
 	}
+
 }

@@ -5,25 +5,11 @@ import static com.eviware.loadui.ui.fx.util.ObservableLists.ofCollection;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.transform;
 import static com.eviware.loadui.ui.fx.util.Properties.forLabel;
 import static javafx.beans.binding.Bindings.bindContent;
-import static javafx.beans.binding.Bindings.isEmpty;
-import static javafx.collections.FXCollections.observableArrayList;
-
-import javax.annotation.Nullable;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
-import javafx.beans.binding.Bindings;
-import javafx.beans.property.ReadOnlyProperty;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.Event;
 import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -34,11 +20,11 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.eviware.loadui.api.assertion.AssertionItem;
-import com.eviware.loadui.api.events.BaseEvent;
-import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.ProjectItem;
-import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.statistics.Statistic;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.model.Chart;
@@ -52,15 +38,11 @@ import com.eviware.loadui.api.testevents.TestEvent;
 import com.eviware.loadui.api.testevents.TestEventRegistry;
 import com.eviware.loadui.ui.fx.api.PostActionEvent;
 import com.eviware.loadui.ui.fx.api.input.DraggableEvent;
-import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
-import com.eviware.loadui.ui.fx.util.InspectorHelpers;
-import com.eviware.loadui.ui.fx.util.ObservableLists;
 import com.eviware.loadui.ui.fx.views.analysis.linechart.LineChartViewNode;
 import com.eviware.loadui.util.BeanInjector;
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
-import com.google.common.base.Predicate;
 
 public class ChartGroupView extends VBox
 {
@@ -98,7 +80,7 @@ public class ChartGroupView extends VBox
 
 	private final ChartGroup chartGroup;
 
-	private final ObservableValue<Execution> executionProperty;
+	private final ObservableValue<Execution> currentExecution;
 	private final ProjectItem project;
 	private final Observable poll;
 
@@ -118,11 +100,11 @@ public class ChartGroupView extends VBox
 
 	private final ObservableList<LineChartViewNode> componentSubcharts;
 
-	public ChartGroupView( ChartGroup chartGroup, ObservableValue<Execution> executionProperty, ProjectItem project,
+	public ChartGroupView( ChartGroup chartGroup, ObservableValue<Execution> currentExecution, ProjectItem project,
 			Observable poll )
 	{
 		this.chartGroup = chartGroup;
-		this.executionProperty = executionProperty;
+		this.currentExecution = currentExecution;
 		this.project = project;
 		this.poll = poll;
 
@@ -198,7 +180,7 @@ public class ChartGroupView extends VBox
 	{
 		if( Objects.equal( type, LineChartView.class.getName() ) )
 		{
-			return new LineChartViewNode( executionProperty, ( LineChartView )chartGroup.getChartView(), poll );
+			return new LineChartViewNode( currentExecution, ( LineChartView )chartGroup.getChartView(), poll );
 		}
 		return LabelBuilder.create().text( "Unsupported chart type: " + type ).build();
 	}
@@ -235,7 +217,7 @@ public class ChartGroupView extends VBox
 		@Override
 		public LineChartViewNode apply( ChartView _chartView )
 		{
-			return new LineChartViewNode( executionProperty, ( LineChartView )_chartView, poll );
+			return new LineChartViewNode( currentExecution, ( LineChartView )_chartView, poll );
 		}
 	};
 
