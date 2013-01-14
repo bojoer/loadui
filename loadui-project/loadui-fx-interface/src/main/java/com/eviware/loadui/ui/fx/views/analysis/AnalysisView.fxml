@@ -18,7 +18,7 @@
 		<stylesheets>
 			<URL value="@AnalysisView.css" />
 		</stylesheets>
-		<HBox spacing="10" alignment="baseline_left">
+		<HBox fx:id="buttonContainer" spacing="10" alignment="baseline_left">
 			<Label fx:id="executionLabel" styleClass="title" text="No Execution" />
 			<Button text="close" id="close-analysis-view" onAction="#close" />
 		</HBox>
