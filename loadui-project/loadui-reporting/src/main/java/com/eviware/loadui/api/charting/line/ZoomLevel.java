@@ -22,20 +22,27 @@ package com.eviware.loadui.api.charting.line;
  */
 public enum ZoomLevel
 {
-	ALL( 1, -1, 0, 1 ), WEEKS( 604800, 100, 4, 1 ), DAYS( 86400, 75, 3, 1 ), HOURS( 3600, 50, 2, 1 ), MINUTES( 60, 50,
-			1, 1 ), SECONDS( 1, 12, 0, 5 );
+	ALL( 1, -1, 0, 1, "" ), WEEKS( 604800, 100, 4, 1, "w" ), DAYS( 86400, 75, 3, 1, "d" ), HOURS( 3600, 50, 2, 1, "h" ), MINUTES(
+			60, 50, 1, 1, "m" ), SECONDS( 1, 12, 0, 5, "s" );
 
 	private final int interval;
 	private final int unitWidth;
 	private final int level;
 	private final int majorTickInterval;
+	private final String shortName;
 
-	ZoomLevel( int interval, int unitWidth, int level, int majorTickInterval )
+	ZoomLevel( int interval, int unitWidth, int level, int majorTickInterval, String shortName )
 	{
 		this.interval = interval;
 		this.unitWidth = unitWidth;
 		this.level = level;
+		this.shortName = shortName;
 		this.majorTickInterval = majorTickInterval * interval;
+	}
+
+	public ZoomLevel zoomOut()
+	{
+		return this.ordinal() != 0 ? ZoomLevel.values()[this.ordinal() - 1] : null;
 	}
 
 	public int getInterval()
@@ -56,6 +63,11 @@ public enum ZoomLevel
 	public int getMajorTickInterval()
 	{
 		return majorTickInterval;
+	}
+
+	public String getShortName()
+	{
+		return shortName;
 	}
 
 	private static ZoomLevel[] spanLevels = { MINUTES, HOURS, DAYS, WEEKS };

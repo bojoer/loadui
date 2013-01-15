@@ -23,7 +23,9 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Series;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.util.StringConverter;
 
+import org.joda.time.Period;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,6 +37,7 @@ import com.eviware.loadui.api.statistics.model.chart.line.TestEventSegment;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.util.execution.TestExecutionUtils;
+import com.eviware.loadui.util.statistics.ChartUtils;
 import com.google.common.base.Function;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -95,6 +98,34 @@ public class ScrollableLineChart extends HBox
 	@FXML
 	private void initialize()
 	{
+		xAxis.setTickLabelFormatter( new StringConverter<Number>()
+		{
+			@Override
+			public String toString( Number n )
+			{
+				long value = n.longValue();
+				if( value == 0 )
+					return "0";
+				ZoomLevel parentZoomLevel = zoomLevelProperty.get().zoomOut();
+				long parentIntervalMillis = parentZoomLevel.getInterval() * 1000;
+				System.out.println( "" + value + " % " + parentIntervalMillis + " = " + value % parentIntervalMillis );
+				if( value % parentIntervalMillis != 0 )
+				{
+					System.out.println( Long.toString( value / 1000 ) );
+					return Long.toString( value / ( 1000 * zoomLevelProperty.get().getInterval() ) );
+				}
+				System.out.println( "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" );
+				return Long.toString( value / parentIntervalMillis ) + parentZoomLevel.getShortName();
+			}
+
+			@Override
+			public Number fromString( String s )
+			{
+				// TODO Auto-generated method stub
+				return null;
+			}
+		} );
+
 		scrollBar.visibleAmountProperty().bind( shownSpan );
 		scrollBar.blockIncrementProperty().bind( shownSpan.divide( 2 ) );
 		scrollBar.unitIncrementProperty().bind( shownSpan.divide( 40 ) );
@@ -129,9 +160,10 @@ public class ScrollableLineChart extends HBox
 				int i = 0;
 				for( Series<?, ?> series : seriesList )
 				{
-					segmentViews.get( i ).setColor( seriesToColor( series ) );
+					segmentViews.get( i ).setColor( ChartUtils.lineToColor( series, seriesList ) );
 					if( segmentViews.get( i ) instanceof EventSegmentView )
-						eventSeriesStyles.getUnchecked( series ).set( "-fx-stroke: " + seriesToColor( series ) + ";" );
+						eventSeriesStyles.getUnchecked( series ).set(
+								"-fx-stroke: " + ChartUtils.lineToColor( series, seriesList ) + ";" );
 
 					i++ ;
 				}
@@ -196,33 +228,6 @@ public class ScrollableLineChart extends HBox
 		tickZoomLevelProperty.set( level );
 
 		log.debug( "TickMode set to: " + level.name() );
-	}
-
-	private String seriesToColor( Series<?, ?> series )
-	{
-		int seriesOrder = seriesList.indexOf( series );
-
-		switch( seriesOrder % 8 )
-		{
-		case 0 :
-			return "#f9d900";
-		case 1 :
-			return "#a9e200";
-		case 2 :
-			return "#22bad9";
-		case 3 :
-			return "#0181e2";
-		case 4 :
-			return "#2f357f";
-		case 5 :
-			return "#860061";
-		case 6 :
-			return "#c62b00";
-		case 7 :
-			return "#ff5700";
-		}
-
-		throw new RuntimeException( "This is mathematically impossible!" );
 	}
 
 	public void setChartProperties( final ObservableValue<Execution> currentExecution,

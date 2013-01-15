@@ -5,9 +5,13 @@ import static com.eviware.loadui.ui.fx.util.ObservableLists.ofCollection;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.transform;
 import static com.eviware.loadui.ui.fx.util.Properties.forLabel;
 import static javafx.beans.binding.Bindings.bindContent;
+import static javafx.beans.binding.Bindings.lessThan;
+import static javafx.beans.binding.Bindings.size;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
+import javafx.beans.binding.Bindings;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -136,15 +140,13 @@ public class ChartGroupView extends VBox
 	{
 		chartGroupToggleGroup = new ToggleGroup();
 		componentGroupToggle.setToggleGroup( chartGroupToggleGroup );
-
+		componentGroupToggle.disableProperty().bind( lessThan( 2, size( componentSubcharts ) ) );
 		componentGroup.visibleProperty().bind( componentGroupToggle.selectedProperty() );
 
 		bindContent( componentGroup.getChildren(), componentSubcharts );
 
 		chartGroupLabel.textProperty().bind( forLabel( chartGroup ) );
 		chartView.getChildren().setAll( createChart( chartGroup.getType() ) );
-
-		//TODO: Bind SegmentViews.
 
 		addEventHandler( DraggableEvent.ANY, new EventHandler<DraggableEvent>()
 		{

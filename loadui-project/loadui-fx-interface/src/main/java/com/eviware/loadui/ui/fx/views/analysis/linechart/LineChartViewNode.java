@@ -14,6 +14,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.chart.LineChart;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
@@ -228,6 +229,18 @@ public class LineChartViewNode extends VBox
 			if( chart.getOwner() instanceof StatisticHolder )
 				holders.add( ( StatisticHolder )chart.getOwner() );
 		return holders;
+	}
+
+	public void setZoomLevel( ZoomLevel zoomLevel )
+	{
+		scrollableLineChart.setZoomLevel( zoomLevel );
+		chartView.setAttribute( ZOOM_LEVEL_ATTRIBUTE, zoomLevel.name() );
+
+	}
+
+	public LineChart<Number, Number> getLineChart()
+	{
+		return scrollableLineChart.getLineChart();
 	}
 
 }
