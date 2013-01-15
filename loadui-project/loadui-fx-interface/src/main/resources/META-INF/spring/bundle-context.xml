@@ -4,8 +4,6 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans   
        http://www.springframework.org/schema/beans/spring-beans.xsd">
        
-	<bean id="coreImageResolver" class="com.eviware.loadui.ui.fx.util.CoreImageResolver" />
-
 	<bean id="eventLogInspector" class="com.eviware.loadui.ui.fx.views.eventlog.EventLogInspector">
 		<constructor-arg ref="executionManager" />
 		<constructor-arg ref="testEventManager" />
