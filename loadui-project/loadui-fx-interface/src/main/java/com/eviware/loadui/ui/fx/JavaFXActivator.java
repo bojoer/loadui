@@ -1,5 +1,7 @@
 package com.eviware.loadui.ui.fx;
 
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
 
 import javafx.application.Platform;
@@ -21,6 +23,29 @@ public class JavaFXActivator implements BundleActivator
 
 		final ClassLoader bundleClassLoader = JavaFXActivator.class.getClassLoader();
 
+		// delay requesting beans from OSGi in order to let it get started first
+		new Timer( "JavaFX-LoadUI-Loader" ).schedule( new TimerTask()
+		{
+			@Override
+			public void run()
+			{
+				try
+				{
+					Stage stage = BeanInjector.getBeanFuture( Stage.class ).get();
+					startJavaFX( stage, bundleClassLoader );
+				}
+				catch( Exception e )
+				{
+					System.out.println( "JavaFXActivator Unable to get Stage > " + e );
+					ErrorHandler.promptRestart();
+				}
+			}
+		}, 2000 );
+
+	}
+
+	private void startJavaFX( final Stage stage, final ClassLoader bundleClassLoader )
+	{
 		Platform.runLater( new Runnable()
 		{
 			@Override
@@ -52,8 +77,7 @@ public class JavaFXActivator implements BundleActivator
 
 				try
 				{
-					new MainWindow( BeanInjector.getBeanFuture( Stage.class ).get(), BeanInjector.getBeanFuture(
-							WorkspaceProvider.class ).get() ).show();
+					new MainWindow( stage, BeanInjector.getBeanFuture( WorkspaceProvider.class ).get() ).show();
 				}
 				catch( RuntimeException | InterruptedException | ExecutionException e )
 				{
@@ -63,7 +87,6 @@ public class JavaFXActivator implements BundleActivator
 
 			}
 		} );
-
 	}
 
 	@Override
