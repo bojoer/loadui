@@ -27,6 +27,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JWindow;
 
+@Deprecated
 public class SplashController
 {
 	private static JWindow window;

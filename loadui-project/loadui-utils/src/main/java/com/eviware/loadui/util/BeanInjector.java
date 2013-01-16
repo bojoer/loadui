@@ -27,6 +27,8 @@ import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceEvent;
 import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceReference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.osgi.context.BundleContextAware;
 
 import com.google.common.cache.CacheBuilder;
@@ -35,14 +37,15 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.util.concurrent.AbstractFuture;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.UncheckedExecutionException;
 
 public enum BeanInjector
 {
 	INSTANCE;
 
-	private final LoadingCache<Class<?>, Object> beanCache = CacheBuilder.newBuilder().weakValues()
-			.build( new CacheLoader<Class<?>, Object>()
+	private static final Logger log = LoggerFactory.getLogger( BeanInjector.class );
+
+	private final LoadingCache<Class<?>, Object> beanCache = CacheBuilder.newBuilder().weakValues().build(
+			new CacheLoader<Class<?>, Object>()
 			{
 				@Override
 				public Object load( Class<?> key ) throws Exception
@@ -78,10 +81,10 @@ public enum BeanInjector
 		}
 	}
 
-	public static void setBundleContext( BundleContext arg0 )
+	public static void setBundleContext( BundleContext context )
 	{
-		INSTANCE.context = arg0;
-		arg0.addServiceListener( new ServiceListener()
+		INSTANCE.context = context;
+		context.addServiceListener( new ServiceListener()
 		{
 			@Override
 			public void serviceChanged( ServiceEvent event )
@@ -102,7 +105,8 @@ public enum BeanInjector
 			}
 		} );
 		INSTANCE.clearCache();
-		INSTANCE.beanCache.put( BundleContext.class, arg0 );
+		INSTANCE.beanCache.put( BundleContext.class, context );
+		log.info( "BundleContext set successfully" );
 		INSTANCE.waiterLatch.countDown();
 	}
 
@@ -130,7 +134,17 @@ public enum BeanInjector
 		{
 			T service = ( T )context.getService( ref );
 			if( service != null )
+			{
 				return service;
+			}
+			else
+			{
+				log.warn( "Found serviceReference but service itself was null" );
+			}
+		}
+		else
+		{
+			log.warn( "Could not find serviceReference for " + cls.getName() );
 		}
 
 		throw new IllegalArgumentException( "No Bean found for class: " + cls );
@@ -141,6 +155,7 @@ public enum BeanInjector
 		@Override
 		public void setBundleContext( BundleContext arg0 )
 		{
+			log.info( "Setting BundleContext for BeanInjector" );
 			BeanInjector.setBundleContext( arg0 );
 		}
 	}
@@ -159,6 +174,7 @@ public enum BeanInjector
 			{
 				if( event.getType() == ServiceEvent.REGISTERED )
 				{
+					log.info( "Service has been registered: " + event.getServiceReference().getBundle().getLocation() );
 					//TODO: We can't use generics here until the OSGi jars stop using compilation flags that are not compatible with Java7.
 					ServiceReference/* <T> */serviceReference = event.getServiceReference();
 					set( ( T )INSTANCE.context.getService( serviceReference ) );
@@ -189,18 +205,20 @@ public enum BeanInjector
 				{
 					set( serviceType.cast( cachedObject ) );
 				}
+				else
+				{
+					String msg = "Service of type " + serviceType.getName() + " has been dropped";
+					log.warn( msg );
+					throw new RuntimeException( msg );
+				}
 			}
 			catch( InterruptedException e )
 			{
 				Thread.currentThread().interrupt();
 			}
-			catch( ExecutionException e )
+			catch( Exception e )
 			{
-				//Ignore
-			}
-			catch( UncheckedExecutionException e )
-			{
-				//Ignore
+				setException( e );
 			}
 		}
 

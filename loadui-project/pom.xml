@@ -17,6 +17,7 @@
 		<springVersion>3.1.1.RELEASE</springVersion>
 	</properties>
 	<modules>
+		<module>loadui-socket-client</module>
 		<module>loadui-core-deps</module>
 		<module>loadui-api</module>
 		<module>loadui-model-xmlbeans</module>

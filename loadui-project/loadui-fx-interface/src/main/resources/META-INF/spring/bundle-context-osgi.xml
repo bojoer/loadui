@@ -15,10 +15,4 @@
 	<osgi:service ref="systemLogInspector" interface="com.eviware.loadui.ui.fx.api.Inspector" />
 	<osgi:service ref="assertionInspector" interface="com.eviware.loadui.ui.fx.api.Inspector" />
 
-	<osgi:service ref="coreImageResolver">
-		<osgi:interfaces>
-			<value>com.eviware.loadui.ui.fx.util.CoreImageResolver</value>
-			<value>com.eviware.loadui.ui.fx.api.ImageResolver</value>
-		</osgi:interfaces>
-	</osgi:service>
 </beans>
