@@ -17,12 +17,10 @@
 
 <fx:root type="javafx.scene.layout.VBox" xmlns:fx="http://javafx.com/fxml"
 	styleClass="chart-view-node, line-chart-view-node">
-	<Label fx:id="chartViewLabel" />
 	<ScrollableLineChart fx:id="scrollableLineChart"/>
 	<HBox>
 		<Button text="Add Statistic..." onAction="#addStatistic" />
 		<ZoomMenuButton fx:id="zoomMenuButton" text="Zoom"/>
-		<Label  fx:id="timer" text="Not set" />
 		<CheckBox fx:id="followCheckBox" text="follow" /> 
 	</HBox>
 </fx:root>

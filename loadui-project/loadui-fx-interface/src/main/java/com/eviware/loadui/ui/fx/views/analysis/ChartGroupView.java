@@ -114,6 +114,7 @@ public class ChartGroupView extends VBox
 		this.project = project;
 		this.poll = poll;
 
+		//		componentSubcharts = FXCollections.observableArrayList();
 		componentSubcharts = transform( fx( transform( ofCollection( chartGroup ), chartToChartView ) ),
 				chartViewToChartViewHolder );
 

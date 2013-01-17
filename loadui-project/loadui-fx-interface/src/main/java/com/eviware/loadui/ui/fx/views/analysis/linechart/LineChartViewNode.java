@@ -53,10 +53,6 @@ public class LineChartViewNode extends VBox
 
 	protected static final Logger log = LoggerFactory.getLogger( LineChartViewNode.class );
 
-	private static final PeriodFormatter timeFormatter = new PeriodFormatterBuilder().printZeroNever().appendWeeks()
-			.appendSuffix( "w" ).appendSeparator( " " ).appendDays().appendSuffix( "d" ).appendSeparator( " " )
-			.appendHours().appendSuffix( "h" ).appendSeparator( " " ).appendMinutes().appendSuffix( "m" ).toFormatter();
-
 	private final TestExecutionTask executionTask = new TestExecutionTask()
 	{
 
@@ -83,9 +79,6 @@ public class LineChartViewNode extends VBox
 
 	@FXML
 	private ScrollableLineChart scrollableLineChart;
-
-	@FXML
-	private Label timer;
 
 	@FXML
 	private ZoomMenuButton zoomMenuButton;
@@ -125,18 +118,6 @@ public class LineChartViewNode extends VBox
 				return currentExecution.getValue().getLength();
 			}
 		}, currentExecution, poll ) );
-
-		scrollableLineChart.positionProperty().addListener( new InvalidationListener()
-		{
-			@Override
-			public void invalidated( Observable arg0 )
-			{
-				long millis = ( long )scrollableLineChart.getPosition();
-				Period period = new Period( millis );
-				String formattedTime = timeFormatter.print( period.normalizedStandard() );
-				timer.setText( formattedTime );
-			}
-		} );
 
 		zoomMenuButton.selectedProperty().addListener( new ChangeListener<ZoomLevel>()
 		{

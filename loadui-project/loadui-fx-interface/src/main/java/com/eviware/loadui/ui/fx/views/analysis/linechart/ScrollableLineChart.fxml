@@ -3,6 +3,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
@@ -11,18 +12,26 @@
 <?import com.eviware.loadui.ui.fx.views.analysis.linechart.SegmentBox?>
 <?import javafx.scene.control.Button?>
 
-<fx:root type="javafx.scene.layout.HBox" xmlns:fx="http://javafx.com/fxml" >
+<fx:root type="javafx.scene.layout.HBox" xmlns:fx="http://javafx.com/fxml">
 	<SegmentBox fx:id="segmentBox" fillWidth="true" />
 	<VBox HBox.hgrow="ALWAYS">
-		<LineChart fx:id="lineChart" animated="false"
-			createSymbols="true" legendVisible="false">
-			<xAxis>
-				<NumberAxis fx:id="xAxis" autoRanging="false" animated="false" />
-			</xAxis>
-			<yAxis>
-				<NumberAxis fx:id="yAxis" animated="false" />
-			</yAxis>
-		</LineChart>
+		<AnchorPane>
+			<LineChart fx:id="lineChart" animated="false"
+				createSymbols="true" legendVisible="false" AnchorPane.rightAnchor="0"
+				AnchorPane.leftAnchor="0" AnchorPane.topAnchor="0"
+				AnchorPane.bottomAnchor="0">
+				<xAxis>
+					<NumberAxis fx:id="xAxis" autoRanging="false" animated="false" />
+				</xAxis>
+				<yAxis>
+					<NumberAxis fx:id="yAxis" animated="false" />
+				</yAxis>
+			</LineChart>
+			<Label fx:id="zoomLevel" styleClass="overlayed-chart-text"
+				text="zoom" AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="15" />
+			<Label fx:id="ellapsedTime" styleClass="overlayed-chart-text"
+				AnchorPane.leftAnchor="33" AnchorPane.bottomAnchor="15" />
+		</AnchorPane>
 		<ChartScrollBar fx:id="scrollBar" />
 	</VBox>
 </fx:root>
