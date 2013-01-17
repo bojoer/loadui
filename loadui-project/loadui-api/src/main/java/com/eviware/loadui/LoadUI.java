@@ -65,6 +65,12 @@ public class LoadUI
 		return "true".equals( System.getProperty( HEADLESS ) );
 	}
 
+	public static boolean isPro()
+	{
+		return Boolean.parseBoolean( System.getProperty( "loadui.pro" ) );
+
+	}
+
 	/**
 	 * Gets the directory from where all relative paths should be resolved.
 	 * 

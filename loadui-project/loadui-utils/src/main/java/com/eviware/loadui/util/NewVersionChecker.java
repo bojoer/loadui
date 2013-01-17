@@ -90,13 +90,12 @@ public class NewVersionChecker
 
 			if( fstNode.getNodeType() == Node.ELEMENT_NODE )
 			{
-				final boolean isPro = Boolean.parseBoolean( System.getProperty( "loadui.pro" ) );
 
 				Element fstElmnt = ( Element )fstNode;
 
 				versionName = getElementContent( "version-number", fstElmnt );
 
-				if( isPro )
+				if( LoadUI.isPro() )
 				{
 					releaseNotes = getElementContent( "release-notes-pro", fstElmnt );
 					downloadUrl = getElementContent( "download-link-pro", fstElmnt );
