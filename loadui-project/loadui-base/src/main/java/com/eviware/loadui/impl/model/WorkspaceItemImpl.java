@@ -103,11 +103,14 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 	{
 		super.init();
 
-		for( AgentItemConfig agentConfig : getConfig().getAgentList() )
+		if( LoadUI.isPro() )
 		{
-			AgentItemImpl agent = AgentItemImpl.newInstance( this, agentConfig );
-			agent.addEventListener( BaseEvent.class, agentListener );
-			agentList.addItem( agent );
+			for( AgentItemConfig agentConfig : getConfig().getAgentList() )
+			{
+				AgentItemImpl agent = AgentItemImpl.newInstance( this, agentConfig );
+				agent.addEventListener( BaseEvent.class, agentListener );
+				agentList.addItem( agent );
+			}
 		}
 
 		for( ProjectReferenceConfig projectRefConfig : getConfig().getProjectList() )

@@ -18,12 +18,19 @@ package com.eviware.loadui.ui.fx.views.analysis.reporting;
 import java.awt.Image;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.control.Button;
+
+import javax.imageio.ImageIO;
+import javax.swing.SwingUtilities;
 import javafx.scene.chart.LineChart;
+import javafx.scene.chart.XYChart.Series;
 
 import com.eviware.loadui.api.charting.line.ZoomLevel;
 import com.eviware.loadui.api.statistics.model.Chart;
@@ -31,6 +38,7 @@ import com.eviware.loadui.api.statistics.model.ChartGroup;
 import com.eviware.loadui.api.statistics.model.StatisticPage;
 import com.eviware.loadui.api.statistics.model.chart.ChartView;
 import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
+import com.eviware.loadui.api.statistics.model.chart.line.Segment;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.ui.fx.util.ManualObservable;
 import com.eviware.loadui.ui.fx.views.analysis.linechart.LineChartViewNode;
@@ -109,4 +117,5 @@ public class LineChartUtils
 		Snapshotter snapshotter = new Snapshotter( chartViewNode, node );
 		return snapshotter.createSnapshot();
 	}
+
 }

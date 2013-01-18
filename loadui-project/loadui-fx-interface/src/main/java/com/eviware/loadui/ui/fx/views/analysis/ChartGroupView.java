@@ -5,15 +5,19 @@ import static com.eviware.loadui.ui.fx.util.ObservableLists.ofCollection;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.transform;
 import static com.eviware.loadui.ui.fx.util.Properties.forLabel;
 import static javafx.beans.binding.Bindings.bindContent;
+import static javafx.beans.binding.Bindings.lessThan;
+import static javafx.beans.binding.Bindings.size;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
 import javafx.scene.control.LabelBuilder;
+import javafx.scene.control.MenuButton;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
@@ -38,6 +42,7 @@ import com.eviware.loadui.api.testevents.TestEvent;
 import com.eviware.loadui.api.testevents.TestEventRegistry;
 import com.eviware.loadui.ui.fx.api.PostActionEvent;
 import com.eviware.loadui.ui.fx.api.input.DraggableEvent;
+import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.views.analysis.linechart.LineChartViewNode;
 import com.eviware.loadui.util.BeanInjector;
@@ -76,6 +81,7 @@ public class ChartGroupView extends VBox
 		}
 
 		return chart;
+
 	}
 
 	private final ChartGroup chartGroup;
@@ -85,10 +91,17 @@ public class ChartGroupView extends VBox
 	private final Observable poll;
 
 	@FXML
-	private Label chartGroupLabel;
+	private MenuButton chartMenuButton;
+
+	@FXML
+	private MenuItem renameChartViewItem;
+
+	@FXML
+	private MenuItem deleteChartViewItem;
 
 	@FXML
 	private ToggleButton componentGroupToggle;
+
 	@FXML
 	private HBox buttonBar;
 
@@ -108,6 +121,7 @@ public class ChartGroupView extends VBox
 		this.project = project;
 		this.poll = poll;
 
+		//		componentSubcharts = FXCollections.observableArrayList();
 		componentSubcharts = transform( fx( transform( ofCollection( chartGroup ), chartToChartView ) ),
 				chartViewToChartViewHolder );
 
@@ -134,16 +148,12 @@ public class ChartGroupView extends VBox
 	{
 		chartGroupToggleGroup = new ToggleGroup();
 		componentGroupToggle.setToggleGroup( chartGroupToggleGroup );
-
+		componentGroupToggle.disableProperty().bind( lessThan( 2, size( componentSubcharts ) ) );
 		componentGroup.visibleProperty().bind( componentGroupToggle.selectedProperty() );
 
 		bindContent( componentGroup.getChildren(), componentSubcharts );
-
-		chartGroupLabel.textProperty().bind( forLabel( chartGroup ) );
+		chartMenuButton.textProperty().bind( forLabel( chartGroup ) );
 		chartView.getChildren().setAll( createChart( chartGroup.getType() ) );
-
-		//TODO: Bind SegmentViews.
-
 		addEventHandler( DraggableEvent.ANY, new EventHandler<DraggableEvent>()
 		{
 			@Override
@@ -164,6 +174,18 @@ public class ChartGroupView extends VBox
 				}
 			}
 		} );
+	}
+
+	@FXML
+	protected void renameChart( ActionEvent evt )
+	{
+		fireEvent( IntentEvent.create( IntentEvent.INTENT_RENAME, chartGroup ) );
+	}
+
+	@FXML
+	protected void deleteChart( ActionEvent evt )
+	{
+		chartGroup.delete();
 	}
 
 	public ToggleGroup getChartGroupToggleGroup()

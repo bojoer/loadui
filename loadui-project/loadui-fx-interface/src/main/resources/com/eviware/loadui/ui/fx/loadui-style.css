@@ -763,6 +763,7 @@
 	-fx-control-inner-background: #fbecec;
 }
 
+
 /**
  * Assertion bottom panel.
  */
@@ -771,4 +772,15 @@
  	-fx-background-color: #d6d6d6;
 	-fx-background-radius: 10;
 	-fx-padding: 2 10 10 10;
+ }
+ 
+ 
+ /**
+ * Line Charts.
+ */
+
+ .overlayed-chart-text {
+ 	-fx-text-fill: #939393;
+ 	-fx-fill: #939393;
+ 	-fx-background-color: white;
  }

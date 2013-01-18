@@ -4,6 +4,10 @@ import static com.eviware.loadui.ui.fx.util.ObservableLists.fx;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.ofCollection;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.transform;
 import static javafx.beans.binding.Bindings.bindContent;
+import static javafx.beans.binding.Bindings.createStringBinding;
+
+import java.util.concurrent.Callable;
+
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.property.BooleanProperty;
@@ -17,13 +21,19 @@ import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Series;
+import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 
+import org.joda.time.Period;
+import org.joda.time.format.PeriodFormatter;
+import org.joda.time.format.PeriodFormatterBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,6 +45,7 @@ import com.eviware.loadui.api.statistics.model.chart.line.TestEventSegment;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.util.execution.TestExecutionUtils;
+import com.eviware.loadui.util.statistics.ChartUtils;
 import com.google.common.base.Function;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -60,7 +71,11 @@ public class ScrollableLineChart extends HBox
 				}
 			} );
 
-	private final SimpleObjectProperty<ZoomLevel> zoomLevelProperty = new SimpleObjectProperty<ZoomLevel>(
+	private static final PeriodFormatter timeFormatter = new PeriodFormatterBuilder().printZeroNever().appendWeeks()
+			.appendSuffix( "w" ).appendSeparator( " " ).appendDays().appendSuffix( "d" ).appendSeparator( " " )
+			.appendHours().appendSuffix( "h" ).appendSeparator( " " ).appendMinutes().appendSuffix( "m" ).toFormatter();
+
+	final SimpleObjectProperty<ZoomLevel> zoomLevelProperty = new SimpleObjectProperty<ZoomLevel>(
 			ScrollableLineChart.this, "zoom level", ZoomLevel.SECONDS );
 	private final SimpleObjectProperty<ZoomLevel> tickZoomLevelProperty = new SimpleObjectProperty<ZoomLevel>(
 			ScrollableLineChart.this, "tick zoom level", ZoomLevel.SECONDS );
@@ -74,6 +89,8 @@ public class ScrollableLineChart extends HBox
 
 	protected static final Logger log = LoggerFactory.getLogger( ScrollableLineChart.class );
 
+	private final MillisToTickMark millisToTickMark = new MillisToTickMark( zoomLevelProperty );
+
 	@FXML
 	private SegmentBox segmentBox;
 
@@ -86,6 +103,12 @@ public class ScrollableLineChart extends HBox
 	@FXML
 	private ChartScrollBar scrollBar;
 
+	@FXML
+	private Label ellapsedTime;
+
+	@FXML
+	private Label zoomLevel;
+
 	public ScrollableLineChart()
 	{
 		FXMLUtils.load( this );
@@ -94,11 +117,34 @@ public class ScrollableLineChart extends HBox
 	@FXML
 	private void initialize()
 	{
+		zoomLevel.textProperty().bind( createStringBinding( new Callable<String>()
+		{
+			@Override
+			public String call() throws Exception
+			{
+				return zoomLevelProperty.get().getShortName();
+			}
+		}, zoomLevelProperty ) );
+
+		xAxis.setTickLabelFormatter( millisToTickMark );
+
 		scrollBar.visibleAmountProperty().bind( shownSpan );
 		scrollBar.blockIncrementProperty().bind( shownSpan.divide( 2 ) );
 		scrollBar.unitIncrementProperty().bind( shownSpan.divide( 40 ) );
 
 		position.bind( scrollBar.leftSidePositionProperty() );
+
+		positionProperty().addListener( new InvalidationListener()
+		{
+			@Override
+			public void invalidated( Observable arg0 )
+			{
+				long millis = ( long )getPosition();
+				Period period = new Period( millis );
+				String formattedTime = timeFormatter.print( period.normalizedStandard() );
+				ellapsedTime.setText( formattedTime );
+			}
+		} );
 
 		maxProperty().addListener( new InvalidationListener()
 		{
@@ -128,9 +174,10 @@ public class ScrollableLineChart extends HBox
 				int i = 0;
 				for( Series<?, ?> series : seriesList )
 				{
-					segmentViews.get( i ).setColor( seriesToColor( series ) );
+					segmentViews.get( i ).setColor( ChartUtils.lineToColor( series, seriesList ) );
 					if( segmentViews.get( i ) instanceof EventSegmentView )
-						eventSeriesStyles.getUnchecked( series ).set( "-fx-stroke: " + seriesToColor( series ) + ";" );
+						eventSeriesStyles.getUnchecked( series ).set(
+								"-fx-stroke: " + ChartUtils.lineToColor( series, seriesList ) + ";" );
 
 					i++ ;
 				}
@@ -144,7 +191,18 @@ public class ScrollableLineChart extends HBox
 	 */
 	public void setZoomLevel( ZoomLevel zoomLevel )
 	{
+		ZoomLevel fromZoomLevel = zoomLevelProperty.get();
 		zoomLevelProperty.set( zoomLevel );
+
+		for( Node n : xAxis.getChildrenUnmodifiable() )
+		{
+			if( n instanceof Text )
+			{
+				Text text = ( Text )n;
+				text.setText( millisToTickMark.changeZoomLevel( text.getText(), fromZoomLevel ) );
+			}
+		}
+
 		if( zoomLevel.equals( ZoomLevel.ALL ) )
 		{
 			zoomLevel = ZoomLevel.forSpan( scrollBar.maxProperty().longValue() / 1000 );
@@ -178,6 +236,7 @@ public class ScrollableLineChart extends HBox
 		}
 
 		// recalculates the position after the span has changed
+		scrollBar.setLeftSidePosition( position.getValue() );
 		scrollBar.updateLeftSide();
 
 	}
@@ -196,33 +255,6 @@ public class ScrollableLineChart extends HBox
 		log.debug( "TickMode set to: " + level.name() );
 	}
 
-	private String seriesToColor( Series<?, ?> series )
-	{
-		int seriesOrder = seriesList.indexOf( series );
-
-		switch( seriesOrder % 8 )
-		{
-		case 0 :
-			return "#f9d900";
-		case 1 :
-			return "#a9e200";
-		case 2 :
-			return "#22bad9";
-		case 3 :
-			return "#0181e2";
-		case 4 :
-			return "#2f357f";
-		case 5 :
-			return "#860061";
-		case 6 :
-			return "#c62b00";
-		case 7 :
-			return "#ff5700";
-		}
-
-		throw new RuntimeException( "This is mathematically impossible!" );
-	}
-
 	public void setChartProperties( final ObservableValue<Execution> currentExecution, LineChartView chartView,
 			Observable poll )
 	{
@@ -236,6 +268,8 @@ public class ScrollableLineChart extends HBox
 
 		segmentsList = fx( ofCollection( chartView, LineChartView.SEGMENTS, Segment.class, chartView.getSegments() ) );
 		seriesList = transform( segmentsList, segmentToSeries );
+
+		// TODO: apply short names here?
 		segmentViews = transform( segmentsList, segmentToView );
 
 		bindContent( getLineChart().getData(), seriesList );
@@ -313,9 +347,9 @@ public class ScrollableLineChart extends HBox
 		public SegmentView apply( final Segment segment )
 		{
 			if( segment instanceof LineSegment )
-				return new LineSegmentView( ( LineSegment )segment );
+				return new LineSegmentView( ( LineSegment )segment, segmentBox.isExpandedProperty() );
 			else
-				return new EventSegmentView( ( TestEventSegment )segment );
+				return new EventSegmentView( ( TestEventSegment )segment, segmentBox.isExpandedProperty() );
 		}
 	}
 
@@ -324,7 +358,7 @@ public class ScrollableLineChart extends HBox
 		@Override
 		public EventSegmentView apply( final TestEventSegment segment )
 		{
-			return new EventSegmentView( segment );
+			return new EventSegmentView( segment, segmentBox.isExpandedProperty() );
 		}
 	}
 
