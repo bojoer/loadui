@@ -12,4 +12,8 @@
 	<bean id="assertionInspector" class="com.eviware.loadui.ui.fx.views.assertions.AssertionInspector" >
 		<constructor-arg ref="statisticsManager" />
 	</bean>
+	<bean id="mainWindowCreator" class="com.eviware.loadui.ui.fx.api.LoadUiMainWindowCreator">
+		<constructor-arg ref="workspaceProvider" />
+		<constructor-arg ref="testEventManager" />
+	</bean>
 </beans>
