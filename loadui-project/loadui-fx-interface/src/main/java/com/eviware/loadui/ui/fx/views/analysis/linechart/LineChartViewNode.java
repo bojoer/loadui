@@ -84,9 +84,6 @@ public class LineChartViewNode extends VBox
 	private ScrollableLineChart scrollableLineChart;
 
 	@FXML
-	private Label timer;
-
-	@FXML
 	private ZoomMenuButton zoomMenuButton;
 
 	@FXML
@@ -125,18 +122,6 @@ public class LineChartViewNode extends VBox
 			}
 		}, currentExecution, poll ) );
 
-		scrollableLineChart.positionProperty().addListener( new InvalidationListener()
-		{
-			@Override
-			public void invalidated( Observable arg0 )
-			{
-				long millis = ( long )scrollableLineChart.getPosition();
-				Period period = new Period( millis );
-				String formattedTime = timeFormatter.print( period.normalizedStandard() );
-				timer.setText( formattedTime );
-			}
-		} );
-
 		zoomMenuButton.selectedProperty().addListener( new ChangeListener<ZoomLevel>()
 		{
 			@Override
@@ -148,9 +133,8 @@ public class LineChartViewNode extends VBox
 
 		currentExecution.addListener( new InvalidationListener()
 		{
-
 			@Override
-			public void invalidated( Observable arg0 )
+			public void invalidated( Observable _ )
 			{
 				//sets the position to 0 when there is a new execution
 				scrollableLineChart.setPosition( 0d );
@@ -200,7 +184,7 @@ public class LineChartViewNode extends VBox
 		dialog.setOnConfirm( new EventHandler<ActionEvent>()
 		{
 			@Override
-			public void handle( ActionEvent arg0 )
+			public void handle( ActionEvent _ )
 			{
 				Selection selection = dialog.getSelection();
 

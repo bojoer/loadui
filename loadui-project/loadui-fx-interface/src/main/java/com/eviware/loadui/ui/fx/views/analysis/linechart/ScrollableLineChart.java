@@ -71,7 +71,7 @@ public class ScrollableLineChart extends HBox
 				}
 			} );
 
-	private static final PeriodFormatter timeFormatter = new PeriodFormatterBuilder().printZeroNever().appendWeeks()
+	public static final PeriodFormatter timeFormatter = new PeriodFormatterBuilder().printZeroNever().appendWeeks()
 			.appendSuffix( "w" ).appendSeparator( " " ).appendDays().appendSuffix( "d" ).appendSeparator( " " )
 			.appendHours().appendSuffix( "h" ).appendSeparator( " " ).appendMinutes().appendSuffix( "m" ).toFormatter();
 
@@ -89,7 +89,7 @@ public class ScrollableLineChart extends HBox
 
 	protected static final Logger log = LoggerFactory.getLogger( ScrollableLineChart.class );
 
-	private final MillisToTickMark millisToTickMark = new MillisToTickMark( zoomLevelProperty );
+	private final MillisToTickMark millisToTickMark = new MillisToTickMark( zoomLevelProperty, timeFormatter );
 
 	@FXML
 	private SegmentBox segmentBox;
