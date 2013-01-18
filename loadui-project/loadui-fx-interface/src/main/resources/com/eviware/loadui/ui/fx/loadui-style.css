@@ -395,6 +395,10 @@
 	visibility: hidden;
 }
 
+.tool-box .expander-category-button .graphic{
+	-fx-shape: -fx-shape-navigation-right;
+}
+
 .item-holder {
 	-fx-padding: 5;
 	-fx-spacing: 5;
