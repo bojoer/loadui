@@ -1,5 +1,8 @@
 package com.eviware.loadui.ui.fx.util;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -14,18 +17,21 @@ import javafx.scene.Node;
 import javafx.scene.SceneBuilder;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBuilder;
-import javafx.scene.control.Slider;
 import javafx.scene.control.SplitPaneBuilder;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextAreaBuilder;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.VBoxBuilder;
 import javafx.stage.Stage;
 
-import com.eviware.loadui.ui.fx.views.analysis.linechart.LineSegmentView;
-import com.eviware.loadui.ui.fx.views.analysis.linechart.SegmentView;
+import com.eviware.loadui.api.testevents.MessageLevel;
+import com.eviware.loadui.api.testevents.TestEvent.Entry;
+import com.eviware.loadui.api.testevents.TestEventManager;
+import com.eviware.loadui.ui.fx.control.NotificationPanel;
+import com.eviware.loadui.util.testevents.MessageTestEvent;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
@@ -38,13 +44,55 @@ public class StyleTester extends Application
 	@SuppressWarnings( "rawtypes" )
 	private Node createTestNode()
 	{
-		VBox container = new VBox();
-		SegmentView one = new LineSegmentView( null );
-		Slider s = new Slider();
-		s.setDisable( true );
-		container.getChildren().addAll( one, new LineSegmentView( null ), new LineSegmentView( null ),
-				new LineSegmentView( null ), s );
-		return container;
+
+				HBox container = new HBox();
+				
+				TestEventManager tem = mock( TestEventManager.class );
+				final NotificationPanel panel = new NotificationPanel();
+				//panel.setPrefWidth( 400 );
+				//panel.setMinWidth( 100 );
+				panel.getMsgText().setWrapText( true );
+
+				//HBox.setHgrow( panel, null );
+				tem.registerObserver( panel );
+				Button butt = new Button("Hello there");
+				butt.setOnAction( new EventHandler<ActionEvent>()
+				{
+
+					@Override
+					public void handle( ActionEvent arg0 )
+					{
+						Entry entry = mock( Entry.class );
+						when( entry.getTestEvent() ).thenReturn(
+								new MessageTestEvent( 1L, MessageLevel.NOTIFICATION, "This is my message" ) );
+						panel.onTestEvent( entry );
+					}
+				} );
+				container.getChildren().addAll( panel, butt );
+				
+				return container;
+
+//		StackPane stack = new StackPane();
+//		Rectangle helpIcon = new Rectangle( 30.0, 25.0 );
+//		helpIcon.setFill( new LinearGradient( 0, 0, 0, 1, true, CycleMethod.NO_CYCLE, new Stop[] {
+//				new Stop( 0, Color.web( "#4977A3" ) ), new Stop( 0.5, Color.web( "#B0C6DA" ) ),
+//				new Stop( 1, Color.web( "#9CB6CF" ) ), } ) );
+//		helpIcon.setStroke( Color.web( "#D0E6FA" ) );
+//		helpIcon.setArcHeight( 3.5 );
+//		helpIcon.setArcWidth( 3.5 );
+//
+//		Text helpText = new Text( "?" );
+//		helpText.setFont( Font.font( "Verdana", FontWeight.BOLD, 18 ) );
+//		helpText.setFill( Color.WHITE );
+//		helpText.setStroke( Color.web( "#7080A0" ) );
+//
+//		stack.getChildren().addAll( helpIcon, helpText );
+//		stack.setAlignment( Pos.CENTER_RIGHT ); // Right-justify nodes in stack
+//		StackPane.setMargin( helpText, new Insets( 0, 10, 0, 0 ) ); // Center "?"
+////		stack.setPrefWidth( 50 );
+//		stack.setMaxWidth( 50 );
+//		stack.setId( "blah" );
+//		return stack;
 	}
 
 	@Override
