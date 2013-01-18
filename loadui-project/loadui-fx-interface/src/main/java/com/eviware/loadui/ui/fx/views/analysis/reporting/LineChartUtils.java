@@ -109,7 +109,7 @@ public class LineChartUtils
 	{
 		ManualObservable chartUpdater = new ManualObservable();
 
-		final LineChartViewNode chartViewNode = new LineChartViewNode( executionProperty, null, chartView, chartUpdater );
+		final LineChartViewNode chartViewNode = new LineChartViewNode( executionProperty, chartView, chartUpdater );
 		chartViewNode.setZoomLevel( ZoomLevel.ALL );
 
 		final LineChart<Number, Number> node = chartViewNode.getLineChart();

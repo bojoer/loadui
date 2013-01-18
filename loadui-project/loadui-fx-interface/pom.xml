@@ -52,8 +52,8 @@
 								<taskdef resource="com/sun/javafx/tools/ant/antlib.xml"
 									uri="javafx:com.sun.javafx.tools.ant">
 									<classpath>
-										<pathelement location="${env.JAVAFX2_HOME}/lib/ant-javafx.jar" />
-										<pathelement location="${env.JAVAFX2_HOME}/jre/lib/jfxrt.jar" />
+										<pathelement location="${env.JAVA_HOME}/lib/ant-javafx.jar" />
+										<pathelement location="${env.JAVA_HOME}/jre/lib/jfxrt.jar" />
 									</classpath>
 								</taskdef>
 
@@ -99,7 +99,7 @@
 			<groupId>com.oracle</groupId>
 			<artifactId>javafx-runtime</artifactId>
 			<version>2.2</version>
-			<systemPath>${env.JAVAFX2_HOME}/jre/lib/jfxrt.jar</systemPath>
+			<systemPath>${env.JAVA_HOME}/jre/lib/jfxrt.jar</systemPath>
 			<scope>system</scope>
 		</dependency>
 		<dependency>

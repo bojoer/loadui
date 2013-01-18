@@ -19,6 +19,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabBuilder;
 import javafx.scene.control.TabPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 
 import javax.annotation.Nullable;
@@ -77,7 +78,7 @@ public class AnalysisView extends StackPane
 		@Nullable
 		public StatisticTab apply( @Nullable StatisticPage page )
 		{
-			return new StatisticTab( page, currentExecution, comparedExecution, project, poll );
+			return new StatisticTab( page, currentExecution, project, poll );
 		}
 	};
 
@@ -90,13 +91,15 @@ public class AnalysisView extends StackPane
 	@FXML
 	private AnalysisToolBox toolBox;
 
+	@FXML
+	private HBox buttonContainer;
+
 	private final ProjectItem project;
 	private final ObservableList<Execution> recentExecutionList;
 	private final ObservableList<Execution> archivedExecutionList;
 	private final Observable poll;
 
 	private final Property<Execution> currentExecution = new SimpleObjectProperty<>( this, "currentExecution" );
-	private final Property<Execution> comparedExecution = new SimpleObjectProperty<>( this, "comparedExecution" );
 
 	private Tab plusButton;
 
@@ -203,15 +206,15 @@ public class AnalysisView extends StackPane
 		}
 	}
 
+	public HBox getButtonContainer()
+	{
+		return buttonContainer;
+	}
+
 	@FXML
 	public void close()
 	{
 		AnalysisView.this.fireEvent( IntentEvent.create( IntentEvent.INTENT_CLOSE, getCurrentExecution() ) );
 	}
 
-	@FXML
-	public void compare()
-	{
-		comparedExecution.setValue( recentExecutionList.get( 0 ) );
-	}
 }

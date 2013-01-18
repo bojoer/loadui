@@ -13,9 +13,9 @@
 <?import javafx.scene.control.Slider?>
 
 <fx:root type="javafx.scene.layout.StackPane" xmlns:fx="http://javafx.com/fxml"
-	styleClass="slim-icon" maxWidth="140">
+	styleClass="slim-icon">
 	<HBox styleClass="line-segment-view" >
-		<Label fx:id="segmentLabel" text="Label" maxWidth="120"
+		<Label fx:id="segmentLabel" text="Label"
 			HBox.hgrow="ALWAYS" />
 		<MenuButton fx:id="menuButton">
 			<items>

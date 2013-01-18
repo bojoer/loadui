@@ -74,6 +74,7 @@ final class SegmentToSeriesFunction implements Function<Segment, XYChart.Series<
 								( long )chart.getPosition() + chart.getSpan() + 2000, chart.getTickZoomLevel().getLevel(),
 								execution.getValue() ), datapointToChartdata );
 
+				// applies the scale to each point
 				final Function<XYChart.Data<Number, Number>, XYChart.Data<Number, Number>> chartdataToScaledChartdata = new Function<XYChart.Data<Number, Number>, XYChart.Data<Number, Number>>()
 				{
 					@Override
@@ -86,14 +87,10 @@ final class SegmentToSeriesFunction implements Function<Segment, XYChart.Series<
 					}
 				};
 
-				// applies the scale to each point
-
 				return Iterables.transform( chartdata, chartdataToScaledChartdata );
 
 			}
 		}, observables ) );
-		//					observableArrayList( currentExecution, positionProperty(), spanProperty(), poll, tickZoomLevelProperty,
-		//							scaleUpdate() ) ) );
 
 		return series;
 	}
@@ -126,7 +123,6 @@ final class SegmentToSeriesFunction implements Function<Segment, XYChart.Series<
 						} );
 			}
 		}, observables ) );
-		//			observableArrayList( currentExecution, positionProperty(), spanProperty(), poll ) ) );
 
 		series.nodeProperty().addListener( new ChangeListener<Node>()
 		{

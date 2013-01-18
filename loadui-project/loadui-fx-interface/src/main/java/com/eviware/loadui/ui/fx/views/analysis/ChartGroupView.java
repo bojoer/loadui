@@ -9,15 +9,15 @@ import static javafx.beans.binding.Bindings.lessThan;
 import static javafx.beans.binding.Bindings.size;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
-import javafx.beans.binding.Bindings;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
 import javafx.scene.control.LabelBuilder;
+import javafx.scene.control.MenuButton;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
@@ -42,6 +42,7 @@ import com.eviware.loadui.api.testevents.TestEvent;
 import com.eviware.loadui.api.testevents.TestEventRegistry;
 import com.eviware.loadui.ui.fx.api.PostActionEvent;
 import com.eviware.loadui.ui.fx.api.input.DraggableEvent;
+import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.views.analysis.linechart.LineChartViewNode;
 import com.eviware.loadui.util.BeanInjector;
@@ -80,20 +81,27 @@ public class ChartGroupView extends VBox
 		}
 
 		return chart;
+
 	}
 
 	private final ChartGroup chartGroup;
 
 	private final ObservableValue<Execution> currentExecution;
-	private final ObservableValue<Execution> comparedExecution;
 	private final ProjectItem project;
 	private final Observable poll;
 
 	@FXML
-	private Label chartGroupLabel;
+	private MenuButton chartMenuButton;
+
+	@FXML
+	private MenuItem renameChartViewItem;
+
+	@FXML
+	private MenuItem deleteChartViewItem;
 
 	@FXML
 	private ToggleButton componentGroupToggle;
+
 	@FXML
 	private HBox buttonBar;
 
@@ -105,12 +113,11 @@ public class ChartGroupView extends VBox
 
 	private final ObservableList<LineChartViewNode> componentSubcharts;
 
-	public ChartGroupView( ChartGroup chartGroup, ObservableValue<Execution> currentExecution,
-			ObservableValue<Execution> comparedExecution, ProjectItem project, Observable poll )
+	public ChartGroupView( ChartGroup chartGroup, ObservableValue<Execution> currentExecution, ProjectItem project,
+			Observable poll )
 	{
 		this.chartGroup = chartGroup;
 		this.currentExecution = currentExecution;
-		this.comparedExecution = comparedExecution;
 		this.project = project;
 		this.poll = poll;
 
@@ -145,10 +152,8 @@ public class ChartGroupView extends VBox
 		componentGroup.visibleProperty().bind( componentGroupToggle.selectedProperty() );
 
 		bindContent( componentGroup.getChildren(), componentSubcharts );
-
-		chartGroupLabel.textProperty().bind( forLabel( chartGroup ) );
+		chartMenuButton.textProperty().bind( forLabel( chartGroup ) );
 		chartView.getChildren().setAll( createChart( chartGroup.getType() ) );
-
 		addEventHandler( DraggableEvent.ANY, new EventHandler<DraggableEvent>()
 		{
 			@Override
@@ -171,6 +176,18 @@ public class ChartGroupView extends VBox
 		} );
 	}
 
+	@FXML
+	protected void renameChart( ActionEvent evt )
+	{
+		fireEvent( IntentEvent.create( IntentEvent.INTENT_RENAME, chartGroup ) );
+	}
+
+	@FXML
+	protected void deleteChart( ActionEvent evt )
+	{
+		chartGroup.delete();
+	}
+
 	public ToggleGroup getChartGroupToggleGroup()
 	{
 		return chartGroupToggleGroup;
@@ -185,8 +202,7 @@ public class ChartGroupView extends VBox
 	{
 		if( Objects.equal( type, LineChartView.class.getName() ) )
 		{
-			return new LineChartViewNode( currentExecution, comparedExecution, ( LineChartView )chartGroup.getChartView(),
-					poll );
+			return new LineChartViewNode( currentExecution, ( LineChartView )chartGroup.getChartView(), poll );
 		}
 		return LabelBuilder.create().text( "Unsupported chart type: " + type ).build();
 	}
@@ -223,7 +239,7 @@ public class ChartGroupView extends VBox
 		@Override
 		public LineChartViewNode apply( ChartView _chartView )
 		{
-			return new LineChartViewNode( currentExecution, comparedExecution, ( LineChartView )_chartView, poll );
+			return new LineChartViewNode( currentExecution, ( LineChartView )_chartView, poll );
 		}
 	};
 

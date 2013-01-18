@@ -92,8 +92,8 @@
 	</build>
 	<dependencies>
 		<dependency>
-			<groupId>com.eviware.loadui</groupId>
-			<artifactId>loadui-agent-deps</artifactId>
+			<groupId>com.eviware.loadui.pro</groupId>
+			<artifactId>loadui-pro-agent-deps</artifactId>
 			<version>${project.parent.version}</version>
 			<type>pom</type>
 		</dependency>

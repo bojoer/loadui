@@ -53,6 +53,10 @@ public class LineChartViewNode extends VBox
 
 	protected static final Logger log = LoggerFactory.getLogger( LineChartViewNode.class );
 
+	private static final PeriodFormatter timeFormatter = new PeriodFormatterBuilder().printZeroNever().appendWeeks()
+			.appendSuffix( "w" ).appendSeparator( " " ).appendDays().appendSuffix( "d" ).appendSeparator( " " )
+			.appendHours().appendSuffix( "h" ).appendSeparator( " " ).appendMinutes().appendSuffix( "m" ).toFormatter();
+
 	private final TestExecutionTask executionTask = new TestExecutionTask()
 	{
 
@@ -73,7 +77,6 @@ public class LineChartViewNode extends VBox
 	};
 
 	private final ObservableValue<Execution> currentExecution;
-	private final ObservableValue<Execution> comparedExecution;
 	private final Observable poll;
 	private final LineChartView chartView;
 
@@ -81,20 +84,21 @@ public class LineChartViewNode extends VBox
 	private ScrollableLineChart scrollableLineChart;
 
 	@FXML
+	private Label timer;
+
+	@FXML
 	private ZoomMenuButton zoomMenuButton;
 
 	@FXML
 	private CheckBox followCheckBox;
 
-	public LineChartViewNode( final ObservableValue<Execution> currentExecution,
-			final ObservableValue<Execution> comparedExecution, LineChartView chartView, Observable poll )
+	public LineChartViewNode( final ObservableValue<Execution> currentExecution, LineChartView chartView, Observable poll )
 	{
 		log.debug( "new LineChartViewNode created! " );
 
 		BeanInjector.getBean( TestRunner.class ).registerTask( executionTask, Phase.START, Phase.STOP );
 
 		this.currentExecution = currentExecution;
-		this.comparedExecution = comparedExecution;
 		this.chartView = chartView;
 		this.poll = poll;
 
@@ -102,11 +106,13 @@ public class LineChartViewNode extends VBox
 	}
 
 	@FXML
-	private void initialize()
+	public void initialize()
 	{
+		log.debug( "INITIALIZE LineChartViewNode STARTED" );
+
 		loadAttributes();
 
-		scrollableLineChart.setChartProperties( currentExecution, comparedExecution, chartView, poll );
+		scrollableLineChart.setChartProperties( currentExecution, chartView, poll );
 
 		scrollableLineChart.titleProperty().bind( Properties.forLabel( chartView ) );
 
@@ -119,13 +125,24 @@ public class LineChartViewNode extends VBox
 			}
 		}, currentExecution, poll ) );
 
+		scrollableLineChart.positionProperty().addListener( new InvalidationListener()
+		{
+			@Override
+			public void invalidated( Observable arg0 )
+			{
+				long millis = ( long )scrollableLineChart.getPosition();
+				Period period = new Period( millis );
+				String formattedTime = timeFormatter.print( period.normalizedStandard() );
+				timer.setText( formattedTime );
+			}
+		} );
+
 		zoomMenuButton.selectedProperty().addListener( new ChangeListener<ZoomLevel>()
 		{
 			@Override
 			public void changed( ObservableValue<? extends ZoomLevel> arg0, ZoomLevel arg1, ZoomLevel newZoomLevel )
 			{
-				scrollableLineChart.setZoomLevel( newZoomLevel );
-				chartView.setAttribute( ZOOM_LEVEL_ATTRIBUTE, newZoomLevel.name() );
+				setZoomLevel( newZoomLevel );
 			}
 		} );
 
@@ -156,6 +173,7 @@ public class LineChartViewNode extends VBox
 			level = ZoomLevel.SECONDS;
 		}
 		zoomMenuButton.setSelected( level );
+
 		log.debug( "Zoomlevel: " + level.toString() );
 
 		Boolean follow;

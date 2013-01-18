@@ -90,6 +90,10 @@ public class MainWindowView extends StackPane
 		initInspectorView();
 		showWorkspace();
 	}
+	
+	public MenuButton getMainButton() {
+		return mainButton;
+	}
 
 	private void initIntentEventHanding()
 	{

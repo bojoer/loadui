@@ -57,13 +57,12 @@ public class StatisticTab extends Tab
 		@Override
 		public ChartGroupView apply( ChartGroup chartGroup )
 		{
-			return new ChartGroupView( chartGroup, currentExecution, comparedExecution, project, poll );
+			return new ChartGroupView( chartGroup, currentExecution, project, poll );
 		}
 	};
 
 	private final StatisticPage page;
 	private final ObservableValue<Execution> currentExecution;
-	private final ObservableValue<Execution> comparedExecution;
 	private final ProjectItem project;
 	private final Observable poll;
 	private final ObservableList<ChartGroupView> chartGroupViews;
@@ -71,12 +70,11 @@ public class StatisticTab extends Tab
 	@FXML
 	private VBox chartList;
 
-	public StatisticTab( StatisticPage page, ObservableValue<Execution> currentExecution,
-			ObservableValue<Execution> comparedExecution, ProjectItem project, Observable poll )
+	public StatisticTab( StatisticPage page, ObservableValue<Execution> currentExecution, ProjectItem project,
+			Observable poll )
 	{
 		this.page = page;
 		this.currentExecution = currentExecution;
-		this.comparedExecution = comparedExecution;
 		this.project = project;
 		this.poll = poll;
 		chartGroupViews = transform( fx( ofCollection( page ) ), chartGroupToView );

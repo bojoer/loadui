@@ -2,7 +2,9 @@ package com.eviware.loadui.ui.fx.views.analysis.linechart;
 
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.MenuButton;
@@ -34,18 +36,21 @@ public class LineSegmentView extends SegmentView<LineSegment>
 
 	protected static final Logger log = LoggerFactory.getLogger( LineSegmentView.class );
 
-	private BooleanProperty scaling = new SimpleBooleanProperty( true );
+	private final BooleanProperty scaling = new SimpleBooleanProperty( true );
 	private int scale = 0;
+	private final ReadOnlyBooleanProperty isExpandedProperty;
 
-	public LineSegmentView( LineSegment segment )
+	public LineSegmentView( LineSegment segment, ReadOnlyBooleanProperty isExpandedProperty )
 	{
 		super( segment );
+		this.isExpandedProperty = isExpandedProperty;
 		FXMLUtils.load( this );
 	}
 
 	@FXML
 	private void initialize()
 	{
+		segmentLabel.maxWidthProperty().bind( Bindings.when( isExpandedProperty ).then( 240 ).otherwise( 120 ) );
 		segmentLabel.setText( segment.getStatisticHolder().getLabel() + " " + segment.getVariableName() + " "
 				+ segment.getStatisticName() );
 

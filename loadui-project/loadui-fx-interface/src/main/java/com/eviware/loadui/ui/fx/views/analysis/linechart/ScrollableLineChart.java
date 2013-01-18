@@ -10,7 +10,6 @@ import java.util.concurrent.Callable;
 
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.LongProperty;
@@ -31,7 +30,6 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import javafx.util.StringConverter;
 
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatter;
@@ -55,10 +53,9 @@ import com.google.common.cache.LoadingCache;
 
 public class ScrollableLineChart extends HBox
 {
-	private ObservableValue<Execution> currentExecution;
-	private ObservableValue<Execution> comparedExecution;
-	private Observable poll;
-	private LineChartView chartView;
+	//	private ObservableValue<Execution> currentExecution;
+	//	private Observable poll;
+	//	private LineChartView chartView;
 
 	private ObservableList<Segment> segmentsList;
 	private ObservableList<XYChart.Series<Number, Number>> seriesList;
@@ -192,7 +189,7 @@ public class ScrollableLineChart extends HBox
 	/**
 	 * returns the tickmode ZoomLevel
 	 */
-	public ZoomLevel setZoomLevel( ZoomLevel zoomLevel )
+	public void setZoomLevel( ZoomLevel zoomLevel )
 	{
 		ZoomLevel fromZoomLevel = zoomLevelProperty.get();
 		zoomLevelProperty.set( zoomLevel );
@@ -242,7 +239,6 @@ public class ScrollableLineChart extends HBox
 		scrollBar.setLeftSidePosition( position.getValue() );
 		scrollBar.updateLeftSide();
 
-		return zoomLevel;
 	}
 
 	public void setTickMode( ZoomLevel level )
@@ -259,13 +255,12 @@ public class ScrollableLineChart extends HBox
 		log.debug( "TickMode set to: " + level.name() );
 	}
 
-	public void setChartProperties( final ObservableValue<Execution> currentExecution,
-			final ObservableValue<Execution> comparedExecution, LineChartView chartView, Observable poll )
+	public void setChartProperties( final ObservableValue<Execution> currentExecution, LineChartView chartView,
+			Observable poll )
 	{
-		this.currentExecution = currentExecution;
-		this.comparedExecution = comparedExecution;
-		this.chartView = chartView;
-		this.poll = poll;
+		//		this.currentExecution = currentExecution;
+		//		this.chartView = chartView;
+		//		this.poll = poll;
 
 		segmentToSeries = new SegmentToSeriesFunction( currentExecution,
 				javafx.collections.FXCollections.observableArrayList( currentExecution, positionProperty(), spanProperty(),
@@ -273,6 +268,8 @@ public class ScrollableLineChart extends HBox
 
 		segmentsList = fx( ofCollection( chartView, LineChartView.SEGMENTS, Segment.class, chartView.getSegments() ) );
 		seriesList = transform( segmentsList, segmentToSeries );
+
+		// TODO: apply short names here?
 		segmentViews = transform( segmentsList, segmentToView );
 
 		bindContent( getLineChart().getData(), seriesList );
@@ -350,9 +347,9 @@ public class ScrollableLineChart extends HBox
 		public SegmentView apply( final Segment segment )
 		{
 			if( segment instanceof LineSegment )
-				return new LineSegmentView( ( LineSegment )segment );
+				return new LineSegmentView( ( LineSegment )segment, segmentBox.isExpandedProperty() );
 			else
-				return new EventSegmentView( ( TestEventSegment )segment );
+				return new EventSegmentView( ( TestEventSegment )segment, segmentBox.isExpandedProperty() );
 		}
 	}
 
@@ -361,7 +358,7 @@ public class ScrollableLineChart extends HBox
 		@Override
 		public EventSegmentView apply( final TestEventSegment segment )
 		{
-			return new EventSegmentView( segment );
+			return new EventSegmentView( segment, segmentBox.isExpandedProperty() );
 		}
 	}
 
