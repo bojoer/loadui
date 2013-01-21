@@ -6,12 +6,12 @@
        http://www.springframework.org/schema/osgi  
        http://www.springframework.org/schema/osgi/spring-osgi.xsd">
        
-    <osgi:reference id="executionManager" interface="com.eviware.loadui.api.statistics.store.ExecutionManager" />
-    <osgi:reference id="testEventManager" interface="com.eviware.loadui.api.testevents.TestEventManager" />
+    <osgi:reference id="executionManager"  interface="com.eviware.loadui.api.statistics.store.ExecutionManager" />
+    <osgi:reference id="testEventManager"  interface="com.eviware.loadui.api.testevents.TestEventManager" />
     <osgi:reference id="statisticsManager" interface="com.eviware.loadui.api.statistics.StatisticsManager" />
     <osgi:reference id="workspaceProvider" interface="com.eviware.loadui.api.model.WorkspaceProvider" />
-       
-	<osgi:service ref="eventLogInspector" interface="com.eviware.loadui.ui.fx.api.Inspector" />
+    
+    <osgi:service ref="eventLogInspector"  interface="com.eviware.loadui.ui.fx.api.Inspector" />
 	<osgi:service ref="systemLogInspector" interface="com.eviware.loadui.ui.fx.api.Inspector" />
 	<osgi:service ref="assertionInspector" interface="com.eviware.loadui.ui.fx.api.Inspector" />
 

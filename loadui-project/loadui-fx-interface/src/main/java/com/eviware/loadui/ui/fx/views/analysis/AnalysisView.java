@@ -95,8 +95,8 @@ public class AnalysisView extends StackPane
 	private HBox buttonContainer;
 
 	private final ProjectItem project;
-	private final ObservableList<Execution> recentExecutionList;
-	private final ObservableList<Execution> archivedExecutionList;
+	private final ObservableList<Execution> allExecutionList;
+
 	private final Observable poll;
 
 	private final Property<Execution> currentExecution = new SimpleObjectProperty<>( this, "currentExecution" );
@@ -122,12 +122,10 @@ public class AnalysisView extends StackPane
 		return currentExecution.getValue();
 	}
 
-	public AnalysisView( ProjectItem project, ObservableList<Execution> recentExecutionList,
-			ObservableList<Execution> archivedExecutionList, Observable poll )
+	public AnalysisView( ProjectItem project, ObservableList<Execution> allExecutionsInProject, Observable poll )
 	{
 		this.project = project;
-		this.recentExecutionList = recentExecutionList;
-		this.archivedExecutionList = archivedExecutionList;
+		this.allExecutionList = allExecutionsInProject;
 		this.poll = poll;
 
 		FXMLUtils.load( this );
@@ -209,6 +207,11 @@ public class AnalysisView extends StackPane
 	public HBox getButtonContainer()
 	{
 		return buttonContainer;
+	}
+
+	public ObservableList<Execution> getAllExecutions()
+	{
+		return allExecutionList;
 	}
 
 	@FXML

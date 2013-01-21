@@ -12,6 +12,7 @@
 <?import javafx.geometry.Insets?>
 <?import java.net.URL?>
 <?import com.eviware.loadui.ui.fx.views.window.MainWindowView?>
+<?import com.eviware.loadui.ui.fx.control.NotificationPanel?>
 
 <fx:root type="javafx.scene.layout.StackPane" xmlns:fx="http://javafx.com/fxml">
 	<stylesheets>
@@ -32,4 +33,5 @@
 			<MenuItem id="systemProperties" text="System Properties" onAction="#systemProperties" />
 		</items>
 	</MenuButton>
+	<NotificationPanel fx:id="notificationPanel" />
 </fx:root>

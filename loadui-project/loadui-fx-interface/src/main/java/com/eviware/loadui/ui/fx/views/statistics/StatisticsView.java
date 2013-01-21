@@ -79,6 +79,17 @@ public class StatisticsView extends StackPane
 					}
 				} ) );
 
+		final ObservableList<Execution> allExecutionsInProject = fx( filter(
+				ofCollection( executionManager, ExecutionManager.ARCHIVE_EXECUTIONS, Execution.class, executions ),
+				new Predicate<Execution>()
+				{
+					@Override
+					public boolean apply( Execution input )
+					{
+						return equal( projectExecutionManager.getProjectId( input ), project.getId() );
+					}
+				} ) );
+
 		addEventHandler( IntentEvent.ANY, new EventHandler<IntentEvent<?>>()
 		{
 			@Override
@@ -93,7 +104,7 @@ public class StatisticsView extends StackPane
 							currentExecution.setValue( ( Execution )event.getArg() );
 						}
 
-						AnalysisView analysisView = new AnalysisView( project, recentExecutions, archivedExecutions, poll );
+						AnalysisView analysisView = new AnalysisView( project, allExecutionsInProject, poll );
 						analysisView.currentExecutionProperty().bind( currentExecution );
 						getChildren().setAll( analysisView );
 						PerspectiveEvent.fireEvent( PerspectiveEvent.PERSPECTIVE_ANALYSIS, analysisView );

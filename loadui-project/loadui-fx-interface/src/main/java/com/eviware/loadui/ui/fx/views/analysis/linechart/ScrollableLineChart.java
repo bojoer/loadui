@@ -268,6 +268,8 @@ public class ScrollableLineChart extends HBox
 
 		segmentsList = fx( ofCollection( chartView, LineChartView.SEGMENTS, Segment.class, chartView.getSegments() ) );
 		seriesList = transform( segmentsList, segmentToSeries );
+
+		// TODO: apply short names here?
 		segmentViews = transform( segmentsList, segmentToView );
 
 		bindContent( getLineChart().getData(), seriesList );
@@ -345,9 +347,9 @@ public class ScrollableLineChart extends HBox
 		public SegmentView apply( final Segment segment )
 		{
 			if( segment instanceof LineSegment )
-				return new LineSegmentView( ( LineSegment )segment );
+				return new LineSegmentView( ( LineSegment )segment, segmentBox.isExpandedProperty() );
 			else
-				return new EventSegmentView( ( TestEventSegment )segment );
+				return new EventSegmentView( ( TestEventSegment )segment, segmentBox.isExpandedProperty() );
 		}
 	}
 
@@ -356,7 +358,7 @@ public class ScrollableLineChart extends HBox
 		@Override
 		public EventSegmentView apply( final TestEventSegment segment )
 		{
-			return new EventSegmentView( segment );
+			return new EventSegmentView( segment, segmentBox.isExpandedProperty() );
 		}
 	}
 

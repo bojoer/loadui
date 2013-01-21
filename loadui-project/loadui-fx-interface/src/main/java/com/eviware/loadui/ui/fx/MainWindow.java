@@ -9,6 +9,7 @@ import javafx.stage.WindowEvent;
 import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.model.WorkspaceProvider;
+import com.eviware.loadui.api.testevents.TestEventManager;
 import com.eviware.loadui.ui.fx.api.intent.BlockingTask;
 import com.eviware.loadui.ui.fx.api.intent.DeleteTask;
 import com.eviware.loadui.ui.fx.views.window.MainWindowView;
@@ -20,15 +21,20 @@ public class MainWindow
 	private static final String WINDOW_WIDTH = MainWindow.class.getName() + "@width";
 	private static final String WINDOW_HEIGHT = MainWindow.class.getName() + "@height";
 
-	private final Stage stage;
+	private Stage stage;
+	private TestEventManager tem;
 	private final WorkspaceProvider workspaceProvider;
 
-	public MainWindow( final Stage stage, final WorkspaceProvider workspaceProvider )
+	public MainWindow( final WorkspaceProvider workspaceProvider )
 	{
-		this.stage = stage;
 		this.workspaceProvider = workspaceProvider;
+	}
 
-		loadDimensions();
+	public MainWindow withStage( Stage stage )
+	{
+		if (this.stage != null)
+			throw new IllegalStateException("Stage has already been set");
+		this.stage = stage;
 		stage.addEventHandler( WindowEvent.WINDOW_HIDING, new EventHandler<WindowEvent>()
 		{
 			@Override
@@ -37,10 +43,23 @@ public class MainWindow
 				saveDimensions();
 			}
 		} );
+
+		loadDimensions();
+		return this;
+	}
+	
+	public MainWindow withTestEventManager( TestEventManager tem ) {
+		if (this.tem != null)
+			throw new IllegalStateException("TestEventManager has already been set");
+		this.tem = tem;
+		return this;
 	}
 
 	public void show()
 	{
+		if (stage == null || tem == null )
+			throw new IllegalStateException("Stage or TestEventManager have not been set");
+		
 		stage.setTitle( System.getProperty( LoadUI.NAME, "loadUI" ) + " " + LoadUI.VERSION );
 
 		Platform.runLater( new Runnable()
@@ -48,8 +67,18 @@ public class MainWindow
 			@Override
 			public void run()
 			{
+				final MainWindowView mainView = new MainWindowView( workspaceProvider);
+				mainView.runAfterInit( new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						tem.registerObserver( mainView.getNotificationPanel() );
+					}
+				} );
+				
 				stage.setScene( SceneBuilder.create().stylesheets( "/com/eviware/loadui/ui/fx/loadui-style.css" )
-						.root( new MainWindowView( workspaceProvider ) ).build() );
+						.root( mainView ).build() );
 				BlockingTask.install( stage.getScene() );
 				DeleteTask.install( stage.getScene() );
 
