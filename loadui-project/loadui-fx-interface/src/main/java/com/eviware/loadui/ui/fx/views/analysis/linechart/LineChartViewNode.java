@@ -16,10 +16,8 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 
-import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
 import org.slf4j.Logger;
@@ -84,9 +82,6 @@ public class LineChartViewNode extends VBox
 	private ScrollableLineChart scrollableLineChart;
 
 	@FXML
-	private Label timer;
-
-	@FXML
 	private ZoomMenuButton zoomMenuButton;
 
 	@FXML
@@ -124,18 +119,6 @@ public class LineChartViewNode extends VBox
 				return currentExecution.getValue().getLength();
 			}
 		}, currentExecution, poll ) );
-
-		scrollableLineChart.positionProperty().addListener( new InvalidationListener()
-		{
-			@Override
-			public void invalidated( Observable arg0 )
-			{
-				long millis = ( long )scrollableLineChart.getPosition();
-				Period period = new Period( millis );
-				String formattedTime = timeFormatter.print( period.normalizedStandard() );
-				timer.setText( formattedTime );
-			}
-		} );
 
 		zoomMenuButton.selectedProperty().addListener( new ChangeListener<ZoomLevel>()
 		{
