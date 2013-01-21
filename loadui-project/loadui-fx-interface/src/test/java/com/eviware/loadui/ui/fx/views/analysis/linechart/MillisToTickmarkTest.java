@@ -35,5 +35,8 @@ public class MillisToTickmarkTest
 		assertEquals( "1m", millisToTickMark.changeZoomLevel( "1", ZoomLevel.MINUTES ) );
 		assertEquals( "1h", millisToTickMark.changeZoomLevel( "1h", ZoomLevel.MINUTES ) );
 		assertEquals( "1d", millisToTickMark.changeZoomLevel( "1d", ZoomLevel.MINUTES ) );
+
+		zoomLevelProperty.set( ZoomLevel.WEEKS );
+		assertEquals( "2", millisToTickMark.toString( 1209600000 ) );
 	}
 }

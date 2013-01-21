@@ -15,6 +15,8 @@
  */
 package com.eviware.loadui.api.charting.line;
 
+import javax.annotation.CheckForNull;
+
 /**
  * Defines the zoom level of a chart.
  * 
@@ -22,8 +24,9 @@ package com.eviware.loadui.api.charting.line;
  */
 public enum ZoomLevel
 {
-	ALL( 1, -1, 0, 1, "a", "all" ), WEEKS( 604800, 100, 4, 1, "w", "weeks" ), DAYS( 86400, 75, 3, 1, "d", "days" ), HOURS(
-			3600, 50, 2, 1, "h", "hrs" ), MINUTES( 60, 50, 1, 1, "m", "mins" ), SECONDS( 1, 12, 0, 5, "s", "sec" );
+	ALL( Integer.MAX_VALUE, -1, 0, 1, "a", "all" ), WEEKS( 604800, 100, 4, 1, "w", "weeks" ), DAYS( 86400, 75, 3, 1,
+			"d", "days" ), HOURS( 3600, 50, 2, 1, "h", "hrs" ), MINUTES( 60, 50, 1, 1, "m", "mins" ), SECONDS( 1, 12, 0,
+			5, "s", "sec" );
 
 	private final int interval;
 	private final int unitWidth;
@@ -48,6 +51,7 @@ public enum ZoomLevel
 		return shortName;
 	}
 
+	@CheckForNull
 	public ZoomLevel zoomOut()
 	{
 		return this.ordinal() != 0 ? ZoomLevel.values()[this.ordinal() - 1] : null;

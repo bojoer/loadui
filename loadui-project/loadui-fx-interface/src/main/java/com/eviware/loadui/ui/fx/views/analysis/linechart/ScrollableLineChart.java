@@ -75,7 +75,7 @@ public class ScrollableLineChart extends HBox
 			.appendSuffix( "w" ).appendSeparator( " " ).appendDays().appendSuffix( "d" ).appendSeparator( " " )
 			.appendHours().appendSuffix( "h" ).appendSeparator( " " ).appendMinutes().appendSuffix( "m" ).toFormatter();
 
-	final SimpleObjectProperty<ZoomLevel> zoomLevelProperty = new SimpleObjectProperty<ZoomLevel>(
+	private final SimpleObjectProperty<ZoomLevel> zoomLevelProperty = new SimpleObjectProperty<ZoomLevel>(
 			ScrollableLineChart.this, "zoom level", ZoomLevel.SECONDS );
 	private final SimpleObjectProperty<ZoomLevel> tickZoomLevelProperty = new SimpleObjectProperty<ZoomLevel>(
 			ScrollableLineChart.this, "tick zoom level", ZoomLevel.SECONDS );
@@ -89,7 +89,7 @@ public class ScrollableLineChart extends HBox
 
 	protected static final Logger log = LoggerFactory.getLogger( ScrollableLineChart.class );
 
-	private final MillisToTickMark millisToTickMark = new MillisToTickMark( zoomLevelProperty, timeFormatter );
+	private final MillisToTickMark millisToTickMark = new MillisToTickMark( tickZoomLevelProperty, timeFormatter );
 
 	@FXML
 	private SegmentBox segmentBox;
@@ -117,14 +117,16 @@ public class ScrollableLineChart extends HBox
 	@FXML
 	private void initialize()
 	{
+		xAxis.lowerBoundProperty().bind( position );
+
 		zoomLevel.textProperty().bind( createStringBinding( new Callable<String>()
 		{
 			@Override
 			public String call() throws Exception
 			{
-				return zoomLevelProperty.get().getShortName();
+				return tickZoomLevelProperty.get().getShortName();
 			}
-		}, zoomLevelProperty ) );
+		}, tickZoomLevelProperty ) );
 
 		xAxis.setTickLabelFormatter( millisToTickMark );
 
@@ -150,7 +152,7 @@ public class ScrollableLineChart extends HBox
 		{
 
 			@Override
-			public void invalidated( Observable arg0 )
+			public void invalidated( Observable _ )
 			{
 				if( zoomLevelProperty.getValue() == ZoomLevel.ALL )
 				{
@@ -191,7 +193,7 @@ public class ScrollableLineChart extends HBox
 	 */
 	public void setZoomLevel( ZoomLevel zoomLevel )
 	{
-		ZoomLevel fromZoomLevel = zoomLevelProperty.get();
+		ZoomLevel fromZoomLevel = tickZoomLevelProperty.get();
 		zoomLevelProperty.set( zoomLevel );
 
 		for( Node n : xAxis.getChildrenUnmodifiable() )
@@ -209,9 +211,7 @@ public class ScrollableLineChart extends HBox
 			xScale.setValue( ( 1000.0 * zoomLevel.getInterval() ) / zoomLevel.getUnitWidth() );
 			scrollBar.setDisable( true );
 
-			xAxis.setAutoRanging( true );
-			xAxis.lowerBoundProperty().unbind();
-			xAxis.upperBoundProperty().unbind();
+			xAxis.upperBoundProperty().bind( scrollBar.maxProperty() );
 			shownSpan.bind( maxProperty() );
 		}
 		else
@@ -219,8 +219,6 @@ public class ScrollableLineChart extends HBox
 			xScale.setValue( ( 1000.0 * zoomLevel.getInterval() ) / zoomLevel.getUnitWidth() );
 			scrollBar.setDisable( false );
 
-			xAxis.setAutoRanging( false );
-			xAxis.lowerBoundProperty().bind( position );
 			xAxis.upperBoundProperty().bind( position.add( shownSpan ).add( 2000d ) );
 			shownSpan.bind( xAxis.widthProperty().multiply( xScale ) );
 		}
