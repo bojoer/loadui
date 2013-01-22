@@ -22,8 +22,8 @@ final class MillisToTickMark extends StringConverter<Number>
 			return "0";
 		ZoomLevel parentZoomLevel = zoomLevelProperty.get().zoomOut();
 		long parentIntervalMillis = parentZoomLevel.getInterval() * 1000;
-		System.out.println( "" + value + " % " + parentIntervalMillis + " >= " + zoomLevelProperty.get().getInterval()
-				* 1000 );
+		//		System.out.println( "" + value + " % " + parentIntervalMillis + " >= " + zoomLevelProperty.get().getInterval()
+		//				* 1000 );
 		if( value % parentIntervalMillis >= zoomLevelProperty.get().getInterval() * 1000 )
 		{
 			return Long.toString( value / ( ( 1000 * zoomLevelProperty.get().getInterval() ) )

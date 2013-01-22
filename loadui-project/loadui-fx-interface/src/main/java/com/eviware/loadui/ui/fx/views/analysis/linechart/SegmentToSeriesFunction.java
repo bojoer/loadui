@@ -21,6 +21,7 @@ import com.eviware.loadui.api.statistics.model.chart.line.Segment;
 import com.eviware.loadui.api.statistics.model.chart.line.TestEventSegment;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.testevents.TestEvent;
+import com.eviware.loadui.ui.fx.api.analysis.ExecutionChart;
 import com.google.common.base.Function;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Iterables;

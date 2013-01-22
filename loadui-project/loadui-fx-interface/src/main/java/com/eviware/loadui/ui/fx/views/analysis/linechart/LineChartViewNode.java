@@ -7,7 +7,6 @@ import java.util.LinkedList;
 
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
-import javafx.beans.property.Property;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -35,10 +34,10 @@ import com.eviware.loadui.api.statistics.model.chart.ChartView;
 import com.eviware.loadui.api.statistics.model.chart.line.ConfigurableLineChartView;
 import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
 import com.eviware.loadui.api.statistics.store.Execution;
+import com.eviware.loadui.ui.fx.api.analysis.ExecutionChart;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.Properties;
 import com.eviware.loadui.ui.fx.views.analysis.AddStatisticDialog;
-import com.eviware.loadui.ui.fx.views.analysis.ExecutionProperty;
 import com.eviware.loadui.ui.fx.views.analysis.Selection;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.execution.TestExecutionUtils;
@@ -94,7 +93,7 @@ public class LineChartViewNode extends VBox
 	{
 		log.debug( "new LineChartViewNode created! " );
 
-		// executionChart = BeanInjector.getBean( ExecutionChart.class );
+		//executionChart = BeanInjector.getBean( ExecutionChart.class );
 		executionChart = new ScrollableLineChart();
 
 		BeanInjector.getBean( TestRunner.class ).registerTask( executionTask, Phase.START, Phase.STOP );
@@ -102,30 +101,6 @@ public class LineChartViewNode extends VBox
 		this.currentExecution = currentExecution;
 		this.chartView = chartView;
 		this.poll = poll;
-
-		BeanInjector.getBean( ExecutionProperty.class ).addListener( new InvalidationListener()
-		{
-
-			@Override
-			public void invalidated( Observable arg0 )
-			{
-				Property<Execution> value = BeanInjector.getBean( ExecutionProperty.class );
-				log.debug( "(" + executionChart.titleProperty().getValue() + ") compared property changed to: "
-						+ value.getValue().getLabel() );
-			}
-		} );
-
-		currentExecution.addListener( new InvalidationListener()
-		{
-
-			@Override
-			public void invalidated( Observable arg0 )
-			{
-				log.debug( "(" + executionChart.titleProperty().getValue() + ") current execution changed to: "
-						+ currentExecution.getValue().getLabel() );
-
-			}
-		} );
 
 		FXMLUtils.load( this );
 	}

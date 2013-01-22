@@ -1,4 +1,4 @@
-package com.eviware.loadui.ui.fx.views.analysis.linechart;
+package com.eviware.loadui.ui.fx.api.analysis;
 
 import javafx.beans.Observable;
 import javafx.beans.property.BooleanProperty;

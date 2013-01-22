@@ -42,6 +42,7 @@ import com.eviware.loadui.api.statistics.model.chart.line.LineSegment;
 import com.eviware.loadui.api.statistics.model.chart.line.Segment;
 import com.eviware.loadui.api.statistics.model.chart.line.TestEventSegment;
 import com.eviware.loadui.api.statistics.store.Execution;
+import com.eviware.loadui.ui.fx.api.analysis.ExecutionChart;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.ManualObservable;
 import com.eviware.loadui.util.execution.TestExecutionUtils;
@@ -262,9 +263,6 @@ public class ScrollableLineChart extends HBox implements ExecutionChart
 	public void setChartProperties( final ObservableValue<Execution> currentExecution, LineChartView chartView,
 			Observable poll )
 	{
-		//		this.currentExecution = currentExecution;
-		//		this.chartView = chartView;
-		//		this.poll = poll;
 
 		scrollBar.maxProperty().bind( createLongBinding( new Callable<Long>()
 		{
