@@ -1,18 +1,9 @@
 package com.eviware.loadui.ui.fx;
 
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.ExecutionException;
-
 import javafx.application.Platform;
-import javafx.stage.Stage;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
-
-import com.eviware.loadui.api.model.WorkspaceProvider;
-import com.eviware.loadui.ui.fx.util.ErrorHandler;
-import com.eviware.loadui.util.BeanInjector;
 
 public class JavaFXActivator implements BundleActivator
 {
@@ -23,28 +14,11 @@ public class JavaFXActivator implements BundleActivator
 
 		final ClassLoader bundleClassLoader = JavaFXActivator.class.getClassLoader();
 
-		// delay requesting beans from OSGi in order to let it get started first
-		new Timer( "JavaFX-LoadUI-Loader" ).schedule( new TimerTask()
-		{
-			@Override
-			public void run()
-			{
-				try
-				{
-					Stage stage = BeanInjector.getBeanFuture( Stage.class ).get();
-					startJavaFX( stage, bundleClassLoader );
-				}
-				catch( Exception e )
-				{
-					System.out.println( "JavaFXActivator Unable to get Stage > " + e );
-					ErrorHandler.promptRestart();
-				}
-			}
-		}, 2000 );
+		initJavaFXThreadWith( bundleClassLoader );
 
 	}
 
-	private void startJavaFX( final Stage stage, final ClassLoader bundleClassLoader )
+	private void initJavaFXThreadWith( final ClassLoader bundleClassLoader )
 	{
 		Platform.runLater( new Runnable()
 		{
@@ -74,16 +48,6 @@ public class JavaFXActivator implements BundleActivator
 				new javax.swing.JFormattedTextField();
 
 				Thread.currentThread().setContextClassLoader( bundleClassLoader );
-
-				try
-				{
-					new MainWindow( stage, BeanInjector.getBeanFuture( WorkspaceProvider.class ).get() ).show();
-				}
-				catch( RuntimeException | InterruptedException | ExecutionException e )
-				{
-					e.printStackTrace();
-					ErrorHandler.promptRestart();
-				}
 
 			}
 		} );

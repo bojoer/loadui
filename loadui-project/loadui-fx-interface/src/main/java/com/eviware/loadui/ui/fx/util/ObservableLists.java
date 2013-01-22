@@ -359,10 +359,10 @@ public class ObservableLists
 
 	/**
 	 * Returns a new ObservableList that contains all the elements of the given
-	 * lists, and keeps the new list in sync with any changes to the original
-	 * lists. The order of the elements are guaranteed to correspond to the order
-	 * of the elements in the sublists -- but as a consequence, this method is
-	 * inefficient and recreates the whole list on any change.
+	 * list, with elementToAppend added last. The order of the elements are
+	 * guaranteed to correspond to the order of the elements in the sublists --
+	 * but as a consequence, this method is inefficient and recreates the whole
+	 * list on any change.
 	 * 
 	 * @return
 	 */
@@ -378,6 +378,35 @@ public class ObservableLists
 			{
 				listeningList.list.setAll( inputList );
 				listeningList.list.add( elementToAppend );
+			}
+		};
+		listeningList.addListener( listener );
+		listener.invalidated( inputList );
+
+		return listeningList.readOnlyList;
+	}
+
+	/**
+	 * Returns a new ObservableList that contains all the elements of the given
+	 * list, with elementToPrepend added first. The order of the elements are
+	 * guaranteed to correspond to the order of the elements in the sublists --
+	 * but as a consequence, this method is inefficient and recreates the whole
+	 * list on any change.
+	 * 
+	 * @return
+	 */
+
+	public static final <T> ObservableList<T> prependElement( final ObservableList<? extends T> inputList,
+			final T elementToPrepend )
+	{
+		final ListeningList<T, T> listeningList = new ListeningList<>( inputList );
+		final InvalidationListener listener = new InvalidationListener()
+		{
+			@Override
+			public void invalidated( Observable _ )
+			{
+				listeningList.list.add( elementToPrepend );
+				listeningList.list.addAll( inputList );
 			}
 		};
 		listeningList.addListener( listener );
@@ -680,12 +709,12 @@ public class ObservableLists
 				{
 					switch( event.getEvent() )
 					{
-					case ADDED:
+					case ADDED :
 						Object element = event.getElement();
 						if( type.isInstance( element ) )
 							list.add( type.cast( event.getElement() ) );
 						break;
-					case REMOVED:
+					case REMOVED :
 						list.remove( event.getElement() );
 						break;
 					}

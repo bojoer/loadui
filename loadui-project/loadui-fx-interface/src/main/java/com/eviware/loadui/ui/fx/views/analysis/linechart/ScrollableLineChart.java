@@ -44,6 +44,7 @@ import com.eviware.loadui.api.statistics.model.chart.line.Segment;
 import com.eviware.loadui.api.statistics.model.chart.line.TestEventSegment;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
+import com.eviware.loadui.ui.fx.util.ManualObservable;
 import com.eviware.loadui.util.execution.TestExecutionUtils;
 import com.eviware.loadui.util.statistics.ChartUtils;
 import com.google.common.base.Function;
@@ -86,6 +87,8 @@ public class ScrollableLineChart extends HBox
 	private final LongProperty position = new SimpleLongProperty( 0 );
 	private final LongProperty shownSpan = new SimpleLongProperty( 60000 );
 	private final LongProperty xScale = new SimpleLongProperty( 1 );
+
+	ManualObservable manualUpdate = new ManualObservable();
 
 	protected static final Logger log = LoggerFactory.getLogger( ScrollableLineChart.class );
 
@@ -188,27 +191,27 @@ public class ScrollableLineChart extends HBox
 
 	}
 
-	/**
-	 * returns the tickmode ZoomLevel
-	 */
 	public void setZoomLevel( ZoomLevel zoomLevel )
 	{
-		ZoomLevel fromZoomLevel = tickZoomLevelProperty.get();
+		ZoomLevel fromTickZoomLevel = tickZoomLevelProperty.get();
 		zoomLevelProperty.set( zoomLevel );
+		log.debug( "chart:(" + titleProperty().get() + ") ZoomLevel set to: " + zoomLevel.name()
+				+ " fromTickZoomLevel is: " + fromTickZoomLevel.name() );
 
 		for( Node n : xAxis.getChildrenUnmodifiable() )
 		{
 			if( n instanceof Text )
 			{
 				Text text = ( Text )n;
-				text.setText( millisToTickMark.changeZoomLevel( text.getText(), fromZoomLevel ) );
+				text.setText( millisToTickMark.changeZoomLevel( text.getText(), fromTickZoomLevel ) );
 			}
 		}
 
 		if( zoomLevel.equals( ZoomLevel.ALL ) )
 		{
-			zoomLevel = ZoomLevel.forSpan( scrollBar.maxProperty().longValue() / 1000 );
-			xScale.setValue( ( 1000.0 * zoomLevel.getInterval() ) / zoomLevel.getUnitWidth() );
+			setTickMode( ZoomLevel.forSpan( scrollBar.maxProperty().longValue() / 1000 ) );
+			xScale.setValue( ( 1000.0 * tickZoomLevelProperty.get().getInterval() )
+					/ tickZoomLevelProperty.get().getUnitWidth() );
 			scrollBar.setDisable( true );
 
 			xAxis.upperBoundProperty().bind( scrollBar.maxProperty() );
@@ -218,24 +221,23 @@ public class ScrollableLineChart extends HBox
 		{
 			xScale.setValue( ( 1000.0 * zoomLevel.getInterval() ) / zoomLevel.getUnitWidth() );
 			scrollBar.setDisable( false );
-
 			xAxis.upperBoundProperty().bind( position.add( shownSpan ).add( 2000d ) );
 			shownSpan.bind( xAxis.widthProperty().multiply( xScale ) );
+			setTickMode( zoomLevel );
 		}
-
-		setTickMode( zoomLevel );
-
-		log.debug( "ZoomLevel set to: " + zoomLevel.name() + " xScale is now: " + xScale.getValue() );
+		log.debug( "chart:(" + titleProperty().get() + ") xscale set to: " + xScale.doubleValue() );
 
 		if( scrollBar.followStateProperty().get() && TestExecutionUtils.isExecutionRunning() )
 		{
 			setPositionToLeftSide();
-			log.debug( "Set position to: " + position.get() + " (following)" );
+			log.debug( "chart:(" + titleProperty().get() + ") Set position to: " + position.get() + " (following)" );
 		}
 
 		// recalculates the position after the span has changed
 		scrollBar.setLeftSidePosition( position.getValue() );
 		scrollBar.updateLeftSide();
+
+		manualUpdate.fireInvalidation();
 
 	}
 
@@ -250,7 +252,7 @@ public class ScrollableLineChart extends HBox
 
 		tickZoomLevelProperty.set( level );
 
-		log.debug( "TickMode set to: " + level.name() );
+		log.debug( "chart:(" + titleProperty().get() + ") TickMode set to: " + level.name() );
 	}
 
 	public void setChartProperties( final ObservableValue<Execution> currentExecution, LineChartView chartView,
@@ -261,8 +263,8 @@ public class ScrollableLineChart extends HBox
 		//		this.poll = poll;
 
 		segmentToSeries = new SegmentToSeriesFunction( currentExecution,
-				javafx.collections.FXCollections.observableArrayList( currentExecution, positionProperty(), spanProperty(),
-						poll, tickZoomLevelProperty, scaleUpdate() ), this, eventSeriesStyles );
+				javafx.collections.FXCollections.observableArrayList( currentExecution, positionProperty(), poll,
+						scaleUpdate(), manualUpdate ), this, eventSeriesStyles );
 
 		segmentsList = fx( ofCollection( chartView, LineChartView.SEGMENTS, Segment.class, chartView.getSegments() ) );
 		seriesList = transform( segmentsList, segmentToSeries );
