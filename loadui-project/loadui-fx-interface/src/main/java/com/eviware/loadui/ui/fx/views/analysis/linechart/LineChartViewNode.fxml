@@ -14,10 +14,11 @@
 <?import com.eviware.loadui.ui.fx.views.analysis.linechart.ChartScrollBar?>
 <?import com.eviware.loadui.ui.fx.views.analysis.linechart.ScrollableLineChart?>
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.layout.Pane?>
 
 <fx:root type="javafx.scene.layout.VBox" xmlns:fx="http://javafx.com/fxml"
 	styleClass="chart-view-node, line-chart-view-node">
-	<ScrollableLineChart fx:id="scrollableLineChart"/>
+	<StackPane fx:id="chartContainer"/>
 	<HBox>
 		<Button text="Add Statistic..." onAction="#addStatistic" />
 		<ZoomMenuButton fx:id="zoomMenuButton" text="Zoom"/>

@@ -29,11 +29,11 @@ final class SegmentToSeriesFunction implements Function<Segment, XYChart.Series<
 {
 	ObservableValue<Execution> execution;
 	ObservableList<Observable> observables;
-	ScrollableLineChart chart;
+	ExecutionChart chart;
 	LoadingCache<XYChart.Series<?, ?>, StringProperty> eventSeriesStyles;
 
 	public SegmentToSeriesFunction( ObservableValue<Execution> execution, ObservableList<Observable> observables,
-			ScrollableLineChart chart, LoadingCache<XYChart.Series<?, ?>, StringProperty> eventSeriesStyles )
+			ExecutionChart chart, LoadingCache<XYChart.Series<?, ?>, StringProperty> eventSeriesStyles )
 	{
 		this.execution = execution;
 		this.observables = observables;
