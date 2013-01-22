@@ -13,7 +13,7 @@ import javafx.util.Duration;
 public class Animations
 {
 
-	private enum State
+	public enum State
 	{
 		HIDDEN, SLIDING_DOWN, SLIDING_UP, FADING_AWAY, VISIBLE
 	}
@@ -71,7 +71,12 @@ public class Animations
 				} ).build();
 	}
 
-	private State stopAnyRunningAnimation()
+	public State getCurrentState()
+	{
+		return state;
+	}
+
+	public State stopAnyRunningAnimation()
 	{
 		switch( state )
 		{

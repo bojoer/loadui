@@ -14,7 +14,7 @@
 <?import com.eviware.loadui.ui.fx.views.window.MainWindowView?>
 <?import com.eviware.loadui.ui.fx.control.NotificationPanel?>
 
-<fx:root type="javafx.scene.layout.StackPane" xmlns:fx="http://javafx.com/fxml">
+<fx:root type="javafx.scene.layout.StackPane" styleClass="loadui-main-window" xmlns:fx="http://javafx.com/fxml">
 	<stylesheets>
 		<URL value="@MainWindowView.css" />
 	</stylesheets>
@@ -33,5 +33,6 @@
 			<MenuItem id="systemProperties" text="System Properties" onAction="#systemProperties" />
 		</items>
 	</MenuButton>
-	<NotificationPanel fx:id="notificationPanel" />
+	<!-- This is placed here only for initialization. It will automagically be placed in the correct place(s) later -->
+	<NotificationPanel fx:id="notificationPanel" StackPane.alignment="top_center" />
 </fx:root>

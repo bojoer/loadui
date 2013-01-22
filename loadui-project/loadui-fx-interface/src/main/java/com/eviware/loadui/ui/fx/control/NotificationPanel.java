@@ -12,6 +12,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
 import org.slf4j.Logger;
@@ -20,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import com.eviware.loadui.api.testevents.TestEvent.Entry;
 import com.eviware.loadui.api.testevents.TestEventManager.TestEventObserver;
 import com.eviware.loadui.ui.fx.util.Animations;
+import com.eviware.loadui.ui.fx.util.Animations.State;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.util.testevents.MessageTestEvent;
 
@@ -42,31 +44,75 @@ public class NotificationPanel extends VBox implements TestEventObserver, EventH
 	@FXML
 	private Label msgText;
 
+	private Pane originalParent;
+
+	private EventHandler<MouseEvent> showLogHandler = new EventHandler<MouseEvent>()
+	{
+		@Override
+		public void handle( MouseEvent arg0 )
+		{
+			// no default action
+		}
+	};
+
 	public NotificationPanel()
 	{
 		FXMLUtils.load( this );
 	}
 
+	public void setMainWindowView( Pane mainView )
+	{
+		this.originalParent = mainView;
+	}
+
+	public void setOnShowLog( EventHandler<MouseEvent> handler )
+	{
+		showLogHandler = handler;
+	}
+
 	@FXML
 	private void initialize()
 	{
-		System.out.println( "Initializing" );
 		log.debug( "Initializing" );
 		setVisible( false );
+		setOnMouseEntered( new EventHandler<MouseEvent>()
+		{
+
+			@Override
+			public void handle( MouseEvent event )
+			{
+				State state = anime.getCurrentState();
+				if( state == State.VISIBLE || state == State.FADING_AWAY )
+				{
+					anime.stopAnyRunningAnimation();
+					if( fadeAwayTask != null )
+						fadeAwayTask.cancel();
+				}
+			}
+
+		} );
+		setOnMouseExited( new EventHandler<MouseEvent>()
+		{
+			@Override
+			public void handle( MouseEvent event )
+			{
+				if( anime.getCurrentState() == State.VISIBLE )
+				{
+					anime.fadeAway();
+				}
+			}
+		} );
 	}
 
 	@FXML
 	private void showSystemLog( MouseEvent event )
 	{
-		System.out.println( "Showing system log" );
-		log.debug( "Showing system log" );
+		showLogHandler.handle( event );
 	}
 
 	@FXML
 	private void hideNotifications( MouseEvent event )
 	{
-		System.out.println( "Hiding notifications" );
-		log.debug( "Hiding notifications" );
 		anime.slideUp();
 	}
 
@@ -76,40 +122,83 @@ public class NotificationPanel extends VBox implements TestEventObserver, EventH
 	}
 
 	@Override
-	public void onTestEvent( Entry event )
+	public void onTestEvent( Entry entry )
 	{
-		if( event.getTestEvent() instanceof MessageTestEvent )
+		if( entry.getTestEvent() instanceof MessageTestEvent )
 		{
-			detectMouseMovement( false );
-			final MessageTestEvent te = ( MessageTestEvent )event.getTestEvent();
-			final String dateStr = dateFormat.format( new Date() );
-			System.out.println( "Got a MessageTestEvent: " + te.getMessage() );
-			log.debug( "Got a MessageTestEvent: " + te.getMessage() );
+			final MessageTestEvent te = ( MessageTestEvent )entry.getTestEvent();
 			Platform.runLater( new Runnable()
 			{
 				@Override
 				public void run()
 				{
-					msgText.setText( te.getMessage() );
-					dateText.setText( dateStr );
-					display();
+					if( isVisible() )
+					{
+						msgCount.setText( Integer.toString( getCurrentMsgCount() + 1 ) );
+					}
+					else
+					{
+						msgCount.setText( "" );
+						detectMouseMovement( false );
+						final String dateStr = dateFormat.format( new Date() );
+						msgText.setText( te.getMessage() );
+						dateText.setText( dateStr );
+						display();
+					}
 				}
 			} );
 		}
-		else
-		{
-			System.out.println( "Got an event of wrong type: " + event.getTestEvent().getClass() );
-			log.debug( "Got an event of wrong type: " + event.getTestEvent().getClass() );
-		}
+	}
 
+	private Integer getCurrentMsgCount()
+	{
+		String text = msgCount.getText().isEmpty() ? "0" : msgCount.getText();
+		return Integer.valueOf( text );
 	}
 
 	private void display()
 	{
+		ensureThisIsUnderPreferredParent();
+
 		if( fadeAwayTask != null )
 			fadeAwayTask.cancel();
-		anime.slideDown();
-		detectMouseMovement( true );
+
+		// must run this only after the JavaFX processes the above code so the panel will be in
+		// the correct place before sliding down
+		Platform.runLater( new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				anime.slideDown();
+				detectMouseMovement( true );
+			}
+		} );
+
+	}
+
+	private void ensureThisIsUnderPreferredParent()
+	{
+		if( originalParent == null )
+		{
+			log.debug( "No mainView has been set, we need to set it to something like its current parent" );
+			originalParent = ( Pane )getParent();
+		}
+
+		// The preferred place for the NotificationPanel is in the first Pane of the DOM
+		Pane pane = ( Pane )originalParent.getScene().lookup( "Pane" );
+
+		if( pane == null )
+		{
+			if( getParent() != originalParent )
+			{
+				originalParent.getChildren().add( this );
+			}
+		}
+		else if( pane != getParent() )
+		{
+			pane.getChildren().add( this );
+		}
 	}
 
 	private void detectMouseMovement( boolean enable )

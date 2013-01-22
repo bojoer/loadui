@@ -18,24 +18,24 @@
 	</stylesheets>
 	<StackPane>
 		<Region styleClass="base" />
-		<VBox >
+		<VBox>
 			<padding>
 				<Insets  top="10" right="10" bottom="10" left="10" />
 			</padding>
-			<HBox>
-				<Label fx:id="dateText" />
-				<Label fx:id="msgCount" />
-			</HBox>
-			<Label fx:id="msgText" />
+			<AnchorPane>
+				<Label fx:id="dateText" AnchorPane.leftAnchor="10"/>
+				<Label fx:id="msgCount" AnchorPane.rightAnchor="10" />
+			</AnchorPane>
+			<Label fx:id="msgText" wrapText="true" />
 		</VBox>
 	</StackPane>
 	<StackPane>
 		<Region styleClass="bottom" />
 		<AnchorPane styleClass="bottomPanel">
-			<Button text="System Log »"
-				AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="6.0" AnchorPane.bottomAnchor="6.0"
+			<Button text="View messages in the Event Log »"
+				AnchorPane.leftAnchor="10" AnchorPane.topAnchor="6" AnchorPane.bottomAnchor="6"
 				onMouseClicked="#showSystemLog" />
-			<Button AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="6.0"
+			<Button AnchorPane.rightAnchor="10" AnchorPane.topAnchor="6"
 				onMouseClicked="#hideNotifications">
 				<graphic>
 					<Region maxHeight="5" styleClass="up-arrow" />
