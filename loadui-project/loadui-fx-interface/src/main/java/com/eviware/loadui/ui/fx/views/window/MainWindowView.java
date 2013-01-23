@@ -13,6 +13,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.MenuButton;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 
 import com.eviware.loadui.LoadUI;
@@ -74,7 +75,16 @@ public class MainWindowView extends StackPane
 	private void initialize()
 	{
 		notificationPanel.setVisible( false );
-		
+		notificationPanel.setMainWindowView( this );
+		notificationPanel.setOnShowLog( new EventHandler<MouseEvent>()
+		{
+			@Override
+			public void handle( MouseEvent event )
+			{
+				inspectorView.ensureShowing( InspectorView.EVENT_LOG_TAB );
+			}
+		} );
+
 		workspaceProvider.addEventListener( BaseEvent.class, workspaceListener );
 
 		if( workspaceProvider.isWorkspaceLoaded() )

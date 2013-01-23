@@ -51,8 +51,14 @@ import com.google.common.collect.Ordering;
 
 public class InspectorView extends AnchorPane
 {
-	private static final Ordering<String> INSPECTOR_ORDERING = SafeExplicitOrdering.of( "System Log", "Distribution",
-			"Assertions", "Event Log", "Monitors" ).compound( Ordering.natural() );
+	public static final String MONITORS_TAB = "Monitors";
+	public static final String ASSERTIONS_TAB = "Assertions";
+	public static final String DISTRIBUTION_TAB = "Distribution";
+	public static final String SYSTEM_LOG_TAB = "System Log";
+	public static final String EVENT_LOG_TAB = "Event Log";
+
+	private static final Ordering<String> INSPECTOR_ORDERING = SafeExplicitOrdering.of( SYSTEM_LOG_TAB,
+			DISTRIBUTION_TAB, ASSERTIONS_TAB, EVENT_LOG_TAB, MONITORS_TAB ).compound( Ordering.natural() );
 
 	private final BooleanProperty minimizedProperty = new SimpleBooleanProperty( this, "minimized", true );
 
@@ -108,6 +114,26 @@ public class InspectorView extends AnchorPane
 	public EventType<? extends PerspectiveEvent> getPerspective()
 	{
 		return perspective.getValue();
+	}
+
+	public void ensureShowing( String optionalTabName )
+	{
+		tabPane.getSelectionModel().select( getTabByName( optionalTabName ) );
+		dragBehavior.animateToLastHeight();
+	}
+
+	private Tab getTabByName( String name )
+	{
+		if( name == null )
+			name = "";
+		for( Tab tab : inspectorTabs )
+		{
+			if( name.equals( tab.getId() ) )
+			{
+				return tab;
+			}
+		}
+		return new Tab();
 	}
 
 	@edu.umd.cs.findbugs.annotations.SuppressWarnings( value = "NP_NULL_ON_SOME_PATH", justification = "Execution of code will stop after ErrorHandler.promptRestart()." )
@@ -276,7 +302,7 @@ public class InspectorView extends AnchorPane
 	{
 		private boolean dragging = false;
 		private double startY = 0;
-		private double lastHeight = 0;
+		private double lastHeight = 200;
 
 		private final EventHandler<ActionEvent> eventHandler = new EventHandler<ActionEvent>()
 		{
@@ -313,6 +339,10 @@ public class InspectorView extends AnchorPane
 				{
 					minimizedProperty.set( true );
 				}
+				else
+				{
+					lastHeight = getMaxHeight();
+				}
 			}
 			else if( event.getEventType() == MouseEvent.MOUSE_CLICKED )
 			{
@@ -339,16 +369,24 @@ public class InspectorView extends AnchorPane
 							+ tabPane.getSelectionModel().getSelectedItem().getContent().prefHeight( -1 ) );
 				}
 			}
-			else
-			{
-				lastHeight = getHeight();
-			}
 
+			animateToHeight( target );
+		}
+
+		public void animateToLastHeight()
+		{
+			minimizedProperty.set( true );
+			animateToHeight( lastHeight );
+		}
+
+		private void animateToHeight( double target )
+		{
 			TimelineBuilder
 					.create()
 					.keyFrames(
 							new KeyFrame( Duration.seconds( 0.2 ), new KeyValue( maxHeightProperty(), target,
 									Interpolator.EASE_BOTH ) ) ).onFinished( eventHandler ).build().playFromStart();
 		}
+
 	}
 }

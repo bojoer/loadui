@@ -20,7 +20,9 @@ import javafx.scene.control.ButtonBuilder;
 import javafx.scene.control.SplitPaneBuilder;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextAreaBuilder;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -42,29 +44,28 @@ public class StyleTester extends Application
 	
 	private Node createTestNode()
 	{
-				HBox container = new HBox();
+				final Pane container = new FlowPane();
+				container.getStyleClass().add( "container" );
 				
 				TestEventManager tem = mock( TestEventManager.class );
 				final NotificationPanel panel = new NotificationPanel();
-				//panel.setPrefWidth( 400 );
-				//panel.setMinWidth( 100 );
-				panel.getMsgText().setWrapText( true );
-
+				//panel.getMsgText().setWrapText( true );
 				//HBox.setHgrow( panel, null );
 				tem.registerObserver( panel );
+				
 				Button butt = new Button("Hello there");
 				butt.setOnAction( new EventHandler<ActionEvent>()
 				{
-
 					@Override
 					public void handle( ActionEvent arg0 )
 					{
 						Entry entry = mock( Entry.class );
 						when( entry.getTestEvent() ).thenReturn(
-								new MessageTestEvent( 1L, MessageLevel.NOTIFICATION, "This is my message" ) );
+								new MessageTestEvent( 1L, MessageLevel.NOTIFICATION, "This is my message&&&&&&&&&&&&&&&&&&&&&&&  &&&&&&&&&&&&&&&&&&&&&&&&&& &&&&&&&&&&&&&&&&&&&&&&&&&&& &&&&&&&&&&&&&&&&&&&&&&&&&&&& &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&" ) );
 						panel.onTestEvent( entry );
 					}
 				} );
+				
 				container.getChildren().addAll( panel, butt );
 				
 				return container;

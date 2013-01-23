@@ -1,11 +1,9 @@
 package com.eviware.loadui.ui.fx.views.analysis.linechart;
 
 import static com.google.common.base.Objects.firstNonNull;
-import static javafx.beans.binding.Bindings.createLongBinding;
 
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.concurrent.Callable;
 
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
@@ -16,6 +14,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
 import javafx.scene.control.CheckBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
 import org.joda.time.format.PeriodFormatter;
@@ -35,6 +34,7 @@ import com.eviware.loadui.api.statistics.model.chart.ChartView;
 import com.eviware.loadui.api.statistics.model.chart.line.ConfigurableLineChartView;
 import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
 import com.eviware.loadui.api.statistics.store.Execution;
+import com.eviware.loadui.ui.fx.api.analysis.ExecutionChart;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.Properties;
 import com.eviware.loadui.ui.fx.views.analysis.AddStatisticDialog;
@@ -78,8 +78,10 @@ public class LineChartViewNode extends VBox
 	private final Observable poll;
 	private final LineChartView chartView;
 
+	private ExecutionChart executionChart;
+
 	@FXML
-	private ScrollableLineChart scrollableLineChart;
+	private StackPane chartContainer;
 
 	@FXML
 	private ZoomMenuButton zoomMenuButton;
@@ -90,6 +92,9 @@ public class LineChartViewNode extends VBox
 	public LineChartViewNode( final ObservableValue<Execution> currentExecution, LineChartView chartView, Observable poll )
 	{
 		log.debug( "new LineChartViewNode created! " );
+
+		//executionChart = BeanInjector.getBean( ExecutionChart.class );
+		executionChart = new ScrollableLineChart();
 
 		BeanInjector.getBean( TestRunner.class ).registerTask( executionTask, Phase.START, Phase.STOP );
 
@@ -107,18 +112,11 @@ public class LineChartViewNode extends VBox
 
 		loadAttributes();
 
-		scrollableLineChart.setChartProperties( currentExecution, chartView, poll );
+		chartContainer.getChildren().add( executionChart.getNode() );
 
-		scrollableLineChart.titleProperty().bind( Properties.forLabel( chartView ) );
+		executionChart.setChartProperties( currentExecution, chartView, poll );
 
-		scrollableLineChart.maxProperty().bind( createLongBinding( new Callable<Long>()
-		{
-			@Override
-			public Long call() throws Exception
-			{
-				return currentExecution.getValue().getLength();
-			}
-		}, currentExecution, poll ) );
+		executionChart.titleProperty().bind( Properties.forLabel( chartView ) );
 
 		zoomMenuButton.selectedProperty().addListener( new ChangeListener<ZoomLevel>()
 		{
@@ -135,11 +133,11 @@ public class LineChartViewNode extends VBox
 			public void invalidated( Observable _ )
 			{
 				//sets the position to 0 when there is a new execution
-				scrollableLineChart.setPosition( 0d );
+				executionChart.setPosition( 0d );
 			}
 		} );
 		followCheckBox.setDisable( !TestExecutionUtils.isExecutionRunning() );
-		followCheckBox.selectedProperty().bindBidirectional( scrollableLineChart.scrollbarFollowStateProperty() );
+		followCheckBox.selectedProperty().bindBidirectional( executionChart.scrollbarFollowStateProperty() );
 
 	}
 
@@ -214,14 +212,14 @@ public class LineChartViewNode extends VBox
 
 	public void setZoomLevel( ZoomLevel zoomLevel )
 	{
-		scrollableLineChart.setZoomLevel( zoomLevel );
+		executionChart.setZoomLevel( zoomLevel );
 		chartView.setAttribute( ZOOM_LEVEL_ATTRIBUTE, zoomLevel.name() );
 
 	}
 
 	public LineChart<Number, Number> getLineChart()
 	{
-		return scrollableLineChart.getLineChart();
+		return executionChart.getLineChart();
 	}
 
 }
