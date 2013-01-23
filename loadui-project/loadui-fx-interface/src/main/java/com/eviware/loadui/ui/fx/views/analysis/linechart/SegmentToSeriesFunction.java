@@ -69,6 +69,7 @@ final class SegmentToSeriesFunction implements Function<Segment, XYChart.Series<
 			@Override
 			public Iterable<XYChart.Data<Number, Number>> call() throws Exception
 			{
+				System.out.println( "!!!!!!!!!!!!!! " + segment.getStatistic() );
 				Iterable<XYChart.Data<Number, Number>> chartdata = Iterables.transform(
 						segment.getStatistic().getPeriod( ( long )chart.getPosition() - 2000,
 								( long )chart.getPosition() + chart.getSpan() + 2000, chart.getTickZoomLevel().getLevel(),

@@ -57,4 +57,11 @@ public class StatisticDescriptorImpl implements Statistic.Descriptor
 	{
 		return source;
 	}
+
+	@Override
+	public String toString()
+	{
+		return "StatisticDescriptor[holder: " + statisticHolder + ", variable: " + variableLabel + ", statistic: "
+				+ statisticLabel + ", source: " + source + "]";
+	}
 }

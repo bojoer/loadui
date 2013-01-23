@@ -88,7 +88,7 @@ public class ScrollableLineChart extends HBox
 	private final LongProperty shownSpan = new SimpleLongProperty( 60000 );
 	private final LongProperty xScale = new SimpleLongProperty( 1 );
 
-	ManualObservable manualUpdate = new ManualObservable();
+	private final ManualObservable manualUpdate = new ManualObservable();
 
 	protected static final Logger log = LoggerFactory.getLogger( ScrollableLineChart.class );
 
