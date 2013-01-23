@@ -44,8 +44,8 @@ public enum BeanInjector
 
 	private static final Logger log = LoggerFactory.getLogger( BeanInjector.class );
 
-	private final LoadingCache<Class<?>, Object> beanCache = CacheBuilder.newBuilder().weakValues().build(
-			new CacheLoader<Class<?>, Object>()
+	private final LoadingCache<Class<?>, Object> beanCache = CacheBuilder.newBuilder().weakValues()
+			.build( new CacheLoader<Class<?>, Object>()
 			{
 				@Override
 				public Object load( Class<?> key ) throws Exception
@@ -53,6 +53,16 @@ public enum BeanInjector
 					return INSTANCE.doGetBean( key );
 				}
 			} );
+
+	public static <T> T getNonCachedBeanOrNull( @Nonnull Class<T> cls )
+	{
+		ServiceReference ref = INSTANCE.context.getServiceReference( cls );
+		if( ref != null )
+		{
+			return ( T )INSTANCE.context.getService( ref );
+		}
+		return null;
+	}
 
 	@Nonnull
 	public static <T> T getBean( @Nonnull final Class<T> cls )

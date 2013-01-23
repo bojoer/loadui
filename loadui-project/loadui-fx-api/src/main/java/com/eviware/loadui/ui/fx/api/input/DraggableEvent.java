@@ -8,7 +8,6 @@ import javafx.scene.input.InputEvent;
 @SuppressWarnings( "serial" )
 public class DraggableEvent extends InputEvent
 {
-	@SuppressWarnings( "hiding" )
 	public static final EventType<DraggableEvent> ANY = new EventType<>( InputEvent.ANY, "DRAGGABLE" );
 
 	/**

@@ -1,4 +1,4 @@
-package com.eviware.loadui.ui.fx.api.input;
+package com.eviware.loadui.ui.fx.input;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.traits.Deletable;
+import com.eviware.loadui.ui.fx.api.input.Selectable;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.util.NodeUtils;
 import com.google.common.base.Function;
@@ -33,14 +34,14 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
-public class Selectable
+public class SelectableImpl implements Selectable
 {
-	protected static final Logger log = LoggerFactory.getLogger( Selectable.class );
-	private static final String selectablePropertyKey = Selectable.class.getName();
+	protected static final Logger log = LoggerFactory.getLogger( SelectableImpl.class );
+	private static final String selectablePropertyKey = SelectableImpl.class.getName();
 	private static final PressToSelectHandler pressToSelectHandler = new PressToSelectHandler();
 	private static final ClickToDeselectHandler clickToDeselectHandler = new ClickToDeselectHandler();
-	private static final Set<Selectable> currentlySelected = Collections
-			.newSetFromMap( new WeakHashMap<Selectable, Boolean>() );
+	private static final Set<SelectableImpl> currentlySelected = Collections
+			.newSetFromMap( new WeakHashMap<SelectableImpl, Boolean>() );
 	@Nonnull
 	private static SelectionRectangle SELECTION_RECTANGLE = new SelectionRectangle();
 	private static final Collection<Node> SELECTABLE_NODES = Collections
@@ -48,10 +49,10 @@ public class Selectable
 	private static final HideSelectionRectangle HIDE_SELECTION_RECTANGLE = new HideSelectionRectangle();
 	private static boolean isDragging;
 
-	private static final Function<Selectable, Node> SELECTABLE_TO_NODE = new Function<Selectable, Node>()
+	private static final Function<SelectableImpl, Node> SELECTABLE_TO_NODE = new Function<SelectableImpl, Node>()
 	{
 		@Override
-		public Node apply( Selectable input )
+		public Node apply( SelectableImpl input )
 		{
 			return input.getNode();
 		}
@@ -65,7 +66,7 @@ public class Selectable
 	 */
 	public static Selectable installSelectable( @Nonnull Node node )
 	{
-		Selectable selectable = new Selectable( node );
+		Selectable selectable = new SelectableImpl( node );
 		node.addEventHandler( MouseEvent.MOUSE_PRESSED, pressToSelectHandler );
 		node.addEventHandler( MouseEvent.MOUSE_RELEASED, HIDE_SELECTION_RECTANGLE );
 		node.getProperties().put( selectablePropertyKey, selectable );
@@ -115,7 +116,7 @@ public class Selectable
 	private ReadOnlyBooleanWrapper selectedProperty;
 	private final Node node;
 
-	private Selectable( Node node )
+	private SelectableImpl( Node node )
 	{
 		this.node = node;
 	}
@@ -164,7 +165,7 @@ public class Selectable
 		}
 	}
 
-	public static ImmutableSet<Selectable> getSelected()
+	public static ImmutableSet<SelectableImpl> getSelected()
 	{
 		return ImmutableSet.copyOf( currentlySelected );
 	}
@@ -201,7 +202,7 @@ public class Selectable
 		selectionArea.addEventHandler( MouseEvent.MOUSE_RELEASED, clickToDeselectHandler );
 	}
 
-	private static void selectAll( Collection<Selectable> selectables )
+	private static void selectAll( Collection<SelectableImpl> selectables )
 	{
 		for( Selectable s : selectables )
 			s.select();
@@ -209,9 +210,9 @@ public class Selectable
 
 	private static void deselectAll()
 	{
-		for( Iterator<Selectable> i = currentlySelected.iterator(); i.hasNext(); )
+		for( Iterator<SelectableImpl> i = currentlySelected.iterator(); i.hasNext(); )
 		{
-			Selectable s = i.next();
+			SelectableImpl s = i.next();
 			s.setSelected( false );
 			i.remove();
 		}
@@ -235,12 +236,12 @@ public class Selectable
 				public void run()
 				{
 					Node node = ( Node )event.getSource();
-					boolean isMoving = Movable.isMovable( node ) && Movable.getMovable( node ).isDragging();
+					boolean isMoving = MovableImpl.isMovable( node ) && MovableImpl.getMovable( node ).isDragging();
 					if( !SELECTION_RECTANGLE.isShowing() && !isMoving && !event.isShortcutDown() && !event.isShiftDown() )
 					{
 						deselectAll();
-						if( Selectable.isSelectable( node ) )
-							Selectable.get( node ).select();
+						if( SelectableImpl.isSelectable( node ) )
+							SelectableImpl.get( node ).select();
 					}
 					SELECTION_RECTANGLE.hide();
 					isDragging = false;
@@ -295,7 +296,7 @@ public class Selectable
 
 	private static class SelectionRectangle extends Popup
 	{
-		private static ImmutableList<Selectable> selectedAtSelectionStart = null;
+		private static ImmutableList<SelectableImpl> selectedAtSelectionStart = null;
 		private double startX;
 		private double startY;
 		private Node ownerNode;

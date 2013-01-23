@@ -65,12 +65,13 @@ import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.api.terminal.Terminal;
 import com.eviware.loadui.ui.fx.api.input.DraggableEvent;
-import com.eviware.loadui.ui.fx.api.input.Movable;
-import com.eviware.loadui.ui.fx.api.input.MultiMovable;
 import com.eviware.loadui.ui.fx.api.input.Selectable;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.control.DragNode;
 import com.eviware.loadui.ui.fx.control.ToolBox;
+import com.eviware.loadui.ui.fx.input.MovableImpl;
+import com.eviware.loadui.ui.fx.input.MultiMovable;
+import com.eviware.loadui.ui.fx.input.SelectableImpl;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.views.canvas.component.ComponentView;
 import com.eviware.loadui.ui.fx.views.canvas.terminal.ConnectionView;
@@ -146,7 +147,7 @@ public class CanvasView extends StackPane
 
 			ConnectionView connectionView = new ConnectionView( connection, outputComponentView, inputComponentView );
 
-			ReadOnlyBooleanProperty selectedProperty = Selectable.installSelectable( connectionView ).selectedProperty();
+			ReadOnlyBooleanProperty selectedProperty = SelectableImpl.installSelectable( connectionView ).selectedProperty();
 			connectionView.fillProperty().bind(
 					Bindings.when( selectedProperty ).then( Color.web( "#00ADEE" ) ).otherwise( Color.GRAY ) );
 			connectionView.effectProperty().bind(
@@ -327,7 +328,7 @@ public class CanvasView extends StackPane
 
 		getChildren().addAll( createGrid(), componentWrapper, zoomSlider, descriptors );
 
-		Selectable.installDragToSelectArea( this );
+		SelectableImpl.installDragToSelectArea( this );
 		initScrolling();
 	}
 
@@ -525,7 +526,7 @@ public class CanvasView extends StackPane
 					for( CanvasObjectView component : actuallyRemoved )
 					{
 						log.debug( "UNINSTALL" );
-						Movable.uninstall( component );
+						MovableImpl.uninstall( component );
 						//Selectable.uninstall( component );
 						MultiMovable.uninstall( CanvasView.this, component );
 					}
@@ -549,7 +550,7 @@ public class CanvasView extends StackPane
 			view.setLayoutY( Integer.parseInt( item.getAttribute( "gui.layoutY", "0" ) ) );
 
 			final Node handle = view.lookup( "#base" );
-			final Movable movable = Movable.install( view, handle );
+			final MovableImpl movable = MovableImpl.install( view, handle );
 			movable.draggingProperty().addListener( new ChangeListener<Boolean>()
 			{
 				@Override
@@ -563,7 +564,7 @@ public class CanvasView extends StackPane
 					}
 				}
 			} );
-			Selectable selectable = Selectable.installSelectable( view );
+			Selectable selectable = SelectableImpl.installSelectable( view );
 			view.effectProperty().bind(
 					Bindings.when( selectable.selectedProperty() ).then( selectedEffect ).otherwise( ( Effect )null ) );
 
@@ -614,7 +615,7 @@ public class CanvasView extends StackPane
 							//Dragging the OutputTerminal (only connection) of a Connection, OR dragging the InputTerminal of a selected Connection:
 							return draggedTerminal.equals( input.getConnection().getOutputTerminal() )
 									|| draggedTerminal.equals( input.getConnection().getInputTerminal() )
-									&& Selectable.get( input ).isSelected();
+									&& SelectableImpl.get( input ).isSelected();
 						}
 					}, null );
 

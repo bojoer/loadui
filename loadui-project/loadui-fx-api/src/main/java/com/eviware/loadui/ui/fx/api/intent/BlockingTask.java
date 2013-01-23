@@ -21,7 +21,7 @@ import javafx.stage.StageStyle;
 import javafx.stage.Window;
 import javafx.util.Duration;
 
-import com.eviware.loadui.ui.fx.control.TaskProgressIndicator;
+import com.eviware.loadui.ui.fx.api.control.TaskProgressIndicator;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;

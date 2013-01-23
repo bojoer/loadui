@@ -9,7 +9,6 @@ import com.eviware.loadui.api.traits.Labeled;
 @SuppressWarnings( "serial" )
 public class IntentEvent<T> extends Event
 {
-	@SuppressWarnings( "hiding" )
 	public static final EventType<IntentEvent<? extends Object>> ANY = new EventType<>( Event.ANY, "INTENT" );
 
 	public static final EventType<IntentEvent<? extends Object>> INTENT_OPEN = new EventType<>( ANY, "INTENT_OPEN" );

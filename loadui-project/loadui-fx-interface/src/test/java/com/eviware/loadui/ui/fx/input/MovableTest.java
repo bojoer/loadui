@@ -1,4 +1,4 @@
-package com.eviware.loadui.ui.fx.api.input;
+package com.eviware.loadui.ui.fx.input;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
@@ -29,19 +29,17 @@ import org.junit.experimental.categories.Category;
 
 import com.eviware.loadui.test.categories.GUITest;
 import com.eviware.loadui.ui.fx.api.input.DraggableEvent;
-import com.eviware.loadui.ui.fx.api.input.Movable;
-import com.eviware.loadui.ui.fx.util.test.TestFX;
-import com.eviware.loadui.ui.fx.util.test.TestFX.MouseMotion;
 import com.eviware.loadui.ui.fx.util.test.FXScreenController;
 import com.eviware.loadui.ui.fx.util.test.FXTestUtils;
-import com.eviware.loadui.util.test.TestUtils;
+import com.eviware.loadui.ui.fx.util.test.TestFX;
+import com.eviware.loadui.ui.fx.util.test.TestFX.MouseMotion;
 import com.google.common.util.concurrent.SettableFuture;
 
 @Category( GUITest.class )
 public class MovableTest
 {
 	private static final SettableFuture<Stage> stageFuture = SettableFuture.create();
-	private static Movable movable;
+	private static MovableImpl movable;
 	private static Stage stage;
 	private static TestFX controller;
 	private static Group group;
@@ -53,7 +51,7 @@ public class MovableTest
 		{
 			Rectangle dragRect = RectangleBuilder.create().id( "dragrect" ).width( 25 ).height( 25 ).fill( Color.BLUE )
 					.build();
-			movable = Movable.install( dragRect );
+			movable = MovableImpl.install( dragRect );
 
 			Rectangle dropRect = RectangleBuilder.create().id( "droprect" ).width( 50 ).height( 50 ).layoutX( 100 )
 					.layoutY( 100 ).build();

@@ -1,4 +1,4 @@
-package com.eviware.loadui.ui.fx.api;
+package com.eviware.loadui.ui.fx;
 
 import javafx.stage.Stage;
 
@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.model.WorkspaceProvider;
 import com.eviware.loadui.api.testevents.TestEventManager;
-import com.eviware.loadui.ui.fx.MainWindow;
 import com.eviware.loadui.util.BeanInjector;
 
 public class LoadUiMainWindowCreator

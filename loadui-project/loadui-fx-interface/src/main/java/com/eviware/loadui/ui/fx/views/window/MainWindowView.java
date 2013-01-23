@@ -27,10 +27,10 @@ import com.eviware.loadui.api.model.WorkspaceProvider;
 import com.eviware.loadui.api.testevents.TestEventManager.TestEventObserver;
 import com.eviware.loadui.api.traits.Labeled;
 import com.eviware.loadui.ui.fx.api.Inspector;
-import com.eviware.loadui.ui.fx.api.input.Selectable;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.api.perspective.PerspectiveEvent;
 import com.eviware.loadui.ui.fx.control.NotificationPanel;
+import com.eviware.loadui.ui.fx.input.SelectableImpl;
 import com.eviware.loadui.ui.fx.util.ErrorHandler;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.ObservableLists;
@@ -100,7 +100,7 @@ public class MainWindowView extends StackPane
 		{
 			mainButton.setGraphic( new ImageView( LoadUI.relativeFile( "res/logo-button.png" ).toURI().toURL()
 					.toExternalForm() ) );
-			Selectable.installDeleteKeyHandler( this );
+			SelectableImpl.installDeleteKeyHandler( this );
 
 			initIntentEventHanding();
 			initInspectorView();

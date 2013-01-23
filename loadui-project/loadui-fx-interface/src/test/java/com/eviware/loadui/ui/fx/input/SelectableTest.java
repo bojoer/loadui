@@ -1,4 +1,4 @@
-package com.eviware.loadui.ui.fx.api.input;
+package com.eviware.loadui.ui.fx.input;
 
 import static com.eviware.loadui.ui.fx.util.test.TestFX.offset;
 import static org.hamcrest.CoreMatchers.is;
@@ -24,6 +24,8 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import com.eviware.loadui.test.categories.GUITest;
+import com.eviware.loadui.ui.fx.api.input.Selectable;
+import com.eviware.loadui.ui.fx.input.SelectableImpl;
 import com.eviware.loadui.ui.fx.util.test.TestFX;
 import com.eviware.loadui.ui.fx.util.test.FXScreenController;
 import com.eviware.loadui.ui.fx.util.test.FXTestUtils;
@@ -52,9 +54,9 @@ public class SelectableTest
 
 			background = PaneBuilder.create().children( rect2, rect1 ).build();
 
-			Selectable.installDragToSelectArea( background );
-			selectable1 = Selectable.installSelectable( rect1 );
-			selectable2 = Selectable.installSelectable( rect2 );
+			SelectableImpl.installDragToSelectArea( background );
+			selectable1 = SelectableImpl.installSelectable( rect1 );
+			selectable2 = SelectableImpl.installSelectable( rect2 );
 
 			rect1.fillProperty().bind(
 					Bindings.when( selectable1.selectedProperty() ).then( Color.GREEN ).otherwise( Color.GREY ) );
