@@ -3,36 +3,51 @@ package com.eviware.loadui.ui.fx.views.analysis.linechart;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.util.StringConverter;
 
+import org.joda.time.Period;
+import org.joda.time.format.PeriodFormatter;
+
 import com.eviware.loadui.api.charting.line.ZoomLevel;
 
 final class MillisToTickMark extends StringConverter<Number>
 {
 	private final SimpleObjectProperty<ZoomLevel> zoomLevelProperty;
+	private final PeriodFormatter timeFormatter;
 
-	MillisToTickMark( SimpleObjectProperty<ZoomLevel> zoomLevelProperty )
+	MillisToTickMark( SimpleObjectProperty<ZoomLevel> zoomLevelProperty, PeriodFormatter timeFormatter )
 	{
 		this.zoomLevelProperty = zoomLevelProperty;
+		this.timeFormatter = timeFormatter;
 	}
 
 	@Override
 	public String toString( Number n )
 	{
 		long value = n.longValue();
+
 		if( value == 0 )
 			return "0";
-		ZoomLevel parentZoomLevel = zoomLevelProperty.get().zoomOut();
-		long parentIntervalMillis = parentZoomLevel.getInterval() * 1000;
-		System.out.println( "" + value + " % " + parentIntervalMillis + " >= " + zoomLevelProperty.get().getInterval()
-				* 1000 );
-		if( value % parentIntervalMillis >= zoomLevelProperty.get().getInterval() * 1000 )
+
+		ZoomLevel zoomLevel = zoomLevelProperty.get();
+		ZoomLevel parentZoomLevel = zoomLevel.zoomOut();
+		long parentInterval = parentZoomLevel.getInterval();
+		//		System.out.println( "" + value / 1000 + " % " + parentInterval + " >= " + zoomLevel.getInterval() );
+
+		if( value / 1000 % parentInterval >= zoomLevel.getInterval() )
 		{
-			return Long.toString( value / ( ( 1000 * zoomLevelProperty.get().getInterval() ) )
-					% zoomLevelProperty.get().zoomOut().getInterval() );
+			return Long.toString( value / 1000 / zoomLevel.getInterval()
+					% ( parentZoomLevel.getInterval() / zoomLevel.getInterval() ) );
 		}
-		return Long.toString( value / parentIntervalMillis ) + parentZoomLevel.oneCharacterAbbreviation();
+		return prettyPrintTime( n );
 	}
 
-	private static Number fromString( String s, ZoomLevel fromZoomLevel )
+	private String prettyPrintTime( Number n )
+	{
+
+		Period period = new Period( n.longValue() );
+		return timeFormatter.print( period.normalizedStandard() );
+	}
+
+	private Number fromString( String s, ZoomLevel fromZoomLevel )
 	{
 		try
 		{
@@ -40,13 +55,8 @@ final class MillisToTickMark extends StringConverter<Number>
 		}
 		catch( NumberFormatException e )
 		{
-			return Long.parseLong( dropLastChar( s ) ) * fromZoomLevel.zoomOut().getInterval() * 1000;
+			return timeFormatter.parsePeriod( s ).toStandardDuration().getMillis();
 		}
-	}
-
-	private static String dropLastChar( String s )
-	{
-		return s.substring( 0, s.length() - 1 );
 	}
 
 	public String changeZoomLevel( String s, ZoomLevel fromZoomLevel )
