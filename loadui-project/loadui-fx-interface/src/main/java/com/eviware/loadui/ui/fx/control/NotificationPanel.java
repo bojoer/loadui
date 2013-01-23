@@ -18,6 +18,7 @@ import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.eviware.loadui.api.testevents.MessageLevel;
 import com.eviware.loadui.api.testevents.TestEvent.Entry;
 import com.eviware.loadui.api.testevents.TestEventManager.TestEventObserver;
 import com.eviware.loadui.ui.fx.util.Animations;
@@ -31,8 +32,8 @@ public class NotificationPanel extends VBox implements TestEventObserver, EventH
 	private static final Logger log = LoggerFactory.getLogger( NotificationPanel.class );
 	private static final DateFormat dateFormat = new SimpleDateFormat( "EEE MMM dd HH:mm:ss", Locale.ENGLISH );
 
-	private Animations anime = new Animations( this, false );
-	private Timer delayer = new Timer( "NotificationsPanel-Timer", true );
+	private final Animations anime = new Animations( this, false );
+	private final Timer delayer = new Timer( "NotificationsPanel-Timer", true );
 	private TimerTask fadeAwayTask;
 
 	@FXML
@@ -127,26 +128,29 @@ public class NotificationPanel extends VBox implements TestEventObserver, EventH
 		if( entry.getTestEvent() instanceof MessageTestEvent )
 		{
 			final MessageTestEvent te = ( MessageTestEvent )entry.getTestEvent();
-			Platform.runLater( new Runnable()
+			if( te.getLevel() != MessageLevel.NOTIFICATION )
 			{
-				@Override
-				public void run()
+				Platform.runLater( new Runnable()
 				{
-					if( isVisible() )
+					@Override
+					public void run()
 					{
-						msgCount.setText( Integer.toString( getCurrentMsgCount() + 1 ) );
+						if( isVisible() )
+						{
+							msgCount.setText( Integer.toString( getCurrentMsgCount() + 1 ) );
+						}
+						else
+						{
+							msgCount.setText( "" );
+							detectMouseMovement( false );
+							final String dateStr = dateFormat.format( new Date() );
+							msgText.setText( te.getMessage() );
+							dateText.setText( dateStr );
+							display();
+						}
 					}
-					else
-					{
-						msgCount.setText( "" );
-						detectMouseMovement( false );
-						final String dateStr = dateFormat.format( new Date() );
-						msgText.setText( te.getMessage() );
-						dateText.setText( dateStr );
-						display();
-					}
-				}
-			} );
+				} );
+			}
 		}
 	}
 
