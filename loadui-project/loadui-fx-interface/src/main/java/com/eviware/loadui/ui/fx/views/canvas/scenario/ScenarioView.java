@@ -4,11 +4,13 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.MenuItemBuilder;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
+import com.eviware.loadui.ui.fx.util.NodeUtils;
 import com.eviware.loadui.ui.fx.views.canvas.CanvasObjectView;
 import com.eviware.loadui.ui.fx.views.canvas.MiniScenarioPlaybackPanel;
 
@@ -51,9 +53,17 @@ public class ScenarioView extends CanvasObjectView
 		private VBox vBox;
 
 		@FXML
+		private ImageView miniature;
+
+		@FXML
 		void initialize()
 		{
 			vBox.getChildren().add( 0, new MiniScenarioPlaybackPanel( getScenario() ) );
+
+			String base64 = getCanvasObject().getAttribute( "miniature_fx2", null );
+
+			if( base64 != null )
+				miniature.setImage( NodeUtils.fromBase64Image( base64 ) );
 		}
 	}
 }

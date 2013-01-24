@@ -1,21 +1,32 @@
 package com.eviware.loadui.ui.fx.views.project;
 
 import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.util.Collection;
 import java.util.Map;
-
+import com.eviware.loadui.ui.fx.views.analysis.reporting.Snapshotter;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
+import javafx.scene.Group;
 import javafx.beans.Observable;
 import javafx.beans.property.Property;
+import javax.imageio.ImageIO;
+import org.apache.commons.codec.binary.Base64;
 import javafx.beans.property.ReadOnlyProperty;
 import javafx.concurrent.Task;
+import com.eviware.loadui.ui.fx.util.NodeUtils;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuButton;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.StackPaneBuilder;
@@ -151,6 +162,7 @@ public class ProjectView extends AnchorPane
 					final Object arg = event.getArg();
 					Preconditions.checkArgument( arg instanceof SceneItem );
 					SceneItem scenario = ( SceneItem )arg;
+
 					ScenarioToolbar toolbar = new ScenarioToolbar( scenario );
 					StackPane.setAlignment( toolbar, Pos.TOP_CENTER );
 					CanvasView canvas = new CanvasView( scenario );
@@ -161,6 +173,11 @@ public class ProjectView extends AnchorPane
 				}
 				else if( event.getEventType() == IntentEvent.INTENT_CLOSE && event.getArg() instanceof SceneItem )
 				{
+					SceneItem scenario = ( SceneItem )event.getArg();
+					Node canvas = lookup( "#spsp" );
+					String base64 = NodeUtils.toBase64Image( canvas );
+					scenario.setAttribute( "miniature_fx2", base64 );
+
 					designTab.setDetachableContent( new ProjectCanvasView( project ) );
 					event.consume();
 				}
@@ -294,8 +311,7 @@ public class ProjectView extends AnchorPane
 		ReadOnlyProperty<Execution> execution = statisticsView.currentExecutionProperty();
 		Collection<StatisticPage> pages = project.getStatisticPages().getChildren();
 
-		Map<ChartView, Image> images = LineChartUtils.createImages( pages, execution,
-				null );
+		Map<ChartView, Image> images = LineChartUtils.createImages( pages, execution, null );
 
 		reportingManager.createReport( project.getLabel(), execution.getValue(), pages, images, execution.getValue()
 				.getSummaryReport() );

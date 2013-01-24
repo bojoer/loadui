@@ -208,6 +208,8 @@ public class CanvasView extends StackPane
 				fx( ofCollection( canvas, CanvasItem.CONNECTIONS, Connection.class, canvas.getConnections() ) ),
 				CONNECTION_TO_VIEW );
 
+		getStyleClass().add( "canvas-view" );
+
 		FXMLUtils.load( this, this, CanvasView.class.getResource( CanvasView.class.getSimpleName() + ".fxml" ) );
 	}
 
@@ -325,11 +327,15 @@ public class CanvasView extends StackPane
 
 		setAlignment( Pos.TOP_LEFT );
 
-		getChildren().addAll( createGrid(), componentWrapper, zoomSlider, descriptors );
+		sp.getChildren().setAll( createGrid(), componentWrapper );
+
+		getChildren().addAll( sp, zoomSlider, descriptors );
 
 		Selectable.installDragToSelectArea( this );
 		initScrolling();
 	}
+
+	public StackPane sp = StackPaneBuilder.create().id( "spsp" ).build();
 
 	private Node createGrid()
 	{
