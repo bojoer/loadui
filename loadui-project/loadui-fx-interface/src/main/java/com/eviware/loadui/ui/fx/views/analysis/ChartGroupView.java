@@ -186,7 +186,7 @@ public class ChartGroupView extends VBox
 	@FXML
 	protected void deleteChart( ActionEvent evt )
 	{
-		chartGroup.delete();
+		fireEvent( IntentEvent.create( IntentEvent.INTENT_DELETE, chartGroup ) );
 	}
 
 	public ToggleGroup getChartGroupToggleGroup()
