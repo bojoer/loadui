@@ -1,4 +1,4 @@
-package com.eviware.loadui.ui.fx.api.input;
+package com.eviware.loadui.ui.fx.input;
 
 import static com.eviware.loadui.ui.fx.util.test.TestFX.offset;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -28,6 +28,10 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import com.eviware.loadui.test.categories.GUITest;
+import com.eviware.loadui.ui.fx.api.input.Selectable;
+import com.eviware.loadui.ui.fx.input.MovableImpl;
+import com.eviware.loadui.ui.fx.input.MultiMovable;
+import com.eviware.loadui.ui.fx.input.SelectableImpl;
 import com.eviware.loadui.ui.fx.util.test.TestFX;
 import com.eviware.loadui.ui.fx.util.test.TestFX.MouseMotion;
 import com.eviware.loadui.ui.fx.util.test.FXScreenController;
@@ -51,25 +55,25 @@ public class MultiMovableTest
 		public void start( Stage primaryStage ) throws Exception
 		{
 			Rectangle rect1 = RectangleBuilder.create().id( "rect1" ).width( 25 ).height( 25 ).fill( Color.BLUE ).build();
-			Movable.install( rect1 );
+			MovableImpl.install( rect1 );
 
 			Rectangle rect2 = RectangleBuilder.create().id( "rect2" ).width( 50 ).height( 50 ).layoutX( 100 )
 					.layoutY( 100 ).build();
-			Movable.install( rect2 );
+			MovableImpl.install( rect2 );
 
 			StackPane stack = StackPaneBuilder.create().id( "stack" ).minHeight( 25 ).minWidth( 25 ).layoutY( 180 )
 					.build();
 			Rectangle rect3 = RectangleBuilder.create().width( 25 ).height( 25 ).fill( Color.DARKSLATEBLUE ).build();
 			VBox handle = VBoxBuilder.create().children( rect3 ).build();
 			stack.getChildren().add( handle );
-			Movable.install( stack, handle );
+			MovableImpl.install( stack, handle );
 
 			background = PaneBuilder.create().children( stack, rect2, rect1 ).build();
 
-			Selectable.installDragToSelectArea( background );
-			selectable1 = Selectable.installSelectable( rect1 );
-			selectable2 = Selectable.installSelectable( rect2 );
-			selectable3 = Selectable.installSelectable( stack );
+			SelectableImpl.installDragToSelectArea( background );
+			selectable1 = SelectableImpl.installSelectable( rect1 );
+			selectable2 = SelectableImpl.installSelectable( rect2 );
+			selectable3 = SelectableImpl.installSelectable( stack );
 
 			rect1.fillProperty().bind(
 					Bindings.when( selectable1.selectedProperty() ).then( Color.GREEN ).otherwise( Color.GREY ) );

@@ -121,6 +121,11 @@
 		</dependency>
 		<dependency>
 			<groupId>com.eviware.loadui</groupId>
+			<artifactId>loadui-fx-api</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.eviware.loadui</groupId>
 			<artifactId>loadui-utils</artifactId>
 			<version>${project.version}</version>
 		</dependency>

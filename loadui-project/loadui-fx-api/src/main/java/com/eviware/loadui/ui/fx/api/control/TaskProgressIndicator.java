@@ -1,4 +1,4 @@
-package com.eviware.loadui.ui.fx.control;
+package com.eviware.loadui.ui.fx.api.control;
 
 import javafx.concurrent.Task;
 import javafx.scene.control.Label;

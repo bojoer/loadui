@@ -1,4 +1,4 @@
-package com.eviware.loadui.ui.fx.api.input;
+package com.eviware.loadui.ui.fx.input;
 
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -10,6 +10,9 @@ import javax.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.eviware.loadui.ui.fx.api.input.DraggableEvent;
+import com.eviware.loadui.ui.fx.api.input.Movable;
+import com.eviware.loadui.ui.fx.api.input.Selectable;
 import com.google.common.base.Preconditions;
 
 public class MultiMovable
@@ -24,7 +27,7 @@ public class MultiMovable
 		@Override
 		public void handle( MouseEvent event )
 		{
-			for( Selectable s : Selectable.getSelected() )
+			for( Selectable s : SelectableImpl.getSelected() )
 			{
 				Node selectedNode = s.getNode();
 				selectedNode.setLayoutX( selectedNode.getLayoutX() + selectedNode.getTranslateX() );
@@ -52,10 +55,10 @@ public class MultiMovable
 			{
 				double translateX = movedNode.getTranslateX();
 				double translateY = movedNode.getTranslateY();
-				for( Selectable s : Selectable.getSelected() )
+				for( Selectable s : SelectableImpl.getSelected() )
 				{
 					Node selectedNode = s.getNode();
-					if( Movable.isMovable( selectedNode ) && Movable.getMovable( selectedNode ) != event.getDraggable() )
+					if( MovableImpl.isMovable( selectedNode ) && MovableImpl.getMovable( selectedNode ) != event.getDraggable() )
 					{
 						selectedNode.setTranslateX( translateX );
 						selectedNode.setTranslateY( translateY );
@@ -76,10 +79,10 @@ public class MultiMovable
 
 	public static void install( @Nonnull final Region selectionArea, @Nonnull final Node node )
 	{
-		Preconditions.checkArgument( Selectable.isSelectable( node ), "The node must already be Selectable." );
-		Preconditions.checkArgument( Movable.isMovable( node ), "The node must already be Movable." );
+		Preconditions.checkArgument( SelectableImpl.isSelectable( node ), "The node must already be Selectable." );
+		Preconditions.checkArgument( MovableImpl.isMovable( node ), "The node must already be Movable." );
 
-		final Movable movable = Movable.getMovable( node );
+		final Movable movable = MovableImpl.getMovable( node );
 		MoveAlongNodesHandler handler = new MoveAlongNodesHandler( movable );
 		node.getProperties().put( MOVA_ALONG_NODES_HANDLER_PROP_KEY, handler );
 		node.addEventHandler( DraggableEvent.DRAGGABLE_DRAGGED, handler );
@@ -90,9 +93,8 @@ public class MultiMovable
 	public static void uninstall( @Nonnull final Region selectionArea, @Nonnull final Node node )
 	{
 		log.debug( "uninstall multimovable" );
-		if( Movable.isMovable( node ) )
+		if( MovableImpl.isMovable( node ) )
 		{
-			final Movable movable = Movable.getMovable( node );
 			node.removeEventHandler( DraggableEvent.DRAGGABLE_DRAGGED, ( EventHandler<DraggableEvent> )node
 					.getProperties().get( MOVA_ALONG_NODES_HANDLER_PROP_KEY ) );
 		}
