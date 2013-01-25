@@ -13,6 +13,7 @@ import javafx.beans.property.Property;
 import javax.imageio.ImageIO;
 import org.apache.commons.codec.binary.Base64;
 import javafx.beans.property.ReadOnlyProperty;
+import javafx.scene.SceneBuilder;
 import javafx.concurrent.Task;
 import com.eviware.loadui.ui.fx.util.NodeUtils;
 import javafx.embed.swing.SwingFXUtils;
@@ -174,8 +175,19 @@ public class ProjectView extends AnchorPane
 				else if( event.getEventType() == IntentEvent.INTENT_CLOSE && event.getArg() instanceof SceneItem )
 				{
 					SceneItem scenario = ( SceneItem )event.getArg();
-					Node canvas = lookup( "#spsp" );
-					String base64 = NodeUtils.toBase64Image( canvas );
+					Group canvas = ( Group )lookup( ".canvas-layer" );
+					StackPane grid = ( StackPane )lookup( ".grid-pane" );
+					StackPane parent = ( StackPane )grid.getParent();
+					parent.getChildren().remove( grid );
+					parent.getChildren().remove( canvas );
+
+					StackPane completeCanvas = StackPaneBuilder.create().children( grid, canvas ).build();
+					SceneBuilder.create().root( completeCanvas ).width( 996 ).height( 525 ).build();
+
+					WritableImage fxImage = completeCanvas.snapshot( null, null );
+					BufferedImage bimg = SwingFXUtils.fromFXImage( fxImage, null );
+					bimg = UIUtils.scaleImage( bimg, 332, 175 );
+					String base64 = NodeUtils.toBase64Image( bimg );
 					scenario.setAttribute( "miniature_fx2", base64 );
 
 					designTab.setDetachableContent( new ProjectCanvasView( project ) );

@@ -4,6 +4,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.MenuItemBuilder;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 
@@ -64,6 +65,8 @@ public class ScenarioView extends CanvasObjectView
 
 			if( base64 != null )
 				miniature.setImage( NodeUtils.fromBase64Image( base64 ) );
+			else
+				miniature.setImage( new Image( ScenarioView.class.getResourceAsStream( "grid.png" ) ) );
 		}
 	}
 }

@@ -2,7 +2,6 @@
 
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
@@ -16,6 +15,5 @@
 <fx:root type="javafx.scene.layout.StackPane" xmlns:fx="http://javafx.com/fxml">
 	<VBox spacing="3" fx:id="vBox">
 		<ImageView fx:id="miniature"/>
-		<Region style="-fx-background-color: red;" minHeight="100" />
 	</VBox>
 </fx:root>

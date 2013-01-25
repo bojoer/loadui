@@ -327,15 +327,11 @@ public class CanvasView extends StackPane
 
 		setAlignment( Pos.TOP_LEFT );
 
-		sp.getChildren().setAll( createGrid(), componentWrapper );
-
-		getChildren().addAll( sp, zoomSlider, descriptors );
+		getChildren().addAll( createGrid(), componentWrapper, zoomSlider, descriptors );
 
 		Selectable.installDragToSelectArea( this );
 		initScrolling();
 	}
-
-	public StackPane sp = StackPaneBuilder.create().id( "spsp" ).build();
 
 	private Node createGrid()
 	{
@@ -361,7 +357,8 @@ public class CanvasView extends StackPane
 			}
 		}, canvasLayer.layoutYProperty() ) );
 
-		return StackPaneBuilder.create().padding( new Insets( -GRID_SIZE ) ).children( gridRegion ).build();
+		return StackPaneBuilder.create().styleClass( "grid-pane" ).padding( new Insets( -GRID_SIZE ) )
+				.children( gridRegion ).build();
 	}
 
 	double startX = 0;

@@ -1,5 +1,6 @@
 package com.eviware.loadui.ui.fx.util;
 
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -40,10 +41,8 @@ public final class NodeUtils
 				node.getBoundsInLocal().getHeight() );
 	}
 
-	public static String toBase64Image( Node node )
+	public static String toBase64Image( BufferedImage bimg )
 	{
-		WritableImage fxImage = node.snapshot( null, null );
-		java.awt.image.BufferedImage bimg = SwingFXUtils.fromFXImage( fxImage, null );
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		try
 		{
