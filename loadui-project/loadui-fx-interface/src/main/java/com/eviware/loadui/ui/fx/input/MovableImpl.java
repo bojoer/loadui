@@ -183,8 +183,6 @@ public class MovableImpl implements Movable
 			@Override
 			public void handle( MouseEvent event )
 			{
-				log.debug( "pressedHandler" );
-
 				Node source = ( Node )event.getSource();
 				MovableImpl movable = ( MovableImpl )source.getProperties().get( MOVABLE_PROP_KEY );
 				if( movable != null )
@@ -200,8 +198,6 @@ public class MovableImpl implements Movable
 			@Override
 			public void handle( MouseEvent event )
 			{
-				log.debug( "draggedHandler" );
-
 				Node source = ( Node )event.getSource();
 				final MovableImpl movable = ( MovableImpl )source.getProperties().get( MOVABLE_PROP_KEY );
 				if( movable != null && movable.isDragging() )
@@ -256,8 +252,6 @@ public class MovableImpl implements Movable
 			@Override
 			public void handle( MouseEvent event )
 			{
-				log.debug( "releasedHandler" );
-
 				Node source = ( Node )event.getSource();
 				MovableImpl movable = ( MovableImpl )source.getProperties().get( MOVABLE_PROP_KEY );
 				if( movable != null && movable.isDragging() )

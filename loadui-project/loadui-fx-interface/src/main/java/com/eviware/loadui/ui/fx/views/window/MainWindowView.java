@@ -277,6 +277,13 @@ public class MainWindowView extends StackPane
 		//		fireEvent( new PerspectiveEvent( PerspectiveEvent.PERSPECTIVE_WORKSPACE ) );
 		PerspectiveEvent.fireEvent( PerspectiveEvent.PERSPECTIVE_WORKSPACE, workspaceView );
 	}
+	
+	public WorkspaceView getWorkspaceView() {
+		if (container != null && container.getChildren().isEmpty() == false)
+			return ( WorkspaceView )container.getChildren().get( 0 );
+		else
+			throw new RuntimeException( "WorkspaceView has not been created yet" );
+	}
 
 	public void settings()
 	{
