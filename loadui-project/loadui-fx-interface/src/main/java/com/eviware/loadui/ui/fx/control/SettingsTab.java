@@ -1,5 +1,6 @@
 package com.eviware.loadui.ui.fx.control;
 
+import java.util.ArrayList;
 import java.util.Map.Entry;
 
 import javafx.scene.control.Label;
@@ -58,15 +59,16 @@ public class SettingsTab extends Tab
 		else
 		{
 			ValidatableTextField<?> textField;
-			if( property.getType().equals( Long.class ) )
-			{
-				textField = ValidatableLongField.Builder.create()
-						.text( Objects.firstNonNull( property.getValue(), "" ).toString() ).build();
-			}
-			else
+			
+			if( property.getType().equals( String.class ))
 			{
 				textField = new ValidatableStringField();
 				textField.setText( Objects.firstNonNull( property.getValue(), "" ).toString() );
+			}
+			else
+			{
+				textField = ValidatableLongField.Builder.create()
+						.text( Objects.firstNonNull( property.getValue(), "" ).toString() ).build();
 			}
 			textField.setId( UIUtils.toCssId( label ) );
 			vBox.getChildren().addAll( new Label( label + ":" ), textField );

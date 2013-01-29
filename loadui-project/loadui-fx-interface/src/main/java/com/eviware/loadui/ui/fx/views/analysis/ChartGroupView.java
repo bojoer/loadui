@@ -63,6 +63,7 @@ public class ChartGroupView extends VBox
 			{
 				for( Statistic.Descriptor statistic : ( ( StatisticHolder )owner ).getDefaultStatistics() )
 				{
+					log.debug( "Adding default stat: " + statistic );
 					( ( ConfigurableLineChartView )chartView ).addSegment( statistic.getStatisticVariableLabel(),
 							statistic.getStatisticLabel(), statistic.getSource() );
 				}
@@ -185,7 +186,7 @@ public class ChartGroupView extends VBox
 	@FXML
 	protected void deleteChart( ActionEvent evt )
 	{
-		chartGroup.delete();
+		fireEvent( IntentEvent.create( IntentEvent.INTENT_DELETE, chartGroup ) );
 	}
 
 	public ToggleGroup getChartGroupToggleGroup()

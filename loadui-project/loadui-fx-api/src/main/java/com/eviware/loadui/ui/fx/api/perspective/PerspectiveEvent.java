@@ -9,7 +9,6 @@ import javafx.scene.layout.Region;
 @SuppressWarnings( "serial" )
 public class PerspectiveEvent extends Event
 {
-	@SuppressWarnings( "hiding" )
 	public static final EventType<PerspectiveEvent> ANY = new EventType<>( Event.ANY, "PERSPECTIVE" );
 	public static final EventType<PerspectiveEvent> PERSPECTIVE_WORKSPACE = new EventType<>( ANY, "WORKSPACE" );
 	public static final EventType<PerspectiveEvent> PERSPECTIVE_PROJECT = new EventType<>( ANY, "PROJECT" );

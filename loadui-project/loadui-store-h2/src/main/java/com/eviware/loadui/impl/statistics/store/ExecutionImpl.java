@@ -133,12 +133,9 @@ public class ExecutionImpl implements Execution, Releasable
 					return new TestEventEntryImpl( new UnknownTestEvent( input.getTimestamp() ), input
 							.getTestEventSourceConfig().getLabel(), "Unknown", input.getInterpolationLevel() );
 				}
-				else
-				{
-					return new TestEventEntryImpl( factory.createTestEvent( input.getTimestamp(), input
-							.getTestEventSourceConfig().getData(), input.getData() ), input.getTestEventSourceConfig()
-							.getLabel(), factory.getLabel(), input.getInterpolationLevel() );
-				}
+				return new TestEventEntryImpl( factory.createTestEvent( input.getTimestamp(), input
+						.getTestEventSourceConfig().getData(), input.getData() ),
+						input.getTestEventSourceConfig().getLabel(), factory.getLabel(), input.getInterpolationLevel() );
 			}
 		};
 
@@ -154,12 +151,9 @@ public class ExecutionImpl implements Execution, Releasable
 							input.getTimestamp(), input.getData() ), input.getTestEventSourceConfig().getLabel(), "Unknown",
 							input.getInterpolationLevel() );
 				}
-				else
-				{
-					return new TestEventEntryImpl( InterpolatedTestEvent.createEvent( UnknownTestEvent.class,
-							input.getTimestamp(), input.getData() ), input.getTestEventSourceConfig().getLabel(),
-							factory.getLabel(), input.getInterpolationLevel() );
-				}
+				return new TestEventEntryImpl( InterpolatedTestEvent.createEvent( UnknownTestEvent.class,
+						input.getTimestamp(), input.getData() ), input.getTestEventSourceConfig().getLabel(),
+						factory.getLabel(), input.getInterpolationLevel() );
 			}
 		};
 

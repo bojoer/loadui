@@ -83,7 +83,7 @@ public class ScrollableLineChart extends HBox implements ExecutionChart
 	private final LongProperty xScale = new SimpleLongProperty( 1 );
 	protected final DoubleProperty currentExecutionLenght = new SimpleDoubleProperty( 0 );
 
-	protected ManualObservable manualDataUpdate = new ManualObservable();
+	protected final ManualObservable manualDataUpdate = new ManualObservable();
 
 	protected static final Logger log = LoggerFactory.getLogger( ScrollableLineChart.class );
 	private final MillisToTickMark millisToTickMark = new MillisToTickMark( tickZoomLevelProperty, timeFormatter );

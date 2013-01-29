@@ -17,8 +17,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
-import org.joda.time.format.PeriodFormatter;
-import org.joda.time.format.PeriodFormatterBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +32,9 @@ import com.eviware.loadui.api.statistics.model.chart.ChartView;
 import com.eviware.loadui.api.statistics.model.chart.line.ConfigurableLineChartView;
 import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
 import com.eviware.loadui.api.statistics.store.Execution;
+import com.eviware.loadui.ui.fx.api.NonSingletonFactory;
 import com.eviware.loadui.ui.fx.api.analysis.ExecutionChart;
+import com.eviware.loadui.ui.fx.util.DefaultNonSingletonFactory;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.Properties;
 import com.eviware.loadui.ui.fx.views.analysis.AddStatisticDialog;
@@ -50,10 +50,6 @@ public class LineChartViewNode extends VBox
 	public static final String FOLLOW_ATTRIBUTE = "follow";
 
 	protected static final Logger log = LoggerFactory.getLogger( LineChartViewNode.class );
-
-	private static final PeriodFormatter timeFormatter = new PeriodFormatterBuilder().printZeroNever().appendWeeks()
-			.appendSuffix( "w" ).appendSeparator( " " ).appendDays().appendSuffix( "d" ).appendSeparator( " " )
-			.appendHours().appendSuffix( "h" ).appendSeparator( " " ).appendMinutes().appendSuffix( "m" ).toFormatter();
 
 	private final TestExecutionTask executionTask = new TestExecutionTask()
 	{
@@ -93,9 +89,9 @@ public class LineChartViewNode extends VBox
 	{
 		log.debug( "new LineChartViewNode created! " );
 
-		//executionChart = BeanInjector.getBean( ExecutionChart.class );
-		executionChart = new ScrollableLineChart();
-
+		NonSingletonFactory nonSingletonFactory = getNonSingletonFactory();
+		executionChart = nonSingletonFactory.createExecutionChart();
+		
 		BeanInjector.getBean( TestRunner.class ).registerTask( executionTask, Phase.START, Phase.STOP );
 
 		this.currentExecution = currentExecution;
@@ -103,6 +99,15 @@ public class LineChartViewNode extends VBox
 		this.poll = poll;
 
 		FXMLUtils.load( this );
+	}
+
+	protected NonSingletonFactory getNonSingletonFactory()
+	{
+		NonSingletonFactory factory = BeanInjector.getNonCachedBeanOrNull( NonSingletonFactory.class );
+		if( factory != null )
+			return factory;
+		else
+			return DefaultNonSingletonFactory.get();
 	}
 
 	@FXML

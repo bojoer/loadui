@@ -1,7 +1,4 @@
-package com.eviware.loadui.ui.fx.api.input;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+package com.eviware.loadui.ui.fx.input;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
@@ -12,8 +9,12 @@ import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.eviware.loadui.ui.fx.api.input.DraggableEvent;
+import com.eviware.loadui.ui.fx.api.input.Movable;
 import com.eviware.loadui.ui.fx.util.NodeUtils;
-import com.eviware.loadui.ui.fx.views.canvas.CanvasView;
 
 /**
  * Adds the ability to move a Node by dragging and dropping with the mouse.
@@ -21,11 +22,11 @@ import com.eviware.loadui.ui.fx.views.canvas.CanvasView;
  * 
  * @author dain.nilsson
  */
-public class Movable implements Draggable
+public class MovableImpl implements Movable
 {
-	protected static final Logger log = LoggerFactory.getLogger( Movable.class );
+	protected static final Logger log = LoggerFactory.getLogger( MovableImpl.class );
 
-	private static final String MOVABLE_PROP_KEY = Movable.class.getName();
+	private static final String MOVABLE_PROP_KEY = MovableImpl.class.getName();
 
 	private static final MovableBehavior BEHAVIOR = new MovableBehavior();
 
@@ -36,7 +37,7 @@ public class Movable implements Draggable
 	 * @param handle
 	 * @return
 	 */
-	public static Movable install( Node node, Node handle )
+	public static MovableImpl install( Node node, Node handle )
 	{
 		return BEHAVIOR.install( node, handle );
 	}
@@ -47,7 +48,7 @@ public class Movable implements Draggable
 	 * @param node
 	 * @return
 	 */
-	public static Movable install( Node node )
+	public static MovableImpl install( Node node )
 	{
 		return BEHAVIOR.install( node, node );
 	}
@@ -67,7 +68,7 @@ public class Movable implements Draggable
 	private Node currentlyHovered;
 	private Point2D startPoint = new Point2D( 0, 0 );
 
-	private Movable( Node node, Node handle )
+	private MovableImpl( Node node, Node handle )
 	{
 		this.node = node;
 		this.handle = handle;
@@ -185,7 +186,7 @@ public class Movable implements Draggable
 				log.debug( "pressedHandler" );
 
 				Node source = ( Node )event.getSource();
-				Movable movable = ( Movable )source.getProperties().get( MOVABLE_PROP_KEY );
+				MovableImpl movable = ( MovableImpl )source.getProperties().get( MOVABLE_PROP_KEY );
 				if( movable != null )
 				{
 					movable.startPoint = new Point2D( event.getSceneX(), event.getSceneY() );
@@ -202,7 +203,7 @@ public class Movable implements Draggable
 				log.debug( "draggedHandler" );
 
 				Node source = ( Node )event.getSource();
-				final Movable movable = ( Movable )source.getProperties().get( MOVABLE_PROP_KEY );
+				final MovableImpl movable = ( MovableImpl )source.getProperties().get( MOVABLE_PROP_KEY );
 				if( movable != null && movable.isDragging() )
 				{
 					Node node = movable.getNode();
@@ -258,7 +259,7 @@ public class Movable implements Draggable
 				log.debug( "releasedHandler" );
 
 				Node source = ( Node )event.getSource();
-				Movable movable = ( Movable )source.getProperties().get( MOVABLE_PROP_KEY );
+				MovableImpl movable = ( MovableImpl )source.getProperties().get( MOVABLE_PROP_KEY );
 				if( movable != null && movable.isDragging() )
 				{
 					Node node = movable.getNode();
@@ -287,9 +288,9 @@ public class Movable implements Draggable
 			}
 		};
 
-		private Movable install( Node node, Node handle )
+		private MovableImpl install( Node node, Node handle )
 		{
-			Movable movable = new Movable( node, handle );
+			MovableImpl movable = new MovableImpl( node, handle );
 
 			node.getProperties().put( MOVABLE_PROP_KEY, movable );
 			handle.getProperties().put( MOVABLE_PROP_KEY, movable );
@@ -303,7 +304,7 @@ public class Movable implements Draggable
 
 		private void uninstall( Node node )
 		{
-			Movable movable = ( Movable )node.getProperties().remove( MOVABLE_PROP_KEY );
+			MovableImpl movable = ( MovableImpl )node.getProperties().remove( MOVABLE_PROP_KEY );
 			if( movable != null )
 			{
 				Node handle = movable.getHandle();
@@ -320,8 +321,8 @@ public class Movable implements Draggable
 		return node.getProperties().containsKey( MOVABLE_PROP_KEY );
 	}
 
-	static Movable getMovable( Node node )
+	static MovableImpl getMovable( Node node )
 	{
-		return ( Movable )node.getProperties().get( MOVABLE_PROP_KEY );
+		return ( MovableImpl )node.getProperties().get( MOVABLE_PROP_KEY );
 	}
 }

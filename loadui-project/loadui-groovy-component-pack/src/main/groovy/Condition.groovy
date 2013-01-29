@@ -212,4 +212,4 @@ redraw()
 
 counterStatisticSupport.init()
 
-defaultStatistics << statistic( 'True percentage', 'Total' )
+defaultStatistics << statistic( 'True percentage', 'VALUE' )

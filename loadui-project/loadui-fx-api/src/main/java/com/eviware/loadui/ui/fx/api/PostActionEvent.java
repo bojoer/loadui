@@ -6,7 +6,6 @@ import javafx.event.EventType;
 @SuppressWarnings( "serial" )
 public class PostActionEvent<T> extends Event
 {
-	@SuppressWarnings( "hiding" )
 	public static final EventType<PostActionEvent<? extends Object>> ANY = new EventType<>( Event.ANY, "INTENT" );
 
 	public static final EventType<PostActionEvent<? extends Object>> WAS_CREATED = new EventType<>( ANY, "WAS_CREATED" );

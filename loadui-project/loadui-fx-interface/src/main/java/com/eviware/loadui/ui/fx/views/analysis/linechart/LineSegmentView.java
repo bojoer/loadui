@@ -1,5 +1,6 @@
 package com.eviware.loadui.ui.fx.views.analysis.linechart;
 
+import static javafx.beans.binding.Bindings.when;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
@@ -16,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.statistics.model.chart.line.LineSegment;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
+import com.eviware.loadui.ui.fx.views.analysis.ShortName;
 
 public class LineSegmentView extends SegmentView<LineSegment>
 {
@@ -51,14 +53,16 @@ public class LineSegmentView extends SegmentView<LineSegment>
 	private void initialize()
 	{
 		segmentLabel.maxWidthProperty().bind( Bindings.when( isExpandedProperty ).then( 240 ).otherwise( 120 ) );
-		segmentLabel.setText( segment.getStatisticHolder().getLabel() + " " + segment.getVariableName() + " "
-				+ segment.getStatisticName() );
+
+		String fullName = segment.getStatisticHolder().getLabel() + " " + segment.getVariableName() + " "
+				+ segment.getStatisticName();
+		String shortName = ShortName.forStatistic( segment.getVariableName(), segment.getStatisticName() );
+		segmentLabel.textProperty().bind( when( isExpandedProperty ).then( fullName ).otherwise( shortName ) );
 
 		loadStyles();
 
 		scaling.addListener( new InvalidationListener()
 		{
-
 			@Override
 			public void invalidated( Observable arg0 )
 			{
@@ -73,9 +77,7 @@ public class LineSegmentView extends SegmentView<LineSegment>
 					menuButton.setDisable( false );
 					getChildren().removeAll( slider );
 					getStyleClass().removeAll( scalingStyleClass );
-
 				}
-
 			}
 		} );
 

@@ -17,6 +17,9 @@ package com.eviware.loadui.impl.statistics.model.chart.line;
 
 import java.util.Arrays;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.eviware.loadui.api.statistics.Statistic;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticVariable;
@@ -32,11 +35,23 @@ public class ChartLineSegment extends AbstractChartSegment implements LineSegmen
 
 	private Statistic<?> statistic;
 
+	protected static final Logger log = LoggerFactory.getLogger( ChartLineSegment.class );
+
 	public ChartLineSegment( ChartLineChartView chart, String variableName, String statisticName, String source )
 	{
 		super( chart, StringUtils.serialize( Arrays.asList( chart.getChart().getOwner().getId(), variableName,
 				statisticName, source ) ) );
 
+		log.debug( "source: " + source );
+		log.debug( "owner: " + chart.getChart().getOwner().getLabel() );
+		for( StatisticVariable v : ( ( StatisticHolder )chart.getChart().getOwner() ).getStatisticVariables() )
+		{
+			log.debug( "variable:   " + v.getLabel() );
+			for( String n : v.getStatisticNames() )
+				log.debug( "metric:         " + n );
+			for( String n : v.getSources() )
+				log.debug( "source:         " + n );
+		}
 		Preconditions.checkArgument( chart.getChart().getOwner() instanceof StatisticHolder,
 				"Owner is not a StatisticHolder!" );
 
@@ -77,7 +92,11 @@ public class ChartLineSegment extends AbstractChartSegment implements LineSegmen
 			final StatisticVariable statisticVariable = getStatisticHolder().getStatisticVariable( variableName );
 			if( statisticVariable != null )
 			{
+				log.debug( "????? SV: " + statisticVariable.getLabel() );
+				for( String n : statisticVariable.getStatisticNames() )
+					log.debug( "stat: " + n );
 				statistic = statisticVariable.getStatistic( statisticName, source );
+				log.debug( "????? " + statisticName + " " + source + " = " + statistic );
 			}
 		}
 

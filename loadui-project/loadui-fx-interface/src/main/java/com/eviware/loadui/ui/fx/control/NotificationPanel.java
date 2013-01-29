@@ -14,15 +14,19 @@ import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.eviware.loadui.api.testevents.MessageLevel;
 import com.eviware.loadui.api.testevents.TestEvent.Entry;
 import com.eviware.loadui.api.testevents.TestEventManager.TestEventObserver;
 import com.eviware.loadui.ui.fx.util.Animations;
 import com.eviware.loadui.ui.fx.util.Animations.State;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
+import com.eviware.loadui.ui.fx.views.analysis.AnalysisView;
 import com.eviware.loadui.util.testevents.MessageTestEvent;
 
 public class NotificationPanel extends VBox implements TestEventObserver, EventHandler<MouseEvent>
@@ -31,10 +35,10 @@ public class NotificationPanel extends VBox implements TestEventObserver, EventH
 	private static final Logger log = LoggerFactory.getLogger( NotificationPanel.class );
 	private static final DateFormat dateFormat = new SimpleDateFormat( "EEE MMM dd HH:mm:ss", Locale.ENGLISH );
 
-	private Animations anime = new Animations( this, false );
-	private Timer delayer = new Timer( "NotificationsPanel-Timer", true );
+	private final Animations anime = new Animations( this, false );
+	private final Timer delayer = new Timer( "NotificationsPanel-Timer", true );
 	private TimerTask fadeAwayTask;
-
+	
 	@FXML
 	private Label dateText;
 
@@ -45,6 +49,8 @@ public class NotificationPanel extends VBox implements TestEventObserver, EventH
 	private Label msgText;
 
 	private Pane originalParent;
+	
+	private final Rectangle wholeWindowRec = new Rectangle( 5000, 5000, Color.TRANSPARENT );
 
 	private EventHandler<MouseEvent> showLogHandler = new EventHandler<MouseEvent>()
 	{
@@ -75,6 +81,7 @@ public class NotificationPanel extends VBox implements TestEventObserver, EventH
 	{
 		log.debug( "Initializing" );
 		setVisible( false );
+		wholeWindowRec.addEventHandler( MouseEvent.MOUSE_MOVED, this );
 		setOnMouseEntered( new EventHandler<MouseEvent>()
 		{
 
@@ -127,26 +134,29 @@ public class NotificationPanel extends VBox implements TestEventObserver, EventH
 		if( entry.getTestEvent() instanceof MessageTestEvent )
 		{
 			final MessageTestEvent te = ( MessageTestEvent )entry.getTestEvent();
-			Platform.runLater( new Runnable()
+			if( te.getLevel() != MessageLevel.NOTIFICATION )
 			{
-				@Override
-				public void run()
+				Platform.runLater( new Runnable()
 				{
-					if( isVisible() )
+					@Override
+					public void run()
 					{
-						msgCount.setText( Integer.toString( getCurrentMsgCount() + 1 ) );
+						if( isVisible() )
+						{
+							msgCount.setText( Integer.toString( getCurrentMsgCount() + 1 ) );
+						}
+						else
+						{
+							msgCount.setText( "" );
+							detectMouseMovement( false );
+							final String dateStr = dateFormat.format( new Date() );
+							msgText.setText( te.getMessage() );
+							dateText.setText( dateStr );
+							display();
+						}
 					}
-					else
-					{
-						msgCount.setText( "" );
-						detectMouseMovement( false );
-						final String dateStr = dateFormat.format( new Date() );
-						msgText.setText( te.getMessage() );
-						dateText.setText( dateStr );
-						display();
-					}
-				}
-			} );
+				} );
+			}
 		}
 	}
 
@@ -158,6 +168,7 @@ public class NotificationPanel extends VBox implements TestEventObserver, EventH
 
 	private void display()
 	{
+		log.debug( "Trying to display a notification" );
 		ensureThisIsUnderPreferredParent();
 
 		if( fadeAwayTask != null )
@@ -185,28 +196,42 @@ public class NotificationPanel extends VBox implements TestEventObserver, EventH
 			originalParent = ( Pane )getParent();
 		}
 
-		// The preferred place for the NotificationPanel is in the first Pane of the DOM
-		Pane pane = ( Pane )originalParent.getScene().lookup( "Pane" );
-
-		if( pane == null )
+		// special case -> if there is an AnalysisView, the NotificationPanel goes into it
+		AnalysisView av = ( AnalysisView )originalParent.getScene().lookup( "AnalysisView" );
+		if( av != null )
 		{
-			if( getParent() != originalParent )
+			if( av != getParent() )
+				av.getChildren().add( this );
+		}
+		else
+		{
+			// If not in AnalysisView, the preferred place for the NotificationPanel is in the first Pane of the DOM
+			Pane pane = ( Pane )originalParent.getScene().lookup( "Pane" );
+
+			if( pane == null )
 			{
-				originalParent.getChildren().add( this );
+				if( getParent() != originalParent )
+				{
+					originalParent.getChildren().add( this );
+				}
+			}
+			else if( pane != getParent() )
+			{
+				log.debug( "Adding NotificationPanel to a new pane!" );
+				pane.getChildren().add( this );
 			}
 		}
-		else if( pane != getParent() )
-		{
-			pane.getChildren().add( this );
-		}
+
 	}
 
 	private void detectMouseMovement( boolean enable )
 	{
 		if( enable )
-			getParent().addEventHandler( MouseEvent.MOUSE_MOVED, this );
-		else
-			getParent().removeEventHandler( MouseEvent.MOUSE_MOVED, this );
+		{
+			originalParent.getChildren().add( wholeWindowRec );
+		} else {
+			originalParent.getChildren().remove( wholeWindowRec );
+		}
 	}
 
 	@Override
