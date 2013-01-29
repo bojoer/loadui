@@ -31,9 +31,9 @@
 				</yAxis>
 			</LineChart>
 			<Label fx:id="zoomLevel" styleClass="overlayed-chart-text"
-				text="zoom" AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="15" />
+				text="zoom" AnchorPane.rightAnchor="10" AnchorPane.bottomAnchor="15" />
 			<Label fx:id="ellapsedTime" styleClass="overlayed-chart-text"
-				AnchorPane.leftAnchor="33" AnchorPane.bottomAnchor="15" />
+				AnchorPane.rightAnchor="1655" AnchorPane.bottomAnchor="15" />
 		</AnchorPane>
 		<ChartScrollBar fx:id="scrollBar" />
 	</VBox>

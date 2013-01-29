@@ -1,7 +1,12 @@
 .chart {
-	-fx-padding: 10px;
-	-fx-background-color: #191919; 
+	-fx-background-color: -fx-chart-background; 
 	-fx-background-radius: 10;
+
+	/*Reusable variables*/
+	-fx-chart-background: #181818; 
+	-fx-axis-color: white; 
+	-fx-text-color: #999999; 
+	-fx-grid-line-color: #474747; 
 }
 
 .chart-title{
@@ -16,14 +21,25 @@
 	-fx-stroke: #474747;
 }
  
-.overlayed-chart-text{
-	-fx-text-fill: #999999; 
+#zoomLevel.overlayed-chart-text{
+	-fx-padding: 11px 5px 0px 7px;
+	-fx-background-color: #181818;
+	-fx-text-fill: #999999;
+	-fx-font-size: 9px; 	
+}
+
+#ellapsedTime.overlayed-chart-text{
+	-fx-border-width: 0px 0px 0px 0px ; 
+	-fx-border-color: transparent #181818 transparent transparent; 
+	-fx-background-color: #181818;
+	-fx-text-fill: #999999;
+	-fx-font-size: 9px; 	
 }
 
 .axis{
 	-fx-minor-tick-visible: false; 
-	-fx-tick-label-fill: white; 
-	-fx-tick-label-font: System; 
+	-fx-tick-label-fill: -fx-axis-color;  
+	-fx-tick-label-font: 10px System; 
 }
 
 .axis:bottom{
@@ -32,19 +48,21 @@
 
 .axis:left{
 	-fx-border-color: transparent white transparent transparent; 
+
 }
 
 #yAxis .axis-tick-mark {
-	visibility: hidden; 
+	-fx-stroke: -fx-axis-color;
+    -fx-stroke-width: 1;	
 }
 
 #xAxis .axis-tick-mark {
-    	-fx-stroke: white;
+    	-fx-stroke: -fx-axis-color;
     	-fx-stroke-width: 1; 
 }
 
 .chart-series-line {
- 	-fx-effect: none; 
+ 	-fx-effect: null; 
 }
 
 .chart-legend {
@@ -53,10 +71,11 @@
 
 .chart-legend-item{
 	visibility: false; 
-}
+}  
 
 .chart-plot-background{
-	-fx-background-color: #181818;
+	-fx-border-color: #474747 transparent transparent transparent; 
+	-fx-background-color: -fx-chart-background;
 }
 
 .chart-line-symbol {
@@ -67,4 +86,6 @@
 
 .chart-alternative-row-fill {
     -fx-fill: #181818;
+    -fx-stroke: transparent;
+    -fx-stroke-width: 0;    
 }
