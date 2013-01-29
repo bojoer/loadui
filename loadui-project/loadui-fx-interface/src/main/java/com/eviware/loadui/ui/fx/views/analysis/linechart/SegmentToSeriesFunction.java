@@ -26,7 +26,7 @@ import com.google.common.base.Function;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Iterables;
 
-final class SegmentToSeriesFunction implements Function<Segment, XYChart.Series<Number, Number>>
+public final class SegmentToSeriesFunction implements Function<Segment, XYChart.Series<Number, Number>>
 {
 	ObservableValue<Execution> execution;
 	ObservableList<Observable> observables;
