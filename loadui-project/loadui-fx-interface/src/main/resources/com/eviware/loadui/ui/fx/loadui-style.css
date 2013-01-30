@@ -30,8 +30,14 @@
 	-base-color-dark: #545454;
 	-base-color-mid: #b3b3b3;
 	-base-color-light: #ededed;
-	
-} 
+}
+
+/**
+ * Text 
+ */
+.text{
+	-fx-font-family: "lucida sans";
+}
  
 .placeholder {
 	-fx-background-color: #292929;
@@ -796,11 +802,10 @@
  
  
  /**
- * Line Charts.
+ * Chart Area Background.
  */
 
- .overlayed-chart-text {
- 	-fx-text-fill: #939393;
- 	-fx-fill: #939393;
- 	-fx-background-color: white;
+.tab-content-area .scroll-pane{
+ 	-fx-background-color: #252525;
+ 	-fx-background-radius: 5; 
  }

@@ -33,7 +33,7 @@
 			<Label fx:id="zoomLevel" styleClass="overlayed-chart-text"
 				text="zoom" AnchorPane.rightAnchor="10" AnchorPane.bottomAnchor="15" />
 			<Label fx:id="ellapsedTime" styleClass="overlayed-chart-text"
-				AnchorPane.rightAnchor="1655" AnchorPane.bottomAnchor="15" />
+				AnchorPane.leftAnchor="10" AnchorPane.bottomAnchor="15" />
 		</AnchorPane>
 		<ChartScrollBar fx:id="scrollBar" />
 	</VBox>

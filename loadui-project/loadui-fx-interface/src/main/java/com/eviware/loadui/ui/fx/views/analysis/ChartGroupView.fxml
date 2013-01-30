@@ -3,22 +3,31 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
+<?import java.net.URL?>
 
 <fx:root type="com.eviware.loadui.ui.fx.views.analysis.ChartGroupView"
 	xmlns:fx="http://javafx.com/fxml" styleClass="chart-group-list-cell">
-	<MenuButton fx:id="chartMenuButton">
-		<items>
-			<MenuItem fx:id="renameChartViewItem" text="Rename" onAction="#renameChart" />
-			<MenuItem fx:id="deleteChartViewItem" text="Delete" onAction="#deleteChart" />
-		</items>
-	</MenuButton> 
-	<StackPane fx:id="chartView" HBox.hgrow="ALWAYS" />
-	<HBox fx:id="buttonBar">
-		<ToggleButton fx:id="componentGroupToggle" text="Components" />
-	</HBox>
-	<VBox fx:id="componentGroup" />
+	<stylesheets>
+		<URL value="@ChartGroupView.css" />
+		</stylesheets>	
+		<VBox fx:id="mainChartGroup" styleClass="main-chart-group">
+			<AnchorPane fx:id="componentGroupAnchor">
+				<MenuButton fx:id="chartMenuButton" AnchorPane.topAnchor="0" AnchorPane.leftAnchor="0">
+					<items>
+						<MenuItem fx:id="renameChartViewItem" text="Rename" onAction="#renameChart" />
+						<MenuItem fx:id="deleteChartViewItem" text="Delete" onAction="#deleteChart" />
+					</items>
+				</MenuButton> 
+				<StackPane fx:id="chartView" HBox.hgrow="ALWAYS" AnchorPane.leftAnchor="0" AnchorPane.topAnchor="25" AnchorPane.rightAnchor="0"/>
+				<HBox fx:id="buttonBar" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"> 
+					<ToggleButton fx:id="componentGroupToggle" text="Components"/>
+				</HBox>
+			</AnchorPane>	
+		</VBox>
+	<VBox fx:id="componentGroup" styleClass="sub-chart-group"/>
 </fx:root>

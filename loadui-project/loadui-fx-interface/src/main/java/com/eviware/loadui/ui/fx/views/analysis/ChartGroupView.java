@@ -20,6 +20,7 @@ import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -104,10 +105,16 @@ public class ChartGroupView extends VBox
 	private ToggleButton componentGroupToggle;
 
 	@FXML
+	private AnchorPane componentGroupAnchor; 
+	
+	@FXML
 	private HBox buttonBar;
 
 	@FXML
 	private VBox componentGroup;
+
+	@FXML
+	private VBox mainChartGroup;
 
 	@FXML
 	private StackPane chartView;
@@ -140,7 +147,7 @@ public class ChartGroupView extends VBox
 				//TODO: remove this eventlistener since it's not used anymore.
 			}
 		};
-
+		
 		parentProperty().addListener( fireCreatedEvent );
 	}
 
@@ -197,6 +204,15 @@ public class ChartGroupView extends VBox
 	public HBox getButtonBar()
 	{
 		return buttonBar;
+	}
+	
+	public AnchorPane getComponentGroupAnchor(){
+		return componentGroupAnchor; 
+	}
+
+	public VBox getMainChartGroup()
+	{
+		return mainChartGroup;
 	}
 
 	private Node createChart( String type )

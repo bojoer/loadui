@@ -36,12 +36,16 @@ public class SegmentBox extends VBox
 
 	public SegmentBox()
 	{
+		getStyleClass().add( "chart-segment-box" );
+		
 		expandCollapseSegments = new ToggleButton();
 		expandCollapseSegments.textProperty().bind(
 				when( expandCollapseSegments.selectedProperty() ).then( "<<" ).otherwise( ">>" ) );
 
 		getChildren().addAll( expandCollapseSegments, segmentViewContainer );
 
+	
+		
 		for( Node node : segmentViewContainer.getChildren() )
 		{
 			if( node instanceof LineSegmentView )
