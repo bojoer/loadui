@@ -48,6 +48,7 @@ import com.eviware.loadui.ui.fx.api.analysis.ExecutionChart;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.ManualObservable;
 import com.eviware.loadui.util.execution.TestExecutionUtils;
+import com.eviware.loadui.util.statistics.ChartUtils;
 import com.google.common.base.Function;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -56,6 +57,9 @@ import com.google.common.cache.LoadingCache;
 public class ScrollableLineChart extends HBox implements ExecutionChart
 {
 	protected ObservableValue<Execution> currentExecution;
+
+	protected ObservableList<SegmentView<?>> segmentViews;
+	protected ObservableList<Series<Number, Number>> seriesList;
 
 	protected final LoadingCache<XYChart.Series<?, ?>, StringProperty> eventSeriesStyles = CacheBuilder.newBuilder()
 			.build( new CacheLoader<XYChart.Series<?, ?>, StringProperty>()
@@ -171,31 +175,36 @@ public class ScrollableLineChart extends HBox implements ExecutionChart
 
 		} );
 
-		// // old way of doing colors
-		//		getSegments().getChildren().addListener( new InvalidationListener()
-		//		{
-		//			@Override
-		//			public void invalidated( Observable _ )
-		//			{
-		//				int i = 0;
-		//				for( Series<?, ?> series : getLineChart().getData() )
-		//				{
-		//					( ( SegmentView<Segment> )getSegments().getChildren().get( i ) ).setColor( ChartUtils.lineToColor(
-		//							series, getLineChart().getData() ) );
-		//					if( getSegments().getChildren().get( i ) instanceof EventSegmentView )
-		//						eventSeriesStyles.getUnchecked( series ).set(
-		//								"-fx-stroke: " + ChartUtils.lineToColor( series, getLineChart().getData() ) + ";" );
-		//
-		//					i++ ;
-		//				}
-		//			}
-		//		} );
+		// legend colors
+		getSegments().getChildren().addListener( new InvalidationListener()
+		{
+			@Override
+			public void invalidated( Observable _ )
+			{
+				int i = 0;
+				for( Series<?, ?> series : getLineChart().getData() )
+				{
+					if( i < getSegments().getChildren().size() )
+					{
+						( ( SegmentView<Segment> )getSegments().getChildren().get( i ) ).setColor( ChartUtils.lineToColor(
+								series, getLineChart().getData() ) );
+						if( getSegments().getChildren().get( i ) instanceof EventSegmentView )
+							eventSeriesStyles.getUnchecked( series ).set(
+									"-fx-stroke: " + ChartUtils.lineToColor( series, getLineChart().getData() ) + ";" );
+					}
+
+					i++ ;
+				}
+			}
+		} );
+
 		log.debug( "initializing.. done" );
 	}
 
 	@Override
 	public void setZoomLevel( ZoomLevel zoomLevel )
 	{
+		long prePosition = position.get();
 		ZoomLevel fromTickZoomLevel = tickZoomLevelProperty.get();
 		zoomLevelProperty.set( zoomLevel );
 		log.debug( "chart:(" + titleProperty().get() + ") ZoomLevel set to: " + zoomLevel.name()
@@ -209,7 +218,6 @@ public class ScrollableLineChart extends HBox implements ExecutionChart
 				text.setText( millisToTickMark.changeZoomLevel( text.getText(), fromTickZoomLevel ) );
 			}
 		}
-
 		if( zoomLevel.equals( ZoomLevel.ALL ) )
 		{
 			setTickMode( ZoomLevel.forSpan( scrollBar.maxProperty().longValue() / 1000 ) );
@@ -236,9 +244,8 @@ public class ScrollableLineChart extends HBox implements ExecutionChart
 			scrollBar.updateFollow();
 			log.debug( "chart:(" + titleProperty().get() + ") Set position to: " + position.get() + " (following)" );
 		}
-
 		// recalculates the position after the span has changed
-		scrollBar.setLeftSidePosition( position.getValue() );
+		scrollBar.setLeftSidePosition( prePosition );
 
 		manualDataUpdate.fireInvalidation();
 	}
@@ -263,6 +270,30 @@ public class ScrollableLineChart extends HBox implements ExecutionChart
 	{
 		this.currentExecution = currentExecution;
 
+		getSegments().getChildren().addListener( new InvalidationListener()
+		{
+			@Override
+			public void invalidated( Observable _ )
+			{
+				log.debug( "(" + titleProperty().get() + ") lines are: " + getLineChart().getData().size() + " | "
+						+ getLineChart().getData().toString() + " legends are: " + getSegments().getChildren().size() + " | "
+						+ getSegments().getChildren() );
+
+				int i = 0;
+				for( Series<?, ?> series : getLineChart().getData() )
+				{
+
+					( ( SegmentView<Segment> )getSegments().getChildren().get( i ) ).setColor( ChartUtils.lineToColor(
+							series, getLineChart().getData() ) );
+					if( getSegments().getChildren().get( i ) instanceof EventSegmentView )
+						eventSeriesStyles.getUnchecked( series ).set(
+								"-fx-stroke: " + ChartUtils.lineToColor( series, getLineChart().getData() ) + ";" );
+
+					i++ ;
+				}
+			}
+		} );
+
 		currentExecutionLenght.bind( createLongBinding( new Callable<Long>()
 		{
 
@@ -281,13 +312,14 @@ public class ScrollableLineChart extends HBox implements ExecutionChart
 
 		ObservableList<Segment> segmentsList = fx( ofCollection( chartView, LineChartView.SEGMENTS, Segment.class,
 				chartView.getSegments() ) );
-		ObservableList<Series<Number, Number>> seriesList = transform( segmentsList, segmentToSeries );
+		seriesList = transform( segmentsList, segmentToSeries );
 
 		// TODO: apply short names here?
-		ObservableList<SegmentView<?>> segmentViews = transform( segmentsList, segmentToView );
+		segmentViews = transform( segmentsList, segmentToView );
 
 		bindContent( getLineChart().getData(), seriesList );
 		bindContent( getSegments().getChildren(), segmentViews );
+
 	}
 
 	public DoubleProperty maxProperty()
