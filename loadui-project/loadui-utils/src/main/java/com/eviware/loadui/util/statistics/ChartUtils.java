@@ -8,7 +8,12 @@ public class ChartUtils
 	{
 		int seriesOrder = listOfLines.indexOf( line );
 
-		switch( seriesOrder % 8 )
+		return lineToColor( seriesOrder );
+	}
+
+	public static String lineToColor( int number )
+	{
+		switch( number % 8 )
 		{
 		case 0 :
 			return "#f9d900";

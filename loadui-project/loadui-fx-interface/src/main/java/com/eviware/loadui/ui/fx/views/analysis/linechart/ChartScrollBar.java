@@ -7,14 +7,24 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.control.ScrollBar;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.util.execution.TestExecutionUtils;
 
 public class ChartScrollBar extends ScrollBar
 {
-	private DoubleProperty leftPositionProperty = new SimpleDoubleProperty( 0d );
-	private BooleanProperty followState = new SimpleBooleanProperty();
+	protected static final Logger log = LoggerFactory.getLogger( ChartScrollBar.class );
+
+	private final DoubleProperty leftPositionProperty = new SimpleDoubleProperty( 0d );
+	private final BooleanProperty followState = new SimpleBooleanProperty();
+	private final DoubleProperty followValue = new SimpleDoubleProperty( 0d );
+
+	private final DoubleProperty followLeftSideValue = new SimpleDoubleProperty( 0d );
 
 	//private boolean followStateinternal;
 
@@ -28,44 +38,59 @@ public class ChartScrollBar extends ScrollBar
 			@Override
 			public void invalidated( Observable arg0 )
 			{
-
 				updateLeftSide();
-
-				if( getVisibleAmount() < getMax() && !isDisabled()
-						&& followState.get() != ( getValue() == getMax() && TestExecutionUtils.isExecutionRunning() ) )
-				{
-					followState.set( getValue() == getMax() );
-				}
-
 			}
+
 		} );
 
-		maxProperty().addListener( new InvalidationListener()
+		followValue.addListener( new ChangeListener<Number>()
 		{
 
 			@Override
-			public void invalidated( Observable arg0 )
+			public void changed( ObservableValue<? extends Number> arg0, Number oldValue, Number newValue )
 			{
 				if( followState.getValue() && !isDisabled() )
 				{
-					setToLeftSide();
-				}
+					// checks to see if user has moved bar since last updatefollow
+					followState.set( leftPositionProperty.get() == followLeftSideValue.get() );
 
+					if( followState.getValue() )
+					{
+						updateFollow();
+					}
+				}
 			}
 		} );
 
-		//when checkbox is pressed
+		/*
+		 * to make follow instantly go to right position without waiting for data
+		 * update. NOTICE do not remove this, it will make binding followValue not
+		 * work. there is a card for this issue in leankit / 2013-01-28
+		 */
 		followState.addListener( new InvalidationListener()
 		{
 
 			@Override
 			public void invalidated( Observable arg0 )
 			{
-
-				// set to true
-				if( followState.getValue() )
+				if( followState.get() )
 				{
-					setToLeftSide();
+					updateFollow();
+				}
+
+			}
+		} );
+
+		visibleAmountProperty().addListener( new InvalidationListener()
+		{
+
+			// gets triggered on ZoomLevel change and when Y axis resizes
+			@Override
+			public void invalidated( Observable arg0 )
+			{
+				if( !followState.getValue() && !TestExecutionUtils.isExecutionRunning() )
+				{
+					updateLeftSide();
 				}
 
 			}
@@ -85,7 +110,6 @@ public class ChartScrollBar extends ScrollBar
 		 * point position of the "thumb"
 		 */
 		double leftside = getValue() - ( getVisibleAmount() * percentage );
-
 		leftPositionProperty.set( leftside );
 
 	}
@@ -100,8 +124,20 @@ public class ChartScrollBar extends ScrollBar
 		return followState;
 	}
 
+	public DoubleProperty followValueProperty()
+	{
+		return followValue;
+	}
+
+	public void updateFollow()
+	{
+		setLeftSidePosition( followValue.getValue() - getVisibleAmount() + 2000 );
+		followLeftSideValue.set( leftPositionProperty.get() );
+	}
+
 	public void setLeftSidePosition( double position )
 	{
+
 		if( position + getVisibleAmount() > getMax() )
 		{
 			double validValue = getMax() - getVisibleAmount();
