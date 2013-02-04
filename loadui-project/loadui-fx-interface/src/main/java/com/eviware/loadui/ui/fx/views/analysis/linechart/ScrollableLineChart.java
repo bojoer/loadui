@@ -103,10 +103,10 @@ public class ScrollableLineChart extends HBox implements ExecutionChart
 	protected LineChart<Number, Number> lineChart;
 
 	@FXML
-	private NumberAxis xAxis;
+	protected NumberAxis xAxis;
 
 	@FXML
-	private NumberAxis yAxis;
+	protected NumberAxis yAxis;
 
 	@FXML
 	protected ChartScrollBar scrollBar;
