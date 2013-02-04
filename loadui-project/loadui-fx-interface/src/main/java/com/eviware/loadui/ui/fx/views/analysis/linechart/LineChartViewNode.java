@@ -13,7 +13,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
-import javafx.scene.control.CheckBox;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
@@ -53,7 +53,6 @@ public class LineChartViewNode extends VBox
 
 	private final TestExecutionTask executionTask = new TestExecutionTask()
 	{
-
 		@Override
 		public void invoke( TestExecution execution, Phase phase )
 		{
@@ -64,9 +63,7 @@ public class LineChartViewNode extends VBox
 			else if( phase == Phase.STOP )
 			{
 				followCheckBox.setDisable( true );
-
 			}
-
 		}
 	};
 
@@ -83,7 +80,7 @@ public class LineChartViewNode extends VBox
 	private ZoomMenuButton zoomMenuButton;
 
 	@FXML
-	private CheckBox followCheckBox;
+	private ToggleButton followCheckBox;
 
 	public LineChartViewNode( final ObservableValue<Execution> currentExecution, LineChartView chartView, Observable poll )
 	{

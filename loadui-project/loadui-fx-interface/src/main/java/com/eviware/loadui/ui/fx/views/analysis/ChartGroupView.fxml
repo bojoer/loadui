@@ -24,6 +24,7 @@
 					</items>
 				</MenuButton> 
 				<StackPane fx:id="chartView" HBox.hgrow="ALWAYS" AnchorPane.leftAnchor="0" AnchorPane.topAnchor="25" AnchorPane.rightAnchor="0"/>
+				<StackPane minHeight="12" />
 				<HBox fx:id="buttonBar" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"> 
 					<ToggleButton fx:id="componentGroupToggle" text="Components"/>
 				</HBox>

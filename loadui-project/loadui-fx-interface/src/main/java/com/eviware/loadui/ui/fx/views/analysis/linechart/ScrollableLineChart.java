@@ -13,10 +13,13 @@ import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.LongProperty;
+import javafx.beans.property.ReadOnlyDoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -87,7 +90,9 @@ public class ScrollableLineChart extends HBox implements ExecutionChart
 	private final LongProperty position = new SimpleLongProperty( 0 );
 	private final LongProperty shownSpan = new SimpleLongProperty( 60000 );
 	private final LongProperty xScale = new SimpleLongProperty( 1 );
+	private final double ellapsedTimeAnchorPusher = 7;
 
+	
 	private final ManualObservable manualUpdate = new ManualObservable();
 
 	protected static final Logger log = LoggerFactory.getLogger( ScrollableLineChart.class );
@@ -102,7 +107,10 @@ public class ScrollableLineChart extends HBox implements ExecutionChart
 
 	@FXML
 	private NumberAxis xAxis;
-
+	
+	@FXML
+	private NumberAxis yAxis; 
+	
 	@FXML
 	private ChartScrollBar scrollBar;
 
@@ -117,11 +125,21 @@ public class ScrollableLineChart extends HBox implements ExecutionChart
 		FXMLUtils.load( this );
 	}
 
+	@SuppressWarnings( "unchecked" )
 	@FXML
 	private void initialize()
 	{
 		xAxis.lowerBoundProperty().bind( position );
 
+		//make sure that ellapsedTime label follows the expansion of the yAxis
+		yAxis.widthProperty().addListener( new ChangeListener(){
+			@Override
+			public void changed( ObservableValue _, Object oldValue, Object newValue )
+			{
+				ellapsedTime.getProperties().put( "pane-left-anchor", ellapsedTimeAnchorPusher+((Double)newValue));
+			}			
+		});
+		
 		zoomLevel.textProperty().bind( createStringBinding( new Callable<String>()
 		{
 			@Override
@@ -171,6 +189,7 @@ public class ScrollableLineChart extends HBox implements ExecutionChart
 
 		} );
 
+		//updates changes in the background and text of segment-views in segment-box
 		getSegments().getChildren().addListener( new InvalidationListener()
 		{
 			@Override

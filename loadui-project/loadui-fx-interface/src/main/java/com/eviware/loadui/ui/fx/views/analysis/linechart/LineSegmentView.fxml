@@ -3,6 +3,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
@@ -14,14 +15,13 @@
 
 <fx:root type="javafx.scene.layout.StackPane" xmlns:fx="http://javafx.com/fxml"
 	styleClass="slim-icon">
-	<HBox styleClass="line-segment-view" >
-		<Label fx:id="segmentLabel" text="Label"
-			HBox.hgrow="ALWAYS" />
-		<MenuButton fx:id="menuButton">
+	<AnchorPane styleClass="line-segment-view">
+		<MenuButton fx:id="menuButton" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" minHeight="15">
 			<items>
 				<MenuItem text="Scale" onAction="#enableScaling" />
 				<MenuItem text="Delete" onAction="#delete" />
 			</items>
 		</MenuButton>
-	</HBox>
+		<Label fx:id="segmentLabel" AnchorPane.leftAnchor="20" text="Label"/>
+	</AnchorPane>
 </fx:root>

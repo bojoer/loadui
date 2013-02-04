@@ -19,9 +19,10 @@
 <fx:root type="javafx.scene.layout.VBox" xmlns:fx="http://javafx.com/fxml"
 	styleClass="chart-view-node, line-chart-view-node">
 	<StackPane fx:id="chartContainer"/>
+	<HBox minHeight="9" />
 	<HBox alignment="baseline_right">
 		<Button text="Add Statistic" onAction="#addStatistic" />
 		<ZoomMenuButton fx:id="zoomMenuButton" text="Zoom"/>
-		<CheckBox fx:id="followCheckBox" text="follow" /> 
+		<ToggleButton fx:id="followCheckBox" text="follow" /> 
 	</HBox>
 </fx:root>

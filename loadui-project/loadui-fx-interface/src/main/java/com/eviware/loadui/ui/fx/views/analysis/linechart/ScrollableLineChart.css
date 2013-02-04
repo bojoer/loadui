@@ -1,37 +1,42 @@
 .chart {
-	-fx-background-color: -fx-chart-background; 
-	-fx-background-radius: 10;
-
-	/*Reusable variables*/
-	-fx-chart-background: #181818; 
+	-fx-background-color: linear-gradient(to bottom, #333333 0%, #111111 5%, #111111 95%, #333333 100%);
+	-fx-background-radius: 5;
+	
+	-fx-border-color: #111111;
+	-fx-border-width: 5; 
+	-fx-border-radius: 5;
+	
 	-fx-axis-color: white; 
-	-fx-text-color: #999999; 
+	-fx-text-color: #999999;
 	-fx-grid-line-color: #474747; 
+	-fx-padding: 0;
 }
 
 .chart-title{
-	visibility: false; 
+	-fx-text-fill: transparent; 
+	-fx-background-color: transparent; 
 }
 
 .chart-horizontal-grid-lines{
-	-fx-stroke: #474747; 
+	-fx-stroke: -fx-grid-line-color; 
 }
 
 .chart-vertical-grid-lines{
-	-fx-stroke: #474747;
+	-fx-stroke: -fx-grid-line-color;
 }
  
 #zoomLevel.overlayed-chart-text{
-	-fx-padding: 11px 5px 0px 7px;
-	-fx-background-color: #181818;
+	-fx-border-width: 12px 0px 0px 11px;
+	-fx-border-color: #111111 #111111 transparent #111111;
+	-fx-background-color: #111111;
 	-fx-text-fill: #999999;
 	-fx-font-size: 9px; 	
 }
 
 #ellapsedTime.overlayed-chart-text{
-	-fx-border-width: 0px 0px 0px 0px ; 
-	-fx-border-color: transparent #181818 transparent transparent; 
-	-fx-background-color: #181818;
+	-fx-border-width: 12px 0px 0px 1px;
+	-fx-border-color: transparent #111111 transparent transparent; 
+	-fx-background-color: #111111;
 	-fx-text-fill: #999999;
 	-fx-font-size: 9px; 	
 }
@@ -48,21 +53,21 @@
 
 .axis:left{
 	-fx-border-color: transparent white transparent transparent; 
-
 }
 
-#yAxis .axis-tick-mark {
-	-fx-stroke: -fx-axis-color;
+.axis:left .axis-tick-mark {
+    -fx-stroke: -fx-axis-color;
     -fx-stroke-width: 1;	
 }
 
-#xAxis .axis-tick-mark {
+.axis:bottom .axis-tick-mark {
     	-fx-stroke: -fx-axis-color;
     	-fx-stroke-width: 1; 
 }
 
 .chart-series-line {
  	-fx-effect: null; 
+	-fx-stroke-width: 2;
 }
 
 .chart-legend {
@@ -75,17 +80,17 @@
 
 .chart-plot-background{
 	-fx-border-color: #474747 transparent transparent transparent; 
-	-fx-background-color: -fx-chart-background;
+	-fx-background-color: #111111;
 }
 
 .chart-line-symbol {
     -fx-background-insets: 0, 5;
     -fx-background-radius: 5px;
-    -fx-padding: 5px;
+    -fx-padding: 4px;
 }
 
 .chart-alternative-row-fill {
-    -fx-fill: #181818;
+    -fx-fill: #111111;
     -fx-stroke: transparent;
     -fx-stroke-width: 0;    
 }

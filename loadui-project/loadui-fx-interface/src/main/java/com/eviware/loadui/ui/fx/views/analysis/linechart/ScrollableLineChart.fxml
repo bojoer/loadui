@@ -16,13 +16,15 @@
 	<stylesheets>
 		<URL value="@ScrollableLineChart.css" />
 	</stylesheets>
-	<SegmentBox fx:id="segmentBox" fillWidth="true" />
+	<SegmentBox fx:id="segmentBox" fillWidth="true" minWidth="200"/>
+	<StackPane minWidth="12"/>
 	<VBox HBox.hgrow="ALWAYS">
-		<AnchorPane>
+		<AnchorPane VBox.vgrow="ALWAYS">
 			<LineChart fx:id="lineChart" animated="false"
-				createSymbols="true" legendVisible="false" AnchorPane.rightAnchor="0"
-				AnchorPane.leftAnchor="0" AnchorPane.topAnchor="0"
-				AnchorPane.bottomAnchor="0">
+				createSymbols="true" legendVisible="false" 
+				minHeight="200" prefHeight="200"
+				AnchorPane.rightAnchor="0" AnchorPane.leftAnchor="0" 
+				AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0">
 				<xAxis>
 					<NumberAxis fx:id="xAxis" autoRanging="false" animated="false" />
 				</xAxis>
@@ -31,9 +33,9 @@
 				</yAxis>
 			</LineChart>
 			<Label fx:id="zoomLevel" styleClass="overlayed-chart-text"
-				text="zoom" AnchorPane.rightAnchor="10" AnchorPane.bottomAnchor="15" />
+				text="zoom" AnchorPane.rightAnchor="9" AnchorPane.bottomAnchor="15" />
 			<Label fx:id="ellapsedTime" styleClass="overlayed-chart-text"
-				AnchorPane.leftAnchor="10" AnchorPane.bottomAnchor="15" />
+				AnchorPane.bottomAnchor="15"/>			
 		</AnchorPane>
 		<ChartScrollBar fx:id="scrollBar" />
 	</VBox>

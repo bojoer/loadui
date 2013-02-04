@@ -5,29 +5,10 @@
 	-fx-shape-navigation-down: "M68.01,-24.63 C68.19,-24.04 68.28,-23.43 68.28,-22.84 L68.28,-22.84 C68.28,-20.79 67.26,-18.83 65.49,-17.67 L40.06,-1.01 L40.06,-1.01 C38.12,-0.26 35.65,-0.34 33.63,-0.80 L5.37,-16.85 L5.37,-16.85 C2.95,-18.23 1.75,-21.05 2.45,-23.76 L2.45,-23.76 C3.15,-26.46 5.56,-28.35 8.35,-28.39 L62.04,-29.00 L62.04,-29.00 C64.78,-29.04 67.21,-27.25 68.01,-24.63 Z";
 }
 
-
 .chart-group-list-cell{
-	-fx-padding: 9;
+	-fx-padding: 9 12 9 12;
 	-fx-background-radius: 9; 
 	-fx-background-color: #252525; 
-}
-
-/**
- * Main-chart
- */
-.main-chart-group{
-	-fx-background-color: linear-gradient(to bottom, #999999 0%, #6E6E6E 10%, #6E6E6E 90%, #999999 100%);
-	-fx-padding: 9; 
-	-fx-background-radius: 9; 
-}
-
-/**
- * Sub-Charts
- */
-.sub-chart-group{
-	-fx-background-color: #4E4E4E;
-	-fx-padding: 9; 
-	-fx-background-radius: 9;
 }
 
 #chartMenuButton.menu-button{
@@ -35,40 +16,9 @@
 	-fx-font-weight: bold;  
 }
 
-#chartMenuButton.menu-button:hover{
-	-fx-background-color: #7E7E7E;
-}
-
-#componentGroupToggle.toggle-button{
-	-fx-background-color: #6E6E6E;
-}
-
-#componentGroupToggle.toggle-button:hover{
-	-fx-background-color: #7E7E7E;
-}
-
-#componentGroupToggle.toggle-button:selected{
-	-fx-background-color: #2E2E2E;
-}
-
-.chart-segment-box{
-	-fx-background-color: #757575;
-	-fx-background-radius: 9; 
-	-fx-padding: 9;
-}
-
-.chart-segment-box .toggle-button{
-	-fx-background-color: #6E6E6E;
-}
-
-.line-segment-view .menu-button{
-	-fx-background-color: #ACACAC;
-}
-
-#zoomMenuButton.menu-button{
-	-fx-background-color: #ACACAC;
-}
-
+/**
+ * All Charts
+ */
 .scroll-bar .increment-button{
 	-fx-shape: -fx-shape-navigation-right;
 	-fx-padding: 0.25em; 
@@ -77,4 +27,198 @@
 .scroll-bar .decrement-button{
 	-fx-shape: -fx-shape-navigation-left;
 	-fx-padding: 0.25em; 
+}
+
+.scaling {
+	-fx-padding: 1.5px; 
+}
+
+/**
+ * Segment-box specifics for all charts
+ */
+.chart-segment-box #statistics-label{
+	 	-fx-text-fill: #BBBBBB;
+}
+
+.chart-segment-box #statistics-label{
+	-fx-background-color: transparent; 
+}
+
+.chart-segment-box #expander-toggle-button.toggle-button{
+	-fx-background-color: #BBBBBB;
+	-fx-scale-x: 0.6;
+	-fx-scale-y: 0.6; 
+	-fx-shape: -fx-shape-navigation-right; 
+}
+
+.chart-segment-box #expander-toggle-button.toggle-button:selected{
+	-fx-scale-x: 0.6;
+	-fx-scale-y: 0.6; 
+	-fx-shape: -fx-shape-navigation-left;
+}
+
+/**
+ * Main-chart
+ */
+.main-chart-group{
+	-fx-background-color: linear-gradient(to bottom, #888888 0%, #666666 3%, #666666 94%, #555555 100%);
+	-fx-padding: 12; 
+	-fx-background-radius: 9; 
+}
+
+.main-chart-group #zoomMenuButton.menu-button{
+	-fx-background-color: transparent; 
+	-fx-text-fill: #7E7E7E;
+}
+
+.main-chart-group #zoomMenuButton.menu-button:hover{
+	-fx-background-color: #7E7E7E; 
+	-fx-text-fill: #7E7E7E;
+}
+
+.main-chart-group .button{
+	-fx-background-color: transparent;
+	-fx-border-color: transparent; 
+}
+
+.main-chart-group .button:hover{
+	-fx-background-color: #7E7E7E;
+}
+
+.main-chart-group .menu-button{
+	-fx-background-color: transparent; 
+}
+
+.main-chart-group .menu-button:hover{
+	-fx-background-color: #7E7E7E;
+}
+
+.main-chart-group .toggle-button{
+	-fx-background-color: transparent;
+}
+
+.main-chart-group .toggle-button:hover{
+	-fx-background-color: #7E7E7E;
+}
+
+.main-chart-group .toggle-button:selected{
+	-fx-background-color: #252525;	
+	-fx-text-fill: #7E7E7E; 
+}
+
+/**
+ * Segment-Box
+ */
+
+.main-chart-group .chart-segment-box{
+	-fx-background-color: linear-gradient(to bottom, #2E2E2E 0%, #585858 100%);
+	-fx-border-color: #555555; 
+	-fx-background-radius: 11; 
+	-fx-border-radius: 9; 
+	-fx-border-width: 3;
+	-fx-padding: 9;
+}
+
+.main-chart-group .chart-segment-box .toggle-button{
+	-fx-background-color: transparent;
+}
+
+.main-chart-group .line-segment-view .menu-button{
+	-fx-background-radius: 2;  
+}
+
+.main-chart-group .line-segment-view:hover .menu-button{
+	-fx-background-color: black;
+	-fx-text-fill: white; 
+}
+
+/**
+ * Sub-Charts
+ */
+.sub-chart-group{
+	-fx-background-color: linear-gradient(to bottom, derive(#888888, -30%) 0%, derive(#666666, -30%) 3%, derive( #555555, -30%) 94%, derive(#666666, -30%) 100%);
+	-fx-padding: 12; 
+	-fx-background-radius: 9;
+}
+
+.sub-chart-group #zoomMenuButton.menu-button{
+	-fx-background-color: transparent; 
+	-fx-text-fill: derive(#7E7E7E, 30%);
+}
+
+.sub-chart-group #zoomMenuButton.menu-button:hover{
+	-fx-background-color: #7E7E7E; 
+}
+
+/*This is because this button is a special breed and label does not seem to adhere to regular zoomMenubutton */
+.sub-chart-group #zoomMenuButton.menu-button .label{
+		-fx-text-fill: derive(#7E7E7E, 30%);
+}
+
+.sub-chart-group #zoomMenuButton.menu-button:hover .label{
+		-fx-text-fill: black;
+}
+
+.sub-chart-group .button{
+	-fx-background-color: transparent;
+	-fx-border-color: transparent;
+	-fx-text-fill: derive(#7E7E7E, 30%); 
+}
+
+.sub-chart-group .button:hover{
+	-fx-background-color: #7E7E7E;
+	-fx-text-fill: black;
+}
+
+.sub-chart-group .menu-button{
+	-fx-background-color: transparent; 
+	-fx-text-fill: derive(#7E7E7E, 30%);
+}
+
+.sub-chart-group .menu-button:hover{
+	-fx-background-color: #7E7E7E;
+	-fx-text-fill: black;
+}
+
+.sub-chart-group .toggle-button{
+	-fx-background-color: transparent;
+	-fx-text-fill: derive(#7E7E7E, 30%);
+}
+
+.sub-chart-group .toggle-button:hover{
+	-fx-background-color: #7E7E7E;
+	-fx-text-fill: black;
+}
+
+.sub-chart-group .toggle-button:selected{
+	-fx-background-color: #252525;
+	-fx-text-fill: #7E7E7E; 	
+}
+
+
+
+
+/**
+ * chart segment box
+ */
+.sub-chart-group .chart-segment-box{
+	-fx-background-color: linear-gradient(to bottom, derive(#2E2E2E, -30%) 0%, derive(#585858, -30%) 100%);
+	-fx-background-radius: 11; 
+	-fx-border-radius: 9; 
+	-fx-border-color: derive(#555555, -30%); 
+	-fx-border-width: 3;
+	-fx-padding: 9;
+}
+
+.sub-chart-group .chart-segment-box .toggle-button{
+	-fx-background-color: transparent;
+}
+
+.sub-chart-group .line-segment-view .menu-button{
+	-fx-background-radius: 2;  
+}
+
+.sub-chart-group .line-segment-view:hover .menu-button{
+	-fx-background-color: black;
+	-fx-text-fill: white; 
 }
