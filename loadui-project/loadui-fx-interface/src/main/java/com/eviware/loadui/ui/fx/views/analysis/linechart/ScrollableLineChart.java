@@ -288,30 +288,6 @@ public class ScrollableLineChart extends HBox implements ExecutionChart
 	{
 		this.currentExecution = currentExecution;
 
-		getSegments().getChildren().addListener( new InvalidationListener()
-		{
-			@Override
-			public void invalidated( Observable _ )
-			{
-				log.debug( "(" + titleProperty().get() + ") lines are: " + getLineChart().getData().size() + " | "
-						+ getLineChart().getData().toString() + " legends are: " + getSegments().getChildren().size() + " | "
-						+ getSegments().getChildren() );
-
-				int i = 0;
-				for( Series<?, ?> series : getLineChart().getData() )
-				{
-
-					( ( SegmentView<Segment> )getSegments().getChildren().get( i ) ).setColor( ChartUtils.lineToColor(
-							series, getLineChart().getData() ) );
-					if( getSegments().getChildren().get( i ) instanceof EventSegmentView )
-						eventSeriesStyles.getUnchecked( series ).set(
-								"-fx-stroke: " + ChartUtils.lineToColor( series, getLineChart().getData() ) + ";" );
-
-					i++ ;
-				}
-			}
-		} );
-
 		currentExecutionLenght.bind( createLongBinding( new Callable<Long>()
 		{
 
