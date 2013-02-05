@@ -10,7 +10,7 @@
 	<version>4.5.1.1-SNAPSHOT</version>
 	<description>Allows loadUI to run soapUI tests.</description>
 	<properties>
-		<loadUIVersion>2.1.1</loadUIVersion>
+		<loadUIVersion>2.1.2</loadUIVersion>
 		<soapUIVersion>${project.version}</soapUIVersion>
 	</properties>
 	<repositories>
