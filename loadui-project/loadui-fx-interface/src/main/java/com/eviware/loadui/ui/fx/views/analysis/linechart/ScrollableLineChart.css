@@ -1,5 +1,5 @@
 .chart {
-	-fx-background-color: linear-gradient(to bottom, #333333 0%, #111111 5%, #111111 95%, #333333 100%);
+	-fx-background-color: linear-gradient(to bottom, #333333 0%, #111111 5%);
 	-fx-background-radius: 5;
 	
 	-fx-border-color: #111111;

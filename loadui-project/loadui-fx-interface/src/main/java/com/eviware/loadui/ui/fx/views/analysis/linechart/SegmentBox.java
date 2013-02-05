@@ -58,7 +58,7 @@ public class SegmentBox extends VBox
 	public SegmentBox()
 	{
 		getStyleClass().add( "chart-segment-box" );
-
+		
 		statisticsLabel = LabelBuilder.create().text( "Statistics" ).id( "statistics-label").alignment( Pos.CENTER_LEFT ).build();
 		expandCollapseSegments = ToggleButtonBuilder.create().id( "expander-toggle-button" ).alignment( Pos.CENTER_RIGHT ).build();
 		
@@ -67,8 +67,10 @@ public class SegmentBox extends VBox
 		AnchorPane.setRightAnchor( expandCollapseSegments, 0d );
 				
 		scalingButtonBox = HBoxBuilder.create().children( scalingCancelButton, scalingCloseButton ).styleClass( "scaling-button-box").alignment( Pos.BASELINE_RIGHT ).build();
-		betweenStatisticsAndLineSegmentViews = HBoxBuilder.create().minHeight( 7.5 ).build();
-		betweenScalingAndScalingButtons = HBoxBuilder.create().minHeight( 7.5 ).build();
+		
+		/*Spaces in between components according to design since this class has no FXML (yet?)*/
+		betweenStatisticsAndLineSegmentViews = HBoxBuilder.create().minHeight( 6 ).build();
+		betweenScalingAndScalingButtons = HBoxBuilder.create().minHeight( 6 ).build();
 		
 		getChildren().addAll( topBox, betweenStatisticsAndLineSegmentViews, segmentViewContainer );
 				

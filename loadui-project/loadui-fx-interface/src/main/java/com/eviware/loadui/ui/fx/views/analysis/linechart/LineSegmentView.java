@@ -11,6 +11,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.Slider;
 import javafx.scene.control.SliderBuilder;
+import javafx.scene.shape.Rectangle;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,8 +53,8 @@ public class LineSegmentView extends SegmentView<LineSegment>
 	@FXML
 	private void initialize()
 	{
-		segmentLabel.maxWidthProperty().bind( Bindings.when( isExpandedProperty ).then( 240 ).otherwise( 120 ) );
-
+		segmentLabel.maxWidthProperty().bind( Bindings.when( isExpandedProperty ).then( 300 ).otherwise( 130 ) );
+			
 		String fullName = segment.getStatisticHolder().getLabel() + " " + segment.getVariableName() + " "
 				+ segment.getStatisticName();
 		String shortName = ShortName.forStatistic( segment.getVariableName(), segment.getStatisticName() );
@@ -98,8 +99,7 @@ public class LineSegmentView extends SegmentView<LineSegment>
 					parent.updateScale();
 				}
 			}
-		} );
-
+		});
 	}
 
 	private void loadStyles()
@@ -114,7 +114,6 @@ public class LineSegmentView extends SegmentView<LineSegment>
 		}
 		scale = newScale;
 		slider.setValue( scale );
-
 	}
 
 	public void enableScaling( boolean value )

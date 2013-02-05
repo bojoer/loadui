@@ -3,6 +3,7 @@ package com.eviware.loadui.ui.fx.views.analysis.linechart;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
+import javafx.scene.shape.Rectangle;
 
 import com.eviware.loadui.api.statistics.model.chart.line.Segment;
 
@@ -12,6 +13,9 @@ public abstract class SegmentView<T extends Segment> extends StackPane
 
 	@FXML
 	protected Label segmentLabel;
+	
+	@FXML
+	protected Rectangle legendColorRectangle; 
 
 	public SegmentView( T segment )
 	{
@@ -20,9 +24,9 @@ public abstract class SegmentView<T extends Segment> extends StackPane
 
 	public void setColor( String color )
 	{
-		setStyle( "-fx-background-color: " + color + ";" );
+		legendColorRectangle.setStyle( "-fx-fill: " + color + ";");
 	}
-
+	
 	@FXML
 	protected void delete()
 	{
