@@ -195,4 +195,16 @@ public class StringUtils
 		long s = seconds % 60;
 		return f.format( h ) + ":" + f.format( m ) + ":" + f.format( s );
 	}
+
+	public static String padLeft( String str, int length )
+	{
+		if (length <= 0) length = 1;
+		return String.format( "%1$" + length + "s", str );
+	}
+
+	public static String padRight( String str, int length )
+	{
+		if (length <= 0) length = 1;
+		return String.format( "%1$-" + length + "s", str );
+	}
 }
