@@ -8,6 +8,7 @@ import com.eviware.loadui.ui.fx.views.analysis.reporting.Snapshotter;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.scene.Group;
+import javafx.scene.Scene;
 import javafx.beans.Observable;
 import javafx.beans.property.Property;
 import javax.imageio.ImageIO;
@@ -19,7 +20,9 @@ import com.eviware.loadui.ui.fx.util.NodeUtils;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
@@ -182,7 +185,18 @@ public class ProjectView extends AnchorPane
 					parent.getChildren().remove( canvas );
 
 					StackPane completeCanvas = StackPaneBuilder.create().children( grid, canvas ).build();
-					SceneBuilder.create().root( completeCanvas ).width( 996 ).height( 525 ).build();
+					Scene snapshotScene = SceneBuilder.create().root( completeCanvas ).width( 996 ).height( 525 ).build();
+					//					String styleSheetUrl = null;
+					//					try
+					//					{
+					//						styleSheetUrl = new File( "src/main/resources/com/eviware/loadui/ui/fx/loadui-style.css" ).toURI()
+					//								.toURL().toExternalForm();
+					//					}
+					//					catch( MalformedURLException e )
+					//					{
+					//						e.printStackTrace();
+					//					}
+					//					snapshotScene.getStylesheets().add( styleSheetUrl );
 
 					WritableImage fxImage = completeCanvas.snapshot( null, null );
 					BufferedImage bimg = SwingFXUtils.fromFXImage( fxImage, null );

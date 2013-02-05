@@ -32,7 +32,7 @@
 			<children>
 				<TabPane id="project-tab-pane" tabClosingPolicy="unavailable">
 					<DetachableTab fx:id="designTab" id="designTab" text="Design" />
-					<DetachableTab fx:id="resultTab" id="resultTab" text="Results" />
+					<DetachableTab fx:id="resultTab" id="resultTab" text="Statistics" />
 				</TabPane>
 			</children>
 		</StackPane>

@@ -27,7 +27,7 @@ import com.eviware.loadui.ui.fx.util.Properties;
 public abstract class PlaybackPanel<T extends CounterDisplay, C extends CanvasItem> extends HBox
 {
 	public final static String TIME_LABEL = "Time";
-	public final static String REQUESTS_LABEL = "Requests";
+	public final static String REQUESTS_LABEL = "Sent";
 	public final static String FAILURES_LABEL = "Failures";
 
 	private final UpdateDisplays updateDisplays = new UpdateDisplays( this );

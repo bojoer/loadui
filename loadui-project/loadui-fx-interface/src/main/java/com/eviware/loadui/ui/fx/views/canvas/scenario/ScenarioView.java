@@ -6,6 +6,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.MenuItemBuilder;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 
 import com.eviware.loadui.api.model.SceneItem;
@@ -67,6 +69,21 @@ public class ScenarioView extends CanvasObjectView
 				miniature.setImage( NodeUtils.fromBase64Image( base64 ) );
 			else
 				miniature.setImage( new Image( ScenarioView.class.getResourceAsStream( "grid.png" ) ) );
+
+			miniature.setOnMouseClicked( new EventHandler<MouseEvent>()
+			{
+				@Override
+				public void handle( MouseEvent event )
+				{
+					if( event.getButton().equals( MouseButton.PRIMARY ) )
+					{
+						if( event.getClickCount() == 2 )
+						{
+							open();
+						}
+					}
+				}
+			} );
 		}
 	}
 }
