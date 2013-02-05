@@ -145,6 +145,11 @@
 			<version>2.1</version>
 		</dependency>
 		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>com.springsource.org.apache.commons.codec</artifactId>
+			<version>1.4.0</version>
+		</dependency>
+		<dependency>
 			<groupId>com.eviware.loadui</groupId>
 			<artifactId>loadui-test-utils</artifactId>
 			<version>${project.version}</version>
