@@ -1,6 +1,9 @@
 package com.eviware.loadui.ui.fx.util;
 
 import java.awt.Desktop;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
@@ -23,7 +26,7 @@ import com.sun.javafx.PlatformUtil;
 public class UIUtils
 {
 	protected static final Logger log = LoggerFactory.getLogger( UIUtils.class );
-	
+
 	private final static String TOOLBOX_IMAGES_PATH = "/com/eviware/loadui/ui/fx/toolboxIcons/";
 
 	public static Image getImageFor( Object object )
@@ -55,7 +58,7 @@ public class UIUtils
 					+ ( object instanceof Class ? object : "of class " + object.getClass().getName() ) );
 		}
 	}
-	
+
 	private static String root( String fileName )
 	{
 		return UIUtils.class.getResource( TOOLBOX_IMAGES_PATH + fileName ).toExternalForm();
@@ -64,6 +67,28 @@ public class UIUtils
 	public static String toCssId( String label )
 	{
 		return label.toLowerCase().replace( " ", "-" );
+	}
+
+	public static BufferedImage scaleImage( BufferedImage image, int maxWidth, int maxHeight )
+	{
+		double imageWidth = image.getWidth();
+		double imageHeight = image.getHeight();
+		double scale = Math.min( maxWidth / imageWidth, maxHeight / imageHeight );
+
+		int width = ( int )( imageWidth * scale );
+		int height = ( int )( imageHeight * scale );
+
+		log.debug( "" + maxWidth + " " + maxHeight + " " + imageWidth + " " + imageHeight + " " + scale + " " + width
+				+ " " + height );
+
+		BufferedImage scaledImage = new BufferedImage( width, height, BufferedImage.TYPE_INT_ARGB );
+
+		Graphics2D graphics2D = scaledImage.createGraphics();
+		graphics2D.setRenderingHint( RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR );
+		graphics2D.drawImage( image, 0, 0, width, height, null );
+		graphics2D.dispose();
+
+		return scaledImage;
 	}
 
 	public static void openInExternalBrowser( final String url )

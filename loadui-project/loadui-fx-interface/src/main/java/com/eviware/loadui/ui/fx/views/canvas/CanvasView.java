@@ -209,6 +209,8 @@ public class CanvasView extends StackPane
 				fx( ofCollection( canvas, CanvasItem.CONNECTIONS, Connection.class, canvas.getConnections() ) ),
 				CONNECTION_TO_VIEW );
 
+		getStyleClass().add( "canvas-view" );
+
 		FXMLUtils.load( this, this, CanvasView.class.getResource( CanvasView.class.getSimpleName() + ".fxml" ) );
 	}
 
@@ -356,7 +358,8 @@ public class CanvasView extends StackPane
 			}
 		}, canvasLayer.layoutYProperty() ) );
 
-		return StackPaneBuilder.create().padding( new Insets( -GRID_SIZE ) ).children( gridRegion ).build();
+		return StackPaneBuilder.create().styleClass( "grid-pane" ).padding( new Insets( -GRID_SIZE ) )
+				.children( gridRegion ).build();
 	}
 
 	double startX = 0;
