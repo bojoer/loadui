@@ -18,17 +18,15 @@
 
 <fx:root type="javafx.scene.layout.StackPane" xmlns:fx="http://javafx.com/fxml"
 	styleClass="slim-icon">
-	
 	<AnchorPane styleClass="line-segment-view">
-		
-		<ImageView AnchorPane.leftAnchor="9" AnchorPane.topAnchor="9" AnchorPane.bottomAnchor="9"> 
+		<ImageView AnchorPane.leftAnchor="9" AnchorPane.topAnchor="3" AnchorPane.bottomAnchor="3" fitHeight="21" fitWidth="21" preserveRatio="true"> 
 			<image>
-				<Image url="res/images/placeholder.png" />
+				<Image url="res/icon_32x32.png" />
 			</image>
 		</ImageView>
-		<Rectangle fx:id="legendColorRectangle" AnchorPane.leftAnchor="36" AnchorPane.topAnchor="14" height="8" width="8" />
-		<Label fx:id="segmentLabel" AnchorPane.leftAnchor="48" AnchorPane.topAnchor="14" text="Label"/>
-		<MenuButton fx:id="menuButton" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.leftAnchor="0" minHeight="24">
+		<Rectangle fx:id="legendColorRectangle" AnchorPane.leftAnchor="36" AnchorPane.topAnchor="9" AnchorPane.bottomAnchor="9" height="9" width="9" />
+		<Label fx:id="segmentLabel" AnchorPane.leftAnchor="48" AnchorPane.topAnchor="6" text="Label"/>
+		<MenuButton fx:id="menuButton" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.leftAnchor="0" minHeight="27">
 			<items>
 				<MenuItem text="Scale" onAction="#enableScaling" />
 				<MenuItem text="Delete" onAction="#delete" />

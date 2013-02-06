@@ -108,14 +108,26 @@
 	-fx-border-radius: 3;
 }
 
+.scaling .slider{
+	-fx-skin: "com.eviware.loadui.ui.fx.control.skin.StyleableGraphicSlider";
+}
+
 .scaling .slider .thumb{
 	-fx-background-color: linear-gradient(to bottom, #CCCCCC 0%, #888888 100%);
-	-fx-background-radius: 4; 
-	-fx-background-insets: 0 0 0 0; 
-	-fx-padding: 18 9 18 9; 	
+	-fx-background-radius: 6; 
+	-fx-padding: 3 3 18 3; 	
 	-fx-border-color: #666666;
 	-fx-border-width: 2;
-	-fx-border-radius: 3;
+	-fx-border-radius: 5;
+}
+
+.scaling .slider .thumb .graphic{
+	-fx-background-color: blue; 
+}
+
+.segment-box .slider{
+	-fx-skin: "com.eviware.loadui.ui.fx.control.skin.StyleableGraphicSlider";
+	visibility: hidden; 
 }
 
 /**
