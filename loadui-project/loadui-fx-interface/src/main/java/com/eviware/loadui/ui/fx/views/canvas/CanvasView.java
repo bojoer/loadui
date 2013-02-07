@@ -9,7 +9,6 @@ import static com.eviware.loadui.ui.fx.util.ObservableLists.transform;
 import static com.google.common.collect.Sets.newHashSet;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
@@ -34,8 +33,10 @@ import javafx.scene.Node;
 import javafx.scene.control.Labeled;
 import javafx.scene.control.Slider;
 import javafx.scene.control.SliderBuilder;
+import javafx.scene.effect.BlurType;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Effect;
-import javafx.scene.effect.Glow;
+import javafx.scene.effect.Shadow;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
@@ -90,7 +91,7 @@ public class CanvasView extends StackPane
 {
 	protected static final Logger log = LoggerFactory.getLogger( CanvasView.class );
 
-	private static final Effect selectedEffect = new Glow( 0.5 );
+	private static final Effect selectedEffect = new DropShadow(Blurype.GAUSSIAN, new Color( 0.4, 0.4, 0.4, 0.5 ), 10.0, 3.0, 0, 0);
 	private static final int GRID_SIZE = 36;
 	private static final double PADDING = -45;
 	private final UninstallCanvasObjectView uninstallCanvasObject = new UninstallCanvasObjectView();
@@ -103,7 +104,7 @@ public class CanvasView extends StackPane
 			return string.toLowerCase();
 		}
 	};
-
+	
 	private static final Ordering<String> CATEGORY_COMPARATOR = Ordering.compound(
 			Arrays.asList( SafeExplicitOrdering.of( Lists.transform( Arrays.asList( "VU Scenario",
 					GeneratorCategory.CATEGORY, RunnerCategory.CATEGORY, FlowCategory.CATEGORY, SchedulerCategory.CATEGORY,
