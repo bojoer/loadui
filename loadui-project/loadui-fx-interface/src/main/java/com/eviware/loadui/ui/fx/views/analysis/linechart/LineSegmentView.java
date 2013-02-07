@@ -1,6 +1,7 @@
 package com.eviware.loadui.ui.fx.views.analysis.linechart;
 
 import static javafx.beans.binding.Bindings.when;
+import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
@@ -13,6 +14,7 @@ import javafx.scene.Node;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.Slider;
 import javafx.scene.control.SliderBuilder;
+import javafx.scene.layout.Region;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +37,8 @@ public class LineSegmentView extends SegmentView<LineSegment>
 	private SegmentBox parent;
 
 	private Slider slider;
+	
+	private Region sliderNob; 
 
 	private final String scalingStyleClass = "scaling";
 
@@ -79,6 +83,9 @@ public class LineSegmentView extends SegmentView<LineSegment>
 					getChildren().addAll( slider );
 					getStyleClass().addAll( scalingStyleClass );
 					slider.visibleProperty().set( true );
+					if(sliderNob != null){
+						loadNob( slider );
+					}
 				}
 				else
 				{
@@ -109,7 +116,6 @@ public class LineSegmentView extends SegmentView<LineSegment>
 
 		slider.getChildrenUnmodifiable().addListener( new ListChangeListener<Node>()
 		{
-
 			@Override
 			public void onChanged( javafx.collections.ListChangeListener.Change<? extends Node> change )
 			{
@@ -118,12 +124,26 @@ public class LineSegmentView extends SegmentView<LineSegment>
 					for (Node node : change.getAddedSubList()) {
 						if( node instanceof StyleableGraphicSlider )
 						{
-							node.setStyle( "-fx-background-color: " + color );
+							loadNob( node );
 						}
 					}
 				}
 			}
 		} );
+	}
+	
+	private void loadNob(final Node node){
+		Platform.runLater( new Runnable(){
+			public void run(){
+				Node nob = node.lookup( ".graphic" );
+				if(nob instanceof Region && nob != null){
+					sliderNob = (Region)nob;
+					sliderNob.setStyle( "-fx-background-color: " + color + ";");
+				}else{
+					log.warn( "Cannot find sliderNob for slider" );
+				}
+			}
+		});
 	}
 
 	private void loadStyles()

@@ -22,6 +22,7 @@ import javafx.scene.layout.HBoxBuilder;
 import javafx.scene.layout.VBox;
 
 import com.eviware.loadui.ui.fx.util.ManualObservable;
+import com.sun.javafx.PlatformUtil;
 
 public class SegmentBox extends VBox
 {
@@ -36,8 +37,8 @@ public class SegmentBox extends VBox
 				}
 			} ).build();
 
-	private final Button scalingCancelButton = ButtonBuilder.create().id( "scaling-cancel-button" )
-			.text( "Cancel" ).onAction( new EventHandler<ActionEvent>()
+	private final Button scalingCancelButton = ButtonBuilder.create().id( "scaling-cancel-button" ).text( "Cancel" )
+			.onAction( new EventHandler<ActionEvent>()
 			{
 				@Override
 				public void handle( ActionEvent _ )
@@ -53,7 +54,7 @@ public class SegmentBox extends VBox
 	private final HBox scalingButtonBox;
 	private final HBox betweenStatisticsAndLineSegmentViews;
 	private final HBox betweenScalingAndScalingButtons;
-	
+
 	private final String styleClass = "chart-segment-box";
 
 	public SegmentBox()
@@ -70,14 +71,26 @@ public class SegmentBox extends VBox
 		AnchorPane.setLeftAnchor( statisticsLabel, 0d );
 		AnchorPane.setRightAnchor( expandCollapseSegments, 0d );
 
-		scalingButtonBox = HBoxBuilder.create().visible( false ).children( scalingCancelButton, HBoxBuilder.create().minWidth( 3 ).build(), scalingCloseButton )
-				.styleClass( "scaling-button-box" ).alignment( Pos.BASELINE_RIGHT ).build();
+		if( !PlatformUtil.isMac() )
+		{
+			scalingButtonBox = HBoxBuilder.create().visible( false )
+					.children( scalingCloseButton, HBoxBuilder.create().minWidth( 3 ).build(), scalingCancelButton )
+					.styleClass( "scaling-button-box" ).alignment( Pos.BASELINE_RIGHT ).build();
+		}
+		else
+		{
+			scalingButtonBox = HBoxBuilder.create().visible( false )
+					.children( scalingCancelButton, HBoxBuilder.create().minWidth( 3 ).build(), scalingCloseButton )
+					.styleClass( "scaling-button-box" ).alignment( Pos.BASELINE_RIGHT ).build();
+
+		}
 
 		//Give me some space..
 		betweenStatisticsAndLineSegmentViews = HBoxBuilder.create().minHeight( 6 ).build();
 		betweenScalingAndScalingButtons = HBoxBuilder.create().minHeight( 6 ).build();
-		
-		getChildren().addAll( topBox, betweenStatisticsAndLineSegmentViews, segmentViewContainer, betweenScalingAndScalingButtons, scalingButtonBox );
+
+		getChildren().addAll( topBox, betweenStatisticsAndLineSegmentViews, segmentViewContainer,
+				betweenScalingAndScalingButtons, scalingButtonBox );
 
 		for( Node node : segmentViewContainer.getChildren() )
 		{
@@ -88,7 +101,7 @@ public class SegmentBox extends VBox
 				view.setContainer( this );
 			}
 		}
-		
+
 		segmentViewContainer.getChildren().addListener( new InvalidationListener()
 		{
 			@Override
@@ -101,7 +114,7 @@ public class SegmentBox extends VBox
 						LineSegmentView view = ( LineSegmentView )node;
 						view.scalingProperty().bind( scaling );
 						view.setContainer( SegmentBox.this );
-						view.loadSliders();
+
 					}
 				}
 			}
@@ -115,13 +128,13 @@ public class SegmentBox extends VBox
 				if( scaling.get() )
 				{
 					scalingButtonBox.visibleProperty().set( true );
-					for(Node node : segmentViewContainer.getChildren()){
-						if(node instanceof LineSegmentView){
-							LineSegmentView view = (LineSegmentView) node;
-							view.loadSliders();
+					for( Node node : segmentViewContainer.getChildren() )
+					{
+						if( node instanceof LineSegmentView )
+						{
+							LineSegmentView view = ( LineSegmentView )node;
 						}
 					}
-					
 				}
 				else
 				{
@@ -154,6 +167,6 @@ public class SegmentBox extends VBox
 	public void enableScaling()
 	{
 		scaling.set( true );
-		
+
 	}
 }

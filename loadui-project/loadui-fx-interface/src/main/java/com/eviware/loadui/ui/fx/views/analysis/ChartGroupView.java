@@ -9,6 +9,7 @@ import static javafx.beans.binding.Bindings.lessThan;
 import static javafx.beans.binding.Bindings.size;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
+import javafx.beans.binding.Bindings;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -154,11 +155,12 @@ public class ChartGroupView extends VBox
 	@FXML
 	private void initialize()
 	{
+		
 		chartGroupToggleGroup = new ToggleGroup();
 		componentGroupToggle.setToggleGroup( chartGroupToggleGroup );
 		componentGroupToggle.disableProperty().bind( lessThan( 2, size( componentSubcharts ) ) );
 		componentGroup.visibleProperty().bind( componentGroupToggle.selectedProperty() );
-
+		
 		bindContent( componentGroup.getChildren(), componentSubcharts );
 		chartMenuButton.textProperty().bind( forLabel( chartGroup ) );
 		chartView.getChildren().setAll( createChart( chartGroup.getType() ) );
@@ -181,7 +183,7 @@ public class ChartGroupView extends VBox
 					}
 				}
 			}
-		} );
+		});
 	}
 
 	@FXML

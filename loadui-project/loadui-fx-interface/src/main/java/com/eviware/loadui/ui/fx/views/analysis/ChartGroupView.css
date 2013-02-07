@@ -121,10 +121,6 @@
 	-fx-border-radius: 5;
 }
 
-.scaling .slider .thumb .graphic{
-	-fx-background-color: blue; 
-}
-
 .segment-box .slider{
 	-fx-skin: "com.eviware.loadui.ui.fx.control.skin.StyleableGraphicSlider";
 	visibility: hidden; 

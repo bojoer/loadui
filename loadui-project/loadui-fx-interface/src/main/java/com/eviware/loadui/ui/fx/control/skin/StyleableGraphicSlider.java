@@ -14,7 +14,7 @@ public class StyleableGraphicSlider extends SliderSkin
 		Platform.runLater( new Runnable(){
 			public void run(){
 				StackPane thumb = (StackPane) slider.lookup( ".thumb" );
-				thumb.getChildren().add(RegionBuilder.create().styleClass( "graphic" ).stylesheets( "StyleableGraphicsSlider.css" ).minHeight( 6 ).minWidth( 12 ).build());
+				thumb.getChildren().add(RegionBuilder.create().styleClass( "graphic" ).minHeight( 6 ).minWidth( 12 ).build());
 			}
 		});
 	}
