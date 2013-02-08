@@ -20,7 +20,7 @@ public class WorkspaceLoadedState extends TestState
 	@Override
 	protected void enterFromParent() throws Exception
 	{
-		WorkspaceProvider workspaceProvider = BeanInjector.getBean( WorkspaceProvider.class );
+		WorkspaceProvider workspaceProvider = ControllerStartedState.STATE.getWorkspaceProviderByForce();
 		if( !workspaceProvider.isWorkspaceLoaded() )
 		{
 			workspace = workspaceProvider.loadDefaultWorkspace();
