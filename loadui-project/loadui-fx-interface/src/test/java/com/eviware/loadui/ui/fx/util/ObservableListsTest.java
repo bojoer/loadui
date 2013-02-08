@@ -171,4 +171,40 @@ public class ObservableListsTest
 		assertThat( observableList, equalTo( asList( 3, 4, 1 ) ) );
 
 	}
+
+	@Test
+	public void concatTest()
+	{
+		ObservableList<Integer> list1 = FXCollections.observableArrayList();
+		list1.addAll( 1, 2, 3 );
+
+		ObservableList<Integer> list2 = FXCollections.observableArrayList();
+		list2.addAll( 4, 5 );
+
+		ObservableList<Integer> list3 = FXCollections.observableArrayList();
+		list3.addAll( 6, 7, 8, 9 );
+
+		ObservableList<Integer> list1list2 = ObservableLists.concat( list1, list2 );
+
+		assertThat( list1list2, equalTo( asList( 1, 2, 3, 4, 5 ) ) );
+
+		list1.remove( new Integer( 1 ) );
+		list2.remove( new Integer( 4 ) );
+
+		assertThat( list1list2, equalTo( asList( 2, 3, 5 ) ) );
+
+		ObservableList<Integer> list1list2list3 = ObservableLists.concat( list1, list2, list3 );
+
+		assertThat( list1list2list3, equalTo( asList( 2, 3, 5, 6, 7, 8, 9 ) ) );
+
+		list1.add( new Integer( 1 ) );
+		list2.add( new Integer( 4 ) );
+
+		assertThat( list1list2list3, equalTo( asList( 2, 3, 1, 5, 4, 6, 7, 8, 9 ) ) );
+
+		list3.remove( new Integer( 8 ) );
+
+		assertThat( list1list2list3, equalTo( asList( 2, 3, 1, 5, 4, 6, 7, 9 ) ) );
+	}
+
 }
