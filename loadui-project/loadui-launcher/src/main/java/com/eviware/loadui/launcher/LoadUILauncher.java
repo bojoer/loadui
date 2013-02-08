@@ -467,6 +467,7 @@ public class LoadUILauncher
 		setDefaultSystemProperty( "loadui.instance", "controller" );
 
 		File loaduiHome = new File( System.getProperty( LOADUI_HOME ) );
+		System.out.println( "LoadUI Home: " + loaduiHome.getAbsolutePath() );
 		if( !loaduiHome.isDirectory() )
 			if( !loaduiHome.mkdirs() )
 				throw new RuntimeException( "Unable to create directory: " + loaduiHome.getAbsolutePath() );

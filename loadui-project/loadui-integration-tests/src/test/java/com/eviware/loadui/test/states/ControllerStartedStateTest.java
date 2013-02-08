@@ -15,27 +15,20 @@ import com.eviware.loadui.test.categories.IntegrationTest;
 @Category( IntegrationTest.class )
 public class ControllerStartedStateTest
 {
-	private BundleContext context;
-
+	
 	@Before
 	public void enterState()
 	{
 		ControllerStartedState.STATE.enter();
-		context = ControllerStartedState.STATE.getBundleContext();
 	}
 
 	@Test
 	public void shouldHaveWorkspaceProvider() throws Exception
 	{
-		//TODO: We can't use generics here until the OSGi jars stop using compilation flags that are not compatible with Java7.
-		ServiceReference/* <WorkspaceProvider> */ref = null;
-		for( int tries = 100; ref == null && tries > 0; tries-- )
-		{
-			ref = context.getServiceReference( WorkspaceProvider.class.getName() );
-			Thread.sleep( 100 );
-		}
-		WorkspaceProvider workspaceProvider = ( WorkspaceProvider )context.getService( ref );
+		WorkspaceProvider workspaceProvider = ControllerStartedState.STATE.getWorkspaceProviderByForce();
 
 		assertThat( workspaceProvider, notNullValue() );
 	}
+
+
 }

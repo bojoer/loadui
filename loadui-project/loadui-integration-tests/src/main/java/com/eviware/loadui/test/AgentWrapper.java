@@ -49,7 +49,7 @@ public class AgentWrapper
 		//config.setProperty( "felix.auto.deploy.dir", new File( "../loadui-agent-deps/target/bundle" ).getAbsolutePath() );
 
 		File bundleDir = new File( baseDir, "bundle" );
-		IntegrationTestUtils.copyDirectory( new File( "../loadui-agent-deps/target/bundle" ), bundleDir );
+		//IntegrationTestUtils.copyDirectory( new File( "../loadui-agent-deps/target/bundle" ), bundleDir );
 		IntegrationTestUtils.copyDirectory( new File( "target/bundle" ), bundleDir );
 
 		//Add the required packages that should be in the OSGi config file.
