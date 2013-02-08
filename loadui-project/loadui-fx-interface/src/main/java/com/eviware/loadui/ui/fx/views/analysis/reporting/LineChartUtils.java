@@ -16,6 +16,8 @@
 package com.eviware.loadui.ui.fx.views.analysis.reporting;
 
 import java.awt.Image;
+import java.io.File;
+import java.net.MalformedURLException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;

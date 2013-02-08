@@ -1,0 +1,62 @@
+/**
+ * OptionsSlider styles
+ */
+
+.options-slider {
+	-fx-skin: "com.eviware.loadui.ui.fx.control.skin.OptionsSliderSkin";
+	-fx-padding: 0;
+	-fx-font-size: 9;	
+}
+
+.options-slider .sliding-area  {
+   -fx-background-color: #EAEAEA, linear-gradient(to right, #A2A3A5, #D7D7D8);
+	-fx-background-insets: 
+	0 0 0 0,
+	0 1 1 0;
+   -fx-padding: 6;
+}
+
+
+.options-slider .radio-button .radio  {
+	-fx-background-color: transparent;
+	-fx-background-insets: 1;
+	-fx-background-radius: 1;
+
+	-fx-padding: 1; /* padding from outside edge to the inner black dot */
+}
+
+.options-slider .radio-button .dot {
+   	-color-base: #DFDFDF;
+	-color-dark: derive(-color-base, -30%);
+	-color-light: derive(-color-base, 50%);
+
+	-fx-background-color:
+ 	derive(-color-base, -30%), 
+	derive(-color-base, 30%), 
+	linear-gradient(to bottom, 
+	-color-light 0%,
+	-color-dark 20%, 
+	-color-light 40%, 
+	-color-dark 60%, 
+	-color-light 80%,
+	-color-dark 100%);
+
+	
+	-fx-background-radius: 2;
+
+	-fx-background-insets: 
+	-1 -1 -1 -1,
+	0.2 0.2 0.2 0.2,
+	2 1 2 1;
+
+	-fx-padding: 5;
+	-fx-opacity: 0;
+}
+
+.options-slider .radio-button:hover .dot {
+	-fx-opacity: 0.2;	
+}
+
+.options-slider .radio-button:selected .dot {	
+	-fx-opacity: 1;
+}

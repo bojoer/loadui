@@ -1,21 +1,26 @@
 package com.eviware.loadui.ui.fx.views.analysis.linechart;
 
 import static javafx.beans.binding.Bindings.when;
+import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.Slider;
 import javafx.scene.control.SliderBuilder;
+import javafx.scene.layout.Region;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.statistics.model.chart.line.LineSegment;
+import com.eviware.loadui.ui.fx.control.skin.StyleableGraphicSlider;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.views.analysis.ShortName;
 
@@ -31,8 +36,9 @@ public class LineSegmentView extends SegmentView<LineSegment>
 
 	private SegmentBox parent;
 
-	private final Slider slider = SliderBuilder.create().snapToTicks( true ).min( -6 ).max( 6 ).majorTickUnit( 1 )
-			.minorTickCount( 0 ).build();
+	private Slider slider;
+	
+	private Region sliderNob; 
 
 	private final String scalingStyleClass = "scaling";
 
@@ -52,7 +58,11 @@ public class LineSegmentView extends SegmentView<LineSegment>
 	@FXML
 	private void initialize()
 	{
-		segmentLabel.maxWidthProperty().bind( Bindings.when( isExpandedProperty ).then( 240 ).otherwise( 120 ) );
+
+		slider = SliderBuilder.create().snapToTicks( true ).visible( false ).min( -6 ).max( 6 ).majorTickUnit( 1 )
+				.minorTickCount( 0 ).build();
+
+		segmentLabel.maxWidthProperty().bind( Bindings.when( isExpandedProperty ).then( 300 ).otherwise( 130 ) );
 
 		String fullName = segment.getStatisticHolder().getLabel() + " " + segment.getVariableName() + " "
 				+ segment.getStatisticName();
@@ -60,6 +70,7 @@ public class LineSegmentView extends SegmentView<LineSegment>
 		segmentLabel.textProperty().bind( when( isExpandedProperty ).then( fullName ).otherwise( shortName ) );
 
 		loadStyles();
+		getChildren().addAll( slider );
 
 		scaling.addListener( new InvalidationListener()
 		{
@@ -70,7 +81,11 @@ public class LineSegmentView extends SegmentView<LineSegment>
 				{
 					menuButton.setDisable( true );
 					getChildren().addAll( slider );
-					getStyleClass().add( scalingStyleClass );
+					getStyleClass().addAll( scalingStyleClass );
+					slider.visibleProperty().set( true );
+					if(sliderNob != null){
+						loadNob( slider );
+					}
 				}
 				else
 				{
@@ -85,7 +100,6 @@ public class LineSegmentView extends SegmentView<LineSegment>
 
 		slider.valueProperty().addListener( new InvalidationListener()
 		{
-
 			@Override
 			public void invalidated( Observable arg0 )
 			{
@@ -100,6 +114,36 @@ public class LineSegmentView extends SegmentView<LineSegment>
 			}
 		} );
 
+		slider.getChildrenUnmodifiable().addListener( new ListChangeListener<Node>()
+		{
+			@Override
+			public void onChanged( javafx.collections.ListChangeListener.Change<? extends Node> change )
+			{
+				while( change.next() )
+				{
+					for (Node node : change.getAddedSubList()) {
+						if( node instanceof StyleableGraphicSlider )
+						{
+							loadNob( node );
+						}
+					}
+				}
+			}
+		} );
+	}
+	
+	private void loadNob(final Node node){
+		Platform.runLater( new Runnable(){
+			public void run(){
+				Node nob = node.lookup( ".graphic" );
+				if(nob instanceof Region && nob != null){
+					sliderNob = (Region)nob;
+					sliderNob.setStyle( "-fx-background-color: " + color + ";");
+				}else{
+					log.warn( "Cannot find sliderNob for slider" );
+				}
+			}
+		});
 	}
 
 	private void loadStyles()
@@ -114,7 +158,6 @@ public class LineSegmentView extends SegmentView<LineSegment>
 		}
 		scale = newScale;
 		slider.setValue( scale );
-
 	}
 
 	public void enableScaling( boolean value )

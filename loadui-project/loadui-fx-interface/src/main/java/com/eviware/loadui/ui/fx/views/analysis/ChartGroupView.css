@@ -7,8 +7,8 @@
 
 .chart-group-list-cell{
 	-fx-padding: 9 12 9 12;
-	-fx-background-radius: 9; 
-	-fx-background-color: #252525; 
+	-fx-background-radius: 6; 
+	-fx-background-color: #252525;
 }
 
 #chartMenuButton.menu-button{
@@ -16,21 +16,8 @@
 	-fx-font-weight: bold;  
 }
 
-/**
- * All Charts
- */
-.scroll-bar .increment-button{
-	-fx-shape: -fx-shape-navigation-right;
-	-fx-padding: 0.25em; 
-}
-
-.scroll-bar .decrement-button{
-	-fx-shape: -fx-shape-navigation-left;
-	-fx-padding: 0.25em; 
-}
-
-.scaling {
-	-fx-padding: 1.5px; 
+#chartMenuButton.menu-button:hover{
+	-fx-background-color: #7E7E7E; 
 }
 
 /**
@@ -38,6 +25,7 @@
  */
 .chart-segment-box #statistics-label{
 	 	-fx-text-fill: #BBBBBB;
+	 	-fx-font-size: 16;  
 }
 
 .chart-segment-box #statistics-label{
@@ -57,32 +45,118 @@
 	-fx-shape: -fx-shape-navigation-left;
 }
 
+.chart-segment-box .slim-icon{
+	-fx-padding: 5 0 0 0; 
+}
+
+/**
+ * The legend buttons
+ */
+.chart-segment-box .line-segment-view{
+	-fx-background-color: linear-gradient(to bottom, #DDDDDD 0%, #888888 100%); 		
+	-fx-background-radius: 4;
+	-fx-border-color: #666666; 
+	-fx-border-radius: 3; 
+	-fx-border-width: 2;  
+	visibility: visible;
+}
+
+.chart-segment-box .line-segment-view:hover{
+	-fx-background-color: linear-gradient(to bottom, derive(#DDDDDD, -30%) 0%, derive(#888888, -30%) 100%); 		
+	-fx-background-radius: 4;
+	visibility: visible;
+}
+
+.chart-segment-box .line-segment-view .menu-button{
+	-fx-background-color: transparent;
+	visibility: visible; 
+}
+
+.chart-segment-box .button{
+ 	-fx-background-color: linear-gradient(to bottom, #DDDDDD 0%, #AAAAAA 100%);
+ 	-fx-border-color: #888888;
+ 	-fx-border-width: 2; 
+ 	-fx-padding: 7;
+}
+
+.chart-segment-box .button:hover{
+	-fx-background-color: linear-gradient(to bottom, #33CCFF 0%, #00AAFF 100%);
+} 
+
+.scaling .menu-button:disabled{
+	-fx-background-color: transparent; 
+	visibility: hidden; 
+}
+
+.scaling .line-segment-view:hover{
+	visibility: hidden; 
+}
+
+.scaling .line-segment-view{
+	visibility: hidden; 
+}
+
+/**
+ * Scaling-slider
+ */
+.scaling .slider .track{
+	-fx-background-color: #888888; 
+	-fx-background-radius: 4; 
+	-fx-padding: 10;
+	-fx-border-color: #666666;
+	-fx-border-width: 2; 
+	-fx-border-radius: 3;
+}
+
+.scaling .slider{
+	-fx-skin: "com.eviware.loadui.ui.fx.control.skin.StyleableGraphicSlider";
+}
+
+.scaling .slider .thumb{
+	-fx-background-color: linear-gradient(to bottom, #CCCCCC 0%, #888888 100%);
+	-fx-background-radius: 6; 
+	-fx-padding: 3 3 18 3; 	
+	-fx-border-color: #666666;
+	-fx-border-width: 2;
+	-fx-border-radius: 5;
+}
+
+.segment-box .slider{
+	-fx-skin: "com.eviware.loadui.ui.fx.control.skin.StyleableGraphicSlider";
+	visibility: hidden; 
+}
+
 /**
  * Main-chart
  */
 .main-chart-group{
-	-fx-background-color: linear-gradient(to bottom, #888888 0%, #666666 3%, #666666 94%, #555555 100%);
-	-fx-padding: 12; 
-	-fx-background-radius: 9; 
+	-fx-background-color: linear-gradient(to bottom, #888888 0%, #666666 12px, #666666 96%, #555555 100%);
+	-fx-padding: 9 9 0 9; 
+	-fx-background-radius: 5; 
+	-fx-border-color: #7E7E7E linear-gradient(to bottom, #888888 0%, #666666 12px, #666666 97%, #7E7E7E 100%) #7E7E7E linear-gradient(to bottom, #888888 0%, #666666 12px, #666666 97%, #7E7E7E 100%);
+	-fx-border-width: 0 1 0 1;
+	-fx-border-radius: 4 4 0 0;   
 }
 
 .main-chart-group #zoomMenuButton.menu-button{
 	-fx-background-color: transparent; 
-	-fx-text-fill: #7E7E7E;
+	-fx-text-fill: black;
 }
 
 .main-chart-group #zoomMenuButton.menu-button:hover{
 	-fx-background-color: #7E7E7E; 
-	-fx-text-fill: #7E7E7E;
+	-fx-text-fill: black;
 }
 
-.main-chart-group .button{
+.main-chart-group #addStatisticButton.button{
 	-fx-background-color: transparent;
-	-fx-border-color: transparent; 
+	-fx-border-color: transparent;
+	-fx-text-fill: black; 
 }
 
-.main-chart-group .button:hover{
+.main-chart-group #addStatisticButton.button:hover{
 	-fx-background-color: #7E7E7E;
+	-fx-text-fill: black;
 }
 
 .main-chart-group .menu-button{
@@ -107,14 +181,14 @@
 }
 
 /**
- * Segment-Box
- */
+ * Main chart Segment-Box specifics (TODO: Might not be needed anylonger )
+ **/
 
 .main-chart-group .chart-segment-box{
 	-fx-background-color: linear-gradient(to bottom, #2E2E2E 0%, #585858 100%);
 	-fx-border-color: #555555; 
-	-fx-background-radius: 11; 
-	-fx-border-radius: 9; 
+	-fx-background-radius: 5; 
+	-fx-border-radius: 4; 
 	-fx-border-width: 3;
 	-fx-padding: 9;
 }
@@ -123,22 +197,14 @@
 	-fx-background-color: transparent;
 }
 
-.main-chart-group .line-segment-view .menu-button{
-	-fx-background-radius: 2;  
-}
-
-.main-chart-group .line-segment-view:hover .menu-button{
-	-fx-background-color: black;
-	-fx-text-fill: white; 
-}
-
 /**
  * Sub-Charts
  */
 .sub-chart-group{
-	-fx-background-color: linear-gradient(to bottom, derive(#888888, -30%) 0%, derive(#666666, -30%) 3%, derive( #555555, -30%) 94%, derive(#666666, -30%) 100%);
-	-fx-padding: 12; 
-	-fx-background-radius: 9;
+	-fx-border-width: 0 1 1 1 ; 
+	-fx-border-radius: 0 0 4 4;
+	-fx-border-color: #7E7E7E; 
+	-fx-padding: 3; 
 }
 
 .sub-chart-group #zoomMenuButton.menu-button{
@@ -159,13 +225,13 @@
 		-fx-text-fill: black;
 }
 
-.sub-chart-group .button{
+.sub-chart-group #addStatisticButton.button{
 	-fx-background-color: transparent;
 	-fx-border-color: transparent;
 	-fx-text-fill: derive(#7E7E7E, 30%); 
 }
 
-.sub-chart-group .button:hover{
+.sub-chart-group #addStatisticButton.button:hover{
 	-fx-background-color: #7E7E7E;
 	-fx-text-fill: black;
 }
@@ -195,16 +261,25 @@
 	-fx-text-fill: #7E7E7E; 	
 }
 
-
-
+/**
+ * Line-Chart-View-Nodes
+ */
+.sub-chart-group .line-chart-view-node{
+	-fx-background-color: linear-gradient(to bottom, derive(#888888, -50%) 0%, derive(#666666, -50%) 3%, derive( #666666, -50%) 94%, derive(#555555, -50%) 100%);
+	-fx-padding: 9 9 0 9; 
+	-fx-border-color: #252525; 
+	-fx-border-width: 3;
+	-fx-border-radius: 4; 
+	-fx-background-radius: 7;
+} 
 
 /**
  * chart segment box
  */
 .sub-chart-group .chart-segment-box{
 	-fx-background-color: linear-gradient(to bottom, derive(#2E2E2E, -30%) 0%, derive(#585858, -30%) 100%);
-	-fx-background-radius: 11; 
-	-fx-border-radius: 9; 
+	-fx-background-radius: 5; 
+	-fx-border-radius: 4; 
 	-fx-border-color: derive(#555555, -30%); 
 	-fx-border-width: 3;
 	-fx-padding: 9;
@@ -212,13 +287,4 @@
 
 .sub-chart-group .chart-segment-box .toggle-button{
 	-fx-background-color: transparent;
-}
-
-.sub-chart-group .line-segment-view .menu-button{
-	-fx-background-radius: 2;  
-}
-
-.sub-chart-group .line-segment-view:hover .menu-button{
-	-fx-background-color: black;
-	-fx-text-fill: white; 
 }

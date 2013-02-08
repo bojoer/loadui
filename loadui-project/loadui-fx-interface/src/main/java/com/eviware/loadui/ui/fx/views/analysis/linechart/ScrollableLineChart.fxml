@@ -33,7 +33,7 @@
 				</yAxis>
 			</LineChart>
 			<Label fx:id="zoomLevel" styleClass="overlayed-chart-text"
-				text="zoom" AnchorPane.rightAnchor="9" AnchorPane.bottomAnchor="15" />
+				text="zoom" AnchorPane.rightAnchor="12" AnchorPane.bottomAnchor="15" />
 			<Label fx:id="ellapsedTime" styleClass="overlayed-chart-text"
 				AnchorPane.bottomAnchor="15"/>			
 		</AnchorPane>

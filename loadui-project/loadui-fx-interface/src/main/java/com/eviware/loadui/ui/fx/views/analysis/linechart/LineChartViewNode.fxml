@@ -21,8 +21,9 @@
 	<StackPane fx:id="chartContainer"/>
 	<HBox minHeight="9" />
 	<HBox alignment="baseline_right">
-		<Button text="Add Statistic" onAction="#addStatistic" />
-		<ZoomMenuButton fx:id="zoomMenuButton" text="Zoom"/>
+		<Button fx:id="addStatisticButton" text="Add Statistic" onAction="#addStatistic" />
+		<ZoomMenuButton fx:id="zoomMenuButton" text="Zoom" />
 		<ToggleButton fx:id="followCheckBox" text="follow" /> 
 	</HBox>
+	<HBox minHeight="9" />	
 </fx:root>

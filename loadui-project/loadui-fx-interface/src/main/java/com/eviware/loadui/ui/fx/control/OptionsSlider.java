@@ -69,6 +69,7 @@ public class OptionsSlider extends Control
 
 	private void initialize()
 	{
+		getStylesheets().add( OptionsSlider.class.getResource( "OptionsSlider.bss" ).toExternalForm() );
 		getStyleClass().setAll( DEFAULT_STYLE_CLASS );
 	}
 

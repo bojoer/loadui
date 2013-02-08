@@ -43,8 +43,6 @@ public class OptionsSliderSkin extends SkinBase<OptionsSlider, BehaviorBase<Opti
 		VBox vBox = VBoxBuilder.create().styleClass( "container" ).build();
 		Bindings.bindContent( vBox.getChildren(), radioButtons );
 
-		System.out.println( "selected " + slider.getSelected() );
-
 		InvalidationListener recreateRadioButtons = new InvalidationListener()
 		{
 			@Override
