@@ -9,10 +9,11 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import com.eviware.loadui.api.model.ProjectItem;
+import com.eviware.loadui.test.AgentTest;
 import com.eviware.loadui.test.categories.IntegrationTest;
 
 @Category( IntegrationTest.class )
-public class ProjectCreatedStateTest
+public class ProjectCreatedStateTest extends AgentTest
 {
 	private ProjectItem project;
 

@@ -41,11 +41,13 @@ public final class ExecutorManagerImpl implements ExecutorManager
 
 	public final static Logger log = LoggerFactory.getLogger( ExecutorManagerImpl.class );
 
-	private final CustomThreadPoolExecutor executor;
-	private final ResizableBlockingQueue<Runnable> queue = new ResizableBlockingQueue<>( DEFAULT_QUEUE_SIZE );
+	private CustomThreadPoolExecutor executor;
+	private ResizableBlockingQueue<Runnable> queue = new ResizableBlockingQueue<>( DEFAULT_QUEUE_SIZE );
 
-	public ExecutorManagerImpl( final WorkspaceProvider workspaceProvider )
-	{
+	public void setWorkspaceProvider( final WorkspaceProvider workspaceProvider ) {
+		if (executor != null) {
+			return;
+		}
 		executor = new CustomThreadPoolExecutor( DEFAULT_POOL_SIZE, queue, new ThreadFactory()
 		{
 			private final AtomicInteger threadCount = new AtomicInteger( 1 );

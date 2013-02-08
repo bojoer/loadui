@@ -24,7 +24,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.LoadUI;
-import com.eviware.loadui.api.addon.AddonRegistry;
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.model.WorkspaceItem;
@@ -39,9 +38,11 @@ public class WorkspaceProviderImpl implements WorkspaceProvider, Releasable
 
 	private final EventSupport eventSupport = new EventSupport( this );
 	private WorkspaceItem workspace;
+	private ModelItemFactory modelItemFactory;
 
-	public WorkspaceProviderImpl( AddonRegistry addonRegistry )
+	public WorkspaceProviderImpl( ModelItemFactory modelItemFactory )
 	{
+		this.modelItemFactory = modelItemFactory;
 	}
 
 	@Override
@@ -50,7 +51,7 @@ public class WorkspaceProviderImpl implements WorkspaceProvider, Releasable
 		try
 		{
 			log.info( "Loading workspace from file: {}", workspaceFile );
-			workspace = WorkspaceItemImpl.loadWorkspace( workspaceFile );
+			workspace = modelItemFactory.loadWorkspaceFrom( workspaceFile );
 			fireEvent( new BaseEvent( this, WORKSPACE_LOADED ) );
 
 			return workspace;

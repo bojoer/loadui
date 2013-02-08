@@ -21,31 +21,38 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.osgi.framework.Bundle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.osgi.util.OsgiStringUtils;
 
 import com.eviware.loadui.LoadUI;
-import com.eviware.loadui.test.categories.IntegrationTest;
+import com.eviware.loadui.util.BeanInjector;
+import com.eviware.loadui.util.StringUtils;
 
 /**
- * Integration tests for testing the loadUI agent through its API.
+ * Base class for all integration tests.
  * 
  * @author dain.nilsson
  */
-@Category( IntegrationTest.class )
-public class AgentTest
+public abstract class AgentTest
 {
-	private static AgentWrapper agent;
+	private static final Logger log = LoggerFactory.getLogger( AgentTest.class );
+
+	private static ControllerWrapper agent;
 
 	@BeforeClass
 	public static void startAgent() throws Exception
 	{
 		int port = IntegrationTestUtils.getAvailablePort();
 		int sslPort = IntegrationTestUtils.getAvailablePort();
-		System.out.println( "Starting Agent on ports " + port + " and " + sslPort );
+		log.info( "Starting Agent on ports " + port + " and " + sslPort );
 		System.setProperty( LoadUI.HTTPS_PORT, Integer.toString( sslPort ) );
-		agent = new AgentWrapper();
+		agent = new ControllerWrapper();
+
+		assertNoFailedBundles();
+
+		//BeanInjector.setBundleContext( agent.getBundleContext() );
 	}
 
 	@AfterClass
@@ -54,12 +61,17 @@ public class AgentTest
 		agent.stop();
 	}
 
-	@Test
-	public void shouldHaveNoFailedBundles()
+	public static void assertNoFailedBundles()
 	{
+		log.info( "Checking if all bundles started properly" );
 		Bundle[] bundles = agent.getBundleContext().getBundles();
 		for( Bundle bundle : bundles )
+		{
+			log.info( StringUtils.padLeft(
+					"Bundle: " + bundle.getSymbolicName() + ": " + OsgiStringUtils.bundleStateAsString( bundle ), 100 ) );
 			assertThat( bundle.getSymbolicName() + " is not Active or Resolved", bundle.getState(),
 					anyOf( is( Bundle.ACTIVE ), is( Bundle.RESOLVED ) ) );
+		}
+		log.info( "ALL BUNDLES ACTIVE OR RESOLVED" );
 	}
 }

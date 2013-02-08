@@ -26,6 +26,7 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.ui.Model;
 
 import com.eviware.loadui.api.addon.AddonRegistry;
 import com.eviware.loadui.api.addressable.AddressableRegistry;
@@ -53,7 +54,9 @@ public class WorkspaceProviderImplTest
 		config.addNewLoaduiWorkspace();
 		config.save( tmp );
 
-		WorkspaceProvider provider = new WorkspaceProviderImpl( mock( AddonRegistry.class ) );
+		ModelItemFactory factory = mock( ModelItemFactory.class );
+		//FIXME mock factory methods
+		WorkspaceProvider provider = new WorkspaceProviderImpl( factory );
 
 		WorkspaceItem workspace = provider.loadWorkspace( tmp );
 

@@ -100,7 +100,7 @@ public class LineChartViewNode extends VBox
 
 	protected NonSingletonFactory getNonSingletonFactory()
 	{
-		NonSingletonFactory factory = BeanInjector.getNonCachedBeanOrNull( NonSingletonFactory.class );
+		NonSingletonFactory factory = BeanInjector.getBean( NonSingletonFactory.class, 50 );
 		if( factory != null )
 			return factory;
 		else

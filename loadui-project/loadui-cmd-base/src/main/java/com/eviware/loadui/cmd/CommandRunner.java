@@ -26,12 +26,12 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
 import org.codehaus.groovy.control.CompilationFailedException;
+import org.osgi.framework.BundleException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.eviware.loadui.api.groovy.GroovyCommand;
 import com.eviware.loadui.api.model.WorkspaceProvider;
-import com.eviware.loadui.launcher.api.GroovyCommand;
-import com.eviware.loadui.launcher.api.OSGiUtils;
 
 public class CommandRunner
 {
@@ -39,10 +39,12 @@ public class CommandRunner
 
 	private final ExecutorService executor;
 	private final WorkspaceProvider workspaceProvider;
+	private final LoaduiBundleContextAware ctxAware;
 	private final GroovyShell shell;
 
-	public CommandRunner( WorkspaceProvider workspaceProvider )
+	public CommandRunner( WorkspaceProvider workspaceProvider, LoaduiBundleContextAware ctxAware )
 	{
+		this.ctxAware = ctxAware;
 		this.executor = Executors.newSingleThreadScheduledExecutor( new ThreadFactory()
 		{
 			@Override
@@ -104,12 +106,20 @@ public class CommandRunner
 
 			if( command.exitOnCompletion() )
 			{
-				if( result instanceof Number )
-					OSGiUtils.shutdown( ( ( Number )result ).intValue() );
-				else if( result instanceof Boolean )
-					OSGiUtils.shutdown( ( Boolean )result ? 0 : 1 );
-				else
-					OSGiUtils.shutdown();
+				try
+				{
+					if( result instanceof Number )
+						ctxAware.stopFramework( ( ( Number )result ).intValue() );
+					else if( result instanceof Boolean )
+						ctxAware.stopFramework( ( Boolean )result ? 0 : 1 );
+					else
+						ctxAware.stopFramework();
+				}
+				catch( BundleException be )
+				{
+					log.warn( "Problem shutting down", be );
+				}
+
 			}
 		}
 	}

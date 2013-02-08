@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -40,7 +41,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.convert.ConversionService;
 
 import com.eviware.loadui.api.addressable.Addressable;
+import com.eviware.loadui.api.addressable.AddressableRegistry;
 import com.eviware.loadui.api.component.ComponentContext;
+import com.eviware.loadui.api.component.ComponentRegistry;
 import com.eviware.loadui.api.counter.CounterSynchronizer;
 import com.eviware.loadui.api.events.ActionEvent;
 import com.eviware.loadui.api.events.BaseEvent;
@@ -88,7 +91,6 @@ import com.eviware.loadui.impl.summary.sections.ProjectExecutionDataSection;
 import com.eviware.loadui.impl.summary.sections.ProjectExecutionMetricsSection;
 import com.eviware.loadui.impl.summary.sections.ProjectExecutionNotablesSection;
 import com.eviware.loadui.impl.terminal.ConnectionImpl;
-import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.collections.CollectionEventSupport;
 import com.eviware.loadui.util.collections.CollectionFuture;
@@ -124,42 +126,32 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	private final Property<Boolean> saveReport;
 	private final Property<String> reportFolder;
 	private final Property<String> reportFormat;
-	
+
 	private final File projectFile;
+	private final ModelItemFactory modelItemFactory;
 
-	private static LoaduiProjectDocumentConfig preProcessProjectFile( LoaduiProjectDocumentConfig config )
+	ProjectItemImpl( AddressableRegistry addressableRegistry, ConversionService conversionService,
+			ScheduledExecutorService scheduler, ComponentRegistry componentRegistry, TestRunner testRunner,
+			WorkspaceItem workspace, File projectFile, LoaduiProjectDocumentConfig doc,
+			PropertySynchronizer propertySynchronizer, CounterSynchronizer counterSynchronizer,
+			ModelItemFactory modelItemFactory )
 	{
-		return config;
-	}
-
-	public static ProjectItemImpl loadProject( WorkspaceItem workspace, File projectFile ) throws XmlException,
-			IOException
-	{
-		ProjectItemImpl object = new ProjectItemImpl( workspace, projectFile,
-				projectFile.exists() ? preProcessProjectFile( LoaduiProjectDocumentConfig.Factory.parse( projectFile ) )
-						: LoaduiProjectDocumentConfig.Factory.newInstance() );
-		object.init();
-		object.postInit();
-
-		return object;
-	}
-
-	private ProjectItemImpl( WorkspaceItem workspace, File projectFile, LoaduiProjectDocumentConfig doc )
-	{
-		super( doc.getLoaduiProject(), new AggregatedCounterSupport() );
+		super( doc.getLoaduiProject(), addressableRegistry, conversionService, new AggregatedCounterSupport(), scheduler,
+				componentRegistry, testRunner, modelItemFactory );
 		this.doc = doc;
 		this.projectFile = projectFile;
 		this.workspace = workspace;
-		conversionService = BeanInjector.getBean( ConversionService.class );
-		propertySynchronizer = BeanInjector.getBean( PropertySynchronizer.class );
-		counterSynchronizer = BeanInjector.getBean( CounterSynchronizer.class );
+		this.conversionService = conversionService;
+		this.propertySynchronizer = propertySynchronizer;
+		this.counterSynchronizer = counterSynchronizer;
+		this.modelItemFactory = modelItemFactory;
 		saveReport = createProperty( SAVE_REPORT_PROPERTY, Boolean.class, false );
 		reportFolder = createProperty( REPORT_FOLDER_PROPERTY, String.class, "" );
 		reportFormat = createProperty( REPORT_FORMAT_PROPERTY, String.class, "" );
 		statisticPages = new StatisticPagesImpl( getConfig().getStatistics() == null ? getConfig().addNewStatistics()
 				: getConfig().getStatistics() );
 
-		BeanInjector.getBean( TestRunner.class ).registerTask( agentAwaiter, Phase.PRE_START );
+		testRunner.registerTask( agentAwaiter, Phase.PRE_START );
 	}
 
 	@Override
@@ -167,7 +159,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	{
 		for( SceneItemConfig conf : getConfig().getSceneList() )
 		{
-			attachScene( SceneItemImpl.newInstance( this, conf ) );
+			attachScene( modelItemFactory.createSceneItemImpl( this, conf ) );
 		}
 
 		super.init();
@@ -296,7 +288,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		SceneItemConfig sceneConfig = getConfig().addNewScene();
 		sceneConfig.setLabel( label );
 
-		SceneItemImpl scene = SceneItemImpl.newInstance( this, sceneConfig );
+		SceneItemImpl scene = modelItemFactory.createSceneItemImpl( this, sceneConfig );
 		if( attachScene( scene ) )
 			fireCollectionEvent( SCENES, CollectionEvent.Event.ADDED, scene );
 		return scene;
@@ -356,7 +348,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	@Override
 	public void release()
 	{
-		BeanInjector.getBean( TestRunner.class ).unregisterTask( agentAwaiter, Phase.PRE_START );
+		testRunner.unregisterTask( agentAwaiter, Phase.PRE_START );
 		getWorkspace().removeEventListener( BaseEvent.class, workspaceListener );
 		ReleasableUtils.releaseAll( agentListener, statisticPages, getChildren() );
 
@@ -563,7 +555,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 			throw new RuntimeException( e );
 		}
 
-		SceneItemImpl scene = SceneItemImpl.newInstance( this, config );
+		SceneItemImpl scene = modelItemFactory.createSceneItemImpl( this, config );
 		if( attachScene( scene ) )
 			fireCollectionEvent( SCENES, CollectionEvent.Event.ADDED, scene );
 

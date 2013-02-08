@@ -15,7 +15,6 @@
  */
 package com.eviware.loadui.impl.model;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EventObject;
@@ -27,6 +26,7 @@ import java.util.concurrent.ExecutorService;
 import org.springframework.core.convert.ConversionService;
 
 import com.eviware.loadui.LoadUI;
+import com.eviware.loadui.api.addressable.AddressableRegistry;
 import com.eviware.loadui.api.component.ActivityStrategy;
 import com.eviware.loadui.api.component.ComponentBehavior;
 import com.eviware.loadui.api.component.ComponentContext;
@@ -77,7 +77,6 @@ import com.eviware.loadui.impl.terminal.InputTerminalImpl;
 import com.eviware.loadui.impl.terminal.OutputTerminalImpl;
 import com.eviware.loadui.impl.terminal.TerminalHolderSupport;
 import com.eviware.loadui.impl.terminal.TerminalMessageImpl;
-import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.ReleasableUtils;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
@@ -86,14 +85,6 @@ import com.google.common.collect.Sets;
 
 public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implements ComponentItem
 {
-	public static ComponentItemImpl newInstance( CanvasItem canvas, ComponentItemConfig config )
-	{
-		ComponentItemImpl object = new ComponentItemImpl( canvas, config );
-		object.init();
-		object.postInit();
-
-		return object;
-	}
 
 	private final ExecutorService executor;
 	private final ConversionService conversionService;
@@ -122,24 +113,28 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 
 	private ActivityStrategy activityStrategy;
 	private final ActivityListener activityListener = new ActivityListener();
+	private final TestRunner testRunner;
 
 	private final Set<Statistic.Descriptor> defaultStatistics = Sets.newLinkedHashSet();
 	private final TerminalsEnabledTask terminalsEnabledTask = new TerminalsEnabledTask();
 	private boolean terminalsEnabled = false;
 
-	private ComponentItemImpl( CanvasItem canvas, ComponentItemConfig config )
+	ComponentItemImpl( CanvasItem canvas, ComponentItemConfig config, AddressableRegistry addressableRegistry,
+			ConversionService conversionService, ExecutorService executorService, CounterSynchronizer counterSynchronizer,
+			TestRunner testRunner )
 	{
-		super( config );
+		super( config, addressableRegistry, conversionService );
 		this.canvas = canvas;
 
 		remoteTerminal = new RemoteTerminal( this );
 		controllerTerminal = new ControllerTerminal( this );
 
-		executor = BeanInjector.getBean( ExecutorService.class );
-		conversionService = BeanInjector.getBean( ConversionService.class );
+		this.executor = executorService;
+		this.conversionService = conversionService;
+		this.testRunner = testRunner;
 
-		counterSupport = LoadUI.isController() ? new RemoteAggregatedCounterSupport(
-				BeanInjector.getBean( CounterSynchronizer.class ) ) : new CounterSupport();
+		counterSupport = LoadUI.isController() ? new RemoteAggregatedCounterSupport( counterSynchronizer )
+				: new CounterSupport();
 
 		workspaceListener = LoadUI.isController() && canvas instanceof SceneItem ? new WorkspaceListener() : null;
 		projectListener = LoadUI.isController() && canvas instanceof SceneItem ? new ProjectListener() : null;
@@ -147,7 +142,7 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		terminalHolderSupport = new TerminalHolderSupport( this );
 		statisticHolderSupport = new StatisticHolderSupport( this );
 
-		BeanInjector.getBean( TestRunner.class ).registerTask( terminalsEnabledTask, Phase.PRE_START, Phase.POST_STOP );
+		testRunner.registerTask( terminalsEnabledTask, Phase.PRE_START, Phase.POST_STOP );
 
 		terminalsEnabled = canvas.isRunning();
 	}
@@ -270,7 +265,7 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 	@Override
 	public void release()
 	{
-		BeanInjector.getBean( TestRunner.class ).unregisterTask( terminalsEnabledTask, Phase.values() );
+		testRunner.unregisterTask( terminalsEnabledTask, Phase.values() );
 
 		context.clearEventListeners();
 
@@ -1047,6 +1042,7 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 			case POST_STOP :
 				terminalsEnabled = false;
 				break;
+			default: break;
 			}
 		}
 	}

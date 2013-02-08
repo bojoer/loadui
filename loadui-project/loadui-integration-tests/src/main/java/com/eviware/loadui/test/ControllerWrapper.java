@@ -24,10 +24,16 @@ import java.util.TreeSet;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
+import org.osgi.framework.ServiceEvent;
+import org.osgi.framework.ServiceListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.LoadUI;
+import com.eviware.loadui.util.BeanInjector;
 
 /**
  * An embedded headless loadUI Controller which can be used for testing. All
@@ -39,6 +45,8 @@ import com.eviware.loadui.LoadUI;
  */
 public class ControllerWrapper
 {
+	private static final Logger log = LoggerFactory.getLogger( ControllerWrapper.class );
+
 	private final File baseDir = new File( "target/controllerTest" );
 	private final File homeDir = new File( baseDir, ".loadui" );
 	private final OSGiLauncher launcher;
@@ -62,13 +70,6 @@ public class ControllerWrapper
 		File bundleDir = new File( baseDir, "bundle" );
 		IntegrationTestUtils.copyDirectory( new File( "../loadui-controller-deps/target/bundle" ), bundleDir );
 		IntegrationTestUtils.copyDirectory( new File( "target/bundle" ), bundleDir );
-
-		// osgi = new OSGiWrapper();
-		// Properties config = osgi.getConfig();
-		// config.setProperty( "felix.cache.rootdir", baseDir.getAbsolutePath() );
-		// File bundleDir = new File( baseDir, "bundle" );
-		// Utilities.copyDirectory( new File(
-		// "../loadui-controller-deps/target/bundle" ), bundleDir );
 
 		// Remove bundles depending on JavaFX and the API bundle.
 		for( File bundle : bundleDir.listFiles() )
@@ -114,6 +115,16 @@ public class ControllerWrapper
 
 		launcher.init();
 		launcher.start();
+
+		Bundle[] bundles = launcher.getBundleContext().getBundles();
+		log.debug( "Launcher BundleContext has a total of " + bundles.length + " bundles in it" );
+		for( Bundle b : bundles )
+		{
+			log.debug( "Bundle " + b.getSymbolicName() + " - state " + b.getState() );
+		}
+		
+		BeanInjector.reset();
+		BeanInjector.setBundleContext( launcher.getBundleContext() );
 		context = launcher.getBundleContext();
 	}
 

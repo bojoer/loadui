@@ -24,12 +24,28 @@ import com.eviware.loadui.api.addressable.AddressableRegistry;
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.config.LoaduiSceneDocumentConfig;
-import com.eviware.loadui.impl.model.SceneItemImpl;
-import com.eviware.loadui.util.BeanInjector;
+import com.eviware.loadui.impl.model.ModelItemFactory;
 import com.eviware.loadui.util.StringUtils;
 
 public class StringToSceneItemConverter implements Converter<String, SceneItem>
 {
+
+	private ModelItemFactory modelItemFactory;
+	private AddressableRegistry addressableRegistry;
+
+	
+	public void setModelItemFactory( ModelItemFactory modelItemFactory )
+	{
+		this.modelItemFactory = modelItemFactory;
+	}
+
+
+	public void setAddressableRegistry( AddressableRegistry addressableRegistry )
+	{
+		this.addressableRegistry = addressableRegistry;
+	}
+
+
 	@Override
 	public SceneItem convert( String source )
 	{
@@ -38,8 +54,7 @@ public class StringToSceneItemConverter implements Converter<String, SceneItem>
 			List<String> parts = StringUtils.deserialize( source );
 			LoaduiSceneDocumentConfig doc = LoaduiSceneDocumentConfig.Factory.parse( parts.get( 0 ) );
 
-			return SceneItemImpl.newInstance(
-					( ProjectItem )BeanInjector.getBean( AddressableRegistry.class ).lookup( parts.get( 1 ) ),
+			return modelItemFactory.createSceneItemImpl( ( ProjectItem )addressableRegistry.lookup( parts.get( 1 ) ),
 					doc.getLoaduiScene() );
 		}
 		catch( XmlException e )

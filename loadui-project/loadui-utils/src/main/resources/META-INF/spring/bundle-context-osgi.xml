@@ -5,4 +5,5 @@
                       http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi-1.0.xsd">
 	
 	<osgi:service ref="messageTestEventFactory" interface="com.eviware.loadui.api.testevents.TestEvent$Factory" />
+	
 </beans>

@@ -1,8 +1,5 @@
 package com.eviware.loadui.ui.fx.views.workspace;
 
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -63,7 +60,7 @@ public class CreateNewAgentDialog extends ConfirmationDialog
 	{
 		try
 		{
-			AgentDiscovery discovery = BeanInjector.getBeanFuture( AgentDiscovery.class ).get( 100, TimeUnit.MILLISECONDS );
+			AgentDiscovery discovery = BeanInjector.getBean( AgentDiscovery.class, 100 );
 			Iterable<AgentReference> newAgents = Iterables.filter( discovery.getDiscoveredAgents(),
 					new Predicate<AgentReference>()
 					{
@@ -113,7 +110,7 @@ public class CreateNewAgentDialog extends ConfirmationDialog
 												.children( Lists.newArrayList( agentCheckBoxes ) ).build() ).build() );
 			}
 		}
-		catch( InterruptedException | ExecutionException | TimeoutException e )
+		catch( RuntimeException e )
 		{
 			// Ignore failure.
 		}

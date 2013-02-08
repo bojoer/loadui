@@ -6,6 +6,9 @@
 	<bean id="commandRunner" class="com.eviware.loadui.cmd.CommandRunner"
 		destroy-method="destroy">
 		<constructor-arg ref="workspaceProvider" />
+		<constructor-arg ref="ctxAware" />
 	</bean>
+	
+	<bean id="ctxAware" class="com.eviware.loadui.cmd.LoaduiBundleContextAware" />
 
 </beans>

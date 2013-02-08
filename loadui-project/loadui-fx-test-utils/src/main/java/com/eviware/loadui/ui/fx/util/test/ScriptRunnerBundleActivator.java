@@ -47,8 +47,8 @@ public class ScriptRunnerBundleActivator implements BundleActivator
 			{
 				try
 				{
-					Stage stage = BeanInjector.getBeanFuture( Stage.class ).get();
-					final WorkspaceProvider workspaceProvider = BeanInjector.getBeanFuture( WorkspaceProvider.class ).get();
+					Stage stage = BeanInjector.getBean( Stage.class );
+					final WorkspaceProvider workspaceProvider = BeanInjector.getBean( WorkspaceProvider.class );
 					TestUtils.awaitCondition( new Callable<Boolean>()
 					{
 						@Override

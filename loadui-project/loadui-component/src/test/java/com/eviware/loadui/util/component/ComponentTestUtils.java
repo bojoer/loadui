@@ -26,21 +26,30 @@ import org.springframework.core.convert.support.DefaultConversionService;
 import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.addressable.AddressableRegistry;
 import com.eviware.loadui.api.component.ComponentBehavior;
+import com.eviware.loadui.api.component.ComponentRegistry;
 import com.eviware.loadui.api.counter.Counter;
+import com.eviware.loadui.api.counter.CounterSynchronizer;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.TerminalConnectionEvent;
 import com.eviware.loadui.api.events.TerminalMessageEvent;
+import com.eviware.loadui.api.execution.TestRunner;
+import com.eviware.loadui.api.messaging.BroadcastMessageEndpoint;
+import com.eviware.loadui.api.messaging.MessageEndpointProvider;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.WorkspaceItem;
+import com.eviware.loadui.api.property.PropertySynchronizer;
 import com.eviware.loadui.api.terminal.Connection;
 import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.api.terminal.TerminalMessage;
+import com.eviware.loadui.config.CanvasItemConfig;
 import com.eviware.loadui.config.ComponentItemConfig;
 import com.eviware.loadui.impl.addressable.AddressableRegistryImpl;
 import com.eviware.loadui.impl.counter.CounterSupport;
+import com.eviware.loadui.impl.model.CanvasItemImpl;
 import com.eviware.loadui.impl.model.ComponentItemImpl;
+import com.eviware.loadui.impl.model.ModelItemFactory;
 import com.eviware.loadui.impl.terminal.ConnectionBase;
 import com.eviware.loadui.impl.terminal.OutputTerminalImpl;
 import com.eviware.loadui.impl.terminal.TerminalMessageImpl;
@@ -101,7 +110,34 @@ public class ComponentTestUtils
 				} );
 		when( ( Collection )project.getConnections() ).thenReturn( connections );
 
-		ComponentItemImpl component = ComponentItemImpl.newInstance( project, ComponentItemConfig.Factory.newInstance() );
+		AddressableRegistry ar = mock( AddressableRegistry.class );
+		CanvasItemImpl<CanvasItemConfig> canvas = mock( CanvasItemImpl.class );
+		BroadcastMessageEndpoint bcmep = mock( BroadcastMessageEndpoint.class );
+		ComponentRegistry cr = mock( ComponentRegistry.class );
+		ConversionService cs = mock( ConversionService.class );
+		CounterSynchronizer counterSync = mock( CounterSynchronizer.class );
+		MessageEndpointProvider mepp = mock( MessageEndpointProvider.class );
+		PropertySynchronizer propSync = mock( PropertySynchronizer.class );
+		ScheduledExecutorService es = mock( ScheduledExecutorService.class );
+		TestRunner tr = mock( TestRunner.class );
+
+		ModelItemFactory factory = new ModelItemFactory();
+		factory.setAddressableRegistry( ar );
+		factory.setBroadCastMessageEndPoint( bcmep );
+		factory.setComponentRegistry( cr );
+		factory.setConversionService( cs );
+		factory.setCounterSynchronizer( counterSync );
+		factory.setMessageEndpointProvider( mepp );
+		factory.setPropertySynchronizer( propSync );
+		factory.setScheduledExecutorService( es );
+		factory.setTestRunner( tr );
+
+		ComponentItemConfig config = mock( ComponentItemConfig.class );
+
+		//FIXME mock necessary methods
+		factory.createComponentItemImpl( canvas, config );
+
+		ComponentItemImpl component = factory.createComponentItemImpl( canvas, config );
 		return component;
 	}
 

@@ -52,11 +52,15 @@ public final class ProjectRefImpl implements ProjectRef, Releasable
 	// not save the enabled state as true, ever.
 	private boolean enabled = false;
 	private boolean released = false;
+	
+	private final ModelItemFactory modelItemFactory;
 
-	public ProjectRefImpl( WorkspaceItemImpl workspace, ProjectReferenceConfig config ) throws IOException
+	ProjectRefImpl( WorkspaceItemImpl workspace, ProjectReferenceConfig config,
+			ModelItemFactory modelItemFactory ) throws IOException
 	{
 		this.workspace = workspace;
 		this.config = config;
+		this.modelItemFactory = modelItemFactory;
 		if( config.getAttributes() == null )
 			config.addNewAttributes();
 
@@ -160,7 +164,7 @@ public final class ProjectRefImpl implements ProjectRef, Releasable
 
 		try
 		{
-			project = ProjectItemImpl.loadProject( workspace, projectFile );
+			project = modelItemFactory.loadProject( workspace, projectFile );
 			doSetLabel( project.getLabel() );
 			config.setProjectId( project.getId() );
 			project.addEventListener( BaseEvent.class, projectListener );

@@ -41,6 +41,7 @@
 							<includeScope>compile</includeScope>
 							<excludeTransitive>true</excludeTransitive>
 							<excludeGroupIds>com.oracle,com.google.code.findbugs,org.slf4j</excludeGroupIds>
+							<excludeArtifactIds>loadui-api</excludeArtifactIds>
 							<outputDirectory>${basedir}/target/lib</outputDirectory>
 						</configuration>
 					</execution>
@@ -79,6 +80,11 @@
 		</profile>
 	</profiles>
 	<dependencies>
+		<dependency>
+			<groupId>com.eviware.loadui</groupId>
+			<artifactId>loadui-api</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.apache.felix</groupId>
 			<artifactId>org.apache.felix.main</artifactId>

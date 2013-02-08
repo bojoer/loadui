@@ -35,7 +35,6 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
 
 import javafx.application.Application;
 
@@ -300,7 +299,7 @@ public class LoadUILauncher
 
 			if( nofx )
 			{
-				startAllNonFxBundles();
+				startBundles();
 			}
 
 			loadExternalJarsAsBundles();
@@ -311,17 +310,15 @@ public class LoadUILauncher
 		}
 	}
 
-	private void startAllNonFxBundles()
+	private void startBundles()
 	{
-		Pattern fxPattern = Pattern.compile( "^com\\.eviware\\.loadui\\.(\\w+[.-])*(fx-interface).*$" );
 		for( Bundle bundle : framework.getBundleContext().getBundles() )
 		{
-			String bundleName = bundle.getSymbolicName();
-			if( bundle.getHeaders().get( Constants.FRAGMENT_HOST ) == null
-					&& ( bundleName == null || !fxPattern.matcher( bundleName ).find() ) )
+			if( bundle.getHeaders().get( Constants.FRAGMENT_HOST ) == null ) // do not start fragments
 			{
 				try
 				{
+					log.info( "Starting bundle " + bundle.getSymbolicName() );
 					bundle.start();
 				}
 				catch( Exception e )
@@ -348,6 +345,7 @@ public class LoadUILauncher
 			{
 				try
 				{
+					log.info( "Wrapping external JAR into OSGi bundle: " + ext.getName() );
 					File tmpFile = File.createTempFile( ext.getName(), ".jar" );
 					BndUtils.wrap( ext, tmpFile );
 					framework.getBundleContext().installBundle( tmpFile.toURI().toString() ).start();

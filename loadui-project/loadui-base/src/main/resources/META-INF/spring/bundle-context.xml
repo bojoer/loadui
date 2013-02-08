@@ -3,9 +3,6 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-	<!-- <bean id="beanInjectorContextSetter" class="com.eviware.loadui.util.BeanInjector$ContextSetter" 
-		/> -->
-
 	<bean id="addressableRegistry"
 		class="com.eviware.loadui.impl.addressable.AddressableRegistryImpl" />
 
@@ -17,7 +14,7 @@
 
 	<bean id="executorManager" class="com.eviware.loadui.impl.dispatch.ExecutorManagerImpl"
 		destroy-method="shutdown">
-		<constructor-arg ref="workspaceProvider" />
+		<property name="workspaceProvider" ref="workspaceProvider" />
 	</bean>
 
 	<bean id="executorService" factory-bean="executorManager"
@@ -29,6 +26,18 @@
 		<constructor-arg ref="executorService" />
 		<constructor-arg ref="conversionService" />
 	</bean>
+	
+	<bean id="modelItemFactory" class="com.eviware.loadui.impl.model.ModelItemFactory">
+		<property name="addressableRegistry" ref="addressableRegistry" />
+		<property name="conversionService" ref="conversionService" />
+		<property name="broadCastMessageEndPoint" ref="broadCastMessageEndPoint" />
+		<property name="messageEndpointProvider" ref="messageEndpointProvider" />
+		<property name="scheduledExecutorService" ref="scheduledExecutorService" />
+		<property name="componentRegistry" ref="componentRegistry" />
+		<property name="testRunner" ref="testRunner" />
+		<property name="counterSynchronizer" ref="counterSynchronizer" />
+		<property name="propertySynchronizer" ref="propertySynchronizer" />
+	</bean>
 
 	<bean id="counterSynchronizer" class="com.eviware.loadui.impl.counter.CounterSynchronizerImpl" />
 
@@ -39,7 +48,10 @@
 				<bean
 					class="com.eviware.loadui.impl.conversion.SceneItemImplToStringConverter" />
 				<bean
-					class="com.eviware.loadui.impl.conversion.StringToSceneItemConverter" />
+					class="com.eviware.loadui.impl.conversion.StringToSceneItemConverter">
+					<property name="modelItemFactory" ref="modelItemFactory" />
+					<property name="addressableRegistry" ref="addressableRegistry" />
+				</bean>
 				<bean
 					class="com.eviware.loadui.impl.conversion.ComponentItemImplToStringConverter" />
 				<bean
@@ -64,7 +76,7 @@
 		class="com.eviware.loadui.util.messaging.BroadcastMessageEndpointImpl" />
 
 	<bean id="workspaceProvider" class="com.eviware.loadui.impl.model.WorkspaceProviderImpl">
-		<constructor-arg ref="addonRegistry" />
+		<constructor-arg ref="modelItemFactory" />
 	</bean>
 
 	<bean id="componentRegistry" name="behaviorProvider"

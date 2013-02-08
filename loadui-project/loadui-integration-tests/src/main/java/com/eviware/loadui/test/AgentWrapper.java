@@ -49,7 +49,6 @@ public class AgentWrapper
 		//config.setProperty( "felix.auto.deploy.dir", new File( "../loadui-agent-deps/target/bundle" ).getAbsolutePath() );
 
 		File bundleDir = new File( baseDir, "bundle" );
-		IntegrationTestUtils.copyDirectory( new File( "../loadui-agent-deps/target/bundle" ), bundleDir );
 		IntegrationTestUtils.copyDirectory( new File( "target/bundle" ), bundleDir );
 
 		//Add the required packages that should be in the OSGi config file.
@@ -58,6 +57,7 @@ public class AgentWrapper
 				"com.sun.crypto.provider,com.sun.net.ssl,com.sun.net.ssl.internal.ssl,org.w3c.dom.traversal,javax.transaction.xa;version=1.1.0" );
 		launcher.init();
 		launcher.start();
+		
 		context = launcher.getBundleContext();
 
 	}

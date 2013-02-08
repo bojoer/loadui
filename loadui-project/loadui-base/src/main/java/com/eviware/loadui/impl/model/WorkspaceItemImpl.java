@@ -21,11 +21,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
-import org.apache.xmlbeans.XmlException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.convert.ConversionService;
 
 import com.eviware.loadui.LoadUI;
+import com.eviware.loadui.api.addressable.AddressableRegistry;
 import com.eviware.loadui.api.discovery.AgentDiscovery.AgentReference;
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.CollectionEvent;
@@ -62,21 +63,13 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 	private final AgentListener agentListener = new AgentListener();
 	private final Property<Boolean> localMode;
 	private final Property<Long> numberOfAutosaves;
+	private ModelItemFactory modelItemFactory;
 
-	public static WorkspaceItemImpl loadWorkspace( File workspaceFile ) throws XmlException, IOException
+	WorkspaceItemImpl( File workspaceFile, LoaduiWorkspaceDocumentConfig doc, AddressableRegistry addressableRegistry,
+			ConversionService conversionService )
 	{
-		WorkspaceItemImpl object = new WorkspaceItemImpl( workspaceFile,
-				workspaceFile.exists() ? LoaduiWorkspaceDocumentConfig.Factory.parse( workspaceFile )
-						: LoaduiWorkspaceDocumentConfig.Factory.newInstance() );
-		object.init();
-		object.postInit();
-
-		return object;
-	}
-
-	private WorkspaceItemImpl( File workspaceFile, LoaduiWorkspaceDocumentConfig doc )
-	{
-		super( doc.getLoaduiWorkspace() == null ? doc.addNewLoaduiWorkspace() : doc.getLoaduiWorkspace() );
+		super( doc.getLoaduiWorkspace() == null ? doc.addNewLoaduiWorkspace() : doc.getLoaduiWorkspace(),
+				addressableRegistry, conversionService );
 
 		projectList = CollectionEventSupport.of( this, PROJECT_REFS );
 		agentList = CollectionEventSupport.of( this, AGENTS );
@@ -107,7 +100,7 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 		{
 			for( AgentItemConfig agentConfig : getConfig().getAgentList() )
 			{
-				AgentItemImpl agent = AgentItemImpl.newInstance( this, agentConfig );
+				AgentItemImpl agent = modelItemFactory.createAgentItemImpl( this, agentConfig );
 				agent.addEventListener( BaseEvent.class, agentListener );
 				agentList.addItem( agent );
 			}
@@ -117,7 +110,7 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 		{
 			try
 			{
-				projectList.addItem( new ProjectRefImpl( this, projectRefConfig ) );
+				projectList.addItem( modelItemFactory.createProjectRefImpl( this, projectRefConfig ) );
 			}
 			catch( IOException e )
 			{
@@ -126,6 +119,11 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 		}
 
 		log.info( "Workspace '{}' loaded successfully", this );
+	}
+	
+	void setModelItemFactory( ModelItemFactory modelItemFactory )
+	{
+		this.modelItemFactory = modelItemFactory;
 	}
 
 	@Override
@@ -199,7 +197,7 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 		ProjectRefImpl ref;
 		try
 		{
-			ref = new ProjectRefImpl( this, projectRefConfig );
+			ref = modelItemFactory.createProjectRefImpl( this, projectRefConfig );
 			ref.setEnabled( true );
 			projectList.addItem( ref );
 			ref.setEnabled( enabled );
@@ -225,7 +223,7 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 		AgentItemConfig agentConfig = getConfig().addNewAgent();
 		agentConfig.setUrl( url );
 		agentConfig.setLabel( label );
-		AgentItemImpl agent = AgentItemImpl.newInstance( this, agentConfig );
+		AgentItemImpl agent = modelItemFactory.createAgentItemImpl( this, agentConfig );
 		agent.addEventListener( BaseEvent.class, agentListener );
 		agentList.addItem( agent );
 		return agent;
@@ -238,7 +236,7 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 		agentConfig.setUrl( ref.getUrl() );
 		agentConfig.setId( ref.getId() );
 		agentConfig.setLabel( label );
-		AgentItemImpl agent = AgentItemImpl.newInstance( this, agentConfig );
+		AgentItemImpl agent = modelItemFactory.createAgentItemImpl( this, agentConfig );
 		agent.addEventListener( BaseEvent.class, agentListener );
 		agentList.addItem( agent );
 		return agent;

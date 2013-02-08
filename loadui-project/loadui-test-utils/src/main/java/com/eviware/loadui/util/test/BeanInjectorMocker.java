@@ -88,7 +88,7 @@ public class BeanInjectorMocker
 	{
 		final BundleContext contextMock = mock( BundleContext.class );
 		BeanInjector.setBundleContext( contextMock );
-		BeanInjector.INSTANCE.clearCache();
+		BeanInjector.reset();
 
 		//TODO: We can't use generics here until the OSGi jars stop using compilation flags that are not compatible with Java7.
 		when( contextMock.getServiceReference( any( Class.class ) ) ).thenAnswer( new Answer<ServiceReference>()

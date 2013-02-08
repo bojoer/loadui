@@ -17,7 +17,7 @@ package com.eviware.loadui.launcher.impl;
 
 import java.util.Map;
 
-import com.eviware.loadui.launcher.api.GroovyCommand;
+import com.eviware.loadui.api.groovy.GroovyCommand;
 
 public abstract class AbstractGroovyCommand implements GroovyCommand
 {

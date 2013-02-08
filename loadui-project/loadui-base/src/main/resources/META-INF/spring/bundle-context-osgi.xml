@@ -2,7 +2,8 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-                      http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd">
+                      http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd"
+    osgi:default-timeout="2000" >
 
 	<osgi:reference
 		interface="com.eviware.loadui.api.messaging.MessageEndpointProvider"
@@ -11,6 +12,9 @@
 	<osgi:reference
 		interface="com.eviware.loadui.api.statistics.store.ExecutionManager"
 		id="executionManager" cardinality="0..1" />
+
+	<osgi:reference
+		interface="com.eviware.loadui.api.execution.TestRunner" id="testRunner" cardinality="0..1" />
 
 	<osgi:service
 		interface="com.eviware.loadui.api.messaging.BroadcastMessageEndpoint"

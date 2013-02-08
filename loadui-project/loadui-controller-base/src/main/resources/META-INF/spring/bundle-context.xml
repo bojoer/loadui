@@ -3,9 +3,9 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 	
-	<bean id="controllerTest" class="com.eviware.loadui.controller.ControllerTest" init-method="init">
-		<constructor-arg ref="workspaceProvider" />
-		<constructor-arg ref="componentRegistry" />
+	<bean id="controllerTest" class="com.eviware.loadui.controller.ControllerTest" init-method="init" lazy-init="true" >
+		<property name="workspaceProvider" ref="workspaceProvider" />
+		<property name="componentRegistry" ref="componentRegistry" />
 	</bean>
 	
 	<bean id="testRunner" class="com.eviware.loadui.impl.execution.TestRunnerImpl">
@@ -25,10 +25,10 @@
 	</bean>
 	
 	<bean id="projectExecutionManager"
-		class="com.eviware.loadui.impl.statistics.ProjectExecutionManagerImpl">
-		<constructor-arg ref="executionManager" />
-		<constructor-arg ref="workspaceProvider" />
-		<constructor-arg ref="reportingManager" />
+		class="com.eviware.loadui.impl.statistics.ProjectExecutionManagerImpl" init-method="init">
+		<property name="executionManager" ref="executionManager" />
+		<property name="workspaceProvider" ref="workspaceProvider" />
+		<property name="reportingManager" ref="reportingManager" />
 	</bean>
 	
 	<bean id="agentTestExecutionAddonFactory" class="com.eviware.loadui.impl.execution.AgentTestExecutionAddon$Factory" />

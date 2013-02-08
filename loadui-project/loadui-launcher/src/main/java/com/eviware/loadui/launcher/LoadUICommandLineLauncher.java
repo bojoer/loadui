@@ -17,7 +17,7 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 
-import com.eviware.loadui.launcher.api.GroovyCommand;
+import com.eviware.loadui.api.groovy.GroovyCommand;
 import com.eviware.loadui.launcher.impl.FileGroovyCommand;
 import com.eviware.loadui.launcher.impl.ResourceGroovyCommand;
 

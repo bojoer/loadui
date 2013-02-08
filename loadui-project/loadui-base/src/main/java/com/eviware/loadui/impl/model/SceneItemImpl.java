@@ -22,15 +22,19 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ScheduledExecutorService;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.convert.ConversionService;
 
 import com.eviware.loadui.LoadUI;
+import com.eviware.loadui.api.addressable.AddressableRegistry;
 import com.eviware.loadui.api.component.ComponentContext;
+import com.eviware.loadui.api.component.ComponentRegistry;
 import com.eviware.loadui.api.component.categories.OnOffCategory;
 import com.eviware.loadui.api.component.categories.SchedulerCategory;
 import com.eviware.loadui.api.counter.CounterSynchronizer;
@@ -45,6 +49,7 @@ import com.eviware.loadui.api.events.TerminalEvent;
 import com.eviware.loadui.api.events.TerminalMessageEvent;
 import com.eviware.loadui.api.execution.Phase;
 import com.eviware.loadui.api.execution.TestExecution;
+import com.eviware.loadui.api.execution.TestRunner;
 import com.eviware.loadui.api.messaging.MessageEndpoint;
 import com.eviware.loadui.api.messaging.SceneCommunication;
 import com.eviware.loadui.api.model.AgentItem;
@@ -72,22 +77,11 @@ import com.eviware.loadui.impl.summary.sections.TestCaseExecutionNotablesSection
 import com.eviware.loadui.impl.terminal.ConnectionImpl;
 import com.eviware.loadui.impl.terminal.InputTerminalImpl;
 import com.eviware.loadui.impl.terminal.TerminalHolderSupport;
-import com.eviware.loadui.util.BeanInjector;
 import com.google.common.collect.ImmutableList;
 
 public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements SceneItem
 {
 	private static final Logger log = LoggerFactory.getLogger( CanvasItemImpl.class );
-
-	public static SceneItemImpl newInstance( ProjectItem project, SceneItemConfig config )
-	{
-		log.debug( "Got project: " + project );
-		SceneItemImpl object = new SceneItemImpl( project, config );
-		object.init();
-		object.postInit();
-
-		return object;
-	}
 
 	private final static String INCREMENT_VERSION = "incrementVersion";
 
@@ -108,10 +102,13 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 
 	private final Property<Boolean> followProject;
 
-	private SceneItemImpl( @Nonnull ProjectItem project, SceneItemConfig config )
+	SceneItemImpl( @Nonnull ProjectItem project, SceneItemConfig config, AddressableRegistry addressableRegistry,
+			ConversionService conversionService, ScheduledExecutorService scheduler, ComponentRegistry componentRegistry,
+			TestRunner testRunner, CounterSynchronizer counterSynchronizer, ModelItemFactory modelItemFactory )
 	{
-		super( config, LoadUI.isController() ? new RemoteAggregatedCounterSupport(
-				BeanInjector.getBean( CounterSynchronizer.class ) ) : new AggregatedCounterSupport() );
+		super( config, addressableRegistry, conversionService,
+				LoadUI.isController() ? new RemoteAggregatedCounterSupport( counterSynchronizer )
+						: new AggregatedCounterSupport(), scheduler, componentRegistry, testRunner, modelItemFactory );
 		this.project = project;
 		version = getConfig().getVersion().longValue();
 

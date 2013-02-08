@@ -12,19 +12,19 @@ import org.junit.experimental.categories.Category;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.test.categories.IntegrationTest;
 
-@Category( IntegrationTest.class )
+//@Category( IntegrationTest.class )
 public class WorkspaceLoadedStateTest
 {
 	private WorkspaceItem workspace;
 
-	@Before
+	//@Before
 	public void enterState()
 	{
 		WorkspaceLoadedState.STATE.enter();
 		workspace = WorkspaceLoadedState.STATE.getWorkspace();
 	}
 
-	@Test
+	//@Test
 	public void shouldHaveWorkspace()
 	{
 		assertThat( workspace, notNullValue() );

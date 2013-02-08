@@ -35,18 +35,25 @@ public class ControllerTest
 {
 	public final static Logger log = LoggerFactory.getLogger( ControllerTest.class );
 
-	private final WorkspaceProvider workspaceProvider;
-	private final ComponentRegistry componentRegistry;
+	private WorkspaceProvider workspaceProvider;
+	private ComponentRegistry componentRegistry;
 
-	public ControllerTest( WorkspaceProvider workspaceProvider, ComponentRegistry componentRegistry )
+	public ControllerTest()
 	{
 		log.debug( "ControllerTest started!" );
+	}
+	
+	public void setWorkspaceProvider(WorkspaceProvider workspaceProvider) {
 		this.workspaceProvider = workspaceProvider;
+	}
+	
+	public void setComponentRegistry(ComponentRegistry componentRegistry) {
 		this.componentRegistry = componentRegistry;
 	}
 
 	public void init()
 	{
+		log.info( "Initializing ControllerTest" );
 		new Thread( new Runnable()
 		{
 			@Override

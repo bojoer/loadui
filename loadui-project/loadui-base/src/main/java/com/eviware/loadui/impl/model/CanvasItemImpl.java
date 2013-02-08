@@ -32,8 +32,10 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.convert.ConversionService;
 
 import com.eviware.loadui.LoadUI;
+import com.eviware.loadui.api.addressable.AddressableRegistry;
 import com.eviware.loadui.api.component.ComponentCreationException;
 import com.eviware.loadui.api.component.ComponentDescriptor;
 import com.eviware.loadui.api.component.ComponentRegistry;
@@ -70,7 +72,6 @@ import com.eviware.loadui.impl.statistics.CounterStatisticsWriter;
 import com.eviware.loadui.impl.statistics.StatisticHolderSupport;
 import com.eviware.loadui.impl.summary.MutableSummaryImpl;
 import com.eviware.loadui.impl.terminal.ConnectionImpl;
-import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.collections.CollectionEventSupport;
 import com.eviware.loadui.util.events.EventFuture;
@@ -97,7 +98,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 	private final ComponentRegistry componentRegistry;
 	protected final ScheduledExecutorService scheduler;
 	protected final Counter timerCounter = new TimerCounter();
-	protected final TestRunner testRunner = BeanInjector.getBean( TestRunner.class );
+	protected final TestRunner testRunner;
 	private ScheduledFuture<?> timerFuture;
 	private ScheduledFuture<?> timeLimitFuture;
 	private long time = 0;
@@ -123,17 +124,21 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 
 	private final StatisticHolderSupport statisticHolderSupport;
 	private final CounterStatisticSupport counterStatisticSupport;
+	private final ModelItemFactory modelItemFactory;
 
-	public CanvasItemImpl( Config config, CounterSupport counterSupport )
+	CanvasItemImpl( Config config, AddressableRegistry addressableRegistry, ConversionService conversionService,
+			CounterSupport counterSupport, ScheduledExecutorService scheduler, ComponentRegistry componentRegistry,
+			TestRunner testRunner, ModelItemFactory modelItemFactory )
 	{
-		super( config );
+		super( config, addressableRegistry, conversionService );
 
 		lastSavedHash = DigestUtils.md5Hex( config.xmlText() );
 
 		this.counterSupport = counterSupport;
-
-		scheduler = BeanInjector.getBean( ScheduledExecutorService.class );
-		componentRegistry = BeanInjector.getBean( ComponentRegistry.class );
+		this.scheduler = scheduler;
+		this.componentRegistry = componentRegistry;
+		this.testRunner = testRunner;
+		this.modelItemFactory = modelItemFactory;
 
 		componentList = CollectionEventSupport.of( this, COMPONENTS );
 		connectionList = CollectionEventSupport.of( this, CONNECTIONS );
@@ -297,7 +302,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 		ComponentItemConfig config = getConfig().addNewComponent();
 		config.setType( descriptor.getType() );
 		config.setLabel( label );
-		ComponentItemImpl component = ComponentItemImpl.newInstance( this, config );
+		ComponentItemImpl component = modelItemFactory.createComponentItemImpl( this, config );
 		component.setAttribute( ComponentItem.TYPE, descriptor.getLabel() );
 		if( descriptor.getHelpUrl() != null )
 			component.getContext().setHelpUrl( descriptor.getHelpUrl() );
@@ -323,7 +328,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 
 	private ComponentItemImpl loadComponent( ComponentItemConfig config ) throws ComponentCreationException
 	{
-		final ComponentItemImpl component = ComponentItemImpl.newInstance( this, config );
+		final ComponentItemImpl component = modelItemFactory.createComponentItemImpl( this, config );
 		try
 		{
 			component.setBehavior( componentRegistry.loadBehavior( config.getType(), component.getContext() ) );
@@ -827,6 +832,8 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 				if( timerFuture != null )
 					timerFuture.cancel( true );
 				setRunning( false );
+				break;
+			default :
 				break;
 			}
 		}

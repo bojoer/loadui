@@ -24,7 +24,6 @@ import javax.annotation.OverridingMethodsMustInvokeSuper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.convert.ConversionService;
-import org.springframework.osgi.io.internal.OsgiUtils;
 
 import com.eviware.loadui.api.addon.Addon;
 import com.eviware.loadui.api.addressable.AddressableRegistry;
@@ -41,7 +40,6 @@ import com.eviware.loadui.config.ModelItemConfig;
 import com.eviware.loadui.impl.addon.AddonHolderSupportImpl;
 import com.eviware.loadui.impl.property.AttributeHolderSupport;
 import com.eviware.loadui.impl.property.PropertyMapImpl;
-import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.events.EventSupport;
 import com.google.common.base.Objects;
@@ -65,11 +63,11 @@ public abstract class ModelItemImpl<Config extends ModelItemConfig> implements M
 	protected final AddressableRegistry addressableRegistry;
 	private final AddonHolderSupportImpl addonSupport;
 
-	ModelItemImpl( @Nonnull Config config )
+	ModelItemImpl( @Nonnull Config config, AddressableRegistry registry, ConversionService conversionService )
 	{
 		this.config = config;
 
-		addressableRegistry = BeanInjector.getBean( AddressableRegistry.class );
+		addressableRegistry = registry;
 		if( !config.isSetId() )
 			config.setId( addressableRegistry.generateId() );
 
@@ -77,7 +75,7 @@ public abstract class ModelItemImpl<Config extends ModelItemConfig> implements M
 
 		label = config.getLabel();
 
-		properties = new PropertyMapImpl( this, BeanInjector.getBean( ConversionService.class ),
+		properties = new PropertyMapImpl( this, conversionService,
 				config.getProperties() == null ? config.addNewProperties() : config.getProperties() );
 
 		attributeHolderSupport = new AttributeHolderSupport( config.getAttributes() == null ? config.addNewAttributes()

@@ -18,6 +18,7 @@
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
+						<Export-Package></Export-Package>
 						<Import-Package>!com.eviware.loadui.cmd;*</Import-Package>
 					</instructions>
 				</configuration>
@@ -31,15 +32,19 @@
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>org.springframework.osgi</groupId>
+			<artifactId>spring-osgi-core</artifactId>
+			<version>1.2.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.osgi</groupId>
+			<artifactId>org.osgi.core</artifactId>
+			<version>${osgiVersion}</version>
+		</dependency>
+		<dependency>
 			<groupId>org.codehaus.groovy</groupId>
 			<artifactId>groovy-all</artifactId>
 			<version>${groovyVersion}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.eviware.loadui</groupId>
-			<artifactId>loadui-launcher</artifactId>
-			<version>${project.parent.version}</version>
-			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 </project>

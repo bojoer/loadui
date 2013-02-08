@@ -60,22 +60,34 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager, Rel
 {
 	private static Logger log = LoggerFactory.getLogger( ProjectExecutionManagerImpl.class );
 
-	private final ExecutionManager executionManager;
-	private final WorkspaceProvider workspaceProvider;
-	private final ReportingManager reportingManager;
+	private ExecutionManager executionManager;
+	private WorkspaceProvider workspaceProvider;
+	private ReportingManager reportingManager;
 	private final SetMultimap<String, Execution> projectIdToExecutions = HashMultimap.create();
 	private final Set<SummaryTask> summaryAttachers = new HashSet<>();
 	private final WorkspaceProviderListener workspaceProviderListener = new WorkspaceProviderListener();
 	private final CollectionListener collectionListener = new CollectionListener();
 	private final RunningExecutionTask runningExecutionTask = new RunningExecutionTask();
-
-	ProjectExecutionManagerImpl( final ExecutionManager executionManager, final WorkspaceProvider workspaceProvider,
-			final ReportingManager reportingManager )
+	
+	public void setExecutionManager( ExecutionManager executionManager )
 	{
 		this.executionManager = executionManager;
-		this.workspaceProvider = workspaceProvider;
-		this.reportingManager = reportingManager;
+	}
 
+	public void setWorkspaceProvider( WorkspaceProvider workspaceProvider )
+	{
+		this.workspaceProvider = workspaceProvider;
+	}
+
+	public void setReportingManager( ReportingManager reportingManager )
+	{
+		this.reportingManager = reportingManager;
+	}
+
+
+	public void init()
+	{
+		
 		workspaceProvider.addEventListener( BaseEvent.class, workspaceProviderListener );
 
 		if( workspaceProvider.isWorkspaceLoaded() )

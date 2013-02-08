@@ -25,8 +25,10 @@ import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.convert.ConversionService;
 
 import com.eviware.loadui.LoadUI;
+import com.eviware.loadui.api.addressable.AddressableRegistry;
 import com.eviware.loadui.api.messaging.BroadcastMessageEndpoint;
 import com.eviware.loadui.api.messaging.ConnectionListener;
 import com.eviware.loadui.api.messaging.MessageEndpoint;
@@ -36,7 +38,6 @@ import com.eviware.loadui.api.messaging.VersionMismatchException;
 import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.config.AgentItemConfig;
-import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.messaging.MessageEndpointSupport;
 import com.google.common.collect.ImmutableMap;
@@ -44,15 +45,6 @@ import com.google.common.collect.ImmutableMap;
 public final class AgentItemImpl extends ModelItemImpl<AgentItemConfig> implements AgentItem
 {
 	private static final Logger log = LoggerFactory.getLogger( AgentItemImpl.class );
-
-	public static AgentItemImpl newInstance( WorkspaceItem workspace, AgentItemConfig config )
-	{
-		AgentItemImpl object = new AgentItemImpl( workspace, config );
-		object.init();
-		object.postInit();
-
-		return object;
-	}
 
 	private final WorkspaceItem workspace;
 	private final MessageEndpointProvider provider;
@@ -65,13 +57,15 @@ public final class AgentItemImpl extends ModelItemImpl<AgentItemConfig> implemen
 	private long timeDiff = 0;
 	private long fastestTimeCheck = Long.MAX_VALUE;
 
-	private AgentItemImpl( WorkspaceItem workspace, AgentItemConfig config )
+	AgentItemImpl( AgentItemConfig config, AddressableRegistry addressableRegistry, ConversionService conversionService,
+			WorkspaceItem workspace, BroadcastMessageEndpoint brodCastMsgEndPoint,
+			MessageEndpointProvider msgEndPointProvider, ScheduledExecutorService executor )
 	{
-		super( config );
+		super( config, addressableRegistry, conversionService );
 		this.workspace = workspace;
-		broadcastEndpoint = BeanInjector.getBean( BroadcastMessageEndpoint.class );
-		provider = BeanInjector.getBean( MessageEndpointProvider.class );
-		executorService = BeanInjector.getBean( ScheduledExecutorService.class );
+		broadcastEndpoint = brodCastMsgEndPoint;
+		provider = msgEndPointProvider;
+		executorService = executor;
 
 		createProperty( MAX_THREADS_PROPERTY, Long.class, 1000 );
 		setupClient();
