@@ -7,15 +7,22 @@ import static com.google.common.base.Objects.equal;
 
 import java.lang.ref.WeakReference;
 import java.util.Collection;
+import java.util.concurrent.Callable;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.animation.TimelineBuilder;
 import javafx.application.Platform;
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.Property;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -25,6 +32,10 @@ import javafx.util.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.eviware.loadui.api.execution.Phase;
+import com.eviware.loadui.api.execution.TestExecution;
+import com.eviware.loadui.api.execution.TestExecutionTask;
+import com.eviware.loadui.api.execution.TestRunner;
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.statistics.ProjectExecutionManager;
 import com.eviware.loadui.api.statistics.store.Execution;
@@ -32,9 +43,11 @@ import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.api.perspective.PerspectiveEvent;
 import com.eviware.loadui.ui.fx.util.ManualObservable;
+import com.eviware.loadui.ui.fx.util.ObservableLists;
 import com.eviware.loadui.ui.fx.views.analysis.AnalysisView;
 import com.eviware.loadui.ui.fx.views.result.ResultView;
 import com.eviware.loadui.util.BeanInjector;
+import com.eviware.loadui.util.execution.TestExecutionUtils;
 import com.eviware.loadui.util.statistics.ExecutionListenerAdapter;
 import com.google.common.base.Predicate;
 
@@ -44,12 +57,57 @@ public class StatisticsView extends StackPane
 
 	private final ObservableList<Execution> recentExecutions;
 	private final ObservableList<Execution> archivedExecutions;
+	private final ObservableList<Execution> allExecutionsInProject;
+	private ObservableList<Execution> currentExecutionList = FXCollections.observableArrayList();
+
 	private final Property<Execution> currentExecution = new SimpleObjectProperty<>( this, "currentExecution" );
 
 	private final ManualObservable poll = new ManualObservable();
+	private final ManualObservable refreshAllExecutionList = new ManualObservable();
+	private final BooleanProperty executionRunning;
+
+	private final TestExecutionTask executionTask = new TestExecutionTask()
+	{
+		@Override
+		public void invoke( TestExecution execution, Phase phase )
+		{
+			if( phase == Phase.START )
+			{
+				Platform.runLater( new Runnable()
+				{
+
+					@Override
+					public void run()
+					{
+						log.debug( " Phase.START fired, setting execution running to true" );
+						executionRunning.set( true );
+					}
+
+				} );
+
+			}
+			else if( phase == Phase.POST_STOP )
+			{
+				Platform.runLater( new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						log.debug( " Phase.POST_STOP fired, setting execution running from " + executionRunning.getValue()
+								+ " to false" );
+						executionRunning.set( false );
+					}
+
+				} );
+			}
+		}
+	};
 
 	public StatisticsView( final ProjectItem project )
 	{
+		executionRunning = new SimpleBooleanProperty( TestExecutionUtils.isExecutionRunning() );
+		BeanInjector.getBean( TestRunner.class ).registerTask( executionTask, Phase.START, Phase.POST_STOP );
+
 		final ExecutionManager executionManager = BeanInjector.getBean( ExecutionManager.class );
 		final ProjectExecutionManager projectExecutionManager = BeanInjector.getBean( ProjectExecutionManager.class );
 
@@ -64,6 +122,10 @@ public class StatisticsView extends StackPane
 					@Override
 					public boolean apply( Execution input )
 					{
+						if( equal( projectExecutionManager.getProjectId( input ), project.getId() )
+								&& !( input ).isArchived() )
+							log.debug( "updated recent execution: " + input.getLabel() );
+
 						return equal( projectExecutionManager.getProjectId( input ), project.getId() ) && !input.isArchived();
 					}
 				} ) );
@@ -79,16 +141,46 @@ public class StatisticsView extends StackPane
 					}
 				} ) );
 
-		final ObservableList<Execution> allExecutionsInProject = fx( filter(
-				ofCollection( executionManager, ExecutionManager.ARCHIVE_EXECUTIONS, Execution.class, executions ),
-				new Predicate<Execution>()
-				{
-					@Override
-					public boolean apply( Execution input )
-					{
-						return equal( projectExecutionManager.getProjectId( input ), project.getId() );
-					}
-				} ) );
+		//allExecutionsInProject = ObservableLists.concat( recentExecutions, archivedExecutions );
+		allExecutionsInProject = ObservableLists.fromExpression( new Callable<Iterable<Execution>>()
+		{
+			@Override
+			public Iterable<Execution> call() throws Exception
+			{
+
+				log.debug( "refreshing allExecutionList, isExecutionRunning?: " + executionRunning.get() );
+				if( executionRunning.get() )
+					return ObservableLists.concat( currentExecutionList, recentExecutions, archivedExecutions );
+				return ObservableLists.concat( recentExecutions, archivedExecutions );
+			}
+
+		}, FXCollections.observableArrayList( refreshAllExecutionList, executionRunning ) );
+
+		recentExecutions.addListener( new ListChangeListener<Execution>()
+		{
+
+			@Override
+			public void onChanged( javafx.collections.ListChangeListener.Change<? extends Execution> change )
+			{
+
+				refreshAllExecutionList.fireInvalidation();
+				log.debug( "recent changed" );
+			}
+
+		} );
+
+		currentExecution.addListener( new InvalidationListener()
+		{
+
+			@Override
+			public void invalidated( Observable arg0 )
+			{
+				log.debug( "current execution set to: " + currentExecution.getValue().getLabel() );
+				currentExecutionList.setAll( currentExecution.getValue() );
+				refreshAllExecutionList.fireInvalidation();
+
+			}
+		} );
 
 		addEventHandler( IntentEvent.ANY, new EventHandler<IntentEvent<?>>()
 		{
@@ -120,6 +212,7 @@ public class StatisticsView extends StackPane
 		} );
 
 		getChildren().setAll( new ResultView( currentExecution, recentExecutions, archivedExecutions ) );
+
 	}
 
 	public Execution getCurrentExecution()
