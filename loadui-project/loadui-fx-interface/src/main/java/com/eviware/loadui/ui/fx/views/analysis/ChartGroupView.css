@@ -18,6 +18,7 @@
 
 #chartMenuButton.menu-button:hover{
 	-fx-background-color: #7E7E7E; 
+	-fx-border-color: transparent; 
 }
 
 /**
@@ -69,16 +70,19 @@
 
 .chart-segment-box .line-segment-view .menu-button{
 	-fx-background-color: transparent;
+	-fx-border-color: transparent; 
 	visibility: visible; 
 }
 
 .chart-segment-box .line-segment-view .menu-button:hover{
 	-fx-background-color: transparent;
+	-fx-border-color: transparent; 
 	visibility: visible; 
 }
 
 .chart-segment-box .line-segment-view .menu-button:focus{
 	-fx-background-color: transparent;
+	-fx-border-color: transparent; 
 	visibility: visible; 
 }
 
@@ -149,7 +153,8 @@
 }
 
 .main-chart-group #zoomMenuButton.menu-button{
-	-fx-background-color: transparent; 
+	-fx-background-color: transparent;
+	-fx-border-color: transparent;  
 	-fx-text-fill: black;
 }
 
