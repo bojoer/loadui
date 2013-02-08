@@ -16,14 +16,10 @@
 package com.eviware.loadui.test;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.ServerSocket;
 
-import com.google.common.io.Closeables;
+import com.google.common.io.Files;
 
 /**
  * A collection of static utility methods for simplifying some tasks.
@@ -45,6 +41,8 @@ public class IntegrationTestUtils
 
 	public static void copyDirectory( File sourceLocation, File targetLocation ) throws IOException
 	{
+		if( !sourceLocation.exists() )
+			throw new IOException( "File does not exist: " + sourceLocation );
 		if( sourceLocation.isDirectory() )
 		{
 			if( !targetLocation.exists() && !targetLocation.mkdir() )
@@ -55,24 +53,7 @@ public class IntegrationTestUtils
 		}
 		else
 		{
-			InputStream in = null;
-			OutputStream out = null;
-			try
-			{
-				in = new FileInputStream( sourceLocation );
-				out = new FileOutputStream( targetLocation );
-
-				// Copy the bits from instream to outstream
-				byte[] buf = new byte[1024];
-				int len;
-				while( ( len = in.read( buf ) ) > 0 )
-					out.write( buf, 0, len );
-			}
-			finally
-			{
-				Closeables.closeQuietly( in );
-				Closeables.closeQuietly( out );
-			}
+			Files.copy( sourceLocation, targetLocation );
 		}
 	}
 

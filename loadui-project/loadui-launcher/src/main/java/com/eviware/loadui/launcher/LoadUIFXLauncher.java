@@ -126,8 +126,11 @@ public class LoadUIFXLauncher extends LoadUILauncher
 				{
 					System.setSecurityManager( null );
 
+					System.out.println("LoadUIFXLauncher: Creating launcher");
 					launcher = createLauncher( getParameters().getRaw().toArray( new String[0] ) );
+					System.out.println("LoadUIFXLauncher: Initializing launcher");
 					launcher.init();
+					System.out.println("LoadUIFXLauncher: Starting launcher");
 					launcher.start();
 
 					if( !"true".equals( noFx ) )
