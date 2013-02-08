@@ -91,7 +91,7 @@ public class CanvasView extends StackPane
 {
 	protected static final Logger log = LoggerFactory.getLogger( CanvasView.class );
 
-	private static final Effect selectedEffect = new DropShadow(Blurype.GAUSSIAN, new Color( 0.4, 0.4, 0.4, 0.5 ), 10.0, 3.0, 0, 0);
+	private static final Effect selectedEffect = new DropShadow(BlurType.GAUSSIAN, new Color( 0.4, 0.4, 0.4, 0.5 ), 10.0, 3.0, 0, 0);
 	private static final int GRID_SIZE = 36;
 	private static final double PADDING = -45;
 	private final UninstallCanvasObjectView uninstallCanvasObject = new UninstallCanvasObjectView();
