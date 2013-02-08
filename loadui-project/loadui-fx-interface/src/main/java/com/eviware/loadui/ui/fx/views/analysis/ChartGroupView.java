@@ -9,7 +9,7 @@ import static javafx.beans.binding.Bindings.lessThan;
 import static javafx.beans.binding.Bindings.size;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
-import javafx.beans.binding.Bindings;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -25,6 +25,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.layout.VBoxBuilder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -106,13 +107,12 @@ public class ChartGroupView extends VBox
 	private ToggleButton componentGroupToggle;
 
 	@FXML
-	private AnchorPane componentGroupAnchor; 
-	
+	private AnchorPane componentGroupAnchor;
+
 	@FXML
 	private HBox buttonBar;
 
-	@FXML
-	private VBox componentGroup;
+	final private VBox componentGroup = VBoxBuilder.create().styleClass( "sub-chart-group" ).build();
 
 	@FXML
 	private VBox mainChartGroup;
@@ -148,19 +148,35 @@ public class ChartGroupView extends VBox
 				//TODO: remove this eventlistener since it's not used anymore.
 			}
 		};
-		
+
 		parentProperty().addListener( fireCreatedEvent );
 	}
 
 	@FXML
 	private void initialize()
 	{
-		
+
 		chartGroupToggleGroup = new ToggleGroup();
 		componentGroupToggle.setToggleGroup( chartGroupToggleGroup );
 		componentGroupToggle.disableProperty().bind( lessThan( 2, size( componentSubcharts ) ) );
-		componentGroup.visibleProperty().bind( componentGroupToggle.selectedProperty() );
-		
+
+		componentGroupToggle.selectedProperty().addListener( new ChangeListener<Boolean>()
+		{
+
+			@Override
+			public void changed( ObservableValue<? extends Boolean> arg0, Boolean arg1, Boolean newValue )
+			{
+				if( newValue )
+				{
+					ChartGroupView.this.getChildren().add( componentGroup );
+				}
+				else
+				{
+					ChartGroupView.this.getChildren().remove( componentGroup );
+				}
+			}
+		} );
+
 		bindContent( componentGroup.getChildren(), componentSubcharts );
 		chartMenuButton.textProperty().bind( forLabel( chartGroup ) );
 		chartView.getChildren().setAll( createChart( chartGroup.getType() ) );
@@ -183,7 +199,7 @@ public class ChartGroupView extends VBox
 					}
 				}
 			}
-		});
+		} );
 	}
 
 	@FXML
@@ -207,9 +223,10 @@ public class ChartGroupView extends VBox
 	{
 		return buttonBar;
 	}
-	
-	public AnchorPane getComponentGroupAnchor(){
-		return componentGroupAnchor; 
+
+	public AnchorPane getComponentGroupAnchor()
+	{
+		return componentGroupAnchor;
 	}
 
 	public VBox getMainChartGroup()

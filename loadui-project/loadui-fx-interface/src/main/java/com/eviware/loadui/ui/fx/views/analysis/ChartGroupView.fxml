@@ -30,5 +30,4 @@
 				</HBox>
 			</AnchorPane>	
 		</VBox>
-	<VBox fx:id="componentGroup" styleClass="sub-chart-group"/>
 </fx:root>
