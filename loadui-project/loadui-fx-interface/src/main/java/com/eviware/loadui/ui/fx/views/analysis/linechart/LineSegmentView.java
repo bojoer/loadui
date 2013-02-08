@@ -59,11 +59,13 @@ public class LineSegmentView extends SegmentView<LineSegment>
 	private void initialize()
 	{
 
-		slider = SliderBuilder.create().snapToTicks( true ).visible( false ).min( -6 ).max( 6 ).majorTickUnit( 1 )
+		slider = SliderBuilder.create().snapToTicks( true ).pickOnBounds( true ).visible( false ).min( -6 ).max( 6 ).majorTickUnit( 1 )
 				.minorTickCount( 0 ).build();
 
-		segmentLabel.maxWidthProperty().bind( Bindings.when( isExpandedProperty ).then( 300 ).otherwise( 130 ) );
+		segmentLabel.minWidthProperty().bind( Bindings.when( isExpandedProperty ).then( 250 ).otherwise( 180 ) );
+		segmentLabel.maxWidthProperty().bind( Bindings.when( isExpandedProperty ).then( 320 ).otherwise( 200 ) );
 
+		
 		String fullName = segment.getStatisticHolder().getLabel() + " " + segment.getVariableName() + " "
 				+ segment.getStatisticName();
 		String shortName = ShortName.forStatistic( segment.getVariableName(), segment.getStatisticName() );

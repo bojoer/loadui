@@ -17,7 +17,7 @@
 <?import javafx.scene.image.Image?>
 
 <fx:root type="javafx.scene.layout.StackPane" xmlns:fx="http://javafx.com/fxml"
-	styleClass="slim-icon">
+	styleClass="slim-icon" maxWidth="600">
 	<AnchorPane styleClass="line-segment-view">
 		<ImageView AnchorPane.leftAnchor="9" AnchorPane.topAnchor="3" AnchorPane.bottomAnchor="3" fitHeight="21" fitWidth="21" preserveRatio="true"> 
 			<image>

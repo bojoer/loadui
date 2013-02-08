@@ -2,6 +2,7 @@ package com.eviware.loadui.ui.fx.views.analysis.linechart;
 
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -65,7 +66,17 @@ public class SegmentBox extends VBox
 				.build();
 		expandCollapseSegments = ToggleButtonBuilder.create().id( "expander-toggle-button" ).alignment( Pos.CENTER_RIGHT )
 				.build();
-
+		
+		segmentViewContainer.getChildren().addListener( new InvalidationListener(){
+			@Override
+			public void invalidated( Observable _ )
+			{
+				if(segmentViewContainer.getChildrenUnmodifiable().size() == 0){
+					scalingButtonBox.visibleProperty().set( false );
+				}
+			}
+		});
+		
 		AnchorPane topBox = AnchorPaneBuilder.create().children( statisticsLabel, expandCollapseSegments ).build();
 
 		AnchorPane.setLeftAnchor( statisticsLabel, 0d );
@@ -75,13 +86,14 @@ public class SegmentBox extends VBox
 		{
 			scalingButtonBox = HBoxBuilder.create().visible( false )
 					.children( scalingCloseButton, HBoxBuilder.create().minWidth( 3 ).build(), scalingCancelButton )
-					.styleClass( "scaling-button-box" ).alignment( Pos.BASELINE_RIGHT ).build();
+					.styleClass( "scaling-button-box" ).alignment( Pos.BOTTOM_RIGHT ).build();
+
 		}
 		else
 		{
 			scalingButtonBox = HBoxBuilder.create().visible( false )
 					.children( scalingCancelButton, HBoxBuilder.create().minWidth( 3 ).build(), scalingCloseButton )
-					.styleClass( "scaling-button-box" ).alignment( Pos.BASELINE_RIGHT ).build();
+					.styleClass( "scaling-button-box" ).alignment( Pos.BOTTOM_RIGHT ).build();
 
 		}
 
@@ -120,6 +132,7 @@ public class SegmentBox extends VBox
 			}
 		} );
 
+		
 		scaling.addListener( new InvalidationListener()
 		{
 			@Override
