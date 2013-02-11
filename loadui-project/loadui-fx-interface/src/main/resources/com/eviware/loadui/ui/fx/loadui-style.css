@@ -146,7 +146,6 @@
 /**
  * General button styles
  */
- 
 .button {
 	-button-color-border: #666666;
 	-button-color-background: linear-gradient(to bottom, #e7e7e7, #cbcbcb);
@@ -194,7 +193,6 @@
 	-button-color-background: linear-gradient(to bottom, derive(#bbddff, 50%), derive(#0088ff, 50%));
 }
 
-
 .button:disabled {
 	-button-color-background: #d8d8d8;
 	-fx-opacity: 0.3;
@@ -229,6 +227,62 @@
 
 .button.down {
 	-fx-shape: -fx-shape-navigation-down;
+}
+
+/**
+ * Menu-Button
+ */
+.menu-button{
+	-fx-background-color: transparent; 
+	-fx-border-color: transparent;
+	-fx-border-radius: 4;
+	-fx-border-width: 1; 
+}
+
+.menu-button:hover{
+	-fx-background-color: linear-gradient(to bottom, #AAAAAA 0%, #CCCCCC 50%, #999999 100%); 		
+	-fx-border-color: #ACACAC;
+	-fx-border-radius: 4;
+}
+
+.menu-button:showing{
+	-fx-background-color: #3355CC;
+	-fx-border-color: #3A5ACA;
+	-fx-border-radius: 0;
+}
+
+/*
+ * Combo-box
+ **/
+.combo-box-base{
+	-fx-background-insets: 0;
+}
+
+
+.combo-box{
+	-fx-border-color: #666666; 
+	-fx-border-width: 1; 
+	-fx-border-radius: 0; 
+}
+
+.combo-box .list-cell{
+	-fx-background-color: #FFFFFF; 
+	-fx-background-radius: 0; 
+}
+
+.combo-box .arrow-button{
+	-fx-background-color: #EBEBEB; 
+	-fx-background-radius: 0; 
+	-fx-border-width: 0 0 0 1; 
+	-fx-border-color: #666666;
+}
+
+.combo-box:showing{
+	-fx-border-color: #00AAFF; 
+}
+
+.combo-box:focused{
+	-fx-border-color: #00AAFF; 
 }
 
 /**
