@@ -11,19 +11,14 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
-<?import java.net.URL?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.image.Image?>
 
 <fx:root type="javafx.scene.layout.StackPane" xmlns:fx="http://javafx.com/fxml"
-	styleClass="slim-icon" maxWidth="600">
+	styleClass="slim-icon">
 	<AnchorPane styleClass="line-segment-view">
-		<ImageView AnchorPane.leftAnchor="9" AnchorPane.topAnchor="3" AnchorPane.bottomAnchor="3" fitHeight="21" fitWidth="21" preserveRatio="true"> 
-			<image>
-				<Image url="res/icon_32x32.png" />
-			</image>
-		</ImageView>
+		<Rectangle AnchorPane.leftAnchor="9" AnchorPane.topAnchor="3" AnchorPane.bottomAnchor="3" height="21" width="21" fill="red" /> 
 		<Rectangle fx:id="legendColorRectangle" AnchorPane.leftAnchor="36" AnchorPane.topAnchor="9" AnchorPane.bottomAnchor="9" height="9" width="9" />
 		<Label fx:id="segmentLabel" AnchorPane.leftAnchor="48" AnchorPane.topAnchor="6" text="Label"/>
 		<MenuButton fx:id="menuButton" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.leftAnchor="0" minHeight="27">
