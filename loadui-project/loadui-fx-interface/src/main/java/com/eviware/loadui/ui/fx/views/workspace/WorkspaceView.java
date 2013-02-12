@@ -147,7 +147,7 @@ public class WorkspaceView extends StackPane
 			log.warn( "Unable to load resource file 'application.properties!'", e );
 		}
 
-		webView.getEngine().load( props.getProperty( "starter.page.url" ) );
+		webView.getEngine().load( props.getProperty( "starter.page.url" ) + "?version=" + LoadUI.VERSION );
 
 		initGettingStartedWizard();
 	}
