@@ -12,7 +12,7 @@
 		<dependencySet>
 			<outputDirectory>bundle</outputDirectory>
 			<includes>
-				<include>com.eviware.loadui:loadui-agent-deps</include>
+				<include>com.eviware.loadui.pro:loadui-pro-agent-deps</include>
 				<include>com.eviware.loadui:loadui-soapui-plugin</include>
 			</includes>
 			<excludes>
