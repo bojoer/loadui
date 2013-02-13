@@ -209,6 +209,7 @@ public class ScrollableLineChart extends HBox implements ExecutionChart
 						if( getSegments().getChildren().get( i ) instanceof EventSegmentView )
 							eventSeriesStyles.getUnchecked( series ).set(
 									"-fx-stroke: " + ChartUtils.lineToColor( series, getLineChart().getData() ) + ";" );
+						manualDataUpdate.fireInvalidation();
 					}
 
 					i++ ;
