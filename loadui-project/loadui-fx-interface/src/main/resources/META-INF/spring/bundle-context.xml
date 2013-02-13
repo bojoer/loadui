@@ -16,5 +16,7 @@
 		<constructor-arg ref="workspaceProvider" />
 		<constructor-arg ref="testEventManager" />
 	</bean>
-	
+	<bean id="uiUtils" class="com.eviware.loadui.ui.fx.util.UIUtils">
+		<property name="imageResolver" ref="imageResolver" />
+	</bean>
 </beans>

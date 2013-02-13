@@ -7,6 +7,8 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
+import javax.annotation.Nonnull;
+
 import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -20,6 +22,7 @@ import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.SceneItem;
+import com.eviware.loadui.ui.fx.api.ImageResolver;
 import com.eviware.loadui.util.BeanInjector;
 import com.sun.javafx.PlatformUtil;
 
@@ -29,8 +32,24 @@ public class UIUtils
 
 	private final static String TOOLBOX_IMAGES_PATH = "/com/eviware/loadui/ui/fx/toolboxIcons/";
 
+	private static ImageResolver imageResolver;
+
+	public void setImageResolver( ImageResolver imageResolver )
+	{
+		System.out.println( "Property set." );
+		UIUtils.imageResolver = imageResolver;
+	}
+
+	@Nonnull
 	public static Image getImageFor( Object object )
 	{
+		if( imageResolver != null )
+		{
+			Image image = imageResolver.getImageFor( object );
+			if( image != null )
+				return image;
+		}
+
 		if( object instanceof AgentItem || AgentItem.class.equals( object ) )
 		{
 			return new Image( root( "agent-icon.png" ) );
@@ -52,11 +71,9 @@ public class UIUtils
 		{
 			return new Image( root( "assertion_icon_toolbar.png" ) );
 		}
-		else
-		{
-			throw new RuntimeException( "No image found for resource "
-					+ ( object instanceof Class ? object : "of class " + object.getClass().getName() ) );
-		}
+
+		throw new RuntimeException( "No image found for resource "
+				+ ( object instanceof Class ? object : "of class " + object.getClass().getName() ) );
 	}
 
 	private static String root( String fileName )
@@ -110,7 +127,6 @@ public class UIUtils
 		{
 			Thread t = new Thread( new Runnable()
 			{
-
 				@Override
 				public void run()
 				{

@@ -32,8 +32,6 @@ public class StatisticHolderToolboxItem extends Label
 
 		final ImageView icon;
 		Image image = UIUtils.getImageFor( holder );
-		if( image == null )
-			log.debug( "No image found for holder " + holder );
 		icon = new ImageView( image );
 
 		DragNode dragNode = DragNode.install( StatisticHolderToolboxItem.this, new ImageView( icon.getImage() ) );
