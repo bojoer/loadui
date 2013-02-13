@@ -6,15 +6,18 @@ import static com.eviware.loadui.ui.fx.util.test.TestFX.wrap;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.SceneBuilder;
 import javafx.scene.control.Button;
@@ -31,9 +34,9 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import com.eviware.loadui.test.categories.GUITest;
-import com.eviware.loadui.ui.fx.util.test.TestFX;
 import com.eviware.loadui.ui.fx.util.test.FXScreenController;
 import com.eviware.loadui.ui.fx.util.test.FXTestUtils;
+import com.eviware.loadui.ui.fx.util.test.TestFX;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Lists;
@@ -49,13 +52,14 @@ public class ToolBoxTest
 	private static final List<Rectangle> clicked = new ArrayList<>();
 	private static Stage stage;
 	private static TestFX controller;
+	static ToolBox<Rectangle> toolbox;
 
 	public static class ToolboxTestApp extends Application
 	{
 		@Override
 		public void start( Stage primaryStage ) throws Exception
 		{
-			ToolBox<Rectangle> toolbox = new ToolBox<>( "ToolBox" );
+			toolbox = new ToolBox<>( "ToolBox" );
 			toolbox.getItems().setAll( buildRect( Color.RED ), buildRect( Color.RED ), buildRect( Color.BLUE ),
 					buildRect( Color.GREEN ), buildRect( Color.RED ), buildRect( Color.YELLOW ), buildRect( Color.BLUE ),
 					buildRect( Color.ORANGE ) );
@@ -105,8 +109,6 @@ public class ToolBoxTest
 	{
 		clicked.clear();
 		targetWindow( stage );
-		Button prevButton = find( ".nav.up" );
-		controller.click( prevButton ).click( prevButton ).click( prevButton );
 	}
 
 	@Test
@@ -149,6 +151,8 @@ public class ToolBoxTest
 	@Test
 	public void shouldScrollUsingMouseWheel() throws Exception
 	{
+		Button prevButton = find( ".nav.up" );
+		controller.click( prevButton ).click( prevButton ).click( prevButton );
 		testScrolling( new Runnable()
 		{
 			@Override
@@ -199,4 +203,98 @@ public class ToolBoxTest
 		assertThat( rectangle2.getScene(), notNullValue() );
 		assertThat( rectangle4.getScene(), nullValue() );
 	}
+
+	@Test
+	public void shouldChangeWhenAddingItemsAtRuntime() throws Exception
+	{
+		final Rectangle red = Iterables.get( rectangles.get( Color.RED ), 0 );
+		final Rectangle blue = Iterables.get( rectangles.get( Color.BLUE ), 0 );
+		final Rectangle green = Iterables.get( rectangles.get( Color.GREEN ), 0 );
+
+		class Results
+		{
+			final SettableFuture<Object> clearTest = SettableFuture.create();
+			final SettableFuture<Object> addTwoItemsTest = SettableFuture.create();
+			final SettableFuture<Object> addItemTest = SettableFuture.create();
+			final SettableFuture<Object> afterScrollingTest = SettableFuture.create();
+		}
+		final Results results = new Results();
+
+		runLaterSettingRectangles( new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				toolbox.getItems().clear();
+			}
+		}, results.clearTest );
+		runLaterSettingRectangles( new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				toolbox.getItems().add( red );
+				toolbox.getItems().add( blue );
+			}
+		}, results.addTwoItemsTest );
+		runLaterSettingRectangles( new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				toolbox.getItems().add( green );
+			}
+		}, results.addItemTest );
+		
+		Object clearTest = results.clearTest.get( 1, TimeUnit.SECONDS );
+		Object addTwoItemsTest = results.addTwoItemsTest.get( 1, TimeUnit.SECONDS );
+		Object addItemTest = results.addItemTest.get( 1, TimeUnit.SECONDS );
+		
+		assertFalse( clearTest instanceof Exception );
+		assertFalse( addTwoItemsTest instanceof Exception );
+		assertFalse( addItemTest instanceof Exception );
+		
+		assertTrue( ( ( Set<?> )clearTest ).isEmpty() );
+		assertTrue( ( ( Set<?> )addTwoItemsTest ).containsAll( Arrays.asList( red, blue ) ) );
+		assertTrue( ( ( Set<?> )addItemTest ).containsAll( Arrays.asList( red, blue ) ) ); // no change until clicking scroll button
+		
+		controller.click( ".nav.down" );
+		
+		runLaterSettingRectangles( new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				
+			}
+		}, results.afterScrollingTest );
+
+		Object afterScrollingTest = results.afterScrollingTest.get( 1, TimeUnit.SECONDS );
+		
+		assertFalse( afterScrollingTest instanceof Exception );
+		assertTrue( ( ( Set<?> )afterScrollingTest ).containsAll( Arrays.asList( blue, green ) ) );
+
+	}
+
+	private void runLaterSettingRectangles( final Runnable runnable, final SettableFuture<Object> future )
+	{
+		Platform.runLater( new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				try
+				{
+					runnable.run();
+					future.set( TestFX.findAll( "Rectangle" ) );
+				}
+				catch( Exception e )
+				{
+					future.set( e );
+				}
+			}
+		} );
+
+	}
+
 }

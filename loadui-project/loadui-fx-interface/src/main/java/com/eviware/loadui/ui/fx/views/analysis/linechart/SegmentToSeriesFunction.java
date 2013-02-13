@@ -2,6 +2,7 @@ package com.eviware.loadui.ui.fx.views.analysis.linechart;
 
 import static com.eviware.loadui.ui.fx.util.ObservableLists.fromExpression;
 
+import java.util.ArrayList;
 import java.util.concurrent.Callable;
 
 import javafx.beans.Observable;
@@ -14,6 +15,7 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Series;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.LineBuilder;
+import javafx.scene.shape.StrokeType;
 
 import com.eviware.loadui.api.statistics.DataPoint;
 import com.eviware.loadui.api.statistics.model.chart.line.LineSegment;
@@ -45,6 +47,13 @@ public final class SegmentToSeriesFunction implements Function<Segment, XYChart.
 	@Override
 	public XYChart.Series<Number, Number> apply( final Segment segment )
 	{
+		//		System.out.println( "================== apply: " + execution.toString() );
+		//		if( execution.getValue() == null )
+		//		{
+		//			System.out.println( "returning empty list" );
+		//			return new XYChart.Series<Number, Number>();
+		//		}
+
 		if( segment instanceof LineSegment )
 			return lineSegmentToSeries( ( LineSegment )segment );
 		else
@@ -70,7 +79,7 @@ public final class SegmentToSeriesFunction implements Function<Segment, XYChart.
 			@Override
 			public Iterable<XYChart.Data<Number, Number>> call() throws Exception
 			{
-				System.out.println( "!!!!!!!!!!!!!! " + segment.getStatistic() );
+				//System.out.println( "!!!!!!!!!!!!!! " + segment.getStatistic() );
 				Iterable<XYChart.Data<Number, Number>> chartdata = Iterables.transform(
 						segment.getStatistic().getPeriod( ( long )chart.getPosition() - 2000,
 								( long )chart.getPosition() + chart.getSpan() + 2000, chart.getTickZoomLevel().getLevel(),
@@ -107,6 +116,11 @@ public final class SegmentToSeriesFunction implements Function<Segment, XYChart.
 			@Override
 			public Iterable<XYChart.Data<Number, Number>> call() throws Exception
 			{
+				if( execution.getValue() == null )
+				{
+					return new ArrayList<XYChart.Data<Number, Number>>();
+				}
+
 				return Iterables.transform(
 						segment.getTestEventsInRange( execution.getValue(), ( long )chart.getPosition() - 2000,
 								( long )chart.getPosition() + chart.getSpan() + 2000, chart.getTickZoomLevel().getLevel() ),
@@ -117,8 +131,9 @@ public final class SegmentToSeriesFunction implements Function<Segment, XYChart.
 							{
 								XYChart.Data<Number, Number> data = new XYChart.Data<Number, Number>( event.getTimestamp(),
 										10.0 );
-								Line eventLine = LineBuilder.create().endY( 600 ).managed( false ).build();
-								eventLine.styleProperty().bind( eventSeriesStyles.getUnchecked( series ) );
+								Line eventLine = LineBuilder.create().endY( 600 ).managed( false )
+										.strokeType( StrokeType.OUTSIDE ).build();
+								eventLine.setStyle( eventSeriesStyles.getUnchecked( series ).get() );
 								data.setNode( eventLine );
 								return data;
 							}

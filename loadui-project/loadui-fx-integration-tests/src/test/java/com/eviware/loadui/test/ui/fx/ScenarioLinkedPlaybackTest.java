@@ -3,8 +3,8 @@ package com.eviware.loadui.test.ui.fx;
 import static org.junit.Assert.assertTrue;
 import javafx.scene.input.KeyCode;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -19,17 +19,16 @@ import com.eviware.loadui.ui.fx.util.test.TestFX;
 public class ScenarioLinkedPlaybackTest
 {
 	private static TestFX controller;
-	private final SceneItem scenario = ScenarioCreatedState.STATE.getScenario();
 
-	@BeforeClass
-	public static void enterState() throws Exception
+	@Before
+	public void enterState() throws Exception
 	{
 		ScenarioCreatedState.STATE.enter();
 		controller = GUI.getController();
 	}
 
-	@AfterClass
-	public static void leaveState() throws Exception
+	@After
+	public void leaveState() throws Exception
 	{
 		ScenarioCreatedState.STATE.getParent().enter();
 	}
@@ -37,6 +36,7 @@ public class ScenarioLinkedPlaybackTest
 	@Test
 	public void shouldFollowProject_when_linked() throws Exception
 	{
+		SceneItem scenario = ScenarioCreatedState.STATE.getScenario();
 		assertTrue( scenario.isFollowProject() );
 
 		for( int i = 0; i < 5; i++ )
@@ -52,6 +52,7 @@ public class ScenarioLinkedPlaybackTest
 	@Test
 	public void shouldNotFollowProject_when_unLinked() throws Exception
 	{
+		SceneItem scenario = ScenarioCreatedState.STATE.getScenario();
 		assertTrue( scenario.isFollowProject() );
 
 		controller.click( "#link-scenario" ).sleep( 500 );
