@@ -133,7 +133,7 @@ public final class SegmentToSeriesFunction implements Function<Segment, XYChart.
 										10.0 );
 								Line eventLine = LineBuilder.create().endY( 600 ).managed( false )
 										.strokeType( StrokeType.OUTSIDE ).build();
-								eventLine.styleProperty().bind( eventSeriesStyles.getUnchecked( series ) );
+								eventLine.setStyle( eventSeriesStyles.getUnchecked( series ).get() );
 								data.setNode( eventLine );
 								return data;
 							}

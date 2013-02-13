@@ -193,7 +193,7 @@ public class ScrollableLineChart extends HBox implements ExecutionChart
 
 		} );
 
-		// legend colors
+		// legend colors and event colors
 		getSegments().getChildren().addListener( new InvalidationListener()
 		{
 			@Override
@@ -302,7 +302,7 @@ public class ScrollableLineChart extends HBox implements ExecutionChart
 
 		SegmentToSeriesFunction segmentToSeries = new SegmentToSeriesFunction( currentExecution,
 				javafx.collections.FXCollections.observableArrayList( currentExecution, position, poll,
-						segmentBox.scaleUpdate(), manualDataUpdate ), this, eventSeriesStyles );
+						segmentBox.scaleUpdate(), manualDataUpdate, currentExecutionLenght ), this, eventSeriesStyles );
 
 		ObservableList<Segment> segmentsList = fx( ofCollection( chartView, LineChartView.SEGMENTS, Segment.class,
 				chartView.getSegments() ) );
