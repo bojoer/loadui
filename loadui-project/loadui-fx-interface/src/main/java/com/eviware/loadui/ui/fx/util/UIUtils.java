@@ -6,12 +6,13 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URISyntaxException;
-
-import javax.annotation.Nonnull;
+import java.util.List;
 
 import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
+
+import javax.annotation.Nonnull;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,20 +33,21 @@ public class UIUtils
 
 	private final static String TOOLBOX_IMAGES_PATH = "/com/eviware/loadui/ui/fx/toolboxIcons/";
 
-	private static ImageResolver imageResolver;
+	private static List<ImageResolver> imageResolvers;
 
-	public void setImageResolver( ImageResolver imageResolver )
+	public void setImageResolvers( List<ImageResolver> imageResolvers )
 	{
 		System.out.println( "Property set." );
-		UIUtils.imageResolver = imageResolver;
+		UIUtils.imageResolvers = imageResolvers;
 	}
 
 	@Nonnull
 	public static Image getImageFor( Object object )
 	{
-		if( imageResolver != null )
+		for( ImageResolver resolver : imageResolvers )
 		{
-			Image image = imageResolver.getImageFor( object );
+			System.out.println( "Asking resolver." );
+			Image image = resolver.getImageFor( object );
 			if( image != null )
 				return image;
 		}
