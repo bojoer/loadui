@@ -91,6 +91,10 @@
 	-fx-skin: "com.eviware.loadui.ui.fx.control.skin.StyleableGraphicLabelSkin";
 }
 
+.toggle-button.styleable-graphic {
+	-fx-skin: "com.eviware.loadui.ui.fx.control.skin.StyleableGraphicToggleButtonSkin";
+}
+
 .label.styleable-graphic .graphic {
 	-fx-padding: 3;
 	-fx-background-radius: 50;

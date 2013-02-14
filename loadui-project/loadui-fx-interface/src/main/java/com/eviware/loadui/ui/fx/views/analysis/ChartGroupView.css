@@ -33,17 +33,32 @@
 	-fx-background-color: transparent; 
 }
 
-.chart-segment-box #expander-toggle-button.toggle-button{
-	-fx-background-color: #BBBBBB;
-	-fx-scale-x: 0.6;
-	-fx-scale-y: 0.6; 
-	-fx-shape: -fx-shape-navigation-right; 
+.chart-segment-box #expander.toggle-button{
+	-fx-background-color: transparent; 
+	-fx-scale-x: 1; 
+	-fx-scale-y: 1; 
+	-fx-padding: 8;  
 }
 
-.chart-segment-box #expander-toggle-button.toggle-button:selected{
-	-fx-scale-x: 0.6;
-	-fx-scale-y: 0.6; 
+.chart-segment-box #expander.toggle-button:hover{
+	-fx-background-color: #444444;
+	-fx-scale-x: 1; 
+	-fx-scale-y: 1; 
+	-fx-padding: 8; 
+}
+
+.chart-segment-box #expander.toggle-button .graphic{
+	-fx-shape: -fx-shape-navigation-right;
+	-fx-scale-y: 1; 
+	-fx-scale-x: 1; 
+	-fx-background-color: #8B8B8B; 
+	-fx-padding: 5 5;
+}
+
+.chart-segment-box #expander.toggle-button:selected .graphic{
 	-fx-shape: -fx-shape-navigation-left;
+	-fx-background-color: #8B8B8B; 
+	-fx-padding: 5 5;
 }
 
 .chart-segment-box .slim-icon{
