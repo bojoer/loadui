@@ -62,7 +62,7 @@ public class LoadUI
 
 	public static boolean isHeadless()
 	{
-		return "true".equals( System.getProperty( HEADLESS ) );
+		return "true".equals( System.getProperty( HEADLESS, "true" ) );
 	}
 
 	public static boolean isPro()

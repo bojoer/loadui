@@ -64,7 +64,8 @@ public class ErrorHandler
 			try
 			{
 				Runtime.getRuntime().exec(
-						java + " -Xms128m -Xmx1024m -XX:MaxPermSize=256m -cp " + classPath + " com.javafx.main.Main" );
+						java + " -Xms128m -Xmx1024m -XX:MaxPermSize=256m -cp " + classPath
+								+ " com.javafx.main.Main --nofx=false" );
 			}
 			catch( IOException e )
 			{

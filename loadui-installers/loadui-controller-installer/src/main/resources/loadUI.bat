@@ -25,4 +25,4 @@ set JAVA_OPTS=-Xms128m -Xmx1024m -XX:MaxPermSize=256m
 
 rem ********* run loadUI ***********
 
-"%JAVA%" %JAVA_OPTS% -cp "%CLASSPATH%" com.javafx.main.Main %*
+"%JAVA%" %JAVA_OPTS% -cp "%CLASSPATH%" com.javafx.main.Main --nofx=false %*

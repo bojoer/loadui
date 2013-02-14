@@ -95,9 +95,9 @@ public class LoadUIFXLauncher extends LoadUILauncher
 			if( "true".equals( agent ) )
 				setDefaultSystemProperty( "loadui.instance", "agent" );
 
-			if( !"true".equals( noFx ) )
+			if( "false".equals( noFx ) )
 			{
-				setDefaultSystemProperty( "loadui.headless", "true" );
+				setDefaultSystemProperty( "loadui.headless", "false" );
 				final Stage splash = StageBuilder.create().style( StageStyle.TRANSPARENT ).scene( splashScene )
 						.icons( icons ).build();
 				splash.initModality( Modality.APPLICATION_MODAL );
@@ -126,14 +126,14 @@ public class LoadUIFXLauncher extends LoadUILauncher
 				{
 					System.setSecurityManager( null );
 
-					System.out.println("LoadUIFXLauncher: Creating launcher");
+					System.out.println( "LoadUIFXLauncher: Creating launcher" );
 					launcher = createLauncher( getParameters().getRaw().toArray( new String[0] ) );
-					System.out.println("LoadUIFXLauncher: Initializing launcher");
+					System.out.println( "LoadUIFXLauncher: Initializing launcher" );
 					launcher.init();
-					System.out.println("LoadUIFXLauncher: Starting launcher");
+					System.out.println( "LoadUIFXLauncher: Starting launcher" );
 					launcher.start();
 
-					if( !"true".equals( noFx ) )
+					if( "false".equals( noFx ) )
 					{
 						launcher.framework.getBundleContext().registerService( Stage.class, stage,
 								new Hashtable<String, Object>() );

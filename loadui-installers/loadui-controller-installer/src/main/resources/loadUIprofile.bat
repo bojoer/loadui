@@ -25,5 +25,5 @@ set JAVA_OPTS=-Xms128m -Xmx1024m -XX:MaxPermSize=256m
 
 rem ********* run loadui ***********
 
-"%JAVA%" -agentpath:C:\PROGRA~1\JPROFI~1\bin\WINDOW~1\jprofilerti.dll=port=8849 %JAVA_OPTS% -cp "%CLASSPATH%" com.javafx.main.Main %*
+"%JAVA%" -agentpath:C:\PROGRA~1\JPROFI~1\bin\WINDOW~1\jprofilerti.dll=port=8849 %JAVA_OPTS% -cp "%CLASSPATH%" com.javafx.main.Main --nofx=false %*
 

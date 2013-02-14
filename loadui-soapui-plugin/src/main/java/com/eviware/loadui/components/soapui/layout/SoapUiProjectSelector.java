@@ -1,5 +1,6 @@
 package com.eviware.loadui.components.soapui.layout;
 
+import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.util.concurrent.CountDownLatch;
 
@@ -144,6 +145,9 @@ public class SoapUiProjectSelector
 
 	protected void updateProjectLabel( final Label projectLabel )
 	{
+		if( LoadUI.isHeadless() )
+			return;
+
 		Platform.runLater( new Runnable()
 		{
 			@Override
@@ -207,6 +211,9 @@ public class SoapUiProjectSelector
 
 	public void setTestSuites( final String... testSuites )
 	{
+		if( LoadUI.isHeadless() )
+			return;
+
 		Platform.runLater( new Runnable()
 		{
 			@Override
@@ -219,9 +226,8 @@ public class SoapUiProjectSelector
 
 	public void setTestCases( final String... testCases )
 	{
-		log.debug( "setTestCases:\n" );
-		for( String tc : testCases )
-			log.debug( tc );
+		if( LoadUI.isHeadless() )
+			return;
 
 		testCaseLatch = new CountDownLatch( 1 );
 
