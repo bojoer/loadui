@@ -119,8 +119,6 @@ public class ScrollableLineChart extends HBox implements ExecutionChart
 
 	public ScrollableLineChart()
 	{
-		log.debug( "fxml url: "
-				+ ScrollableLineChart.class.getResource( ScrollableLineChart.class.getSimpleName() + ".fxml" ).toString() );
 		FXMLUtils.load( this, this,
 				ScrollableLineChart.class.getResource( ScrollableLineChart.class.getSimpleName() + ".fxml" ) );
 	}
@@ -133,15 +131,16 @@ public class ScrollableLineChart extends HBox implements ExecutionChart
 		xAxis.lowerBoundProperty().bind( position );
 
 		//make sure that ellapsedTime label follows the expansion of the yAxis
-		yAxis.widthProperty().addListener( new ChangeListener()
+		yAxis.widthProperty().addListener( new ChangeListener<Number>()
 		{
-			@Override
-			public void changed( ObservableValue _, Object oldValue, Object newValue )
-			{
-				ellapsedTime.getProperties().put( "pane-left-anchor", ellapsedTimeAnchorPusher + ( ( Double )newValue ) );
-			}
-		} );
 
+			@Override
+			public void changed( ObservableValue<? extends Number> _, Number oldValue, Number newValue )
+			{
+				ellapsedTime.getProperties().put( "pane-left-anchor", ellapsedTimeAnchorPusher + newValue.doubleValue() );
+			}
+		});
+		
 		zoomLevel.textProperty().bind( createStringBinding( new Callable<String>()
 		{
 			@Override
