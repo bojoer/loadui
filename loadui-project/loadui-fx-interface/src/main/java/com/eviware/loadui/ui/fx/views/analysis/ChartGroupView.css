@@ -17,35 +17,28 @@
 }
 
 #chartMenuButton.menu-button:hover{
-	-fx-background-color: #7E7E7E; 
-	-fx-border-color: transparent; 
+	-fx-background-color: linear-gradient(to bottom, #AAAAAA 0%, #CCCCCC 50%, #999999 100%);
 }
 
 /**
  * Segment-box specifics for all charts
  */
+
 .chart-segment-box #statistics-label{
 	 	-fx-text-fill: #BBBBBB;
 	 	-fx-font-size: 16;  
 }
 
-.chart-segment-box #statistics-label{
-	-fx-background-color: transparent; 
-}
-
 .chart-segment-box #expander.toggle-button{
-	-fx-background-color: transparent; 
 	-fx-scale-x: 1; 
-	-fx-scale-y: 1; 
-	-fx-padding: 8;  
+	-fx-scale-y: 1;
+	-fx-border-color: transparent;  
+	-fx-padding: 0 4 0 4;  
 }
 
 .chart-segment-box #expander.toggle-button:hover{
-	-fx-background-color: #444444;
-	-fx-scale-x: 1; 
-	-fx-scale-y: 1; 
-	-fx-padding: 8; 
-}
+	-fx-border-color: transparent; 
+	-fx-background-color: linear-gradient(to bottom, #AAAAAA 0%, #CCCCCC 50%, #999999 100%);}
 
 .chart-segment-box #expander.toggle-button .graphic{
 	-fx-shape: -fx-shape-navigation-right;
@@ -58,6 +51,11 @@
 .chart-segment-box #expander.toggle-button:selected .graphic{
 	-fx-shape: -fx-shape-navigation-left;
 	-fx-background-color: #8B8B8B; 
+	-fx-padding: 5 5;
+}
+
+.chart-segment-box #expander.toggle-button:hover .graphic{
+	-fx-background-color: #4B4B4B; 
 	-fx-padding: 5 5;
 }
 

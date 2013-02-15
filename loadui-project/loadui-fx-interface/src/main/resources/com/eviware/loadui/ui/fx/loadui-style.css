@@ -238,9 +238,7 @@
  */
 .menu-button{
 	-fx-background-color: transparent; 
-	-fx-border-color: transparent;
 	-fx-border-radius: 4;
-	-fx-border-width: 1; 
 }
 
 .menu-button:hover{
@@ -253,6 +251,17 @@
 	-fx-background-color: #3355CC;
 	-fx-border-color: #3A5ACA;
 	-fx-border-radius: 0;
+}
+
+.toggle-button{
+	-fx-background-color: transparent; 
+	-fx-border-color: transparent;
+	-fx-border-radius: 4;
+}
+
+.toggle-button:hover{
+	-fx-background-color: linear-gradient(to bottom, #AAAAAA 0%, #CCCCCC 50%, #999999 100%); 		
+	-fx-border-radius: 4;
 }
 
 /*
