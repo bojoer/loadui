@@ -4,30 +4,20 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.util.Collection;
 import java.util.Map;
-import com.eviware.loadui.ui.fx.views.analysis.reporting.Snapshotter;
+import java.util.concurrent.ExecutionException;
+
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
-import javafx.scene.Group;
-import javafx.scene.Scene;
 import javafx.beans.Observable;
-import javafx.beans.property.Property;
-import javax.imageio.ImageIO;
-import org.apache.commons.codec.binary.Base64;
 import javafx.beans.property.ReadOnlyProperty;
-import javafx.scene.SceneBuilder;
 import javafx.concurrent.Task;
-import com.eviware.loadui.ui.fx.util.NodeUtils;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
+import javafx.scene.Group;
+import javafx.scene.SceneBuilder;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuButton;
 import javafx.scene.image.WritableImage;
@@ -42,20 +32,19 @@ import com.eviware.loadui.api.execution.Phase;
 import com.eviware.loadui.api.execution.TestExecution;
 import com.eviware.loadui.api.execution.TestExecutionTask;
 import com.eviware.loadui.api.execution.TestRunner;
-import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.ProjectRef;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.reporting.ReportingManager;
 import com.eviware.loadui.api.statistics.model.StatisticPage;
-import com.eviware.loadui.api.statistics.model.StatisticPages;
 import com.eviware.loadui.api.statistics.model.chart.ChartView;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.traits.Labeled;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.control.DetachableTab;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
+import com.eviware.loadui.ui.fx.util.NodeUtils;
 import com.eviware.loadui.ui.fx.util.Properties;
 import com.eviware.loadui.ui.fx.util.UIUtils;
 import com.eviware.loadui.ui.fx.views.analysis.reporting.LineChartUtils;
@@ -89,11 +78,39 @@ public class ProjectView extends AnchorPane
 	@FXML
 	private Button summaryButton;
 
-	private CanvasItem lastRunCanvas;
-
 	private final ProjectItem project;
 
 	private final Observable projectReleased;
+
+	private final TestExecutionTask blockWindowTask = new TestExecutionTask()
+	{
+		@Override
+		public void invoke( final TestExecution execution, Phase phase )
+		{
+			Platform.runLater( new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					fireEvent( IntentEvent.create( IntentEvent.INTENT_RUN_BLOCKING, new Runnable()
+					{
+						@Override
+						public void run()
+						{
+							try
+							{
+								execution.complete().get(); // Wait until execution is complete.
+							}
+							catch( InterruptedException | ExecutionException e )
+							{
+								e.printStackTrace();
+							}
+						}
+					} ) );
+				}
+			} );
+		}
+	};
 
 	public ProjectPlaybackPanel getPlaybackPanel()
 	{
@@ -185,7 +202,7 @@ public class ProjectView extends AnchorPane
 					parent.getChildren().remove( canvas );
 
 					StackPane completeCanvas = StackPaneBuilder.create().children( grid, canvas ).build();
-					Scene snapshotScene = SceneBuilder.create().root( completeCanvas ).width( 996 ).height( 525 ).build();
+					SceneBuilder.create().root( completeCanvas ).width( 996 ).height( 525 ).build();
 					//					String styleSheetUrl = null;
 					//					try
 					//					{
@@ -240,7 +257,6 @@ public class ProjectView extends AnchorPane
 						@Override
 						public void run()
 						{
-							lastRunCanvas = execution.getCanvas();
 							summaryButton.setDisable( false );
 						}
 					} );
@@ -248,6 +264,7 @@ public class ProjectView extends AnchorPane
 			}
 		};
 		BeanInjector.getBean( TestRunner.class ).registerTask( testExecutionTask, Phase.PRE_START, Phase.POST_STOP );
+		BeanInjector.getBean( TestRunner.class ).registerTask( blockWindowTask, Phase.PRE_STOP );
 
 		projectReleased.addListener( new InvalidationListener()
 		{
