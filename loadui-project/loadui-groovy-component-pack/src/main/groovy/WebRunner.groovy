@@ -21,7 +21,7 @@
  * @help http://www.loadui.org/Runners/web-page-runner-component.html
  * @name Web Page Runner
  * @category runners
- * @dependency org.apache.httpcomponents:httpcore:4.1
+ * @dependency org.apache.httpcomponents:httpcore:4.1.1
  * @dependency org.apache.httpcomponents:httpclient:4.1.1
  */
 

@@ -65,7 +65,7 @@ public class SegmentBox extends VBox
 
 		statisticsLabel = LabelBuilder.create().text( "Statistics" ).id( "statistics-label" ).alignment( Pos.CENTER_LEFT )
 				.build();
-		expandCollapseSegments = ToggleButtonBuilder.create().id( "expander-toggle-button" ).alignment( Pos.CENTER_RIGHT )
+		expandCollapseSegments = ToggleButtonBuilder.create().id( "expander").styleClass( "styleable-graphic" ).alignment( Pos.CENTER_RIGHT )
 				.build();
 
 		AnchorPane topBox = AnchorPaneBuilder.create().children( statisticsLabel, expandCollapseSegments ).build();
