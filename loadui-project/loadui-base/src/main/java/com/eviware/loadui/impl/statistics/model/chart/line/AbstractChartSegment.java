@@ -40,6 +40,11 @@ public class AbstractChartSegment implements Segment.Removable
 		return chartView.getChart();
 	}
 
+	public ChartLineChartView getChartView()
+	{
+		return chartView;
+	}
+
 	@Override
 	public void setAttribute( String key, String value )
 	{

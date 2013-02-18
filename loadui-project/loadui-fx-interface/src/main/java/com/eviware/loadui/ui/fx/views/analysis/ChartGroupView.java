@@ -31,7 +31,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.assertion.AssertionItem;
-import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.statistics.Statistic;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.model.Chart;
@@ -91,7 +90,6 @@ public class ChartGroupView extends VBox
 	private final ChartGroup chartGroup;
 
 	private final ObservableValue<Execution> currentExecution;
-	private final ProjectItem project;
 	private final Observable poll;
 
 	@FXML
@@ -122,15 +120,12 @@ public class ChartGroupView extends VBox
 
 	private final ObservableList<LineChartViewNode> componentSubcharts;
 
-	public ChartGroupView( ChartGroup chartGroup, ObservableValue<Execution> currentExecution, ProjectItem project,
-			Observable poll )
+	public ChartGroupView( ChartGroup chartGroup, ObservableValue<Execution> currentExecution, Observable poll )
 	{
 		this.chartGroup = chartGroup;
 		this.currentExecution = currentExecution;
-		this.project = project;
 		this.poll = poll;
 
-		//		componentSubcharts = FXCollections.observableArrayList();
 		componentSubcharts = transform( fx( transform( ofCollection( chartGroup ), chartToChartView ) ),
 				chartViewToChartViewHolder );
 

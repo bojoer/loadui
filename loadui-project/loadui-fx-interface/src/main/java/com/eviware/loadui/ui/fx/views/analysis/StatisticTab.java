@@ -21,7 +21,6 @@ import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.statistics.model.Chart;
 import com.eviware.loadui.api.statistics.model.Chart.Owner;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
@@ -57,25 +56,22 @@ public class StatisticTab extends Tab
 		@Override
 		public ChartGroupView apply( ChartGroup chartGroup )
 		{
-			return new ChartGroupView( chartGroup, currentExecution, project, poll );
+			return new ChartGroupView( chartGroup, currentExecution, poll );
 		}
 	};
 
 	private final StatisticPage page;
 	private final ObservableValue<Execution> currentExecution;
-	private final ProjectItem project;
 	private final Observable poll;
 	private final ObservableList<ChartGroupView> chartGroupViews;
 
 	@FXML
 	private VBox chartList;
 
-	public StatisticTab( StatisticPage page, ObservableValue<Execution> currentExecution, ProjectItem project,
-			Observable poll )
+	public StatisticTab( StatisticPage page, ObservableValue<Execution> currentExecution, Observable poll )
 	{
 		this.page = page;
 		this.currentExecution = currentExecution;
-		this.project = project;
 		this.poll = poll;
 		chartGroupViews = transform( fx( ofCollection( page ) ), chartGroupToView );
 

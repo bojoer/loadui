@@ -141,7 +141,6 @@ public class StatisticsView extends StackPane
 					}
 				} ) );
 
-		//allExecutionsInProject = ObservableLists.concat( recentExecutions, archivedExecutions );
 		allExecutionsInProject = ObservableLists.fromExpression( new Callable<Iterable<Execution>>()
 		{
 			@Override

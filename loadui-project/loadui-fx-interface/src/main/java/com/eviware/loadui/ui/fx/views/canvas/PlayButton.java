@@ -1,8 +1,5 @@
 package com.eviware.loadui.ui.fx.views.canvas;
 
-import javax.annotation.Nonnull;
-import javax.swing.plaf.basic.BasicBorders.ToggleButtonBorder;
-
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
@@ -14,7 +11,8 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleButtonBuilder;
 import javafx.scene.layout.StackPane;
 
-import com.eviware.loadui.api.counter.CounterHolder;
+import javax.annotation.Nonnull;
+
 import com.eviware.loadui.api.execution.Phase;
 import com.eviware.loadui.api.execution.TestExecution;
 import com.eviware.loadui.api.execution.TestExecutionTask;
