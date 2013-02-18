@@ -3,8 +3,7 @@ package com.eviware.loadui.launcher.util;
 import java.io.File;
 import java.io.IOException;
 
-import com.sun.javafx.PlatformUtil;
-
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -13,29 +12,82 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBuilder;
 import javafx.scene.layout.HBoxBuilder;
 import javafx.scene.layout.VBoxBuilder;
-import javafx.scene.text.Text;
+import javafx.scene.text.TextBuilder;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageBuilder;
 import javafx.stage.StageStyle;
+import javafx.stage.WindowEvent;
+
+import com.sun.javafx.PlatformUtil;
 
 public class ErrorHandler
 {
+
+	private static class ShowPrompt implements Runnable
+	{
+		final String message;
+
+		ShowPrompt( String message )
+		{
+			this.message = message;
+		}
+
+		@Override
+		public void run()
+		{
+			doShowPrompt( message );
+		}
+
+	}
+
 	public static void promptRestart()
 	{
-		Stage dialogStage = new Stage();
-		dialogStage.setResizable( false );
-		dialogStage.initStyle( StageStyle.UTILITY );
-		dialogStage.initModality( Modality.APPLICATION_MODAL );
+		promptRestart( "A problem occured during startup and LoadUI needs to restart." );
+	}
+
+	public static void promptRestart( final String message )
+	{
+		System.err.println( message );
+
+		Runnable showPrompt = new ShowPrompt( message );
+		if( Platform.isFxApplicationThread() )
+		{
+			showPrompt.run();
+		}
+		else
+		{
+			Platform.runLater( showPrompt );
+		}
+	}
+
+	private static void doShowPrompt( final String message )
+	{
+		Stage dialogStage = StageBuilder.create().resizable( false ).style( StageStyle.UTILITY ).title( "LoadUI" )
+				.onCloseRequest( new EventHandler<WindowEvent>()
+				{
+					@Override
+					public void handle( WindowEvent _ )
+					{
+						quitAction.handle( null );
+					}
+				} ).build();
+
+		dialogStage.initModality( Modality.WINDOW_MODAL );
 
 		Button restartButton = ButtonBuilder.create().text( "Restart" ).onAction( restartAction ).defaultButton( true )
 				.build();
 		Button quitButton = ButtonBuilder.create().text( "Quit" ).onAction( quitAction ).build();
-		dialogStage
-				.setScene( new Scene( VBoxBuilder
-						.create()
-						.children( new Text( "A problem occured during startup and LoadUI needs to restart." ),
-								HBoxBuilder.create().children( restartButton, quitButton ).build() ).alignment( Pos.CENTER )
-						.build() ) );
+		dialogStage.setScene( new Scene( VBoxBuilder
+				.create()
+				.spacing( 10 )
+				.style( "-fx-padding: 10;" )
+				.maxWidth( 600 )
+				.alignment( Pos.CENTER )
+				.children(
+						TextBuilder.create().text( message ).wrappingWidth( 550 ).build(),
+						HBoxBuilder.create().spacing( 20 ).alignment( Pos.CENTER ).children( restartButton, quitButton )
+								.build() ).build() ) );
 		dialogStage.show();
 	}
 
