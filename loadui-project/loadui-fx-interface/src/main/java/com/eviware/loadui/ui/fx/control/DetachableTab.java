@@ -10,6 +10,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.SceneBuilder;
 import javafx.scene.control.Button;
@@ -22,6 +23,7 @@ import javafx.stage.StageBuilder;
 import javafx.stage.WindowEvent;
 
 import com.eviware.loadui.ui.fx.api.intent.BlockingTask;
+import com.eviware.loadui.ui.fx.api.intent.DeleteTask;
 
 public class DetachableTab extends Tab
 {
@@ -88,16 +90,17 @@ public class DetachableTab extends Tab
 				{
 					final Node detachableContent = getDetachableContent();
 					Scene scene;
+
 					detachedStage = StageBuilder
 							.create()
-							.title( getText() )
 							.icons( ( ( Stage )getTabPane().getScene().getWindow() ).getIcons() )
+							.title( getText() )
 							.width( getTabPane().getWidth() )
 							.height( getTabPane().getHeight() )
 							.scene(
 									scene = SceneBuilder.create()
-											.root( StackPaneBuilder.create().children( detachableContent ).build() ).build() )
-							.build();
+											.root( StackPaneBuilder.create().children( detachableContent ).build() )
+											.stylesheets( "/com/eviware/loadui/ui/fx/loadui-style.css" ).build() ).build();
 					detachableContent.setVisible( true );
 					detachedStage.setOnHidden( new EventHandler<WindowEvent>()
 					{
