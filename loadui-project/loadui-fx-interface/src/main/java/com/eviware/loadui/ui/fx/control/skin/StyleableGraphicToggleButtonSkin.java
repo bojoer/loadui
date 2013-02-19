@@ -13,7 +13,6 @@ public class StyleableGraphicToggleButtonSkin extends ToggleButtonSkin
 	{
 		super( button );
 		
-		button.setGraphic( HBoxBuilder.create().children(RegionBuilder.create().styleClass( "graphic" ).build(), RegionBuilder.create().styleClass( "graphic" ).build()).build());
+		button.setGraphic( HBoxBuilder.create().children(RegionBuilder.create().styleClass( "graphic" ).build(), RegionBuilder.create().styleClass( "secondary-graphic" ).build()).build());
 	}
-
 }

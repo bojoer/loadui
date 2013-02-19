@@ -2,18 +2,17 @@
 	-fx-padding: 0 0 0 250;
 }
 
-.tab-header-background {
-	-fx-background-color: transparent;
+.title {
+	-fx-font-size: 20px;
 }
 
 .headers-region {
 	/*-fx-background-color: yellow;*/
 }
 
-.title {
-	-fx-font-size: 20px;
-}
-
+/**
+ * Button-graphics
+ */
 #settingsButton .graphic {
 	-fx-shape: -fx-shape-icon-settings;
 }
@@ -31,13 +30,105 @@
 	-fx-shape: -fx-shape-icon-summary;
 }					
 
-/* detachable tab styling */
-
-.detachable-tab
-{
-	-fx-padding: 0 0 0 18;
+/**
+ * Project Playback Panel (PPP)
+ */
+.project-playback-panel{
+	-fx-spacing: 8; 
+	-fx-padding: 5; 
+	-fx-background-color: linear-gradient(to bottom, #888888 0%, #8F8F8F 100%); 
+	-fx-border-color: #777777;
+	-fx-border-radius: 7;
+	-fx-border-width: 2; 
+	-fx-background-radius: 7;
 }
 
+/**
+ * PPP Playbutton
+ */
+#play-button.toggle-button{
+	-fx-background-color: linear-gradient(#DBDBDB 0%, #757575 100%); 
+	-fx-padding: 5;
+	-fx-background-radius: 30;  
+	-fx-background-insets: 2; 
+	-fx-border-radius: 20; 
+	-fx-border-width: 3; 
+	-fx-border-color: transparent; 
+}
+
+#play-button.toggle-button:hover{
+	-fx-border-color: #4F4F4F; 
+}
+
+#play-button.toggle-button:selected:hover{
+	-fx-border-color: transparent; 
+	-fx-background-color: #4F4F4F;
+}
+
+#play-button.toggle-button:selected{
+	-fx-background-color: linear-gradient(#6D6D6D 0%, #959595 100%);
+}
+
+#play-button.toggle-button .graphic{
+	-fx-shape: -fx-shape-navigation-right; 
+	-fx-scale-x: 0.8; 
+	-fx-scale-y: 0.8; 
+	-fx-padding: 10; 
+	-fx-background-color: #6D6D6D;   
+}
+
+#play-button.toggle-button .secondary-graphic{
+	-fx-padding: 0; 
+	-fx-scale-x: 0.8; 
+	-fx-scale-y: 0.8;
+	-fx-background-color: #6D6D6D;    
+}
+
+#play-button.toggle-button:selected .secondary-graphic{
+	-fx-padding: 10; 
+	-fx-background-color: #DBDBDB;   
+}
+
+#play-button.toggle-button:selected .graphic{
+	-fx-padding: 0;
+}
+
+.play-button-background{
+	-fx-background-color: #4E4E4E; 
+	-fx-background-radius:  20; 
+}
+
+
+/**
+ * PPP Separators
+ */
+.project-playback-panel .separator .line{
+	-fx-border-color: transparent; 
+}
+
+.project-playback-panel .separator{
+	-fx-background-color: #6D6D6D; 	
+}
+
+/**
+ * Progress Indicator
+ */
+
+.progress-indicator{
+	-fx-progress-color: #00FF00; 
+}
+
+/**
+ * Detachable-tabs
+ */
+  
+.tab-header-background {
+	-fx-background-color: transparent;
+}
+ 
+.detachable-tab{
+	-fx-padding: 0 0 0 18;
+}
 
 .detachable-tab .tab-label {
 	-fx-content-display: right;
@@ -64,7 +155,6 @@
 	-fx-background-insets: 
 		-3 -2 5 1,
 		-2 -1 6 2;	
-
 }
 
 .detachable-tab .styleable-graphic:hover {
