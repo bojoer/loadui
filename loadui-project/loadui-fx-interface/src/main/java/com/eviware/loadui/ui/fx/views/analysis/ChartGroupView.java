@@ -5,10 +5,10 @@ import static com.eviware.loadui.ui.fx.util.ObservableLists.ofCollection;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.transform;
 import static com.eviware.loadui.ui.fx.util.Properties.forLabel;
 import static javafx.beans.binding.Bindings.bindContent;
-import static javafx.beans.binding.Bindings.lessThan;
 import static javafx.beans.binding.Bindings.size;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
+import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -108,7 +108,22 @@ public class ChartGroupView extends VBox
 
 		chartGroupToggleGroup = new ToggleGroup();
 		componentGroupToggle.setToggleGroup( chartGroupToggleGroup );
-		componentGroupToggle.disableProperty().bind( lessThan( 2, size( componentSubcharts ) ) );
+		componentGroupToggle.disableProperty().bind( Bindings.greaterThan( 2, size( componentSubcharts ) ) );
+
+		componentGroupToggle.disableProperty().addListener( new ChangeListener<Boolean>()
+		{
+
+			@Override
+			public void changed( ObservableValue<? extends Boolean> arg0, Boolean arg1, Boolean newValue )
+			{
+				// deselects Expand button when it gets disabled == removes subcharts from view
+				if( newValue && componentGroupToggle.selectedProperty().getValue() )
+				{
+					componentGroupToggle.setSelected( false );
+				}
+
+			}
+		} );
 
 		componentGroupToggle.selectedProperty().addListener( new ChangeListener<Boolean>()
 		{

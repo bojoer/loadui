@@ -101,5 +101,16 @@ public class ChartLineSegment extends AbstractChartSegment implements LineSegmen
 		}
 
 		return statistic;
+
+	}
+
+	@Override
+	public void remove()
+	{
+		super.remove();
+		if( getChartView().getSegments().size() == 0 )
+		{
+			getChart().delete();
+		}
 	}
 }

@@ -57,6 +57,7 @@ import com.eviware.loadui.launcher.LoadUICommandLineLauncher.CommandApplication;
 import com.eviware.loadui.launcher.LoadUIFXLauncher.FXApplication;
 import com.eviware.loadui.launcher.api.OSGiUtils;
 import com.eviware.loadui.launcher.util.BndUtils;
+import com.eviware.loadui.launcher.util.ErrorHandler;
 
 /**
  * Starts an embedded OSGi Runtime (Felix) with all the required JavaFX packages
@@ -374,14 +375,20 @@ public class LoadUILauncher
 				if( !lockFile.createNewFile() )
 					throw new RuntimeException( "Unable to create file: " + lockFile.getAbsolutePath() );
 
-			try (RandomAccessFile randomAccessFile = new RandomAccessFile( lockFile, "rw" ))
+			try
 			{
+				@SuppressWarnings( "resource" )
+				RandomAccessFile randomAccessFile = new RandomAccessFile( lockFile, "rw" );
 				FileLock lock = randomAccessFile.getChannel().tryLock();
 				if( lock == null )
 				{
-					System.err.println( "An instance of loadUI is already running!" );
+					ErrorHandler.promptRestart( "An instance of LoadUI is already running!" );
 					exitInError();
 				}
+			}
+			catch( Exception e )
+			{
+				e.printStackTrace();
 			}
 		}
 		catch( OverlappingFileLockException e )

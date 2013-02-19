@@ -304,7 +304,8 @@ public class SelectableImpl implements Selectable
 
 		SelectionRectangle()
 		{
-			box.setStyle( "-fx-background-color: rgba(140, 140, 210, 0.5);" );
+			
+			box.setStyle( "-fx-background-color: rgba(34, 68, 187, 0.5); -fx-border-color: rgba(34, 68, 187, 1.0); -fx-border-width: 1;" );
 			getContent().add( box );
 			setAutoFix( false );
 		}

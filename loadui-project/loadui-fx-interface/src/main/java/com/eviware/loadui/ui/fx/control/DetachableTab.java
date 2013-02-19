@@ -90,14 +90,15 @@ public class DetachableTab extends Tab
 					Scene scene;
 					detachedStage = StageBuilder
 							.create()
-							.title( getText() )
 							.icons( ( ( Stage )getTabPane().getScene().getWindow() ).getIcons() )
+							.title( getText() )
 							.width( getTabPane().getWidth() )
 							.height( getTabPane().getHeight() )
 							.scene(
 									scene = SceneBuilder.create()
-											.root( StackPaneBuilder.create().children( detachableContent ).build() ).build() )
-							.build();
+											.root( StackPaneBuilder.create().children( detachableContent ).styleClass( "detached-content" ).build() )
+											.stylesheets( "/com/eviware/loadui/ui/fx/loadui-style.css" )
+											.build() ).build();
 					detachableContent.setVisible( true );
 					detachedStage.setOnHidden( new EventHandler<WindowEvent>()
 					{

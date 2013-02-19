@@ -29,10 +29,7 @@ import com.eviware.loadui.test.IntegrationTestUtils;
 import com.eviware.loadui.util.test.TestUtils;
 
 /**
- * An embedded headless loadUI Controller which can be used for testing. All
- * packages in the loadui-api bundle are exported into the runtime so that they
- * can be used in tests. The loadui-fx-interface bundle is removed due to its
- * dependency on JavaFX.
+ * An loadUI Controller which can be used for testing.
  * 
  * @author dain.nilsson
  */
@@ -62,7 +59,7 @@ public class ControllerFXWrapper
 			@Override
 			public void run()
 			{
-				OSGiFXLauncher.main( baseDir, new String[] { "-nolock" } );
+				OSGiFXLauncher.main( baseDir, new String[] { "-nolock", "--nofx=false" } );
 			}
 		} ).start();
 
