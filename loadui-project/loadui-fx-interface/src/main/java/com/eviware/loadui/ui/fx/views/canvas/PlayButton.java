@@ -9,6 +9,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleButtonBuilder;
+import javafx.scene.layout.RegionBuilder;
 import javafx.scene.layout.StackPane;
 
 import javax.annotation.Nonnull;
@@ -26,7 +27,7 @@ import com.eviware.loadui.util.execution.TestExecutionUtils;
 
 public class PlayButton extends StackPane
 {
-	private final ToggleButton toggleButton = ToggleButtonBuilder.create().build();
+	private final ToggleButton toggleButton = ToggleButtonBuilder.create().id( "play-button" ).styleClass( "styleable-graphic" ).build();
 	private final CanvasItem canvas;
 	private final BooleanProperty playingProperty = new SimpleBooleanProperty();
 
@@ -92,12 +93,9 @@ public class PlayButton extends StackPane
 		playingProperty.bindBidirectional( toggleButton.selectedProperty() );
 		ProgressIndicator playSpinner = new ProgressIndicator();
 		playSpinner.visibleProperty().bind( toggleButton.selectedProperty() );
-		toggleButton.textProperty().bind(
-				Bindings.when( toggleButton.selectedProperty() ).then( "\u25FC" ).otherwise( "\u25B6" ) );
-		toggleButton.setId( "play-button" );
 
 		TestExecutionUtils.testRunner.registerTask( executionTask, Phase.PRE_START, Phase.POST_STOP );
 
-		getChildren().setAll( playSpinner, toggleButton );
+		getChildren().setAll(RegionBuilder.create().styleClass( "play-button-background" ).build(), playSpinner, toggleButton );
 	}
 }
