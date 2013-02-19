@@ -56,7 +56,7 @@ public class StatisticDroppedHandler implements EventHandler<DraggableEvent>
 	{
 		Chart chart = chartGroup.createChart( owner );
 		if( owner instanceof StatisticHolder )
-			addStatistics( parent, chartGroup, ( StatisticHolder )owner, chart );
+			addStatistics( parent, ( StatisticHolder )owner, chartGroup.getChartViewForChart( chart ) );
 		else if( owner instanceof AssertionItem )
 			addAssertion( chartGroup, ( AssertionItem<?> )owner, chart );
 	}
@@ -72,9 +72,8 @@ public class StatisticDroppedHandler implements EventHandler<DraggableEvent>
 		}
 	}
 
-	private static void addStatistics( Node parent, ChartGroup chartGroup, StatisticHolder owner, Chart chart )
+	private static void addStatistics( Node parent, StatisticHolder owner, ChartView newChartView )
 	{
-		ChartView newChartView = chartGroup.getChartViewForChart( chart );
 		if( newChartView instanceof ConfigurableLineChartView )
 		{
 			new StatisticsDialog( parent, owner, ( ConfigurableLineChartView )newChartView ).show();

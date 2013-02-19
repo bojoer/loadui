@@ -20,6 +20,7 @@ import com.eviware.loadui.api.statistics.Statistic.Descriptor;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.model.Chart;
+import com.eviware.loadui.api.statistics.model.ChartGroup;
 import com.eviware.loadui.api.statistics.model.chart.ChartView;
 import com.eviware.loadui.api.statistics.model.chart.line.ConfigurableLineChartView;
 import com.eviware.loadui.api.traits.Labeled;
@@ -57,6 +58,18 @@ public class StatisticsDialog extends ConfirmationDialog
 							break;
 					}
 				}
+				close();
+			}
+
+		} );
+
+		setOnCancel( new EventHandler<ActionEvent>()
+		{
+			@Override
+			public void handle( ActionEvent _ )
+			{
+				if( !thereAreSegmentsIn( chartView.getChartGroup() ) )
+					chartView.getChartGroup().delete();
 				close();
 			}
 
@@ -129,6 +142,15 @@ public class StatisticsDialog extends ConfirmationDialog
 				return;
 			}
 		}
+	}
+
+	private boolean thereAreSegmentsIn( ChartGroup group )
+	{
+		for( ChartView view : group.getChartViewsForCharts() )
+			if( view instanceof ConfigurableLineChartView )
+				if( !( ( ConfigurableLineChartView )view ).getSegments().isEmpty() )
+					return true;
+		return false;
 	}
 
 }
