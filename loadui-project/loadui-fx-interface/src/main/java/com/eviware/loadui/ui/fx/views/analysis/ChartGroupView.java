@@ -13,7 +13,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.LabelBuilder;
@@ -30,62 +29,22 @@ import javafx.scene.layout.VBoxBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.eviware.loadui.api.assertion.AssertionItem;
-import com.eviware.loadui.api.statistics.Statistic;
-import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.model.Chart;
-import com.eviware.loadui.api.statistics.model.Chart.Owner;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
 import com.eviware.loadui.api.statistics.model.chart.ChartView;
-import com.eviware.loadui.api.statistics.model.chart.line.ConfigurableLineChartView;
 import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
 import com.eviware.loadui.api.statistics.store.Execution;
-import com.eviware.loadui.api.testevents.TestEvent;
-import com.eviware.loadui.api.testevents.TestEventRegistry;
 import com.eviware.loadui.ui.fx.api.PostActionEvent;
 import com.eviware.loadui.ui.fx.api.input.DraggableEvent;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.views.analysis.linechart.LineChartViewNode;
-import com.eviware.loadui.util.BeanInjector;
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
 
 public class ChartGroupView extends VBox
 {
 	protected static final Logger log = LoggerFactory.getLogger( ChartGroupView.class );
-
-	public static final Chart createSubChart( ChartGroup chartGroup, Chart.Owner owner )
-	{
-		Chart chart = chartGroup.createChart( owner );
-		if( owner instanceof StatisticHolder )
-		{
-			ChartView chartView = chartGroup.getChartViewForChart( chart );
-			if( chartView instanceof ConfigurableLineChartView )
-			{
-				for( Statistic.Descriptor statistic : ( ( StatisticHolder )owner ).getDefaultStatistics() )
-				{
-					log.debug( "Adding default stat: " + statistic );
-					( ( ConfigurableLineChartView )chartView ).addSegment( statistic.getStatisticVariableLabel(),
-							statistic.getStatisticLabel(), statistic.getSource() );
-				}
-			}
-		}
-		else if( owner instanceof AssertionItem )
-		{
-			AssertionItem<?> assertionItem = ( AssertionItem<?> )owner;
-			String typeLabel = BeanInjector.getBean( TestEventRegistry.class )
-					.lookupFactory( ( ( TestEvent.Source<?> )assertionItem ).getType() ).getLabel();
-			ChartView chartView = chartGroup.getChartViewForChart( chart );
-			if( chartView instanceof ConfigurableLineChartView )
-			{
-				( ( ConfigurableLineChartView )chartView ).addSegment( typeLabel, assertionItem.getLabel() );
-			}
-		}
-
-		return chart;
-
-	}
 
 	private final ChartGroup chartGroup;
 
@@ -127,12 +86,9 @@ public class ChartGroupView extends VBox
 		this.poll = poll;
 
 		componentSubcharts = transform( fx( transform( ofCollection( chartGroup ), chartToChartView ) ),
-				chartViewToChartViewHolder );
+				chartViewToLineChartViewNode );
 
 		FXMLUtils.load( this );
-
-		log.debug( "Chart CREATED event fired." );
-		log.debug( "Parent is: " + getParent() );
 
 		final InvalidationListener fireCreatedEvent = new InvalidationListener()
 		{
@@ -140,7 +96,6 @@ public class ChartGroupView extends VBox
 			public void invalidated( Observable _ )
 			{
 				fireEvent( PostActionEvent.create( PostActionEvent.WAS_CREATED, ChartGroupView.this ) );
-				//TODO: remove this eventlistener since it's not used anymore.
 			}
 		};
 
@@ -175,26 +130,7 @@ public class ChartGroupView extends VBox
 		bindContent( componentGroup.getChildren(), componentSubcharts );
 		chartMenuButton.textProperty().bind( forLabel( chartGroup ) );
 		chartView.getChildren().setAll( createChart( chartGroup.getType() ) );
-		addEventHandler( DraggableEvent.ANY, new EventHandler<DraggableEvent>()
-		{
-			@Override
-			public void handle( DraggableEvent event )
-			{
-				if( event.getData() instanceof Chart.Owner )
-				{
-					if( event.getEventType() == DraggableEvent.DRAGGABLE_ENTERED )
-					{
-						event.accept();
-						event.consume();
-					}
-					else if( event.getEventType() == DraggableEvent.DRAGGABLE_DROPPED )
-					{
-						createSubChart( chartGroup, ( Owner )event.getData() );
-						event.consume();
-					}
-				}
-			}
-		} );
+		addEventHandler( DraggableEvent.ANY, new StatisticDroppedHandler( this, chartGroup ) );
 	}
 
 	@FXML
@@ -265,7 +201,7 @@ public class ChartGroupView extends VBox
 		}
 	};
 
-	public final Function<ChartView, LineChartViewNode> chartViewToChartViewHolder = new Function<ChartView, LineChartViewNode>()
+	public final Function<ChartView, LineChartViewNode> chartViewToLineChartViewNode = new Function<ChartView, LineChartViewNode>()
 	{
 		@Override
 		public LineChartViewNode apply( ChartView _chartView )

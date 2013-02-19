@@ -36,6 +36,22 @@ import com.google.common.base.Function;
 public class StatisticTab extends Tab
 {
 	private static final Logger log = LoggerFactory.getLogger( StatisticTab.class );
+	private final StatisticPage page;
+	private final ObservableValue<Execution> currentExecution;
+	private final Observable poll;
+	private final ObservableList<ChartGroupView> chartGroupViews;
+
+	@FXML
+	private VBox chartList;
+
+	private final Function<ChartGroup, ChartGroupView> chartGroupToView = new Function<ChartGroup, ChartGroupView>()
+	{
+		@Override
+		public ChartGroupView apply( ChartGroup chartGroup )
+		{
+			return new ChartGroupView( chartGroup, currentExecution, poll );
+		}
+	};
 
 	public final static StatisticPage createStatisticPage( StatisticPages pages, @Nullable String label )
 	{
@@ -50,23 +66,6 @@ public class StatisticTab extends Tab
 
 		return group;
 	}
-
-	private final Function<ChartGroup, ChartGroupView> chartGroupToView = new Function<ChartGroup, ChartGroupView>()
-	{
-		@Override
-		public ChartGroupView apply( ChartGroup chartGroup )
-		{
-			return new ChartGroupView( chartGroup, currentExecution, poll );
-		}
-	};
-
-	private final StatisticPage page;
-	private final ObservableValue<Execution> currentExecution;
-	private final Observable poll;
-	private final ObservableList<ChartGroupView> chartGroupViews;
-
-	@FXML
-	private VBox chartList;
 
 	public StatisticTab( StatisticPage page, ObservableValue<Execution> currentExecution, Observable poll )
 	{
@@ -111,13 +110,16 @@ public class StatisticTab extends Tab
 				{
 					if( event.getEventType() == DraggableEvent.DRAGGABLE_ENTERED )
 					{
+						//TODO make content area somehow highlighted
 						event.accept();
 						event.consume();
 					}
 					else if( event.getEventType() == DraggableEvent.DRAGGABLE_DROPPED )
 					{
+						Owner owner = ( Owner )event.getData();
+						log.debug( "Creating new Chart Group" );
 						ChartGroup group = createChartGroup( page, null, null );
-						ChartGroupView.createSubChart( group, ( Owner )event.getData() );
+						StatisticDroppedHandler.createSubChart( chartList, group, owner );
 						event.consume();
 					}
 				}
