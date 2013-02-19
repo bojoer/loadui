@@ -361,7 +361,7 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 	{
 		if( Boolean.parseBoolean( System.getProperty( "loadui.pro" ) ) )
 			return localMode.getValue();
-		return false;
+		return true;
 	}
 
 	//TODO: Remove and make the distribution mode selector disabled when running instead?
