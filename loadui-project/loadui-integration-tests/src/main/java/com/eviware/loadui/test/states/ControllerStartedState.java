@@ -12,7 +12,7 @@ public class ControllerStartedState extends TestState
 {
 	public static final ControllerStartedState STATE = new ControllerStartedState();
 
-	private ControllerWrapper controller;
+	public ControllerWrapper controller;
 
 	private ControllerStartedState()
 	{
