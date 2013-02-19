@@ -13,10 +13,14 @@ import javafx.scene.layout.StackPane;
 
 import javax.annotation.Nonnull;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.eviware.loadui.api.execution.Phase;
 import com.eviware.loadui.api.execution.TestExecution;
 import com.eviware.loadui.api.execution.TestExecutionTask;
 import com.eviware.loadui.api.model.CanvasItem;
+import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.util.execution.TestExecutionUtils;
 
@@ -25,6 +29,41 @@ public class PlayButton extends StackPane
 	private final ToggleButton toggleButton = ToggleButtonBuilder.create().build();
 	private final CanvasItem canvas;
 	private final BooleanProperty playingProperty = new SimpleBooleanProperty();
+
+	protected static final Logger log = LoggerFactory.getLogger( PlayButton.class );
+
+	private final TestExecutionTask executionTask = new TestExecutionTask()
+	{
+		@Override
+		public void invoke( final TestExecution execution, final Phase phase )
+		{
+			Platform.runLater( new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					CanvasItem startedCanvas = execution.getCanvas();
+
+					if( canvas instanceof SceneItem )
+					{
+						if( ( ( SceneItem )canvas ).isAffectedByExecutionTask( execution ) )
+						{
+							playingProperty.set( phase == Phase.PRE_START );
+						}
+					}
+					else if( canvas instanceof ProjectItem )
+					{
+						if( ( ( ProjectItem )canvas ).getCanvas() == startedCanvas )
+							playingProperty.set( phase == Phase.PRE_START );
+					}
+					else
+					{
+						log.warn( "Unsupported CanvasItem: " + canvas.toString() );
+					}
+				}
+			} );
+		}
+	};
 
 	protected final ChangeListener<Boolean> playCanvas = new ChangeListener<Boolean>()
 	{
@@ -57,22 +96,7 @@ public class PlayButton extends StackPane
 				Bindings.when( toggleButton.selectedProperty() ).then( "\u25FC" ).otherwise( "\u25B6" ) );
 		toggleButton.setId( "play-button" );
 
-		TestExecutionUtils.testRunner.registerTask( new TestExecutionTask()
-		{
-			@Override
-			public void invoke( final TestExecution execution, final Phase phase )
-			{
-				Platform.runLater( new Runnable()
-				{
-					@Override
-					public void run()
-					{
-						if( canvas instanceof SceneItem && ( ( SceneItem )canvas ).isAffectedByExecutionTask( execution ) )
-							playingProperty.set( phase == Phase.PRE_START );
-					}
-				} );
-			}
-		}, Phase.PRE_START, Phase.POST_STOP );
+		TestExecutionUtils.testRunner.registerTask( executionTask, Phase.PRE_START, Phase.POST_STOP );
 
 		getChildren().setAll( playSpinner, toggleButton );
 	}
