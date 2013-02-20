@@ -1,6 +1,5 @@
 package com.eviware.loadui.ui.fx.control;
 
-import java.util.ArrayList;
 import java.util.Map.Entry;
 
 import javafx.scene.control.Label;
