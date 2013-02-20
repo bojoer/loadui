@@ -64,7 +64,7 @@ public class StatisticsView extends StackPane
 
 	private final ManualObservable poll = new ManualObservable();
 	private final ManualObservable refreshAllExecutionList = new ManualObservable();
-	private final BooleanProperty executionRunning;
+	private final BooleanProperty isExecutionRunning;
 
 	private final TestExecutionTask executionTask = new TestExecutionTask()
 	{
@@ -80,7 +80,7 @@ public class StatisticsView extends StackPane
 					public void run()
 					{
 						log.debug( " Phase.START fired, setting execution running to true" );
-						executionRunning.set( true );
+						isExecutionRunning.set( true );
 					}
 
 				} );
@@ -93,9 +93,9 @@ public class StatisticsView extends StackPane
 					@Override
 					public void run()
 					{
-						log.debug( " Phase.POST_STOP fired, setting execution running from " + executionRunning.getValue()
+						log.debug( " Phase.POST_STOP fired, setting execution running from " + isExecutionRunning.getValue()
 								+ " to false" );
-						executionRunning.set( false );
+						isExecutionRunning.set( false );
 					}
 
 				} );
@@ -105,7 +105,7 @@ public class StatisticsView extends StackPane
 
 	public StatisticsView( final ProjectItem project )
 	{
-		executionRunning = new SimpleBooleanProperty( TestExecutionUtils.isExecutionRunning() );
+		isExecutionRunning = new SimpleBooleanProperty( TestExecutionUtils.isExecutionRunning() );
 		BeanInjector.getBean( TestRunner.class ).registerTask( executionTask, Phase.START, Phase.POST_STOP );
 
 		final ExecutionManager executionManager = BeanInjector.getBean( ExecutionManager.class );
@@ -147,13 +147,13 @@ public class StatisticsView extends StackPane
 			public Iterable<Execution> call() throws Exception
 			{
 
-				log.debug( "refreshing allExecutionList, isExecutionRunning?: " + executionRunning.get() );
-				if( executionRunning.get() )
+				log.debug( "refreshing allExecutionList, isExecutionRunning?: " + isExecutionRunning.get() );
+				if( isExecutionRunning.get() )
 					return ObservableLists.concat( currentExecutionList, recentExecutions, archivedExecutions );
 				return ObservableLists.concat( recentExecutions, archivedExecutions );
 			}
 
-		}, FXCollections.observableArrayList( refreshAllExecutionList, executionRunning ) );
+		}, FXCollections.observableArrayList( refreshAllExecutionList, isExecutionRunning ) );
 
 		recentExecutions.addListener( new ListChangeListener<Execution>()
 		{
@@ -181,36 +181,43 @@ public class StatisticsView extends StackPane
 			}
 		} );
 
-		addEventHandler( IntentEvent.ANY, new EventHandler<IntentEvent<?>>()
+		addEventHandler( IntentEvent.INTENT_OPEN, new EventHandler<IntentEvent<?>>()
 		{
 			@Override
 			public void handle( IntentEvent<?> event )
 			{
 				if( event.getArg() instanceof Execution )
 				{
-					if( event.getEventType() == IntentEvent.INTENT_OPEN )
+					if( !currentExecution.isBound() )
 					{
-						if( !currentExecution.isBound() )
-						{
-							currentExecution.setValue( ( Execution )event.getArg() );
-						}
+						currentExecution.setValue( ( Execution )event.getArg() );
+					}
 
-						AnalysisView analysisView = new AnalysisView( project, allExecutionsInProject, poll );
-						analysisView.currentExecutionProperty().bind( currentExecution );
-						getChildren().setAll( analysisView );
-						PerspectiveEvent.fireEvent( PerspectiveEvent.PERSPECTIVE_ANALYSIS, analysisView );
-						event.consume();
-					}
-					else if( event.getEventType() == IntentEvent.INTENT_CLOSE )
-					{
-						getChildren().setAll( new ResultView( currentExecution, recentExecutions, archivedExecutions ) );
-						event.consume();
-					}
+					AnalysisView analysisView = new AnalysisView( project, allExecutionsInProject, poll );
+					analysisView.currentExecutionProperty().bind( currentExecution );
+					getChildren().setAll( analysisView );
+					PerspectiveEvent.fireEvent( PerspectiveEvent.PERSPECTIVE_ANALYSIS, analysisView );
+					event.consume();
 				}
 			}
 		} );
 
-		getChildren().setAll( new ResultView( currentExecution, recentExecutions, archivedExecutions ) );
+		final ResultView resultView = new ResultView( currentExecution, recentExecutions, archivedExecutions );
+		
+		addEventHandler( IntentEvent.INTENT_CLOSE, new EventHandler<IntentEvent<?>>()
+				{
+					@Override
+					public void handle( IntentEvent<?> event )
+					{
+						if( event.getArg() instanceof Execution )
+						{
+							getChildren().setAll( resultView );
+							event.consume();
+						}
+					}
+				} );
+		
+		getChildren().setAll( resultView );
 
 	}
 

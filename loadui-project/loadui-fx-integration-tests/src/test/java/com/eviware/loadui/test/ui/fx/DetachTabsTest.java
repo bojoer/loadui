@@ -77,7 +77,7 @@ public class DetachTabsTest
 	@Test 
 	public void ShouldDetachAndReattachStatistics() throws Exception{
 		
-		controller.click( "#resultTab" ).click( "#resultTab .styleable-graphic" );
+		controller.click( "#statsTab" ).click( "#statsTab .styleable-graphic" );
 		
 		try{
 			TestUtils.awaitCondition( new Callable<Boolean>()

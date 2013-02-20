@@ -70,7 +70,7 @@ public class ProjectView extends AnchorPane
 	private DetachableTab designTab;
 
 	@FXML
-	private DetachableTab resultTab;
+	private DetachableTab statsTab;
 
 	@FXML
 	private MenuButton menuButton;
@@ -137,7 +137,7 @@ public class ProjectView extends AnchorPane
 
 		menuButton.textProperty().bind( Properties.forLabel( project ) );
 		designTab.setDetachableContent( new ProjectCanvasView( project ) );
-		resultTab.setDetachableContent( new StatisticsView( project ) );
+		statsTab.setDetachableContent( new StatisticsView( project ) );
 		summaryButton.setDisable( true );
 
 		addEventHandler( IntentEvent.ANY, new EventHandler<IntentEvent<? extends Object>>()
@@ -350,7 +350,7 @@ public class ProjectView extends AnchorPane
 		log.info( "Open summary requested" );
 		ReportingManager reportingManager = BeanInjector.getBean( ReportingManager.class );
 
-		StatisticsView statisticsView = ( StatisticsView )resultTab.getDetachableContent();
+		StatisticsView statisticsView = ( StatisticsView )statsTab.getDetachableContent();
 		ReadOnlyProperty<Execution> execution = statisticsView.currentExecutionProperty();
 		Collection<StatisticPage> pages = project.getStatisticPages().getChildren();
 
