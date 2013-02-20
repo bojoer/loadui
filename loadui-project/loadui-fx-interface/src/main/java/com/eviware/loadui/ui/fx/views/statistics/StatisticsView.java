@@ -202,8 +202,6 @@ public class StatisticsView extends StackPane
 			}
 		} );
 
-		final ResultView resultView = new ResultView( currentExecution, recentExecutions, archivedExecutions );
-		
 		addEventHandler( IntentEvent.INTENT_CLOSE, new EventHandler<IntentEvent<?>>()
 				{
 					@Override
@@ -211,13 +209,13 @@ public class StatisticsView extends StackPane
 					{
 						if( event.getArg() instanceof Execution )
 						{
-							getChildren().setAll( resultView );
+							getChildren().setAll( new ResultView( currentExecution, recentExecutions, archivedExecutions ) );
 							event.consume();
 						}
 					}
 				} );
 		
-		getChildren().setAll( resultView );
+		getChildren().setAll( new ResultView( currentExecution, recentExecutions, archivedExecutions ) );
 
 	}
 
