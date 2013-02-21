@@ -55,7 +55,7 @@ public class ControllerWrapper
 			throw new RuntimeException( "Could not create home directory!" );
 		System.setProperty( LoadUI.LOADUI_HOME, homeDir.getAbsolutePath() );
 
-		launcher = new OSGiLauncher( new String[] { "-nolock", "-nofx" } );
+		launcher = new OSGiLauncher( new String[] { "-nolock" } );
 		Properties config = launcher.getConfig();
 		config.setProperty( "felix.cache.rootdir", baseDir.getAbsolutePath() );
 
@@ -63,23 +63,18 @@ public class ControllerWrapper
 		IntegrationTestUtils.copyDirectory( new File( "../loadui-controller-deps/target/bundle" ), bundleDir );
 		IntegrationTestUtils.copyDirectory( new File( "target/bundle" ), bundleDir );
 
-		// osgi = new OSGiWrapper();
-		// Properties config = osgi.getConfig();
-		// config.setProperty( "felix.cache.rootdir", baseDir.getAbsolutePath() );
-		// File bundleDir = new File( baseDir, "bundle" );
-		// Utilities.copyDirectory( new File(
-		// "../loadui-controller-deps/target/bundle" ), bundleDir );
-
 		// Remove bundles depending on JavaFX and the API bundle.
 		for( File bundle : bundleDir.listFiles() )
 		{
-			if( bundle.getName().startsWith( "loadui-fx" ) )
+			if( bundle.getName().contains( "loadui-fx" ) || bundle.getName().contains( "groovy-component" ) )
 			{
 				if( !bundle.delete() )
 					throw new IOException( "Unable to delete file: " + bundle );
 			}
 			else if( bundle.getName().startsWith( "loadui-api" ) )
 			{
+				//FIXME we do this because tests are not currently run inside a genuine OSGi environment
+				// We need to use something like pax-exam to create a OSGi test environment
 				try (ZipFile api = new ZipFile( bundle ))
 				{
 					Set<String> packages = new TreeSet<>();

@@ -17,6 +17,7 @@ package com.eviware.loadui.test;
 
 import java.util.Properties;
 
+import org.apache.commons.cli.CommandLine;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 
@@ -54,5 +55,11 @@ public class OSGiLauncher extends LoadUILauncher
 	public void stop() throws BundleException
 	{
 		framework.stop();
+	}
+
+	@Override
+	protected void processCommandLine( CommandLine cmdLine )
+	{
+		// no action
 	}
 }

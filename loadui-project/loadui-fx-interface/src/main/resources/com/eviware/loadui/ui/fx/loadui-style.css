@@ -243,13 +243,11 @@
 
 .menu-button:hover{
 	-fx-background-color: linear-gradient(to bottom, #AAAAAA 0%, #CCCCCC 50%, #999999 100%); 		
-	-fx-border-color: #ACACAC;
 	-fx-border-radius: 4;
 }
 
 .menu-button:showing{
 	-fx-background-color: #3355CC;
-	-fx-border-color: #3A5ACA;
 	-fx-border-radius: 0;
 }
 

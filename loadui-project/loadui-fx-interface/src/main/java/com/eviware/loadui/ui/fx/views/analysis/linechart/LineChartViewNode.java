@@ -1,16 +1,9 @@
 package com.eviware.loadui.ui.fx.views.analysis.linechart;
 
-import static com.google.common.base.Objects.firstNonNull;
-
-import java.util.Collection;
-import java.util.LinkedList;
-
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
 import javafx.scene.control.ToggleButton;
@@ -25,11 +18,6 @@ import com.eviware.loadui.api.execution.Phase;
 import com.eviware.loadui.api.execution.TestExecution;
 import com.eviware.loadui.api.execution.TestExecutionTask;
 import com.eviware.loadui.api.execution.TestRunner;
-import com.eviware.loadui.api.statistics.StatisticHolder;
-import com.eviware.loadui.api.statistics.StatisticVariable;
-import com.eviware.loadui.api.statistics.model.Chart;
-import com.eviware.loadui.api.statistics.model.chart.ChartView;
-import com.eviware.loadui.api.statistics.model.chart.line.ConfigurableLineChartView;
 import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.ui.fx.api.NonSingletonFactory;
@@ -37,8 +25,6 @@ import com.eviware.loadui.ui.fx.api.analysis.ExecutionChart;
 import com.eviware.loadui.ui.fx.util.DefaultNonSingletonFactory;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.Properties;
-import com.eviware.loadui.ui.fx.views.analysis.AddStatisticDialog;
-import com.eviware.loadui.ui.fx.views.analysis.Selection;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.execution.TestExecutionUtils;
 
@@ -88,7 +74,7 @@ public class LineChartViewNode extends VBox
 
 		NonSingletonFactory nonSingletonFactory = getNonSingletonFactory();
 		executionChart = nonSingletonFactory.createExecutionChart();
-		
+
 		BeanInjector.getBean( TestRunner.class ).registerTask( executionTask, Phase.START, Phase.STOP );
 
 		this.currentExecution = currentExecution;
@@ -169,47 +155,6 @@ public class LineChartViewNode extends VBox
 		}
 		followCheckBox.setSelected( follow );
 
-	}
-
-	@FXML
-	public void addStatistic()
-	{
-		final Collection<Chart> charts = chartView.getChartGroup().getChildren();
-
-		Collection<StatisticHolder> holders = getStatisticHolders( charts );
-
-		final AddStatisticDialog dialog = new AddStatisticDialog( this, holders );
-		dialog.setOnConfirm( new EventHandler<ActionEvent>()
-		{
-			@Override
-			public void handle( ActionEvent _ )
-			{
-				Selection selection = dialog.getSelection();
-
-				for( Chart chart : charts )
-				{
-					if( selection.holder.equals( chart.getOwner() ) )
-					{
-						ChartView holderChartView = chartView.getChartGroup().getChartViewForChart( chart );
-
-						( ( ConfigurableLineChartView )holderChartView ).addSegment( selection.variable, selection.statistic,
-								firstNonNull( selection.source, StatisticVariable.MAIN_SOURCE ) );
-						break;
-					}
-				}
-				dialog.close();
-			}
-		} );
-		dialog.show();
-	}
-
-	private static Collection<StatisticHolder> getStatisticHolders( final Collection<Chart> charts )
-	{
-		Collection<StatisticHolder> holders = new LinkedList<>();
-		for( Chart chart : charts )
-			if( chart.getOwner() instanceof StatisticHolder )
-				holders.add( ( StatisticHolder )chart.getOwner() );
-		return holders;
 	}
 
 	public void setZoomLevel( ZoomLevel zoomLevel )

@@ -1,8 +1,5 @@
 package com.eviware.loadui.ui.fx.views.canvas.component;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.event.ActionEvent;
@@ -13,14 +10,8 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleButtonBuilder;
 
 import com.eviware.loadui.api.component.categories.OnOffCategory;
-import com.eviware.loadui.api.layout.LayoutComponent;
-import com.eviware.loadui.api.layout.LayoutContainer;
-import com.eviware.loadui.api.layout.PropertyLayoutComponent;
-import com.eviware.loadui.api.layout.SettingsLayoutContainer;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.ui.fx.control.SettingsDialog;
-import com.eviware.loadui.ui.fx.control.SettingsTab;
-import com.eviware.loadui.ui.fx.control.SettingsTab.Builder;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.LayoutContainerUtils;
 import com.eviware.loadui.ui.fx.util.Properties;

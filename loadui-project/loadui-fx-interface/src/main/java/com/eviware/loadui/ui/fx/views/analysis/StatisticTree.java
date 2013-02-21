@@ -2,7 +2,8 @@ package com.eviware.loadui.ui.fx.views.analysis;
 
 import static com.eviware.loadui.ui.fx.util.TreeUtils.dummyItem;
 
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javafx.beans.property.BooleanProperty;
@@ -10,6 +11,7 @@ import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -30,50 +32,33 @@ import com.google.common.collect.ImmutableList;
 
 public class StatisticTree extends TreeView<Labeled> implements Validatable
 {
+	public static final String AGENT_TOTAL = "Total";
+
 	protected static final Logger log = LoggerFactory.getLogger( StatisticTree.class );
 
-	public static BooleanProperty isValidProperty = new SimpleBooleanProperty( false );
+	private final BooleanProperty isValidProperty = new SimpleBooleanProperty( false );
 
 	// Used to prevent unwanted chain reactions when forcing TreeItems to collapse. 
 	public final AtomicBoolean isForceCollapsing = new AtomicBoolean( false );
 
 	private final ImmutableCollection<AgentItem> agents;
-	private final boolean multipleHolders;
 
-	public static StatisticTree forHolders( Collection<StatisticHolder> holders )
+	public static StatisticTree forHolder( StatisticHolder holder )
 	{
-		TreeItem<Labeled> root;
-		if( holders.size() > 1 )
-		{
-			root = dummyItem( "ROOT" );
-		}
-		else
-		{
-			root = new TreeItem<Labeled>( holders.iterator().next() );
-		}
-		return new StatisticTree( holders, root );
+		TreeItem<Labeled> root = new TreeItem<Labeled>( holder );
+		return new StatisticTree( holder, root );
 	}
 
-	private StatisticTree( Collection<StatisticHolder> holders, TreeItem<Labeled> root )
+	private StatisticTree( StatisticHolder holder, TreeItem<Labeled> root )
 	{
 		super( root );
 		setShowRoot( false );
+		getSelectionModel().setSelectionMode( SelectionMode.MULTIPLE );
 		getStyleClass().add( "assertable-tree" );
-		multipleHolders = holders.size() > 1;
 
-		agents = ImmutableList.copyOf( holders.iterator().next().getCanvas().getProject().getWorkspace().getAgents() );
+		agents = ImmutableList.copyOf( holder.getCanvas().getProject().getWorkspace().getAgents() );
 
-		if( holders.size() == 1 )
-			addVariablesToTree( holders.iterator().next(), root );
-		else
-		{
-			for( StatisticHolder holder : holders )
-			{
-				TreeItem<Labeled> holderItem = autoCollapsingItem( holder, root );
-				addVariablesToTree( holder, holderItem );
-				root.getChildren().add( holderItem );
-			}
-		}
+		addVariablesToTree( holder, root );
 
 		getSelectionModel().selectedItemProperty().addListener( new ChangeListener<TreeItem<Labeled>>()
 		{
@@ -100,7 +85,7 @@ public class StatisticTree extends TreeView<Labeled> implements Validatable
 						isValidProperty.set( true );
 					}
 				}
-				log.debug( "getSelectionModel().getSelectedItem(): " + getSelectionModel().getSelectedItem() );
+				log.debug( "getSelectionModel().getSelectedItems(): " + getSelectionModel().getSelectedItems() );
 			}
 		} );
 
@@ -119,25 +104,21 @@ public class StatisticTree extends TreeView<Labeled> implements Validatable
 		for( String variableName : holder.getStatisticVariableNames() )
 		{
 			StatisticVariable variable = holder.getStatisticVariable( variableName );
-			final TreeItem<Labeled> variableItem = autoCollapsingItem( variable, root );
+			final TreeItem<Labeled> variableItem = treeItem( variable, root );
 
 			for( String statisticName : variable.getStatisticNames() )
 			{
-				Statistic<Number> statistic = ( Statistic<Number> )variable.getStatistic( statisticName,
-						StatisticVariable.MAIN_SOURCE );
-				final TreeItem<Labeled> statisticItem = autoCollapsingItem( statistic, variableItem );
+				Statistic<?> statistic = variable.getStatistic( statisticName, StatisticVariable.MAIN_SOURCE );
+				final TreeItem<Labeled> statisticItem = treeItem( statistic, variableItem );
 				if( !agents.isEmpty() )
 				{
-					statisticItem.getChildren().add( dummyItem( "Total", StatisticVariable.MAIN_SOURCE ) );
+					statisticItem.getChildren().add( dummyItem( AGENT_TOTAL, StatisticVariable.MAIN_SOURCE ) );
 				}
 				for( AgentItem agent : agents )
 				{
 					statisticItem.getChildren().add( new TreeItem<Labeled>( agent ) );
 				}
-
-				variableItem.getChildren().add( statisticItem );
 			}
-			root.getChildren().add( variableItem );
 		}
 	}
 
@@ -158,8 +139,6 @@ public class StatisticTree extends TreeView<Labeled> implements Validatable
 		int depth = 3;
 		if( !agents.isEmpty() )
 			depth++ ;
-		if( multipleHolders )
-			depth++ ;
 		return depth;
 	}
 
@@ -172,45 +151,24 @@ public class StatisticTree extends TreeView<Labeled> implements Validatable
 		return TreeView.getNodeLevel( item ) + 1 == getDepth();
 	}
 
-	public Selection getSelection()
+	public List<Selection> getSelections()
 	{
-		TreeItem<Labeled> selectedItem = getSelectionModel().getSelectedItem();
-		return new Selection( selectedItem, isSource( selectedItem ) );
+		List<TreeItem<Labeled>> selectedItems = getSelectionModel().getSelectedItems();
+		List<Selection> selections = new ArrayList<>( selectedItems.size() );
+		for( int i = 0; i < selectedItems.size(); i++ )
+		{
+			TreeItem<Labeled> item = selectedItems.get( i );
+			if( item.getChildren().isEmpty() ) // forbid selecting a parent (which is possible in multi-selections)
+				selections.add( new Selection( item, isSource( item ) ) );
+		}
+		return selections;
 	}
 
-	private TreeItem<Labeled> autoCollapsingItem( Labeled value, TreeItem<?> parent )
+	private TreeItem<Labeled> treeItem( Labeled value, TreeItem<Labeled> parent )
 	{
 		TreeItem<Labeled> item = new TreeItem<>( value );
-		item.expandedProperty().addListener( new ExpandedTreeItemsLimiter( item, parent ) );
+		parent.getChildren().add( item );
 		return item;
 	}
 
-	private class ExpandedTreeItemsLimiter implements ChangeListener<Boolean>
-	{
-		private final TreeItem<Labeled> expandedItem;
-		private final TreeItem<?> parent;
-
-		ExpandedTreeItemsLimiter( TreeItem<Labeled> item, TreeItem<?> parent )
-		{
-			this.expandedItem = item;
-			this.parent = parent;
-		}
-
-		@Override
-		public void changed( ObservableValue<? extends Boolean> arg0, Boolean oldValue, Boolean newValue )
-		{
-			if( newValue.booleanValue() )
-			{
-				for( TreeItem<?> item : parent.getChildren() )
-				{
-					if( item != expandedItem )
-					{
-						isForceCollapsing.set( true );
-						item.setExpanded( false );
-						isForceCollapsing.set( false );
-					}
-				}
-			}
-		}
-	}
 }

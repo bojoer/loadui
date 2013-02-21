@@ -116,16 +116,6 @@ log.info "Loading Project: {}", projectFile.absolutePath
 projectRef.enabled = true
 def project = projectRef.project
 
-//def summaryExported = 0
-//def summaryExportListener = new EventHandler<BaseEvent>() {
-//	public void handleEvent( BaseEvent event ) {
-//		if( ProjectItem.SUMMARY_EXPORTED == event.key ) {
-//			summaryExported++
-//		}
-//	}
-//}
-//project.addEventListener( BaseEvent, summaryExportListener )
-
 //Get the target
 def target = testCase ? project.getSceneByLabel( testCase ) : project
 if( !target ) {
@@ -267,15 +257,9 @@ while( testExecution.state != TestState.COMPLETED ) {
 	sleep 1000
 }
 
-//Wait for reports to be generated and saved (SUMMARY_EXPORTED is fired once when the summary is saved to the execution, then once again once the summary has been exported, but only if it should be exported).
-//while( summaryExported < ( project.saveReport ? 2 : 1 ) ) {
-//	sleep 1000
-//	log.info 'Waiting for summary generation to complete...'
-//}
-
 //Save Statistics report
 if( statisticPages != null && project.reportFolder ) {
-	def pages = statisticPages.empty ? project.statisticPages.children : project.statisticPages.children.findAll { statisticPages.contains( it.title ) }
+	def pages = statisticPages.empty ? project.statisticPages.children : project.statisticPages.children.findAll { statisticPages.contains( it.label ) }
 	if( !retainZoom ) {
 		for( page in pages ) {
 			for( chartGroup in page.children ) {
@@ -322,7 +306,6 @@ def success = project.getLimit( CanvasItem.FAILURE_COUNTER ) == -1 || project.ge
 log.info "Shutting down..."
 sleep 1000
 
-project.removeEventListener( BaseEvent, summaryExportListener )
 project.release()
 
 workspace.removeEventListener( CollectionEvent, workspaceCollectionListener )

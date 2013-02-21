@@ -35,7 +35,6 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
 
 import javafx.application.Application;
 
@@ -50,7 +49,6 @@ import org.apache.felix.main.AutoProcessor;
 import org.apache.felix.main.Main;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
-import org.osgi.framework.Constants;
 import org.osgi.framework.launch.Framework;
 
 import com.eviware.loadui.launcher.LoadUICommandLineLauncher.CommandApplication;
@@ -65,7 +63,7 @@ import com.eviware.loadui.launcher.util.ErrorHandler;
  * 
  * @author dain.nilsson
  */
-public class LoadUILauncher
+public abstract class LoadUILauncher
 {
 	protected static final String LOADUI_HOME = "loadui.home";
 	protected static final String LOADUI_NAME = "loadui.name";
@@ -130,8 +128,6 @@ public class LoadUILauncher
 	protected final String[] argv;
 	private final Options options;
 	private final CommandLine cmd;
-
-	private boolean nofx = false;
 
 	/**
 	 * Initiates and starts the OSGi runtime.
@@ -298,38 +294,12 @@ public class LoadUILauncher
 		{
 			framework.init();
 			AutoProcessor.process( configProps, framework.getBundleContext() );
-
-			if( nofx )
-			{
-				startAllNonFxBundles();
-			}
-
+			beforeBundlesStart( framework.getBundleContext().getBundles() );
 			loadExternalJarsAsBundles();
 		}
 		catch( BundleException ex )
 		{
 			ex.printStackTrace();
-		}
-	}
-
-	private void startAllNonFxBundles()
-	{
-		Pattern fxPattern = Pattern.compile( "^com\\.eviware\\.loadui\\.(\\w+[.-])*(fx-interface).*$" );
-		for( Bundle bundle : framework.getBundleContext().getBundles() )
-		{
-			String bundleName = bundle.getSymbolicName();
-			if( bundle.getHeaders().get( Constants.FRAGMENT_HOST ) == null
-					&& ( bundleName == null || !fxPattern.matcher( bundleName ).find() ) )
-			{
-				try
-				{
-					bundle.start();
-				}
-				catch( Exception e )
-				{
-					e.printStackTrace();
-				}
-			}
 		}
 	}
 
@@ -450,11 +420,17 @@ public class LoadUILauncher
 		return newOptions;
 	}
 
-	protected void processCommandLine( CommandLine cmdLine )
+	protected abstract void processCommandLine( CommandLine cmdLine );
+
+	/**
+	 * Allows sub-classes to check the installed bundles before they are started.
+	 * Default action does nothing.
+	 * 
+	 * @param bundles
+	 */
+	protected void beforeBundlesStart( Bundle[] bundles )
 	{
-		//Do not auto-load any loadui JavaFX bundles
-		configProps.setProperty( "felix.auto.deploy.action", "install" );
-		nofx = true;
+		// no action
 	}
 
 	protected final void initSystemProperties()

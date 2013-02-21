@@ -131,13 +131,6 @@ public class SegmentBox extends VBox
 				if( scaling.get() )
 				{
 					scalingButtonBox.visibleProperty().set( true );
-					for( Node node : segmentViewContainer.getChildren() )
-					{
-						if( node instanceof LineSegmentView )
-						{
-							LineSegmentView view = ( LineSegmentView )node;
-						}
-					}
 				}
 				else
 				{

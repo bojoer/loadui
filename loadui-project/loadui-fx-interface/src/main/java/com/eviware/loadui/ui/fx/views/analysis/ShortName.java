@@ -73,11 +73,6 @@ public class ShortName
 			this.prefix = prefix;
 		}
 
-		void setPostfix( String postfix )
-		{
-			this.postfix = postfix;
-		}
-
 		String build( String mainPart )
 		{
 			return prefix + " " + mainPart + " " + postfix;

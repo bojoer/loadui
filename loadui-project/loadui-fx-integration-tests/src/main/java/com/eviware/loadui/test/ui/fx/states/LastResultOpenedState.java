@@ -16,7 +16,7 @@ public class LastResultOpenedState extends TestState
 	protected void enterFromParent() throws Exception
 	{
 		GUI.getController().click( ".project-playback-panel #play-button" ).sleep( 5000 )
-				.click( ".project-playback-panel #play-button" ).click( "#resultTab" )
+				.click( ".project-playback-panel #play-button" ).click( "#statsTab" )
 				.doubleClick( "#result-0" );
 	}
 

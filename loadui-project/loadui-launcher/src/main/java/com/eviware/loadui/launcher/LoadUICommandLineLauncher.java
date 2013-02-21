@@ -6,8 +6,10 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javafx.application.Application;
 import javafx.concurrent.Task;
@@ -16,6 +18,8 @@ import javafx.stage.Stage;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleException;
 
 import com.eviware.loadui.launcher.api.GroovyCommand;
 import com.eviware.loadui.launcher.impl.FileGroovyCommand;
@@ -53,6 +57,58 @@ public class LoadUICommandLineLauncher extends LoadUILauncher
 	private static GroovyCommand command;
 
 	@Override
+	protected void beforeBundlesStart( Bundle[] bundles )
+	{
+		final Set<String> doNotStart = new HashSet<>( Arrays.asList( "loadui-pro-fx" ) );
+
+		for( Bundle bundle : bundles )
+		{
+			if( is( bundle ).in( doNotStart ) )
+			{
+				try
+				{
+					System.out.println( "Uninstalling bundle: " + bundle.getSymbolicName() );
+					bundle.uninstall();
+				}
+				catch( BundleException e )
+				{
+					e.printStackTrace();
+				}
+			}
+			else
+			{
+				System.out.println( "Starting: " + bundle.getSymbolicName() );
+			}
+		}
+
+	}
+
+	private ContainsSimilarItem is( Bundle bundle )
+	{
+		return new ContainsSimilarItem( bundle.getSymbolicName() );
+	}
+
+	private class ContainsSimilarItem
+	{
+
+		String name;
+
+		public ContainsSimilarItem( String name )
+		{
+			this.name = name;
+		}
+
+		boolean in( Set<String> set )
+		{
+			for( String item : set )
+				if( name.contains( item ) )
+					return true;
+			return false;
+		}
+
+	}
+
+	@Override
 	protected void processCommandLine( CommandLine cmd )
 	{
 		try (InputStream is = getClass().getResourceAsStream( "/packages-extra.txt" ))
@@ -75,7 +131,6 @@ public class LoadUICommandLineLauncher extends LoadUILauncher
 		{
 			e.printStackTrace();
 		}
-		//		super.processCommandLine( cmd );
 
 		Map<String, Object> attributes = new HashMap<>();
 
@@ -190,7 +245,7 @@ public class LoadUICommandLineLauncher extends LoadUILauncher
 		@Override
 		public void start( final Stage stage ) throws Exception
 		{
-			System.out.println( "start called!" );
+			System.out.println( "CommandApplication starting" );
 
 			Task<Void> task = new Task<Void>()
 			{

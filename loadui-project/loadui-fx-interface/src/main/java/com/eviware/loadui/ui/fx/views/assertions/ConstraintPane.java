@@ -7,7 +7,6 @@ import static com.eviware.loadui.ui.fx.control.fields.ValidatableLongField.IS_EM
 import static com.google.common.base.Predicates.or;
 import static javafx.beans.binding.Bindings.and;
 import static javafx.beans.binding.Bindings.when;
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;

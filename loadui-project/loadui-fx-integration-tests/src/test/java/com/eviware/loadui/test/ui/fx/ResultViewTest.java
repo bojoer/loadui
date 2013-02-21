@@ -45,7 +45,7 @@ public class ResultViewTest
 				.click( PLAY_BUTTON_SELECTOR ).sleep( 1000 ) // stop
 				.click( PLAY_BUTTON_SELECTOR ).sleep( 2000 ) // start
 				.click( PLAY_BUTTON_SELECTOR ) // stop
-				.click( "#resultTab" );
+				.click( "#statsTab" );
 
 		// assert there is a current execution
 		getOrFail( "#current-0" );
@@ -92,7 +92,7 @@ public class ResultViewTest
 		// run one execution
 		controller.click( PLAY_BUTTON_SELECTOR ).sleep( 2000 ) // start
 				.click( PLAY_BUTTON_SELECTOR ).sleep( 1000 ) // stop
-				.click( "#resultTab" );
+				.click( "#statsTab" );
 
 		// check current execution's menu options
 		controller.click( "#current-0 #menuButton" );

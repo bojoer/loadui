@@ -5,8 +5,6 @@ import javafx.scene.control.TextFieldBuilder;
 
 import javax.annotation.Nullable;
 
-import com.eviware.loadui.ui.fx.control.fields.ValidatableLongField.Builder;
-import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.base.Objects;
 import com.google.common.base.Predicate;

@@ -15,7 +15,6 @@ import com.eviware.loadui.api.serialization.ListenableValue;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.traits.Labeled;
 import com.eviware.loadui.ui.fx.control.ConfirmationDialog;
-import com.eviware.loadui.util.assertion.RangeConstraint;
 
 public class CreateAssertionDialog extends ConfirmationDialog
 {
