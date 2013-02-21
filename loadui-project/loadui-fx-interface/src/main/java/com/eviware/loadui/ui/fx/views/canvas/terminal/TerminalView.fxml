@@ -5,5 +5,5 @@
 	<stylesheets>
 		<URL value="@TerminalView.css" />
 	</stylesheets>
-	<Region fx:id="terminalNode" styleClass="terminal" maxWidth="20" maxHeight="20" />
+	<Region fx:id="terminalNode" styleClass="terminal" minWidth="20" minHeight="20" maxWidth="20" maxHeight="20" />
 </fx:root>
