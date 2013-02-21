@@ -1229,9 +1229,10 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 			log.debug( "State changed: " + oldState.name() + " -> STOPPED " );
 		}
 	}
-	
+
 	@Override
-	public void archiveExecution( String executionId ) {
+	public void archiveExecution( String executionId )
+	{
 		ExecutionImpl execution = getExecution( executionId );
 		if( execution == null )
 			return;

@@ -48,6 +48,7 @@ import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.NodeUtils;
 import com.eviware.loadui.ui.fx.util.Properties;
 import com.eviware.loadui.ui.fx.util.UIUtils;
+import com.eviware.loadui.ui.fx.views.analysis.FxExecutionsInfo;
 import com.eviware.loadui.ui.fx.views.analysis.reporting.LineChartUtils;
 import com.eviware.loadui.ui.fx.views.canvas.CanvasView;
 import com.eviware.loadui.ui.fx.views.rename.RenameDialog;
@@ -78,6 +79,10 @@ public class ProjectView extends AnchorPane
 
 	@FXML
 	private Button summaryButton;
+
+	private ProjectPlaybackPanel playbackPanel;
+
+	private final FxExecutionsInfo executionsInfo;
 
 	private final ProjectItem project;
 
@@ -118,11 +123,10 @@ public class ProjectView extends AnchorPane
 		return playbackPanel;
 	}
 
-	private ProjectPlaybackPanel playbackPanel;
-
-	public ProjectView( ProjectItem projectIn )
+	public ProjectView( ProjectItem projectIn, FxExecutionsInfo executionsInfo )
 	{
 		this.project = Preconditions.checkNotNull( projectIn );
+		this.executionsInfo = executionsInfo;
 		projectReleased = Properties.observeEvent( project, ProjectItem.RELEASED );
 
 		FXMLUtils.load( this );
@@ -138,7 +142,7 @@ public class ProjectView extends AnchorPane
 
 		menuButton.textProperty().bind( Properties.forLabel( project ) );
 		designTab.setDetachableContent( new ProjectCanvasView( project ) );
-		statsTab.setDetachableContent( new StatisticsView( project ) );
+		statsTab.setDetachableContent( new StatisticsView( project, executionsInfo ) );
 		summaryButton.setDisable( true );
 
 		addEventHandler( IntentEvent.ANY, new EventHandler<IntentEvent<? extends Object>>()

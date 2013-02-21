@@ -36,6 +36,7 @@ import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.ObservableLists;
 import com.eviware.loadui.ui.fx.util.UIUtils;
 import com.eviware.loadui.ui.fx.views.about.AboutDialog;
+import com.eviware.loadui.ui.fx.views.analysis.FxExecutionsInfo;
 import com.eviware.loadui.ui.fx.views.inspector.InspectorView;
 import com.eviware.loadui.ui.fx.views.project.ProjectView;
 import com.eviware.loadui.ui.fx.views.project.SaveProjectDialog;
@@ -63,10 +64,12 @@ public class MainWindowView extends StackPane
 	private final Property<WorkspaceItem> workspaceProperty = new SimpleObjectProperty<>();
 	private final WorkspaceListener workspaceListener = new WorkspaceListener();
 	private final SimpleBooleanProperty isInitialized = new SimpleBooleanProperty( false );
+	private final FxExecutionsInfo executionsInfo;
 
-	public MainWindowView( WorkspaceProvider workspaceProvider )
+	public MainWindowView( WorkspaceProvider workspaceProvider, FxExecutionsInfo executionsInfo )
 	{
 		this.workspaceProvider = Preconditions.checkNotNull( workspaceProvider );
+		this.executionsInfo = Preconditions.checkNotNull( executionsInfo );
 
 		FXMLUtils.load( this );
 	}
@@ -190,7 +193,7 @@ public class MainWindowView extends StackPane
 										@Override
 										public void run()
 										{
-											ProjectView projectView = new ProjectView( project );
+											ProjectView projectView = new ProjectView( project, executionsInfo );
 											container.getChildren().setAll( projectView );
 											PerspectiveEvent.fireEvent( PerspectiveEvent.PERSPECTIVE_PROJECT, projectView );
 										}
@@ -198,7 +201,6 @@ public class MainWindowView extends StackPane
 								}
 								catch( Exception e )
 								{
-									// TODO Auto-generated catch block
 									e.printStackTrace();
 								}
 
@@ -277,9 +279,10 @@ public class MainWindowView extends StackPane
 		//		fireEvent( new PerspectiveEvent( PerspectiveEvent.PERSPECTIVE_WORKSPACE ) );
 		PerspectiveEvent.fireEvent( PerspectiveEvent.PERSPECTIVE_WORKSPACE, workspaceView );
 	}
-	
-	public WorkspaceView getWorkspaceView() {
-		if (container != null && container.getChildren().isEmpty() == false)
+
+	public WorkspaceView getWorkspaceView()
+	{
+		if( container != null && container.getChildren().isEmpty() == false )
 			return ( WorkspaceView )container.getChildren().get( 0 );
 		else
 			throw new RuntimeException( "WorkspaceView has not been created yet" );

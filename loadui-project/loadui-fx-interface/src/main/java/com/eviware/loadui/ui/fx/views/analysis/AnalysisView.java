@@ -31,7 +31,6 @@ import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.statistics.model.StatisticPage;
 import com.eviware.loadui.api.statistics.model.StatisticPages;
 import com.eviware.loadui.api.statistics.store.Execution;
-import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.Properties;
 import com.google.common.base.Function;
@@ -95,7 +94,6 @@ public class AnalysisView extends StackPane
 	private HBox buttonContainer;
 
 	private final ProjectItem project;
-	private final ObservableList<Execution> allExecutionList;
 
 	private final Observable poll;
 
@@ -122,10 +120,9 @@ public class AnalysisView extends StackPane
 		return currentExecution.getValue();
 	}
 
-	public AnalysisView( ProjectItem project, ObservableList<Execution> allExecutionsInProject, Observable poll )
+	public AnalysisView( ProjectItem project, Observable poll )
 	{
 		this.project = project;
-		this.allExecutionList = allExecutionsInProject;
 		this.poll = poll;
 
 		FXMLUtils.load( this );
@@ -207,17 +204,6 @@ public class AnalysisView extends StackPane
 	public HBox getButtonContainer()
 	{
 		return buttonContainer;
-	}
-
-	public ObservableList<Execution> getAllExecutions()
-	{
-		return allExecutionList;
-	}
-
-	@FXML
-	public void close()
-	{
-		AnalysisView.this.fireEvent( IntentEvent.create( IntentEvent.INTENT_CLOSE, getCurrentExecution() ) );
 	}
 
 }
