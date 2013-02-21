@@ -19,6 +19,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.SceneBuilder;
 import javafx.scene.control.Button;
+import javafx.scene.Node;
 import javafx.scene.control.MenuButton;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
@@ -164,6 +165,29 @@ public class ProjectView extends AnchorPane
 					if( event.getArg() instanceof ProjectItem )
 					{
 						project.save();
+
+						Node canvas = lookup( "#snapshotArea" );
+						Node grid = lookup( ".tool-box" );
+						grid.setVisible( false );
+
+						javafx.scene.SnapshotParameters parameters = new javafx.scene.SnapshotParameters();
+						parameters.setViewport( new javafx.geometry.Rectangle2D( 100, 60, 620, 324 ) );
+						WritableImage fxImage = canvas.snapshot( parameters, null );
+						BufferedImage bimg = SwingFXUtils.fromFXImage( fxImage, null );
+						bimg = UIUtils.scaleImage( bimg, 120, 64 );
+						String base64 = NodeUtils.toBase64Image( bimg );
+
+						for( ProjectRef pRef : project.getWorkspace().getProjectRefs() )
+						{
+							if( pRef.isEnabled() && pRef.getProject() == project )
+							{
+								pRef.setAttribute( "miniature_fx2", base64 );
+								break;
+							}
+						}
+
+						grid.setVisible( true );
+						event.consume();
 					}
 					else
 					{
@@ -194,7 +218,6 @@ public class ProjectView extends AnchorPane
 				}
 				else if( event.getEventType() == IntentEvent.INTENT_CLOSE && event.getArg() instanceof SceneItem )
 				{
-					SceneItem scenario = ( SceneItem )event.getArg();
 					Group canvas = ( Group )lookup( ".canvas-layer" );
 					StackPane grid = ( StackPane )lookup( ".grid-pane" );
 					StackPane parent = ( StackPane )grid.getParent();
@@ -203,22 +226,13 @@ public class ProjectView extends AnchorPane
 
 					StackPane completeCanvas = StackPaneBuilder.create().children( grid, canvas ).build();
 					SceneBuilder.create().root( completeCanvas ).width( 996 ).height( 525 ).build();
-					//					String styleSheetUrl = null;
-					//					try
-					//					{
-					//						styleSheetUrl = new File( "src/main/resources/com/eviware/loadui/ui/fx/loadui-style.css" ).toURI()
-					//								.toURL().toExternalForm();
-					//					}
-					//					catch( MalformedURLException e )
-					//					{
-					//						e.printStackTrace();
-					//					}
-					//					snapshotScene.getStylesheets().add( styleSheetUrl );
 
 					WritableImage fxImage = completeCanvas.snapshot( null, null );
 					BufferedImage bimg = SwingFXUtils.fromFXImage( fxImage, null );
 					bimg = UIUtils.scaleImage( bimg, 332, 175 );
 					String base64 = NodeUtils.toBase64Image( bimg );
+
+					SceneItem scenario = ( SceneItem )event.getArg();
 					scenario.setAttribute( "miniature_fx2", base64 );
 
 					designTab.setDetachableContent( new ProjectCanvasView( project ) );

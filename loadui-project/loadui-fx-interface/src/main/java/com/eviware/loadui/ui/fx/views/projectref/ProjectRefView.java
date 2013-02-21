@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
@@ -14,6 +15,7 @@ import com.eviware.loadui.api.model.ProjectRef;
 import com.eviware.loadui.api.traits.Labeled;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
+import com.eviware.loadui.ui.fx.util.NodeUtils;
 import com.eviware.loadui.ui.fx.util.Properties;
 import com.google.common.base.Preconditions;
 
@@ -24,6 +26,9 @@ public class ProjectRefView extends StackPane implements Labeled
 
 	@FXML
 	private MenuButton menuButton;
+
+	@FXML
+	private ImageView miniature;
 
 	private final ProjectRef projectRef;
 	private final ReadOnlyStringProperty labelProperty;
@@ -43,6 +48,10 @@ public class ProjectRefView extends StackPane implements Labeled
 		setMaxHeight( 95 );
 
 		menuButton.textProperty().bind( labelProperty );
+
+		String base64 = projectRef.getAttribute( "miniature_fx2", null );
+		if( base64 != null )
+			miniature.setImage( NodeUtils.fromBase64Image( base64 ) );
 
 		Tooltip menuTooltip = new Tooltip();
 		menuTooltip.textProperty().bind(
