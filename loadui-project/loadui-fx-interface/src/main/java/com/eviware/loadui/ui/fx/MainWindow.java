@@ -12,6 +12,7 @@ import com.eviware.loadui.api.model.WorkspaceProvider;
 import com.eviware.loadui.api.testevents.TestEventManager;
 import com.eviware.loadui.ui.fx.api.intent.BlockingTask;
 import com.eviware.loadui.ui.fx.api.intent.DeleteTask;
+import com.eviware.loadui.ui.fx.views.analysis.FxExecutionsInfo;
 import com.eviware.loadui.ui.fx.views.window.MainWindowView;
 
 public class MainWindow
@@ -24,6 +25,7 @@ public class MainWindow
 	private Stage stage;
 	private TestEventManager tem;
 	private final WorkspaceProvider workspaceProvider;
+	private FxExecutionsInfo executionsInfo;
 
 	public MainWindow( final WorkspaceProvider workspaceProvider )
 	{
@@ -54,6 +56,11 @@ public class MainWindow
 		this.tem = tem;
 		return this;
 	}
+	
+	public MainWindow provideInfoFor( FxExecutionsInfo executionsInfo ) {
+		this.executionsInfo = executionsInfo;
+		return this;
+	}
 
 	public void show()
 	{
@@ -67,7 +74,7 @@ public class MainWindow
 			@Override
 			public void run()
 			{
-				final MainWindowView mainView = new MainWindowView( workspaceProvider);
+				final MainWindowView mainView = new MainWindowView( workspaceProvider, executionsInfo );
 				mainView.runAfterInit( new Runnable()
 				{
 					@Override
