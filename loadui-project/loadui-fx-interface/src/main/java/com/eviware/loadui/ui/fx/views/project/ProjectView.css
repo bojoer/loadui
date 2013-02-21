@@ -31,20 +31,22 @@
 }					
 
 /**
- * Project Playback Panel (PPP)
+ * Project Playback Panel 
  */
 .project-playback-panel{
-	-fx-spacing: 8; 
-	-fx-padding: 5; 
+	-fx-spacing: 9; 
+	-fx-padding: 6; 
 	-fx-background-color: linear-gradient(to bottom, #888888 0%, #8F8F8F 100%); 
 	-fx-border-color: #777777;
-	-fx-border-radius: 7;
+	-fx-border-radius: 9;
 	-fx-border-width: 2; 
-	-fx-background-radius: 7;
+	-fx-background-radius: 10;
 }
 
+
+
 /**
- * PPP Playbutton
+ * Playbutton
  */
 #play-button.toggle-button{
 	-fx-background-color: linear-gradient(#DBDBDB 0%, #757575 100%); 
@@ -74,7 +76,7 @@
 	-fx-scale-x: 0.8; 
 	-fx-scale-y: 0.8; 
 	-fx-padding: 10; 
-	-fx-background-color: #6D6D6D;   
+	-fx-background-color: #6D6D6D;    
 }
 
 #play-button.toggle-button .secondary-graphic{
@@ -100,13 +102,13 @@
 
 
 /**
- * PPP Separators
+ * Separators
  */
-.project-playback-panel .separator .line{
+.separator .line{
 	-fx-border-color: transparent; 
 }
 
-.project-playback-panel .separator{
+.separator{
 	-fx-background-color: #6D6D6D; 	
 }
 

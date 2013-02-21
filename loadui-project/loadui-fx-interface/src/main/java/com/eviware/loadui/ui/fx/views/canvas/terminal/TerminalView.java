@@ -32,7 +32,7 @@ public class TerminalView extends StackPane {
 	@FXML
 	protected void initialize() {
 		final DragNode dragNode = DragNode.install(terminalNode, CircleBuilder
-				.create().radius(10).style("-fx-fill: radial-gradient(center 50% 50%, radius 50%, reflect, #BBBBBB, #888888, #444444);").build());
+				.create().radius(10).style("-fx-fill: radial-gradient(center 50% 50%, radius 50%, reflect, #BBBBBB, #888888, #444444 90%, #000000 100%);").build());
 		dragNode.setRevert(false);
 		dragNode.setData(terminal);
 

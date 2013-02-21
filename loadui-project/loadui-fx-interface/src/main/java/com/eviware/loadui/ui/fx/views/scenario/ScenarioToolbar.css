@@ -2,6 +2,24 @@
 	-fx-font-size: 20px;
 }
 
+.scenario-toolbar .tool-bar{
+	-fx-background-color: linear-gradient(to bottom, #B7B7B7 0%, #9FA1A4 2%, #757575 98%);
+	-fx-effect: dropshadow(gaussian, #111111, 9, 0.7, 0, 0)
+}
+
+/**
+ * Virtual User Playback Panel 
+ */
+.scenario-toolbar .scenario-playback-panel{
+	-fx-spacing: 6; 
+	-fx-padding: 3; 
+	-fx-background-color: linear-gradient(to bottom, #888888 0%, #8F8F8F 100%); 
+	-fx-border-color: #777777;
+	-fx-border-radius: 9;
+	-fx-border-width: 2; 
+	-fx-background-radius: 10;
+}
+
 #openHelpPageButton .graphic {
 	-fx-shape: -fx-shape-icon-help;
 	-fx-scale-x: 0.7;
@@ -10,3 +28,4 @@
 #closeScenarioButton .graphic {
 	-fx-shape: -fx-shape-icon-close;
 }
+
