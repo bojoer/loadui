@@ -303,13 +303,6 @@ public class ProjectView extends AnchorPane
 	}
 
 	@FXML
-	public void newProjectWizard()
-	{
-		log.info( "New Project Wizard requested" );
-		fireEvent( IntentEvent.create( IntentEvent.INTENT_CREATE, project.getWorkspace() ) );
-	}
-
-	@FXML
 	public void cloneProject()
 	{
 		log.info( "Clone Project requested" );

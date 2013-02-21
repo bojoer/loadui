@@ -40,8 +40,6 @@
 	<MenuButton maxWidth="240" fx:id="menuButton"
 		AnchorPane.topAnchor="18" AnchorPane.leftAnchor="80">
 		<items>
-			<MenuItem fx:id="newProject" id="newProject" text="New Project Wizard"
-				onAction="#newProjectWizard" />
 			<MenuItem fx:id="clone" id="clone" text="Rename..."
 				onAction="#renameProject" />
 			<MenuItem fx:id="save" id="save" text="Save" onAction="#saveProject" />
