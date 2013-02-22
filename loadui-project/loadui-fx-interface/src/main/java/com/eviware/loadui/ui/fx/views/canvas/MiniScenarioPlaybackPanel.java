@@ -12,9 +12,9 @@ public class MiniScenarioPlaybackPanel extends PlaybackPanel<CounterDisplay, Sce
 	{
 		super( canvas );
 
-		setStyle( "-fx-spacing: 8; -fx-background-color: #8b8c8f; -fx-background-radius: 7;" );
+		getStyleClass().setAll( "mini-playback-panel" );
 		setMaxHeight( 28 );
-		setMaxWidth( 245 );
+		setMaxWidth( 255 );
 		setAlignment( Pos.CENTER );
 
 		getChildren().setAll( playButton, separator(), linkScenarioButton( canvas ), separator(), time, separator(),
