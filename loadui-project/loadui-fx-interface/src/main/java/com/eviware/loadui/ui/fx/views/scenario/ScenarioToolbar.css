@@ -13,7 +13,7 @@
 .scenario-toolbar .scenario-playback-panel{
 	-fx-spacing: 6; 
 	-fx-padding: 3; 
-	-fx-background-color: linear-gradient(to bottom, #888888 0%, #8F8F8F 100%); 
+	-fx-background-color: linear-gradient(to bottom, #959595 0%, #ABABAB 100%); 
 	-fx-border-color: #777777;
 	-fx-border-radius: 9;
 	-fx-border-width: 2; 
