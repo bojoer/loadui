@@ -170,6 +170,8 @@ public class ProjectView extends AnchorPane
 					{
 						project.save();
 
+						System.out.println( "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" );
+
 						Node canvas = lookup( "#snapshotArea" );
 						Node grid = lookup( ".tool-box" );
 						grid.setVisible( false );
