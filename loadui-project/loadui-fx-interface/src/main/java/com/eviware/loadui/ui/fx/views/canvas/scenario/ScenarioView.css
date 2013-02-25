@@ -1,0 +1,9 @@
+.scenario-view .mini-playback-panel{
+	-fx-spacing: 6; 
+	-fx-padding: 3; 
+	-fx-background-color: linear-gradient(to bottom, #959595 0%, #ABABAB 100%); 
+	-fx-border-color: #777777;
+	-fx-border-radius: 9;
+	-fx-border-width: 2; 
+	-fx-background-radius: 10;
+}

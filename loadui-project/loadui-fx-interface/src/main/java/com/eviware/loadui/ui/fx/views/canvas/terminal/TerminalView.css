@@ -1,6 +1,8 @@
 .terminal {
-	-fx-background-color: black, red;
-	-fx-background-insets: 0, 2;
-	-fx-background-radius: 10;
-	-fx-padding: 10;
+	-fx-background-color: radial-gradient(center 50% 50%, radius 50%, reflect, #BBBBBB, #444444 90%, #000000 100%);
+	-fx-background-radius: 15; 
+}
+
+.terminal:hover{
+	-fx-effect: dropshadow(gaussian, white, 12, 0.5, 0, 0); 
 }
