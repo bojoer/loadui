@@ -11,13 +11,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.Closeable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javafx.application.Application;
-import javafx.beans.property.Property;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.SceneBuilder;
@@ -82,7 +81,6 @@ public class ResultViewTest
 			when( curr.getId() ).thenReturn( "3" );
 			when( curr.getLabel() ).thenReturn( "Current" );
 			when( curr.isArchived() ).thenReturn( false );
-			Property<Execution> currentExecution = new SimpleObjectProperty<>( curr, "currentExecution" );
 
 			ObservableList<Execution> recentExecutions = fx( filter(
 					ofCollection( firer, ExecutionManager.RECENT_EXECUTIONS, Execution.class, executions ),
@@ -105,7 +103,9 @@ public class ResultViewTest
 						}
 					} ) );
 
-			view = new ResultView( currentExecution, recentExecutions, archivedExecutions );
+			Closeable closeable = mock( Closeable.class );
+
+			view = new ResultView( recentExecutions, archivedExecutions, closeable );
 
 			primaryStage.setScene( SceneBuilder.create().stylesheets( "/com/eviware/loadui/ui/fx/loadui-style.css" )
 					.width( 600 ).height( 600 ).root( view ).build() );
@@ -143,7 +143,7 @@ public class ResultViewTest
 
 		Node archNode = TestFX.find( "#archive-0" );
 		assertTrue( archiveLane.getItems().contains( archNode ) );
-		
+
 		controller.drag( "#result-0" ).to( "#archive-0" );
 		FXTestUtils.awaitEvents();
 		verify( res0 ).archive();

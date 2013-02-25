@@ -9,7 +9,6 @@ import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
@@ -64,7 +63,7 @@ public class FXExecutionsInfoTest
 		assertNotNull( container.data );
 
 		VBox menuItem = new VBox();
-		info.addToMenu( menuItem );
+		container.data.addToMenu( menuItem );
 
 		// menuItem should go into the menuParent we added to info
 		assertEquals( 1, menuParent.getChildren().size() );
@@ -131,6 +130,10 @@ public class FXExecutionsInfoTest
 
 		// last item not set yet
 		assertNull( container.data[2] );
+		
+		// unset the data to see if it will be set again (should not)
+		container.data[0] = null;
+		container.data[1] = null;
 
 		info.runWhenReady( new Callback<ExecutionsInfo.Data, Void>()
 		{
@@ -145,37 +148,115 @@ public class FXExecutionsInfoTest
 		// callback should be called immediately
 		assertNotNull( container.data[2] );
 
+		// older callbacks should not run again
+		assertNull( container.data[0] );
+		assertNull( container.data[1] );
+		
 	}
-
+	
 	@Test
-	public void testImpatientUserAddingMenuItemsEarly()
+	public void testAlwaysRun()
 	{
 		FxExecutionsInfo info = new FxExecutionsInfo();
 
 		ObservableList<Execution> archived = FXCollections.observableArrayList();
 		ObservableList<Execution> recent = FXCollections.observableArrayList();
 		Property<Execution> current = new SimpleObjectProperty<>();
-		info.setCurrentExecution( current );
 
+		class DataContainer
+		{
+			Data[] data = new Data[5];
+		}
+		;
+
+		final DataContainer container = new DataContainer();
+
+		info.alwaysRunWhenReady( new Callback<ExecutionsInfo.Data, Void>()
+		{
+			@Override
+			public Void call( ExecutionsInfo.Data data )
+			{
+				container.data[0] = data;
+				return null;
+			}
+		} );
+		info.alwaysRunWhenReady( new Callback<ExecutionsInfo.Data, Void>()
+		{
+			@Override
+			public Void call( ExecutionsInfo.Data data )
+			{
+				container.data[1] = data;
+				return null;
+			}
+		} );
+		
+		// this one should run only once
+		info.runWhenReady( new Callback<ExecutionsInfo.Data, Void>()
+				{
+					@Override
+					public Void call( ExecutionsInfo.Data data )
+					{
+						container.data[2] = data;
+						return null;
+					}
+				} );
+		
 		info.setArchivedExecutions( archived );
 		info.setRecentExecutions( recent );
-
-		Label l1 = new Label();
-		VBox v1 = new VBox();
-		HBox h1 = new HBox();
-
-		// adding items carelessly before information is ready should still work
-		info.addToMenu( l1 );
-		info.addToMenu( v1 );
-		info.addToMenu( h1 );
-
-		// last piece missing, should trigger adding stuff to the menu
+		info.setCurrentExecution( current );
 		HBox menuParent = new HBox();
 		info.setMenuParent( menuParent );
 
-		assertSame( l1, menuParent.getChildren().get( 0 ) );
-		assertSame( v1, menuParent.getChildren().get( 1 ) );
-		assertSame( h1, menuParent.getChildren().get( 2 ) );
+		// everything has been set now, callbacks should have been called
+		assertNotNull( container.data[0] );
+		assertNotNull( container.data[1] );
+		assertNotNull( container.data[2] );
+
+		// last items not set yet
+		assertNull( container.data[3] );
+		assertNull( container.data[4] );
+		
+		// unset the data to see if it will be set again
+		container.data[0] = null; // should run
+		container.data[1] = null; // should run
+		container.data[2] = null; // should NOT
+		
+		info.reset();
+		
+		info.setArchivedExecutions( archived );
+		info.setRecentExecutions( recent );
+		info.setCurrentExecution( current );
+		info.setMenuParent( menuParent );
+
+		info.alwaysRunWhenReady( new Callback<ExecutionsInfo.Data, Void>()
+		{
+			@Override
+			public Void call( ExecutionsInfo.Data data )
+			{
+				container.data[3] = data;
+				return null;
+			}
+		} );
+		info.runWhenReady( new Callback<ExecutionsInfo.Data, Void>()
+				{
+					@Override
+					public Void call( ExecutionsInfo.Data data )
+					{
+						container.data[4] = data;
+						return null;
+					}
+				} );
+		
+		assertNotNull( container.data[0] );
+		assertNotNull( container.data[1] );
+		assertNull( container.data[2] );
+		assertNotNull( container.data[3] );
+		assertNotNull( container.data[4] );
+		
 	}
+	
+	
+	
+	
 
 }
