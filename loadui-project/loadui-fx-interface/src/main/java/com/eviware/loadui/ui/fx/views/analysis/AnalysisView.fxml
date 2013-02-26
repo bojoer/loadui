@@ -19,7 +19,9 @@
 			<URL value="@AnalysisView.css" />
 		</stylesheets>
 		<HBox fx:id="buttonContainer" spacing="10" alignment="baseline_left">
-			<Label fx:id="executionLabel" styleClass="title" text="No Execution" />
+			<Label fx:id="executionLabel" styleClass="title" />
+			<Button id="open-execution" text="Open previous runs"
+					onAction="#openPreviousRuns" />
 		</HBox>
 		<AnchorPane VBox.vgrow="ALWAYS">
 			<TabPane fx:id="tabPane" AnchorPane.topAnchor="0"

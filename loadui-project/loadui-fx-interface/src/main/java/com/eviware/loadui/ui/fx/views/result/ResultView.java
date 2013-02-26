@@ -3,9 +3,9 @@ package com.eviware.loadui.ui.fx.views.result;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.fx;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.transform;
 import static javafx.beans.binding.Bindings.bindContent;
-import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
-import javafx.beans.property.Property;
+
+import java.io.Closeable;
+
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -25,7 +25,7 @@ public class ResultView extends StackPane
 {
 	enum ExecutionState
 	{
-		CURRENT( "current" ), RECENT( "result" ), ARCHIVED( "archive" );
+		RECENT( "result" ), ARCHIVED( "archive" );
 
 		private String idPrefix;
 
@@ -41,25 +41,21 @@ public class ResultView extends StackPane
 	private PageList<ExecutionView> resultNodeList;
 
 	@FXML
-	private PageList<ExecutionView> currentResultNode;
-
-	@FXML
 	private PageList<ExecutionView> archiveNodeList;
-
-	private final Property<Execution> currentExecution;
 
 	private final ObservableList<Execution> recentExList;
 	private ObservableList<ExecutionView> recentExViews;
 
 	private final ObservableList<Execution> archivedExList;
 	private ObservableList<ExecutionView> archivedExViews;
+	
+	private final Closeable toClose;
 
-	public ResultView( Property<Execution> currentExecution, ObservableList<Execution> recentExecutions,
-			ObservableList<Execution> archivedExecutions )
+	public ResultView( ObservableList<Execution> recentExecutions, ObservableList<Execution> archivedExecutions, Closeable toClose )
 	{
-		this.currentExecution = currentExecution;
 		this.recentExList = recentExecutions;
 		this.archivedExList = archivedExecutions;
+		this.toClose = toClose;
 
 		FXMLUtils.load( this );
 	}
@@ -67,16 +63,6 @@ public class ResultView extends StackPane
 	@FXML
 	private void initialize()
 	{
-		currentExecution.addListener( new InvalidationListener()
-		{
-			@Override
-			public void invalidated( Observable _ )
-			{
-				ExecutionView view = new ExecutionView( currentExecution.getValue(), ExecutionState.CURRENT );
-				view.setId( idFor( ExecutionState.CURRENT, 0 ) );
-				currentResultNode.getItems().setAll( view );
-			}
-		} );
 
 		recentExViews = createExecutionViewsFor( recentExList, ExecutionState.RECENT );
 		bindContent( resultNodeList.getItems(), recentExViews );
@@ -96,7 +82,7 @@ public class ResultView extends StackPane
 			@Override
 			public ExecutionView apply( Execution e )
 			{
-				ExecutionView view = new ExecutionView( e, state );
+				ExecutionView view = new ExecutionView( e, state, toClose );
 				view.setId( idFor( state, executions.indexOf( e ) ) );
 				return view;
 			}

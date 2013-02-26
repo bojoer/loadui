@@ -37,21 +37,11 @@ public class StatisticTab extends Tab
 {
 	private static final Logger log = LoggerFactory.getLogger( StatisticTab.class );
 	private final StatisticPage page;
-	private final ObservableValue<Execution> currentExecution;
 	private final Observable poll;
-	private final ObservableList<ChartGroupView> chartGroupViews;
+	private ObservableList<ChartGroupView> chartGroupViews;
 
 	@FXML
 	private VBox chartList;
-
-	private final Function<ChartGroup, ChartGroupView> chartGroupToView = new Function<ChartGroup, ChartGroupView>()
-	{
-		@Override
-		public ChartGroupView apply( ChartGroup chartGroup )
-		{
-			return new ChartGroupView( chartGroup, currentExecution, poll );
-		}
-	};
 
 	public final static StatisticPage createStatisticPage( StatisticPages pages, @Nullable String label )
 	{
@@ -67,14 +57,25 @@ public class StatisticTab extends Tab
 		return group;
 	}
 
-	public StatisticTab( StatisticPage page, ObservableValue<Execution> currentExecution, Observable poll )
+	public StatisticTab( StatisticPage page, Observable poll )
 	{
 		this.page = page;
-		this.currentExecution = currentExecution;
 		this.poll = poll;
-		chartGroupViews = transform( fx( ofCollection( page ) ), chartGroupToView );
 
 		FXMLUtils.load( this );
+	}
+
+	public void setCurrentExecution( final ObservableValue<Execution> currentExecution )
+	{
+		chartGroupViews = transform( fx( ofCollection( page ) ), new Function<ChartGroup, ChartGroupView>()
+		{
+			@Override
+			public ChartGroupView apply( ChartGroup chartGroup )
+			{
+				return new ChartGroupView( chartGroup, currentExecution, poll );
+			}
+		} );
+		Bindings.bindContent( chartList.getChildren(), chartGroupViews );
 	}
 
 	@FXML
@@ -126,7 +127,6 @@ public class StatisticTab extends Tab
 			}
 		} );
 
-		Bindings.bindContent( chartList.getChildren(), chartGroupViews );
 	}
 
 	@Override

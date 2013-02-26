@@ -21,8 +21,6 @@
 		<Label styleClass="title" text="Results" />
 
 		<HBox>
-			<PageList fx:id="currentResultNode" id="current-result"
-				text="RECENT RESULTS"/>
 			<PageList fx:id="resultNodeList" id="result-node-list" maxHeight="260"
 				widthPerItem="110" spacing="10">
 				<VBox.margin>

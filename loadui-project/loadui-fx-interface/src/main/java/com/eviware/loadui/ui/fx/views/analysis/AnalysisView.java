@@ -6,8 +6,6 @@ import static com.eviware.loadui.ui.fx.util.ObservableLists.ofCollection;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.optimize;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.transform;
 import javafx.beans.Observable;
-import javafx.beans.property.Property;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
@@ -21,6 +19,7 @@ import javafx.scene.control.TabBuilder;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.util.Callback;
 
 import javax.annotation.Nullable;
 
@@ -31,8 +30,10 @@ import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.statistics.model.StatisticPage;
 import com.eviware.loadui.api.statistics.model.StatisticPages;
 import com.eviware.loadui.api.statistics.store.Execution;
+import com.eviware.loadui.ui.fx.api.analysis.ExecutionsInfo;
+import com.eviware.loadui.ui.fx.api.analysis.ExecutionsInfo.Data;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
-import com.eviware.loadui.ui.fx.util.Properties;
+import com.eviware.loadui.ui.fx.views.result.ResultsPopup;
 import com.google.common.base.Function;
 
 public class AnalysisView extends StackPane
@@ -77,7 +78,18 @@ public class AnalysisView extends StackPane
 		@Nullable
 		public StatisticTab apply( @Nullable StatisticPage page )
 		{
-			return new StatisticTab( page, currentExecution, poll );
+			final StatisticTab statsTab = new StatisticTab( page, poll );
+			executionsInfo.runWhenReady( new Callback<Data, Void>()
+			{
+
+				@Override
+				public Void call( Data data )
+				{
+					statsTab.setCurrentExecution( data.getCurrentExecution() );
+					return null;
+				}
+			} );
+			return statsTab;
 		}
 	};
 
@@ -94,36 +106,17 @@ public class AnalysisView extends StackPane
 	private HBox buttonContainer;
 
 	private final ProjectItem project;
-
 	private final Observable poll;
-
-	private final Property<Execution> currentExecution = new SimpleObjectProperty<>( this, "currentExecution" );
-
 	private Tab plusButton;
-
 	private StatisticPages pagesObject;
-
 	private ObservableList<Tab> allTabs;
+	private final ExecutionsInfo executionsInfo;
 
-	public Property<Execution> currentExecutionProperty()
-	{
-		return currentExecution;
-	}
-
-	public void setCurrentExecution( Execution value )
-	{
-		currentExecution.setValue( value );
-	}
-
-	public Execution getCurrentExecution()
-	{
-		return currentExecution.getValue();
-	}
-
-	public AnalysisView( ProjectItem project, Observable poll )
+	public AnalysisView( ProjectItem project, Observable poll, ExecutionsInfo executionsInfo )
 	{
 		this.project = project;
 		this.poll = poll;
+		this.executionsInfo = executionsInfo;
 
 		FXMLUtils.load( this );
 	}
@@ -133,13 +126,21 @@ public class AnalysisView extends StackPane
 	{
 		toolBox.setProject( project );
 
-		currentExecution.addListener( new ChangeListener<Execution>()
+		executionsInfo.runWhenReady( new Callback<ExecutionsInfo.Data, Void>()
 		{
 			@Override
-			public void changed( ObservableValue<? extends Execution> arg0, Execution arg1, Execution newExecution )
+			public Void call( Data data )
 			{
-				executionLabel.textProperty().unbind();
-				executionLabel.textProperty().bind( Properties.forLabel( newExecution ) );
+				setCurrentExecutionLabelTo( data.getCurrentExecution().getValue() );
+				data.getCurrentExecution().addListener( new ChangeListener<Execution>()
+				{
+					@Override
+					public void changed( ObservableValue<? extends Execution> arg0, Execution arg1, Execution newExecution )
+					{
+						setCurrentExecutionLabelTo( newExecution );
+					}
+				} );
+				return null;
 			}
 		} );
 
@@ -201,9 +202,22 @@ public class AnalysisView extends StackPane
 		}
 	}
 
+	private void setCurrentExecutionLabelTo( Execution execution )
+	{
+		executionLabel.setText( execution == null ? "No Execution" : execution.getLabel() );
+	}
+
 	public HBox getButtonContainer()
 	{
 		return buttonContainer;
+	}
+
+	@SuppressWarnings( "resource" )
+	// resultsPopup closeable is closed by the ResultView
+	@FXML
+	protected void openPreviousRuns()
+	{
+		new ResultsPopup( this, executionsInfo ).show();
 	}
 
 }

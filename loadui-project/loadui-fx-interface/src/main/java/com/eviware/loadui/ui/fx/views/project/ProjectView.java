@@ -133,6 +133,7 @@ public class ProjectView extends AnchorPane
 	@FXML
 	private void initialize()
 	{
+		log.info( "Initializing ProjectView" );
 		playbackPanel = new ProjectPlaybackPanel( project );
 		AnchorPane.setTopAnchor( playbackPanel, 6d );
 		AnchorPane.setLeftAnchor( playbackPanel, 440.0 );
@@ -328,7 +329,10 @@ public class ProjectView extends AnchorPane
 	@FXML
 	public void closeProject()
 	{
+		StatisticsView statisticsView = ( StatisticsView )statsTab.getDetachableContent();
+		statisticsView.close();
 		log.info( "Close project requested" );
+		executionsInfo.reset();
 		fireEvent( IntentEvent.create( IntentEvent.INTENT_CLOSE, project ) );
 	}
 
@@ -353,12 +357,12 @@ public class ProjectView extends AnchorPane
 		ReportingManager reportingManager = BeanInjector.getBean( ReportingManager.class );
 
 		StatisticsView statisticsView = ( StatisticsView )statsTab.getDetachableContent();
-		ReadOnlyProperty<Execution> execution = statisticsView.currentExecutionProperty();
+		ReadOnlyProperty<Execution> executionProp = statisticsView.currentExecutionProperty();
 		Collection<StatisticPage> pages = project.getStatisticPages().getChildren();
 
-		Map<ChartView, Image> images = LineChartUtils.createImages( pages, execution, null );
+		Map<ChartView, Image> images = LineChartUtils.createImages( pages, executionProp, null );
 
-		reportingManager.createReport( project.getLabel(), execution.getValue(), pages, images, execution.getValue()
+		reportingManager.createReport( project.getLabel(), executionProp.getValue(), pages, images, executionProp.getValue()
 				.getSummaryReport() );
 	}
 
@@ -378,7 +382,7 @@ public class ProjectView extends AnchorPane
 				@Override
 				public void run()
 				{
-					ProjectView.this.fireEvent( IntentEvent.create( IntentEvent.INTENT_CLOSE, project ) );
+					closeProject();
 				}
 			} );
 			return ProjectUtils.getProjectRef( project );
