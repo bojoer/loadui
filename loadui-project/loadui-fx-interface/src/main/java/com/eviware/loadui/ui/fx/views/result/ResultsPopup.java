@@ -26,12 +26,4 @@ public class ResultsPopup extends Dialog implements Callback<Data, Void>, Closea
 		return null;
 	}
 
-	@Override
-	public void close()
-	{
-		
-		super.close();
-	}
-	
-
 }
