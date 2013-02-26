@@ -64,7 +64,7 @@ public class DetachTabsTest
 				{
 					return TestFX.findAll( ".detached-content .project-canvas-view" ).size() == 1;
 				}
-			}, 3);
+			}, 2);
 		}catch(TimeoutException e){
 			fail("cannot create project-canvas-view");
 		}
@@ -78,22 +78,22 @@ public class DetachTabsTest
 	public void ShouldDetachAndReattachStatistics() throws Exception{
 		
 		controller.click( "#statsTab" ).click( "#statsTab .styleable-graphic" );
-		
+				
 		try{
 			TestUtils.awaitCondition( new Callable<Boolean>()
 			{
 				@Override
 				public Boolean call() throws Exception
 				{
-					return TestFX.findAll( ".detached-content .result-view" ).size() == 1;
+					return TestFX.findAll( ".detached-content .analysis-view" ).size() == 1;
 				}
-			}, 3);
+			}, 2);
 		}catch(TimeoutException e){
-			fail("cannot create result-view");
+			fail("cannot create analysis-view");
 		}
 		
 		//Check so that 
-		assertThat(TestFX.findAll(".detached-content .result-view").size(), is(1));
+		assertThat(TestFX.findAll(".detached-content .analysis-view").size(), is(1));
 		
 		controller.press( KeyCode.ALT ).press( KeyCode.F4 ).release( KeyCode.F4 ).release( KeyCode.ALT );
 	}
