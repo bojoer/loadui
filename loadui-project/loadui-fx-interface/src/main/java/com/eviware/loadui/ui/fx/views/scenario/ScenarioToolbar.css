@@ -8,17 +8,87 @@
 }
 
 /**
- * Virtual User Playback Panel 
- */
+* ScenarioToolbar
+*/
 .scenario-toolbar .scenario-playback-panel{
 	-fx-spacing: 6; 
 	-fx-padding: 3; 
 	-fx-background-color: linear-gradient(to bottom, #959595 0%, #ABABAB 100%); 
-	-fx-border-color: #777777;
+	-fx-border-color: #909090;
 	-fx-border-radius: 9;
 	-fx-border-width: 2; 
 	-fx-background-radius: 10;
 }
+
+
+/**
+ * Regular play playbutton
+ */
+.play-button .toggle-button{
+	-fx-background-color: linear-gradient(to bottom, #DBDBDB 0%, #757575 100%); 
+	-fx-padding: 8;
+	-fx-background-radius: 30;  
+	-fx-background-insets: 6; 
+	-fx-border-radius: 20; 
+	-fx-border-width: 2; 
+	-fx-border-color: #000000; 
+}
+
+.play-button .toggle-button:hover{
+	-fx-background-color: linear-gradient(to bottom, #AAAAAA 0%, #CCCCCC 100%);
+	-fx-border-radius: 20; 
+	-fx-border-width: 2; 
+	-fx-border-color: #000000; 
+}
+
+.play-button .toggle-button:selected{
+	-fx-background-color: linear-gradient(to bottom, #373333 0%, #484848 100%); 
+}
+
+.play-button .toggle-button:selected:hover{
+	-fx-border-radius: 20; 
+	-fx-border-width: 2; 
+	-fx-border-color: #000000; 
+	-fx-background-color: linear-gradient(to bottom, #5A5A5A 0%, #959595 100%); 
+}
+
+.play-button .toggle-button .graphic{
+	-fx-shape: -fx-shape-navigation-right; 
+	-fx-padding: 10;
+	-fx-scale-x: 0.5;
+	-fx-scale-y: 0.5; 
+	-fx-padding: 10; 
+	-fx-background-color: #6D6D6D;    
+}
+
+.play-button .toggle-button .secondary-graphic{
+	-fx-padding: 0; 
+	-fx-scale-x: 0.6; 
+	-fx-scale-y: 0.6;
+	-fx-background-color: #6D6D6D;    
+}
+
+.play-button .toggle-button:selected .secondary-graphic{
+	-fx-padding: 10; 
+	-fx-background-color: linear-gradient(to bottom, #C8C8C8, #E5E5E5);   
+}
+
+.play-button .toggle-button:selected .graphic{
+	-fx-padding: 0;
+}
+
+
+/*Inner and outer area that overlaps spinner to make it look like it should. */
+.outer-spinner-overlay{
+	-fx-background-radius: 20; 
+	-fx-background-color: #000000; 
+}
+
+.inner-spinner-overlay{
+	-fx-background-color: #000000; 
+	-fx-background-insets: 4; 
+	-fx-background-radius: 20;
+ }
 
 #openHelpPageButton .graphic {
 	-fx-shape: -fx-shape-icon-help;
