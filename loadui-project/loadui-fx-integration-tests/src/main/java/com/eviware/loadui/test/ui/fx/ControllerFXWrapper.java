@@ -43,7 +43,7 @@ public class ControllerFXWrapper
 	public ControllerFXWrapper() throws Exception
 	{
 		if( baseDir.exists() && !IntegrationTestUtils.deleteRecursive( baseDir ) )
-			throw new RuntimeException( "Test directory already exists and cannot be deleted!" );
+			throw new RuntimeException( "Test directory already exists and cannot be deleted! "+ baseDir.getAbsolutePath() );
 
 		if( !baseDir.mkdir() )
 			throw new RuntimeException( "Could not create test directory!" );
