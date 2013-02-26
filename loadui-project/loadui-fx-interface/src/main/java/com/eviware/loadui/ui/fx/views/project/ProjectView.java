@@ -17,9 +17,9 @@ import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.SceneBuilder;
 import javafx.scene.control.Button;
-import javafx.scene.Node;
 import javafx.scene.control.MenuButton;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
@@ -57,10 +57,8 @@ import com.eviware.loadui.ui.fx.views.statistics.StatisticsView;
 import com.eviware.loadui.ui.fx.views.workspace.CloneProjectDialog;
 import com.eviware.loadui.ui.fx.views.workspace.CreateNewProjectDialog;
 import com.eviware.loadui.util.BeanInjector;
-import com.google.common.base.Objects;
+import com.eviware.loadui.util.projects.ProjectUtils;
 import com.google.common.base.Preconditions;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
 
 public class ProjectView extends AnchorPane
 {
@@ -170,8 +168,6 @@ public class ProjectView extends AnchorPane
 					{
 						project.save();
 
-						System.out.println( "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" );
-
 						Node canvas = lookup( "#snapshotArea" );
 						Node grid = lookup( ".tool-box" );
 						grid.setVisible( false );
@@ -183,14 +179,7 @@ public class ProjectView extends AnchorPane
 						bimg = UIUtils.scaleImage( bimg, 120, 64 );
 						String base64 = NodeUtils.toBase64Image( bimg );
 
-						for( ProjectRef pRef : project.getWorkspace().getProjectRefs() )
-						{
-							if( pRef.isEnabled() && pRef.getProject() == project )
-							{
-								pRef.setAttribute( "miniature_fx2", base64 );
-								break;
-							}
-						}
+						ProjectUtils.getProjectRef( project ).setAttribute( "miniature_fx2", base64 );
 
 						grid.setVisible( true );
 						event.consume();
@@ -246,7 +235,7 @@ public class ProjectView extends AnchorPane
 				}
 				else if( event.getEventType() == IntentEvent.INTENT_CLONE )
 				{
-					ProjectRef projectRef = getProjectRef( project.getId() );
+					ProjectRef projectRef = ProjectUtils.getProjectRef( project );
 					new CloneProjectDialog( project.getWorkspace(), projectRef, ProjectView.this ).show();
 					event.consume();
 					return;
@@ -373,18 +362,6 @@ public class ProjectView extends AnchorPane
 				.getSummaryReport() );
 	}
 
-	private ProjectRef getProjectRef( String id )
-	{
-		return Iterables.find( project.getWorkspace().getProjectRefs(), new Predicate<ProjectRef>()
-		{
-			@Override
-			public boolean apply( ProjectRef input )
-			{
-				return Objects.equal( input.getProjectId(), project.getId() );
-			}
-		} );
-	}
-
 	private class SaveAndCloseTask extends Task<ProjectRef>
 	{
 		public SaveAndCloseTask()
@@ -404,7 +381,7 @@ public class ProjectView extends AnchorPane
 					ProjectView.this.fireEvent( IntentEvent.create( IntentEvent.INTENT_CLOSE, project ) );
 				}
 			} );
-			return getProjectRef( project.getId() );
+			return ProjectUtils.getProjectRef( project );
 		}
 	}
 
