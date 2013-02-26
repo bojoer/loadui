@@ -101,7 +101,7 @@
 
 .project-playback-panel .inner-spinner-overlay{
 	-fx-background-color: #000000; 
-	-fx-background-insets: 1; 
+	-fx-background-insets: 2; 
 	-fx-background-radius: 20;
 }
 
