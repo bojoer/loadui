@@ -71,7 +71,7 @@ public class DetachTabsTest
 		//Check so that 
 		assertThat(TestFX.findAll(".detached-content .project-canvas-view").size(), is(1));
 		
-		controller.press( KeyCode.ALT ).press( KeyCode.F4 ).release( KeyCode.F4 ).release( KeyCode.ALT );
+		controller.closeCurrentWindow();
 	}
 	
 	@Test 
@@ -95,7 +95,7 @@ public class DetachTabsTest
 		//Check so that 
 		assertThat(TestFX.findAll(".detached-content .analysis-view").size(), is(1));
 		
-		controller.press( KeyCode.ALT ).press( KeyCode.F4 ).release( KeyCode.F4 ).release( KeyCode.ALT );
+		controller.closeCurrentWindow();
 	}
 	
 	@AfterClass

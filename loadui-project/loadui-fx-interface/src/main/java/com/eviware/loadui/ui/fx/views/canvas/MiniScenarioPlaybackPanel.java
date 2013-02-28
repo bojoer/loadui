@@ -13,7 +13,7 @@ public class MiniScenarioPlaybackPanel extends PlaybackPanel<CounterDisplay, Sce
 		super( canvas );
 
 		getStyleClass().setAll( "mini-playback-panel" );
-		setMaxHeight( 28 );
+		setMaxHeight( 32 );
 		setMaxWidth( 255 );
 		setAlignment( Pos.CENTER );
 

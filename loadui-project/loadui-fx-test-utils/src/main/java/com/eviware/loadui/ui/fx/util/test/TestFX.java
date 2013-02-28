@@ -473,6 +473,11 @@ public class TestFX
 		nodePosition = pos;
 		return this;
 	}
+	
+	public TestFX closeCurrentWindow(){
+		this.press(KeyCode.ALT).press(KeyCode.F4).release(KeyCode.F4).release(KeyCode.ALT);
+		return this;
+	}
 
 	private Point2D pointForBounds( Bounds bounds )
 	{
@@ -631,6 +636,7 @@ public class TestFX
 			}
 			return this;
 		}
+		
 
 		public TestFX drop()
 		{

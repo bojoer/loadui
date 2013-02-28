@@ -780,6 +780,34 @@
 	-fx-padding: -2 0 0 0;
 }
 
+/**
+ * Separators
+ * 
+ */
+
+.separator .line{
+	-fx-border-color: #B4B4B4; 
+	-fx-border-style: solid; 
+	-fx-border-width: 0 1 0 0; 
+}
+
+.separator{
+	-fx-background-color: #6D6D6D; 	
+}
+
+/**
+ * Progress Indicator
+ */
+.spinner{
+	-fx-background-color: black; 
+	-fx-background-radius: 20; 
+	-fx-padding: 0; 
+}
+
+.progress-indicator{
+	-fx-progress-color: #FF0000; 
+	-fx-padding: 0;	
+}
 
 /**
  * Controls

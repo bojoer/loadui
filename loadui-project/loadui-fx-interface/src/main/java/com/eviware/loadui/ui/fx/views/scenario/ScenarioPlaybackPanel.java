@@ -12,7 +12,7 @@ final public class ScenarioPlaybackPanel extends ToolbarPlaybackPanel<SceneItem>
 		super( canvas );
 
 		getStyleClass().setAll( "scenario-playback-panel");
-		setMaxHeight( 28 );
+		setMaxHeight( 32 );
 		setMaxWidth( 650 );
 		setAlignment( Pos.CENTER );
 
