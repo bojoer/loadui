@@ -3,10 +3,12 @@ package com.eviware.loadui.ui.fx.views.analysis.linechart;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.fx;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.ofCollection;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.transform;
+import static com.google.common.collect.Sets.newHashSet;
 import static javafx.beans.binding.Bindings.bindContent;
 import static javafx.beans.binding.Bindings.createLongBinding;
 import static javafx.beans.binding.Bindings.createStringBinding;
 
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 import javafx.beans.InvalidationListener;
@@ -21,6 +23,8 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -48,12 +52,15 @@ import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.ui.fx.api.analysis.ExecutionChart;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.ManualObservable;
+import com.eviware.loadui.ui.fx.util.ObservableLists;
+import com.eviware.loadui.ui.fx.views.canvas.CanvasObjectView;
 import com.eviware.loadui.util.execution.TestExecutionUtils;
 import com.eviware.loadui.util.statistics.ChartUtils;
 import com.google.common.base.Function;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.collect.Sets;
 
 public class ScrollableLineChart extends HBox implements ExecutionChart
 {
@@ -139,8 +146,8 @@ public class ScrollableLineChart extends HBox implements ExecutionChart
 			{
 				ellapsedTime.getProperties().put( "pane-left-anchor", ellapsedTimeAnchorPusher + newValue.doubleValue() );
 			}
-		});
-		
+		} );
+
 		zoomLevel.textProperty().bind( createStringBinding( new Callable<String>()
 		{
 			@Override
@@ -300,15 +307,30 @@ public class ScrollableLineChart extends HBox implements ExecutionChart
 
 		scrollBar.maxProperty().bind( currentExecutionLenght );
 
-		SegmentToSeriesFunction segmentToSeries = new SegmentToSeriesFunction( currentExecution,
+		final SegmentToSeriesFunction segmentToSeries = new SegmentToSeriesFunction( currentExecution,
 				javafx.collections.FXCollections.observableArrayList( currentExecution, position, poll,
 						segmentBox.scaleUpdate(), manualDataUpdate, currentExecutionLenght ), this, eventSeriesStyles );
 
-		ObservableList<Segment> segmentsList = fx( ofCollection( chartView, LineChartView.SEGMENTS, Segment.class,
+		final ObservableList<Segment> segmentsList = fx( ofCollection( chartView, LineChartView.SEGMENTS, Segment.class,
 				chartView.getSegments() ) );
+
 		seriesList = transform( segmentsList, segmentToSeries );
 
-		// TODO: apply short names here?
+		seriesList.addListener( new ListChangeListener<Series>()
+		{
+			@Override
+			public void onChanged( javafx.collections.ListChangeListener.Change<? extends Series> c )
+			{
+				while( c.next() )
+				{
+					for( Series s : ObservableLists.getActuallyRemoved( c ) )
+					{
+						s.setData( FXCollections.observableArrayList() );
+					}
+				}
+			}
+		} );
+
 		segmentViews = transform( segmentsList, segmentToView );
 
 		bindContent( getLineChart().getData(), seriesList );

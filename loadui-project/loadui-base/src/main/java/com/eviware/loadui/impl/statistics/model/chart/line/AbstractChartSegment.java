@@ -26,6 +26,7 @@ public class AbstractChartSegment implements Segment.Removable
 	private final ChartLineChartView chartView;
 	private final DelegatingAttributeHolderSupport attributeSupport;
 	private final String id;
+	private boolean isRemoved = false;
 
 	public AbstractChartSegment( ChartLineChartView chart, String id )
 	{
@@ -70,8 +71,16 @@ public class AbstractChartSegment implements Segment.Removable
 	}
 
 	@Override
+	public boolean isRemoved()
+	{
+		return isRemoved;
+	}
+
+	@Override
 	public void remove()
 	{
+		System.out.println( "SEGMENT " + this + " isRemoved!!!!!!!!!!!!!!!!!!!" );
+		isRemoved = true;
 		chartView.removeSegment( this );
 	}
 
