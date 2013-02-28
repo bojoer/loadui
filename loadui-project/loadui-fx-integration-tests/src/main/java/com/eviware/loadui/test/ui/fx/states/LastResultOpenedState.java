@@ -20,8 +20,8 @@ public class LastResultOpenedState extends TestState
 	@Override
 	protected void enterFromParent() throws Exception
 	{
-		GUI.getController().click( ".project-playback-panel #play-button" ).sleep( 500 )
-				.click( ".project-playback-panel #play-button" ).sleep( 1000 ).click( "#statsTab" )
+		GUI.getController().click( ".project-playback-panel .play-button" ).sleep( 500 )
+				.click( ".project-playback-panel .play-button" ).sleep( 1000 ).click( "#statsTab" )
 				.click( "#open-execution" ).doubleClick( "#result-0" );
 	}
 
@@ -34,5 +34,4 @@ public class LastResultOpenedState extends TestState
 			GUI.getController().closeCurrentWindow();
 		}
 	}
-
 }
