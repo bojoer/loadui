@@ -1,7 +1,5 @@
 package com.eviware.loadui.ui.fx.control;
 
-import groovy.lang.Closure;
-
 import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 
