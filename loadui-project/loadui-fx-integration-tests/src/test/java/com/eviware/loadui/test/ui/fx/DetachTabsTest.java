@@ -7,8 +7,6 @@ import static org.junit.Assert.fail;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeoutException;
 
-import javafx.scene.input.KeyCode;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -44,11 +42,6 @@ public class DetachTabsTest
 				return TestFX.findAll( ".detachable-tab" ).size() > 1;
 			}
 		});
-		
-		//Magical mumbojumbo for the garbage-collection god.  
-		System.gc();
-		System.gc();
-		System.gc();
 	}
 	
 	@Test
