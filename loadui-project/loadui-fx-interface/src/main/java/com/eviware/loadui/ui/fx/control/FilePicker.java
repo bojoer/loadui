@@ -2,8 +2,6 @@ package com.eviware.loadui.ui.fx.control;
 
 import java.io.File;
 
-import com.google.common.base.Objects;
-
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ObjectPropertyBase;
 import javafx.beans.value.ChangeListener;
@@ -19,6 +17,16 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.FileChooserBuilder;
 import javafx.stage.Window;
+
+import com.google.common.base.Objects;
+
+/**
+ * A form field that contains a TextField and a Browse button, that opens a
+ * FileChooser dialog.
+ * 
+ * @author maximilian.skog
+ * 
+ */
 
 public class FilePicker extends HBox
 {
