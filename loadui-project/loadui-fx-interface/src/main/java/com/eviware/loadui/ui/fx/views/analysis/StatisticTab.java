@@ -13,6 +13,7 @@ import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.VBox;
 
@@ -28,9 +29,14 @@ import com.eviware.loadui.api.statistics.model.StatisticPage;
 import com.eviware.loadui.api.statistics.model.StatisticPages;
 import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
 import com.eviware.loadui.api.statistics.store.Execution;
+import com.eviware.loadui.ui.fx.api.NonSingletonFactory;
+import com.eviware.loadui.ui.fx.api.analysis.ChartGroupView;
 import com.eviware.loadui.ui.fx.api.input.DraggableEvent;
+import com.eviware.loadui.ui.fx.util.DefaultNonSingletonFactory;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
+import com.eviware.loadui.ui.fx.util.ObservableLists;
 import com.eviware.loadui.ui.fx.util.UIUtils;
+import com.eviware.loadui.util.BeanInjector;
 import com.google.common.base.Function;
 
 public class StatisticTab extends Tab
@@ -49,9 +55,27 @@ public class StatisticTab extends Tab
 		@Override
 		public ChartGroupView apply( ChartGroup chartGroup )
 		{
-			return new ChartGroupView( chartGroup, currentExecution, poll );
+			return getNonSingletonFactory().createChartGroupView( chartGroup, currentExecution, poll );
 		}
 	};
+
+	private final Function<ChartGroupView, Node> chartGroupViewToNode = new Function<ChartGroupView, Node>()
+	{
+		@Override
+		public Node apply( ChartGroupView chartGroupView )
+		{
+			return chartGroupView.getNode();
+		}
+	};
+
+	protected NonSingletonFactory getNonSingletonFactory()
+	{
+		NonSingletonFactory factory = BeanInjector.getNonCachedBeanOrNull( NonSingletonFactory.class );
+		if( factory != null )
+			return factory;
+		else
+			return DefaultNonSingletonFactory.get();
+	}
 
 	public final static StatisticPage createStatisticPage( StatisticPages pages, @Nullable String label )
 	{
@@ -75,6 +99,11 @@ public class StatisticTab extends Tab
 		chartGroupViews = transform( fx( ofCollection( page ) ), chartGroupToView );
 
 		FXMLUtils.load( this );
+	}
+
+	public void setNonSingletonFactory( NonSingletonFactory factory )
+	{
+
 	}
 
 	@FXML
@@ -126,7 +155,8 @@ public class StatisticTab extends Tab
 			}
 		} );
 
-		Bindings.bindContent( chartList.getChildren(), chartGroupViews );
+		Bindings
+				.bindContent( chartList.getChildren(), ObservableLists.transform( chartGroupViews, chartGroupViewToNode ) );
 	}
 
 	@Override
