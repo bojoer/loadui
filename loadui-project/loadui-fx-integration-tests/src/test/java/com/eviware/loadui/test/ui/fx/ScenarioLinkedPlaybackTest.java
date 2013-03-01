@@ -74,7 +74,7 @@ public class ScenarioLinkedPlaybackTest
 
 		controller.click( "#set-limits" ).click( "#time-limit" ).press( KeyCode.CONTROL, KeyCode.A )
 				.release( KeyCode.CONTROL, KeyCode.A ).sleep( 100 ).type( "6" ).sleep( 100 ).click( "#default" )
-				.sleep( 1000 ).click( ".project-playback-panel #play-button" ).sleep( 2000 );
+				.sleep( 1000 ).click( ".project-playback-panel .play-button" ).sleep( 2000 );
 		assertTrue( project.isRunning() );
 
 		controller.sleep( 4000 );
@@ -83,6 +83,6 @@ public class ScenarioLinkedPlaybackTest
 
 	protected void clickPlayStopButton()
 	{
-		controller.click( ".project-playback-panel #play-button" ).sleep( 2000 );
+		controller.click( ".project-playback-panel .play-button" ).sleep( 2000 );
 	}
 }
