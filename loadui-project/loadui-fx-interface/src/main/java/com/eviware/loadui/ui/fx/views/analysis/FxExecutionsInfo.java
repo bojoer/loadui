@@ -1,11 +1,12 @@
 package com.eviware.loadui.ui.fx.views.analysis;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Deque;
-import java.util.LinkedHashSet;
 
 import javafx.beans.property.Property;
+import javafx.beans.property.ReadOnlyProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.layout.HBox;
@@ -20,10 +21,10 @@ public class FxExecutionsInfo implements ExecutionsInfo
 
 	private ObservableList<Execution> recentExecutions;
 	private ObservableList<Execution> archivedExecutions;
-	private Property<Execution> currentExecution;
+	private ReadOnlyProperty<Execution> currentExecution;
 	private HBox menuParent;
-	private Collection<Node> nodesToaddToMenu = new LinkedHashSet<>( 2 );
-	private Deque<Callback<Data, Void>> callbacks = new ArrayDeque<>( 2 );
+	private final Deque<Callback<Data, Void>> volatileCallbacks = new ArrayDeque<>( 4 );
+	private final Collection<PermanentCallback> permanentCallbacks = new ArrayList<>( 1 );
 
 	private boolean isReady()
 	{
@@ -31,18 +32,16 @@ public class FxExecutionsInfo implements ExecutionsInfo
 	}
 
 	@Override
-	public void addToMenu( Node node )
+	public void runWhenReady( Callback<Data, Void> callback )
 	{
-		if( menuParent == null )
-			nodesToaddToMenu.add( node );
-		else
-			menuParent.getChildren().add( node );
+		volatileCallbacks.push( callback );
+		checkIfReady();
 	}
 
 	@Override
-	public void runWhenReady( Callback<Data, Void> callback )
+	public void alwaysRunWhenReady( Callback<Data, Void> callback )
 	{
-		callbacks.add( callback );
+		permanentCallbacks.add( new PermanentCallback( callback ) );
 		checkIfReady();
 	}
 
@@ -68,11 +67,6 @@ public class FxExecutionsInfo implements ExecutionsInfo
 	{
 		Preconditions.checkNotNull( menuParent );
 		this.menuParent = menuParent;
-
-		if( nodesToaddToMenu != null && !nodesToaddToMenu.isEmpty() )
-			menuParent.getChildren().addAll( nodesToaddToMenu );
-
-		nodesToaddToMenu = null;
 		checkIfReady();
 	}
 
@@ -80,31 +74,71 @@ public class FxExecutionsInfo implements ExecutionsInfo
 	{
 		if( isReady() )
 		{
-			while( !callbacks.isEmpty() )
+			Data data = new DataImpl();
+			while( !volatileCallbacks.isEmpty() )
 			{
-				callbacks.pop().call( new Data()
-				{
-
-					@Override
-					public ObservableList<Execution> getRecentExecutions()
-					{
-						return recentExecutions;
-					}
-
-					@Override
-					public ObservableList<Execution> getArchivedExecutions()
-					{
-						return archivedExecutions;
-					}
-
-					@Override
-					public Property<Execution> getCurrentExecution()
-					{
-						return currentExecution;
-					}
-
-				} );
+				volatileCallbacks.pop().call( data );
 			}
+			for( PermanentCallback perm : permanentCallbacks )
+			{
+				if( !perm.alreadyRun )
+					perm.callback.call( data );
+				perm.alreadyRun = true;
+			}
+		}
+	}
+
+	@Override
+	public void reset()
+	{
+		recentExecutions = null;
+		archivedExecutions = null;
+		currentExecution = null;
+		menuParent = null;
+		volatileCallbacks.clear();
+
+		for( PermanentCallback perm : permanentCallbacks )
+		{
+			perm.alreadyRun = false;
+		}
+
+	}
+
+	private class DataImpl implements Data
+	{
+		@Override
+		public ObservableList<Execution> getRecentExecutions()
+		{
+			return recentExecutions;
+		}
+
+		@Override
+		public ObservableList<Execution> getArchivedExecutions()
+		{
+			return archivedExecutions;
+		}
+
+		@Override
+		public ReadOnlyProperty<Execution> getCurrentExecution()
+		{
+			return currentExecution;
+		}
+
+		@Override
+		public void addToMenu( Node node )
+		{
+			menuParent.getChildren().add( node );
+		}
+	}
+
+	private class PermanentCallback
+	{
+		Callback<Data, Void> callback;
+		boolean alreadyRun = false;
+
+		public PermanentCallback( Callback<Data, Void> callback )
+		{
+			this.callback = callback;
 		}
 	}
 

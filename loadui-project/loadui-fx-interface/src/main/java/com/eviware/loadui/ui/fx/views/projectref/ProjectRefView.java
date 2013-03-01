@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -50,7 +51,9 @@ public class ProjectRefView extends StackPane implements Labeled
 		menuButton.textProperty().bind( labelProperty );
 
 		String base64 = projectRef.getAttribute( "miniature_fx2", null );
-		if( base64 != null )
+		if( base64 == null )
+			miniature.setImage( new Image( ProjectRefView.class.getResource( "grid.png" ).toExternalForm() ) );
+		else
 			miniature.setImage( NodeUtils.fromBase64Image( base64 ) );
 
 		Tooltip menuTooltip = new Tooltip();

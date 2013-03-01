@@ -1,14 +1,25 @@
 package com.eviware.loadui.ui.fx.control;
 
 import java.util.Map.Entry;
+import java.util.concurrent.Callable;
 
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBuilder;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextBuilder;
 
 import javax.annotation.Nonnull;
 
+import com.eviware.loadui.api.layout.ActionLayoutComponent;
 import com.eviware.loadui.api.property.Property;
+import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.control.fields.Field;
 import com.eviware.loadui.ui.fx.control.fields.Validatable;
 import com.eviware.loadui.ui.fx.control.fields.ValidatableCheckBox;
@@ -116,7 +127,68 @@ public class SettingsTab extends Tab
 					+ initialValue.getClass().getName() );
 		}
 	}
+	
+	void addActionButton(final ActionLayoutComponent action){
+		
+		//TODO: Fix property-bug. Still never gets the correct properties, so this is currently not working, but the button is in place and does not do anyone harm.
+		try {
+			final Text label = TextBuilder.create().text(((Callable)action.get("status")).call().toString()).build();
+			final Button button = ButtonBuilder.create().text( action.getLabel() ).disable( !action.isEnabled() ).build();
+		
+			final Runnable status = new Runnable(){
+			public void run(){
+				if(action.get("status") instanceof Callable<?>){
+					 try {
+							 
+						@SuppressWarnings("rawtypes")
+						Object obj = ((Callable)action.get("status")).call();
 
+						 if(obj instanceof Boolean){
+							 Boolean connected = (Boolean)obj;
+							 if(connected){
+								 label.setText("Connected to monitor!");
+							 }else{
+								 label.setText("Unable to connect to monitor!");
+							 }
+						 }else{
+							 label.setText(obj.toString());
+						 }
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		};
+		
+		button.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent arg0) {
+
+				 for(Object field : fieldToLoaduiProperty.keySet()){
+					 if(field instanceof TextField){
+						 Property<?> prop = fieldToLoaduiProperty.get(field);
+						 prop.setValue(((TextField) field).getText()); 									 
+					 }
+					 
+					 if(field instanceof CheckBox){
+						 Property<?> prop = fieldToLoaduiProperty.get(field);
+						 prop.setValue(((CheckBox) field).isSelected()); 		
+					 }
+				 }				
+
+				button.fireEvent(IntentEvent.create(
+						IntentEvent.INTENT_RUN_BLOCKING, action.getAction()));
+				button.fireEvent(IntentEvent.create(
+						IntentEvent.INTENT_RUN_BLOCKING, status));
+			}
+		});		
+
+		vBox.getChildren().addAll(button, label);
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+	}
+	
 	boolean validate()
 	{
 		boolean wasValid = true;
@@ -163,6 +235,12 @@ public class SettingsTab extends Tab
 		private Builder( String label )
 		{
 			tab = new SettingsTab( label );
+		}
+		
+		public Builder button( ActionLayoutComponent action){
+			
+			tab.addActionButton(action);
+			return this; 
 		}
 
 		public <T> Builder field( @Nonnull String label, @Nonnull Property<T> loaduiProperty )

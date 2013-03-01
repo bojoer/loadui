@@ -102,6 +102,12 @@ public class SourceLineSegment implements LineSegment
 	}
 
 	@Override
+	public boolean isRemoved()
+	{
+		return false;
+	}
+
+	@Override
 	public String toString()
 	{
 		return parent.toString();

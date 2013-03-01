@@ -24,8 +24,8 @@ public class SaveProjectDialog extends ButtonDialog
 					@Override
 					public void handle( ActionEvent event )
 					{
-						mainWindow.fireEvent( IntentEvent.create( IntentEvent.INTENT_SAVE, project ) );
-						//project.save();
+						mainWindow.getChildView( ProjectView.class ).fireEvent(
+								IntentEvent.create( IntentEvent.INTENT_SAVE, project ) );
 						close();
 						mainWindow.showWorkspace();
 						project.release();

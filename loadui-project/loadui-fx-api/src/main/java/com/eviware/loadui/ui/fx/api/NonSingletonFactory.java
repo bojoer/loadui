@@ -28,7 +28,7 @@ public interface NonSingletonFactory
 	/**
 	 * Creates and returns an ChartGroupView
 	 * 
-	 * @return ExecutionChart
+	 * @return ChartGroupView
 	 */
 	ChartGroupView createChartGroupView( ChartGroup chartGroup, ObservableValue<Execution> currentExecution,
 			Observable poll );

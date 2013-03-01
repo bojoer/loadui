@@ -11,9 +11,9 @@ final public class ScenarioPlaybackPanel extends ToolbarPlaybackPanel<SceneItem>
 	{
 		super( canvas );
 
-		setStyle( "-fx-spacing: 8; -fx-background-color: #8b8c8f; -fx-background-radius: 7;" );
-		setMaxHeight( 28 );
-		setMaxWidth( 550 );
+		getStyleClass().setAll( "scenario-playback-panel");
+		setMaxHeight( 32 );
+		setMaxWidth( 650 );
 		setAlignment( Pos.CENTER );
 
 		getChildren().setAll( playButton, separator(), linkScenarioButton( canvas ), separator(), time, separator(),

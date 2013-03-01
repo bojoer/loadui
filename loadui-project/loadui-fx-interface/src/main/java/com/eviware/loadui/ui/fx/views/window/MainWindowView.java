@@ -11,6 +11,8 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.MenuButton;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -276,16 +278,20 @@ public class MainWindowView extends StackPane
 	{
 		WorkspaceView workspaceView = new WorkspaceView( workspaceProvider.getWorkspace() );
 		container.getChildren().setAll( workspaceView );
-		//		fireEvent( new PerspectiveEvent( PerspectiveEvent.PERSPECTIVE_WORKSPACE ) );
 		PerspectiveEvent.fireEvent( PerspectiveEvent.PERSPECTIVE_WORKSPACE, workspaceView );
 	}
 
-	public WorkspaceView getWorkspaceView()
+	@SuppressWarnings( "unchecked" )
+	public <T extends Parent> T getChildView( Class<T> expectedClass )
 	{
 		if( container != null && container.getChildren().isEmpty() == false )
-			return ( WorkspaceView )container.getChildren().get( 0 );
-		else
-			throw new RuntimeException( "WorkspaceView has not been created yet" );
+		{
+			Node childView = container.getChildren().get( 0 );
+			if( expectedClass.isInstance( childView ) )
+				return ( T )childView;
+		}
+		throw new IllegalStateException( MainWindowView.class.getName() + " does not hold a view of class "
+				+ expectedClass );
 	}
 
 	public void settings()

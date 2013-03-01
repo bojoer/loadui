@@ -1,8 +1,12 @@
 package com.eviware.loadui.test.ui.fx;
 
+import static com.eviware.loadui.ui.fx.util.test.FXTestUtils.failIfExists;
+import static com.eviware.loadui.ui.fx.util.test.FXTestUtils.getOrFail;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+
+import java.util.Set;
+
 import javafx.scene.Node;
 import javafx.scene.control.MenuButton;
 import javafx.scene.input.KeyCode;
@@ -34,6 +38,11 @@ public class ResultViewTest
 	public void leaveState() throws Exception
 	{
 		System.out.println( "Leaving project loaded without agents state" );
+		Set<Node> resultViewSet = TestFX.findAll( ".result-view" );
+		if( !resultViewSet.isEmpty() )
+		{
+			GUI.getController().closeCurrentWindow();
+		}
 		ProjectLoadedWithoutAgentsState.STATE.getParent().enter();
 	}
 
@@ -45,11 +54,7 @@ public class ResultViewTest
 				.click( PLAY_BUTTON_SELECTOR ).sleep( 1000 ) // stop
 				.click( PLAY_BUTTON_SELECTOR ).sleep( 2000 ) // start
 				.click( PLAY_BUTTON_SELECTOR ) // stop
-				.click( "#statsTab" );
-
-		// assert there is a current execution
-		getOrFail( "#current-0" );
-		assertTrue( TestFX.findAll( "#current-1" ).isEmpty() );
+				.click( "#statsTab" ).sleep( 500 ).click( "#open-execution" ).sleep( 500 );
 
 		// assert two results are available
 		Node res0 = getOrFail( "#result-node-list #result-0" );
@@ -81,9 +86,6 @@ public class ResultViewTest
 		// assert no recent execution remains
 		assertTrue( TestFX.findAll( "#result-0" ).isEmpty() );
 
-		// assert the current execution is still there
-		getOrFail( "#current-0" );
-
 	}
 
 	@Test
@@ -92,25 +94,20 @@ public class ResultViewTest
 		// run one execution
 		controller.click( PLAY_BUTTON_SELECTOR ).sleep( 2000 ) // start
 				.click( PLAY_BUTTON_SELECTOR ).sleep( 1000 ) // stop
-				.click( "#statsTab" );
-
-		// check current execution's menu options
-		controller.click( "#current-0 #menuButton" );
-		failIfExists( "#menu-Rename" );
-		failIfExists( "#menu-Delete" );
-
-		// check if Open option works
-		controller.click( "#menu-Open" );
-		getOrFail( ".analysis-view" );
-
-		controller.click( "#close-analysis-view" );
+				.click( "#statsTab" ).sleep( 500 ).click( "#open-execution" ).sleep( 500 );
 
 		// check recent execution menu's options
 		controller.click( "#result-0 #menuButton" );
 		getOrFail( "#menu-Open" );
 		getOrFail( "#menu-Delete" );
 		failIfExists( "#menu-Rename" );
-		controller.click( "#result-0 #menuButton" );
+
+		// check if Open option works
+		controller.click( "#menu-Open" );
+		getOrFail( ".analysis-view" );
+		getOrFail( "#open-execution" );
+
+		controller.click( "#open-execution" );
 
 		// check archive execution menu's options
 		controller.drag( "#result-0" ).to( "#archive-node-list" ).click( "#archive-0 #menuButton" );
@@ -127,32 +124,6 @@ public class ResultViewTest
 		controller.click( "#archive-0 #menuButton" ).click( "#menu-Delete" );
 		failIfExists( "#archive-0" );
 
-	}
-
-	protected void failIfExists( String selector )
-	{
-		try
-		{
-			TestFX.find( selector );
-			fail( "Selector shouldn't have found anything: " + selector );
-		}
-		catch( Exception e )
-		{
-			// expected
-		}
-	}
-
-	protected Node getOrFail( String selector )
-	{
-		try
-		{
-			return TestFX.find( selector );
-		}
-		catch( Exception e )
-		{
-			fail( "Cannot find anything with selector: " + selector );
-			return null;
-		}
 	}
 
 }

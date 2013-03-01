@@ -71,6 +71,7 @@ import com.eviware.loadui.ui.fx.input.MovableImpl;
 import com.eviware.loadui.ui.fx.input.MultiMovable;
 import com.eviware.loadui.ui.fx.input.SelectableImpl;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
+import com.eviware.loadui.ui.fx.util.ObservableLists;
 import com.eviware.loadui.ui.fx.views.canvas.component.ComponentView;
 import com.eviware.loadui.ui.fx.views.canvas.terminal.ConnectionView;
 import com.eviware.loadui.ui.fx.views.canvas.terminal.TerminalView;
@@ -517,19 +518,12 @@ public class CanvasView extends StackPane
 		{
 			while( change.next() )
 			{
-				if( change.wasRemoved() )
+				for( CanvasObjectView component : ObservableLists.getActuallyRemoved( change ) )
 				{
-					Set<CanvasObjectView> actuallyRemoved = Sets.difference( newHashSet( change.getRemoved() ),
-							newHashSet( change.getAddedSubList() ) );
-					log.debug( "ACTUALLY REMOVED: " + actuallyRemoved.size() );
-
-					for( CanvasObjectView component : actuallyRemoved )
-					{
-						log.debug( "UNINSTALL" );
-						MovableImpl.uninstall( component );
-						//Selectable.uninstall( component );
-						MultiMovable.uninstall( CanvasView.this, component );
-					}
+					log.debug( "UNINSTALL" );
+					MovableImpl.uninstall( component );
+					//Selectable.uninstall( component );
+					MultiMovable.uninstall( CanvasView.this, component );
 				}
 			}
 		}

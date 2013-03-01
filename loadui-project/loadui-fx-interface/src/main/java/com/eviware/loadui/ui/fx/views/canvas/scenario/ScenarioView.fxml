@@ -12,6 +12,9 @@
 <?import java.net.URL?>
 
 <fx:root type="javafx.scene.layout.StackPane" xmlns:fx="http://javafx.com/fxml">
+	<stylesheets>
+		<URL value="@ScenarioView.css" />
+	</stylesheets>
 	<VBox spacing="3" fx:id="vBox">
 		<ImageView fx:id="miniature"/>
 	</VBox>

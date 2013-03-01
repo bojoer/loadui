@@ -43,21 +43,12 @@ public class StatisticTab extends Tab
 {
 	private static final Logger log = LoggerFactory.getLogger( StatisticTab.class );
 	private final StatisticPage page;
-	private final ObservableValue<Execution> currentExecution;
 	private final Observable poll;
-	private final ObservableList<ChartGroupView> chartGroupViews;
+	private ObservableList<ChartGroupView> chartGroupViews;
+	private ObservableList<Node> chartGroupNodes;
 
 	@FXML
-	private VBox chartList;
-
-	private final Function<ChartGroup, ChartGroupView> chartGroupToView = new Function<ChartGroup, ChartGroupView>()
-	{
-		@Override
-		public ChartGroupView apply( ChartGroup chartGroup )
-		{
-			return getNonSingletonFactory().createChartGroupView( chartGroup, currentExecution, poll );
-		}
-	};
+	protected VBox chartList;
 
 	private final Function<ChartGroupView, Node> chartGroupViewToNode = new Function<ChartGroupView, Node>()
 	{
@@ -91,19 +82,27 @@ public class StatisticTab extends Tab
 		return group;
 	}
 
-	public StatisticTab( StatisticPage page, ObservableValue<Execution> currentExecution, Observable poll )
+	public StatisticTab( StatisticPage page, Observable poll )
 	{
 		this.page = page;
-		this.currentExecution = currentExecution;
 		this.poll = poll;
-		chartGroupViews = transform( fx( ofCollection( page ) ), chartGroupToView );
 
 		FXMLUtils.load( this );
 	}
 
-	public void setNonSingletonFactory( NonSingletonFactory factory )
+	public void setCurrentExecution( final ObservableValue<Execution> currentExecution )
 	{
+		chartGroupViews = transform( fx( ofCollection( page ) ), new Function<ChartGroup, ChartGroupView>()
+		{
+			@Override
+			public ChartGroupView apply( ChartGroup chartGroup )
+			{
+				return getNonSingletonFactory().createChartGroupView( chartGroup, currentExecution, poll );
+			}
+		} );
+		chartGroupNodes = ObservableLists.transform( chartGroupViews, chartGroupViewToNode );
 
+		Bindings.bindContent( chartList.getChildren(), chartGroupNodes );
 	}
 
 	@FXML
@@ -154,9 +153,6 @@ public class StatisticTab extends Tab
 				}
 			}
 		} );
-
-		Bindings
-				.bindContent( chartList.getChildren(), ObservableLists.transform( chartGroupViews, chartGroupViewToNode ) );
 	}
 
 	@Override

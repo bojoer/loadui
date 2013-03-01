@@ -34,8 +34,8 @@ public class ScenarioToolbar extends AnchorPane
 	{
 		menuButton.textProperty().bind( Properties.forLabel( scenario ) );
 		ScenarioPlaybackPanel playbackPanel = new ScenarioPlaybackPanel( scenario );
-		AnchorPane.setTopAnchor( playbackPanel, 14.0 );
-		AnchorPane.setLeftAnchor( playbackPanel, 440.0 );
+		AnchorPane.setTopAnchor( playbackPanel, 6d );
+		AnchorPane.setLeftAnchor( playbackPanel, 440d );
 		getChildren().add( playbackPanel );
 	}
 
