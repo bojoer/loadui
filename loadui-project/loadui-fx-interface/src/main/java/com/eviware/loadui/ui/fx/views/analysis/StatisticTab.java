@@ -7,13 +7,16 @@ import static com.eviware.loadui.ui.fx.util.Properties.forLabel;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
-import javafx.beans.value.ChangeListener;
+import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.VBox;
 
@@ -32,6 +35,7 @@ import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.ui.fx.api.NonSingletonFactory;
 import com.eviware.loadui.ui.fx.api.analysis.ChartGroupView;
 import com.eviware.loadui.ui.fx.api.input.DraggableEvent;
+import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.util.DefaultNonSingletonFactory;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.ObservableLists;
@@ -46,6 +50,7 @@ public class StatisticTab extends Tab
 	private final Observable poll;
 	private ObservableList<ChartGroupView> chartGroupViews;
 	private ObservableList<Node> chartGroupNodes;
+	private StringProperty tabTitle;
 
 	@FXML
 	protected VBox chartList;
@@ -86,7 +91,6 @@ public class StatisticTab extends Tab
 	{
 		this.page = page;
 		this.poll = poll;
-
 		FXMLUtils.load( this );
 	}
 
@@ -108,17 +112,32 @@ public class StatisticTab extends Tab
 	@FXML
 	private void initialize()
 	{
-		textProperty().bind( forLabel( page ) );
+		tabTitle = forLabel( page );
+		textProperty().bindBidirectional( tabTitle );
+		setId( UIUtils.toCssId( page.getLabel() ) );
 
-		forLabel( page ).addListener( new ChangeListener<String>()
+		MenuItem renameItem = new MenuItem( "Rename" );
+		renameItem.setId( "tab-rename" );
+		renameItem.setOnAction( new EventHandler<ActionEvent>()
 		{
-			@Override
-			public void changed( ObservableValue<? extends String> arg0, String arg1, String newLabel )
+			public void handle( ActionEvent _ )
 			{
-				setId( UIUtils.toCssId( newLabel ) );
+				chartList.fireEvent( IntentEvent.create( IntentEvent.INTENT_RENAME, page ) );
 			}
 		} );
-		setId( UIUtils.toCssId( page.getLabel() ) );
+		MenuItem deleteItem = new MenuItem( "Delete" );
+		deleteItem.setId( "tab-delete" );
+		deleteItem.setOnAction( new EventHandler<ActionEvent>()
+		{
+			public void handle( ActionEvent _ )
+			{
+				getOnClosed().handle( _ );
+			}
+		} );
+
+		ContextMenu menu = new ContextMenu();
+		menu.getItems().addAll( renameItem, deleteItem );
+		setContextMenu( menu );
 
 		setOnClosed( new EventHandler<Event>()
 		{
