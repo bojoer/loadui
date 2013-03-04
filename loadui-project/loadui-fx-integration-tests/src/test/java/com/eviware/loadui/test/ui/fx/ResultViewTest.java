@@ -24,7 +24,7 @@ import com.eviware.loadui.ui.fx.util.test.TestFX;
 public class ResultViewTest
 {
 
-	private static final String PLAY_BUTTON_SELECTOR = ".project-playback-panel #play-button";
+	private static final String PLAY_BUTTON_SELECTOR = ".project-playback-panel .play-button";
 	private static TestFX controller;
 
 	@Before

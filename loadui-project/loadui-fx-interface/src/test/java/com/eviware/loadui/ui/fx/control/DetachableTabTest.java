@@ -3,19 +3,21 @@ package com.eviware.loadui.ui.fx.control;
 import static com.eviware.loadui.ui.fx.util.test.TestFX.find;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.util.concurrent.TimeUnit;
 
 import javafx.application.Application;
+import javafx.scene.Node;
 import javafx.scene.SceneBuilder;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TabPaneBuilder;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.CircleBuilder;
+import javafx.scene.layout.PaneBuilder;
 import javafx.stage.Stage;
 
 import org.junit.BeforeClass;
@@ -43,10 +45,9 @@ public class DetachableTabTest
 			Tab normalTab = new Tab( "Normal tab" );
 			normalTab.setId( "normaltab" );
 
-			DetachableTab detachableTab = new DetachableTab( "Detachable tab" );
+			DetachableTab detachableTab = new DetachableTab( "Detachable tab", DetachedTabsHolder.get() );
 			detachableTab.setId( "detachabletab" );
-			detachableTab.setDetachableContent( CircleBuilder.create().id( "detachablecontent" ).radius( 50 )
-					.fill( Color.RED ).build() );
+			detachableTab.setDetachableContent( PaneBuilder.create().id( "detachablecontent" ).build() );
 
 			primaryStage.setScene( SceneBuilder.create().width( 300 ).height( 200 )
 					.root( TabPaneBuilder.create().id( "tabpane" ).tabs( normalTab, detachableTab ).build() ).build() );
@@ -77,7 +78,7 @@ public class DetachableTabTest
 		assertNotNull( tab );
 
 		assertThat( ( Stage )tab.getDetachableContent().getScene().getWindow(), is( stage ) );
-		assertThat( tab.getContent(), is( tab.getDetachableContent() ) );
+		assertThat( tab.getContent(), is( ( Node )tab.getDetachableContent() ) );
 
 		FXTestUtils.invokeAndWait( new Runnable()
 		{
@@ -97,7 +98,10 @@ public class DetachableTabTest
 				Stage detachedStage = ( Stage )tab.getDetachableContent().getScene().getWindow();
 				assertThat( detachedStage, not( is( stage ) ) );
 				assertThat( detachedStage.getTitle(), is( tab.getText() ) );
-				assertThat( tab.getContent(), not( is( tab.getDetachableContent() ) ) );
+				assertThat( tab.getContent(), not( is( ( Node )tab.getDetachableContent() ) ) );
+
+				// tab should be in detached set
+				assertFalse( DetachedTabsHolder.get().isEmpty() );
 
 				detachedStage.close();
 			}
@@ -105,7 +109,8 @@ public class DetachableTabTest
 
 		assertThat( ( Stage )tab.getDetachableContent().getScene().getWindow(), is( stage ) );
 		assertThat( tab.isDetached(), is( false ) );
-		assertThat( tab.getContent(), is( tab.getDetachableContent() ) );
+		assertThat( tab.getContent(), is( ( Node )tab.getDetachableContent() ) );
+		assertTrue( DetachedTabsHolder.get().isEmpty() );
 	}
 
 	@Test
@@ -119,7 +124,7 @@ public class DetachableTabTest
 		assertNotNull( tab );
 
 		assertThat( ( Stage )tab.getDetachableContent().getScene().getWindow(), is( stage ) );
-		assertThat( tab.getContent(), is( tab.getDetachableContent() ) );
+		assertThat( tab.getContent(), is( ( Node )tab.getDetachableContent() ) );
 
 		TestFX controller = TestFX.wrap( new FXScreenController() ).click( detachButton );
 
@@ -132,7 +137,10 @@ public class DetachableTabTest
 				Stage detachedStage = ( Stage )tab.getDetachableContent().getScene().getWindow();
 				assertThat( detachedStage, not( is( stage ) ) );
 				assertThat( detachedStage.getTitle(), is( tab.getText() ) );
-				assertThat( tab.getContent(), not( is( tab.getDetachableContent() ) ) );
+				assertThat( tab.getContent(), not( is( ( Node )tab.getDetachableContent() ) ) );
+
+				// tab contents should be in detached set
+				assertFalse( DetachedTabsHolder.get().isEmpty() );
 			}
 		}, 2 );
 
@@ -140,6 +148,7 @@ public class DetachableTabTest
 
 		assertThat( ( Stage )tab.getDetachableContent().getScene().getWindow(), is( stage ) );
 		assertThat( tab.isDetached(), is( false ) );
-		assertThat( tab.getContent(), is( tab.getDetachableContent() ) );
+		assertThat( tab.getContent(), is( ( Node )tab.getDetachableContent() ) );
+		assertTrue( DetachedTabsHolder.get().isEmpty() );
 	}
 }

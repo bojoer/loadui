@@ -74,16 +74,8 @@ public class MainWindow
 			@Override
 			public void run()
 			{
-				final MainWindowView mainView = new MainWindowView( workspaceProvider, executionsInfo );
-				mainView.runAfterInit( new Runnable()
-				{
-					@Override
-					public void run()
-					{
-						tem.registerObserver( mainView.getNotificationPanel() );
-					}
-				} );
-				
+				final MainWindowView mainView = new MainWindowView( workspaceProvider, executionsInfo, tem );
+
 				stage.setScene( SceneBuilder.create().stylesheets( "/com/eviware/loadui/ui/fx/loadui-style.css" )
 						.root( mainView ).build() );
 				BlockingTask.install( stage.getScene() );
