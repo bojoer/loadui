@@ -180,4 +180,32 @@ public class NotificationPanelTest
 		assertFalse( panelNode.isVisible() );
 	}
 	
+	@Test
+	public void notificationPanelWontGoAwayIfMouseIsOnIt() throws Exception {
+		FXAppLoadedState.STATE.enter();
+		
+		Node panelNode = getOrFail( ".notification-panel" );
+		
+		BeanInjector.getBeanFuture( TestEventManager.class ).get( 500, TimeUnit.MILLISECONDS )
+				.logMessage( MessageLevel.WARNING, "A message" );
+
+		// find position of notification panel, close it, then put mouse just below it
+		controller.sleep( 1000 ).move( "#hide-notification-panel" ).click().moveBy( 0, 150 ).sleep( 500 );
+		
+		BeanInjector.getBeanFuture( TestEventManager.class ).get( 500, TimeUnit.MILLISECONDS )
+		.logMessage( MessageLevel.WARNING, "A message" );
+		
+		// put mouse on notification panel and stay there for a while
+		controller.sleep( 2000 ).move( "#hide-notification-panel" ).sleep( 5000 );
+		assertTrue( panelNode.isVisible() );
+		
+		// if moving out and going back quickly, panel should still be visible
+		controller.moveBy( 0, 150 ).moveBy( 0, -150 ).sleep( 1000 );
+		assertTrue( panelNode.isVisible() );
+		
+		// now go away and let the panel vanish
+		controller.moveBy( 0, 150 ).sleep( 1000 );
+		assertFalse( panelNode.isVisible() );
+	}
+	
 }
