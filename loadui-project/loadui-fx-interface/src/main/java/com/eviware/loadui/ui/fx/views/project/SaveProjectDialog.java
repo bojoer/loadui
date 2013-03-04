@@ -7,6 +7,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBuilder;
 
 import com.eviware.loadui.api.model.ProjectItem;
+import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.control.ButtonDialog;
 import com.eviware.loadui.ui.fx.views.window.MainWindowView;
 
@@ -23,7 +24,8 @@ public class SaveProjectDialog extends ButtonDialog
 					@Override
 					public void handle( ActionEvent event )
 					{
-						project.save();
+						mainWindow.getChildView( ProjectView.class ).fireEvent(
+								IntentEvent.create( IntentEvent.INTENT_SAVE, project ) );
 						close();
 						mainWindow.showWorkspace();
 						project.release();

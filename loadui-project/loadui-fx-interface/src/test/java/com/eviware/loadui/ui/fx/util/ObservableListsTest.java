@@ -14,8 +14,11 @@ import static org.mockito.Mockito.when;
 
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 
 import org.junit.Ignore;
@@ -28,10 +31,25 @@ import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.events.EventHandler;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Ordering;
 
 public class ObservableListsTest
 {
+	@Test
+	public void getActuallyRemoved_test()
+	{
+		ListChangeListener.Change<Integer> change = mock( ListChangeListener.Change.class );
+		when( change.getRemoved() ).thenReturn( ImmutableList.of( 1, 2, 3 ) );
+		when( change.getAddedSubList() ).thenReturn( ImmutableList.of( 3, 4 ) );
+		when( change.wasRemoved() ).thenReturn( true );
+
+		Set<Integer> actuallyRemoved = ObservableLists.getActuallyRemoved( change );
+
+		assertTrue( actuallyRemoved.equals( ImmutableSet.of( 1, 2 ) ) );
+	}
+
 	@Test
 	public void bindContentUnorderedCanBeRearangedAndStillStayInSync()
 	{

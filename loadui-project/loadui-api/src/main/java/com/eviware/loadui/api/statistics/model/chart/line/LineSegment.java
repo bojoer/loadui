@@ -59,7 +59,7 @@ public interface LineSegment extends Segment
 	 * 
 	 * @return
 	 */
-	public Statistic<?> getStatistic();
+	public Statistic<Number> getStatistic();
 
 	public interface Removable extends LineSegment, Segment.Removable
 	{

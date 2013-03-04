@@ -3,6 +3,7 @@ package com.eviware.loadui.ui.fx.views.analysis.linechart;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.fromExpression;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.concurrent.Callable;
 
 import javafx.beans.Observable;
@@ -34,6 +35,7 @@ public final class SegmentToSeriesFunction implements Function<Segment, XYChart.
 	ObservableList<Observable> observables;
 	ExecutionChart chart;
 	LoadingCache<XYChart.Series<?, ?>, StringProperty> eventSeriesStyles;
+	final public long hash; //TODO: this is debugging code, remove me.
 
 	public SegmentToSeriesFunction( ObservableValue<Execution> execution, ObservableList<Observable> observables,
 			ExecutionChart chart, LoadingCache<XYChart.Series<?, ?>, StringProperty> eventSeriesStyles )
@@ -42,22 +44,17 @@ public final class SegmentToSeriesFunction implements Function<Segment, XYChart.
 		this.observables = observables;
 		this.chart = chart;
 		this.eventSeriesStyles = eventSeriesStyles;
+		this.hash = System.currentTimeMillis() % 1000;
 	}
 
 	@Override
 	public XYChart.Series<Number, Number> apply( final Segment segment )
 	{
-		//		System.out.println( "================== apply: " + execution.toString() );
-		//		if( execution.getValue() == null )
-		//		{
-		//			System.out.println( "returning empty list" );
-		//			return new XYChart.Series<Number, Number>();
-		//		}
+		System.out.println( "Segment: " + segment );
 
 		if( segment instanceof LineSegment )
 			return lineSegmentToSeries( ( LineSegment )segment );
-		else
-			return eventSegmentToSeries( ( TestEventSegment )segment );
+		return eventSegmentToSeries( ( TestEventSegment )segment );
 	}
 
 	private static final Function<DataPoint<?>, XYChart.Data<Number, Number>> datapointToChartdata = new Function<DataPoint<?>, XYChart.Data<Number, Number>>()
@@ -71,7 +68,7 @@ public final class SegmentToSeriesFunction implements Function<Segment, XYChart.
 
 	private Series<Number, Number> lineSegmentToSeries( final LineSegment segment )
 	{
-		XYChart.Series<Number, Number> series = new XYChart.Series<>();
+		final XYChart.Series<Number, Number> series = new XYChart.Series<>();
 		series.setName( segment.getStatisticName() );
 
 		series.setData( fromExpression( new Callable<Iterable<XYChart.Data<Number, Number>>>()
@@ -79,7 +76,9 @@ public final class SegmentToSeriesFunction implements Function<Segment, XYChart.
 			@Override
 			public Iterable<XYChart.Data<Number, Number>> call() throws Exception
 			{
-				//System.out.println( "!!!!!!!!!!!!!! " + segment.getStatistic() );
+				if( segment.isRemoved() )
+					return new LinkedList<>();
+
 				Iterable<XYChart.Data<Number, Number>> chartdata = Iterables.transform(
 						segment.getStatistic().getPeriod( ( long )chart.getPosition() - 2000,
 								( long )chart.getPosition() + chart.getSpan() + 2000, chart.getTickZoomLevel().getLevel(),

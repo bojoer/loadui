@@ -35,6 +35,7 @@ import com.eviware.loadui.api.statistics.model.chart.ChartView;
 import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.ui.fx.api.PostActionEvent;
+import com.eviware.loadui.ui.fx.api.analysis.ChartGroupView;
 import com.eviware.loadui.ui.fx.api.input.DraggableEvent;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
@@ -42,9 +43,9 @@ import com.eviware.loadui.ui.fx.views.analysis.linechart.LineChartViewNode;
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
 
-public class ChartGroupView extends VBox
+public class ChartGroupViewImpl extends VBox implements ChartGroupView
 {
-	protected static final Logger log = LoggerFactory.getLogger( ChartGroupView.class );
+	protected static final Logger log = LoggerFactory.getLogger( ChartGroupViewImpl.class );
 
 	private final ChartGroup chartGroup;
 
@@ -79,7 +80,7 @@ public class ChartGroupView extends VBox
 
 	private final ObservableList<LineChartViewNode> componentSubcharts;
 
-	public ChartGroupView( ChartGroup chartGroup, ObservableValue<Execution> currentExecution, Observable poll )
+	public ChartGroupViewImpl( ChartGroup chartGroup, ObservableValue<Execution> currentExecution, Observable poll )
 	{
 		this.chartGroup = chartGroup;
 		this.currentExecution = currentExecution;
@@ -95,7 +96,7 @@ public class ChartGroupView extends VBox
 			@Override
 			public void invalidated( Observable _ )
 			{
-				fireEvent( PostActionEvent.create( PostActionEvent.WAS_CREATED, ChartGroupView.this ) );
+				fireEvent( PostActionEvent.create( PostActionEvent.WAS_CREATED, ChartGroupViewImpl.this ) );
 			}
 		};
 
@@ -133,11 +134,11 @@ public class ChartGroupView extends VBox
 			{
 				if( newValue )
 				{
-					ChartGroupView.this.getChildren().add( componentGroup );
+					ChartGroupViewImpl.this.getChildren().add( componentGroup );
 				}
 				else
 				{
-					ChartGroupView.this.getChildren().remove( componentGroup );
+					ChartGroupViewImpl.this.getChildren().remove( componentGroup );
 				}
 			}
 		} );
@@ -160,21 +161,25 @@ public class ChartGroupView extends VBox
 		fireEvent( IntentEvent.create( IntentEvent.INTENT_DELETE, chartGroup ) );
 	}
 
+	@Override
 	public ToggleGroup getChartGroupToggleGroup()
 	{
 		return chartGroupToggleGroup;
 	}
 
+	@Override
 	public HBox getButtonBar()
 	{
 		return buttonBar;
 	}
 
+	@Override
 	public AnchorPane getComponentGroupAnchor()
 	{
 		return componentGroupAnchor;
 	}
 
+	@Override
 	public VBox getMainChartGroup()
 	{
 		return mainChartGroup;
@@ -189,6 +194,7 @@ public class ChartGroupView extends VBox
 		return LabelBuilder.create().text( "Unsupported chart type: " + type ).build();
 	}
 
+	@Override
 	public ChartGroup getChartGroup()
 	{
 		return chartGroup;
@@ -226,4 +232,16 @@ public class ChartGroupView extends VBox
 	};
 
 	private ToggleGroup chartGroupToggleGroup;
+
+	@Override
+	public Node getNode()
+	{
+		return this;
+	}
+
+	@Override
+	public MenuButton getMenuButton()
+	{
+		return chartMenuButton;
+	}
 }

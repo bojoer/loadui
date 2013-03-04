@@ -1,8 +1,12 @@
 package com.eviware.loadui.ui.fx.util;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
 import javafx.animation.FadeTransitionBuilder;
+import javafx.animation.Transition;
 import javafx.animation.TranslateTransition;
 import javafx.animation.TranslateTransitionBuilder;
 import javafx.event.ActionEvent;
@@ -116,12 +120,13 @@ public class Animations
 		}
 	}
 
-	public void slideDown()
+	public Then slideDown()
 	{
 		stopAnyRunningAnimation();
 		toAnimate.setVisible( true );
 		state = State.SLIDING_DOWN;
 		SLIDE_DOWN.playFromStart();
+		return new Then( SLIDE_DOWN );
 	}
 
 	public void slideUp()
@@ -145,6 +150,54 @@ public class Animations
 	{
 		state = State.VISIBLE;
 		toAnimate.setVisible( true );
+	}
+
+	public class Then
+	{
+
+		private final Transition transition;
+		private final List<Runnable> runnables = new ArrayList<>();
+		private FinishedListener listener;
+		private EventHandler<ActionEvent> prevHandler;
+
+		public Then( TranslateTransition transition )
+		{
+			this.transition = transition;
+		}
+
+		public Then then( final Runnable action )
+		{
+			if( listener == null )
+			{
+				listener = new FinishedListener();
+				prevHandler = transition.getOnFinished();
+				transition.setOnFinished( listener );
+			}
+			runnables.add( action );
+			return this;
+		}
+
+		private class FinishedListener implements EventHandler<ActionEvent>
+		{
+
+			@Override
+			public void handle( ActionEvent event )
+			{
+				try
+				{
+					for( Runnable action : runnables )
+						action.run();
+				}
+				finally
+				{
+					if( prevHandler != null )
+						prevHandler.handle( event );
+					transition.setOnFinished( prevHandler );
+				}
+			}
+
+		}
+
 	}
 
 }

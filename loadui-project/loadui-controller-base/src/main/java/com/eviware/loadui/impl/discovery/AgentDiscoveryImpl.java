@@ -24,6 +24,8 @@ import java.net.UnknownHostException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -139,17 +141,18 @@ public final class AgentDiscoveryImpl implements AgentDiscovery
 	@Override
 	public Collection<AgentReference> getDiscoveredAgents()
 	{
-		Iterator<AgentReference> it = agents.iterator();
 		long now = System.currentTimeMillis();
-		while( it.hasNext() )
+		List<AgentReference> refsToRemove = new LinkedList<>();
+		for( AgentReference ref : agents )
 		{
-			AgentRefImpl ref = ( AgentRefImpl )it.next();
-			if( ref.discoveryTime + 2000 * DELAY < now )
+			AgentRefImpl refImpl = ( AgentRefImpl )ref;
+			if( refImpl.discoveryTime + 2000 * DELAY < now )
 			{
 				log.debug( "Removing stale entry: {}", ref );
-				it.remove();
+				refsToRemove.add( ref );
 			}
 		}
+		agents.removeAll( refsToRemove );
 		return Collections.unmodifiableSet( agents );
 	}
 

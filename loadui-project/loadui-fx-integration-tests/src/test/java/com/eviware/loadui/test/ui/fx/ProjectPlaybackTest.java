@@ -39,14 +39,14 @@ public class ProjectPlaybackTest
 	@Test
 	public void shouldPlayAndStop() throws Exception
 	{
-		controller.click( ".project-playback-panel #play-button" ).sleep( 5000 );
+		controller.click( ".project-playback-panel .play-button" ).sleep( 5000 );
 
 		Collection<? extends ProjectItem> projects = BeanInjector.getBean( WorkspaceProvider.class ).getWorkspace()
 				.getProjects();
 		ProjectItem project = projects.iterator().next();
 		assertTrue( project.isRunning() );
 
-		controller.click( ".project-playback-panel #play-button" ).sleep( 4000 );
+		controller.click( ".project-playback-panel .play-button" ).sleep( 4000 );
 		assertTrue( !project.isRunning() );
 	}
 
@@ -57,7 +57,7 @@ public class ProjectPlaybackTest
 
 		controller.click( "#set-limits" ).click( "#time-limit" ).press( KeyCode.CONTROL, KeyCode.A )
 				.release( KeyCode.CONTROL, KeyCode.A ).sleep( 100 ).type( "6" ).sleep( 100 ).click( "#default" )
-				.sleep( 1000 ).click( ".project-playback-panel #play-button" ).sleep( 4000 );
+				.sleep( 1000 ).click( ".project-playback-panel .play-button" ).sleep( 4000 );
 		assertTrue( project.isRunning() );
 
 		controller.sleep( 9000 );

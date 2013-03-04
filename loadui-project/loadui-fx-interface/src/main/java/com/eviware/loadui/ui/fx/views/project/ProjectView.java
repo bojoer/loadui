@@ -17,6 +17,7 @@ import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.SceneBuilder;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuButton;
@@ -47,6 +48,7 @@ import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.NodeUtils;
 import com.eviware.loadui.ui.fx.util.Properties;
 import com.eviware.loadui.ui.fx.util.UIUtils;
+import com.eviware.loadui.ui.fx.views.analysis.FxExecutionsInfo;
 import com.eviware.loadui.ui.fx.views.analysis.reporting.LineChartUtils;
 import com.eviware.loadui.ui.fx.views.canvas.CanvasView;
 import com.eviware.loadui.ui.fx.views.rename.RenameDialog;
@@ -55,10 +57,8 @@ import com.eviware.loadui.ui.fx.views.statistics.StatisticsView;
 import com.eviware.loadui.ui.fx.views.workspace.CloneProjectDialog;
 import com.eviware.loadui.ui.fx.views.workspace.CreateNewProjectDialog;
 import com.eviware.loadui.util.BeanInjector;
-import com.google.common.base.Objects;
+import com.eviware.loadui.util.projects.ProjectUtils;
 import com.google.common.base.Preconditions;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
 
 public class ProjectView extends AnchorPane
 {
@@ -70,13 +70,17 @@ public class ProjectView extends AnchorPane
 	private DetachableTab designTab;
 
 	@FXML
-	private DetachableTab resultTab;
+	private DetachableTab statsTab;
 
 	@FXML
 	private MenuButton menuButton;
 
 	@FXML
 	private Button summaryButton;
+
+	private ProjectPlaybackPanel playbackPanel;
+
+	private final FxExecutionsInfo executionsInfo;
 
 	private final ProjectItem project;
 
@@ -117,11 +121,10 @@ public class ProjectView extends AnchorPane
 		return playbackPanel;
 	}
 
-	private ProjectPlaybackPanel playbackPanel;
-
-	public ProjectView( ProjectItem projectIn )
+	public ProjectView( ProjectItem projectIn, FxExecutionsInfo executionsInfo )
 	{
 		this.project = Preconditions.checkNotNull( projectIn );
+		this.executionsInfo = executionsInfo;
 		projectReleased = Properties.observeEvent( project, ProjectItem.RELEASED );
 
 		FXMLUtils.load( this );
@@ -130,14 +133,15 @@ public class ProjectView extends AnchorPane
 	@FXML
 	private void initialize()
 	{
+		log.info( "Initializing ProjectView" );
 		playbackPanel = new ProjectPlaybackPanel( project );
-		AnchorPane.setTopAnchor( playbackPanel, 7d );
+		AnchorPane.setTopAnchor( playbackPanel, 6d );
 		AnchorPane.setLeftAnchor( playbackPanel, 440.0 );
 		getChildren().add( playbackPanel );
 
 		menuButton.textProperty().bind( Properties.forLabel( project ) );
 		designTab.setDetachableContent( new ProjectCanvasView( project ) );
-		resultTab.setDetachableContent( new StatisticsView( project ) );
+		statsTab.setDetachableContent( new StatisticsView( project, executionsInfo ) );
 		summaryButton.setDisable( true );
 
 		addEventHandler( IntentEvent.ANY, new EventHandler<IntentEvent<? extends Object>>()
@@ -164,6 +168,22 @@ public class ProjectView extends AnchorPane
 					if( event.getArg() instanceof ProjectItem )
 					{
 						project.save();
+
+						Node canvas = lookup( "#snapshotArea" );
+						Node grid = lookup( ".tool-box" );
+						grid.setVisible( false );
+
+						javafx.scene.SnapshotParameters parameters = new javafx.scene.SnapshotParameters();
+						parameters.setViewport( new javafx.geometry.Rectangle2D( 100, 60, 620, 324 ) );
+						WritableImage fxImage = canvas.snapshot( parameters, null );
+						BufferedImage bimg = SwingFXUtils.fromFXImage( fxImage, null );
+						bimg = UIUtils.scaleImage( bimg, 120, 64 );
+						String base64 = NodeUtils.toBase64Image( bimg );
+
+						ProjectUtils.getProjectRef( project ).setAttribute( "miniature_fx2", base64 );
+
+						grid.setVisible( true );
+						event.consume();
 					}
 					else
 					{
@@ -194,7 +214,6 @@ public class ProjectView extends AnchorPane
 				}
 				else if( event.getEventType() == IntentEvent.INTENT_CLOSE && event.getArg() instanceof SceneItem )
 				{
-					SceneItem scenario = ( SceneItem )event.getArg();
 					Group canvas = ( Group )lookup( ".canvas-layer" );
 					StackPane grid = ( StackPane )lookup( ".grid-pane" );
 					StackPane parent = ( StackPane )grid.getParent();
@@ -203,22 +222,13 @@ public class ProjectView extends AnchorPane
 
 					StackPane completeCanvas = StackPaneBuilder.create().children( grid, canvas ).build();
 					SceneBuilder.create().root( completeCanvas ).width( 996 ).height( 525 ).build();
-					//					String styleSheetUrl = null;
-					//					try
-					//					{
-					//						styleSheetUrl = new File( "src/main/resources/com/eviware/loadui/ui/fx/loadui-style.css" ).toURI()
-					//								.toURL().toExternalForm();
-					//					}
-					//					catch( MalformedURLException e )
-					//					{
-					//						e.printStackTrace();
-					//					}
-					//					snapshotScene.getStylesheets().add( styleSheetUrl );
 
 					WritableImage fxImage = completeCanvas.snapshot( null, null );
 					BufferedImage bimg = SwingFXUtils.fromFXImage( fxImage, null );
 					bimg = UIUtils.scaleImage( bimg, 332, 175 );
 					String base64 = NodeUtils.toBase64Image( bimg );
+
+					SceneItem scenario = ( SceneItem )event.getArg();
 					scenario.setAttribute( "miniature_fx2", base64 );
 
 					designTab.setDetachableContent( new ProjectCanvasView( project ) );
@@ -226,7 +236,7 @@ public class ProjectView extends AnchorPane
 				}
 				else if( event.getEventType() == IntentEvent.INTENT_CLONE )
 				{
-					ProjectRef projectRef = getProjectRef( project.getId() );
+					ProjectRef projectRef = ProjectUtils.getProjectRef( project );
 					new CloneProjectDialog( project.getWorkspace(), projectRef, ProjectView.this ).show();
 					event.consume();
 					return;
@@ -289,13 +299,6 @@ public class ProjectView extends AnchorPane
 	}
 
 	@FXML
-	public void newProjectWizard()
-	{
-		log.info( "New Project Wizard requested" );
-		fireEvent( IntentEvent.create( IntentEvent.INTENT_CREATE, project.getWorkspace() ) );
-	}
-
-	@FXML
 	public void cloneProject()
 	{
 		log.info( "Clone Project requested" );
@@ -326,7 +329,10 @@ public class ProjectView extends AnchorPane
 	@FXML
 	public void closeProject()
 	{
+		StatisticsView statisticsView = ( StatisticsView )statsTab.getDetachableContent();
+		statisticsView.close();
 		log.info( "Close project requested" );
+		executionsInfo.reset();
 		fireEvent( IntentEvent.create( IntentEvent.INTENT_CLOSE, project ) );
 	}
 
@@ -350,26 +356,14 @@ public class ProjectView extends AnchorPane
 		log.info( "Open summary requested" );
 		ReportingManager reportingManager = BeanInjector.getBean( ReportingManager.class );
 
-		StatisticsView statisticsView = ( StatisticsView )resultTab.getDetachableContent();
-		ReadOnlyProperty<Execution> execution = statisticsView.currentExecutionProperty();
+		StatisticsView statisticsView = ( StatisticsView )statsTab.getDetachableContent();
+		ReadOnlyProperty<Execution> executionProp = statisticsView.currentExecutionProperty();
 		Collection<StatisticPage> pages = project.getStatisticPages().getChildren();
 
-		Map<ChartView, Image> images = LineChartUtils.createImages( pages, execution, null );
+		Map<ChartView, Image> images = LineChartUtils.createImages( pages, executionProp, null );
 
-		reportingManager.createReport( project.getLabel(), execution.getValue(), pages, images, execution.getValue()
+		reportingManager.createReport( project.getLabel(), executionProp.getValue(), pages, images, executionProp.getValue()
 				.getSummaryReport() );
-	}
-
-	private ProjectRef getProjectRef( String id )
-	{
-		return Iterables.find( project.getWorkspace().getProjectRefs(), new Predicate<ProjectRef>()
-		{
-			@Override
-			public boolean apply( ProjectRef input )
-			{
-				return Objects.equal( input.getProjectId(), project.getId() );
-			}
-		} );
 	}
 
 	private class SaveAndCloseTask extends Task<ProjectRef>
@@ -388,10 +382,10 @@ public class ProjectView extends AnchorPane
 				@Override
 				public void run()
 				{
-					ProjectView.this.fireEvent( IntentEvent.create( IntentEvent.INTENT_CLOSE, project ) );
+					closeProject();
 				}
 			} );
-			return getProjectRef( project.getId() );
+			return ProjectUtils.getProjectRef( project );
 		}
 	}
 

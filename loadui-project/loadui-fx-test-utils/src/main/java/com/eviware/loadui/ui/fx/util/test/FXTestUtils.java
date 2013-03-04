@@ -1,5 +1,7 @@
 package com.eviware.loadui.ui.fx.util.test;
 
+import static org.junit.Assert.fail;
+
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Semaphore;
@@ -159,6 +161,32 @@ public class FXTestUtils
 	public static void printGraph( Node root )
 	{
 		printGraph( root, "" );
+	}
+	
+	public static void failIfExists( String selector )
+	{
+		try
+		{
+			TestFX.find( selector );
+			fail( "Selector shouldn't have found anything: " + selector );
+		}
+		catch( Exception e )
+		{
+			// expected
+		}
+	}
+
+	public static <T extends Node> T getOrFail( String selector )
+	{
+		try
+		{
+			return TestFX.find( selector );
+		}
+		catch( Exception e )
+		{
+			fail( "Cannot find anything with selector: " + selector );
+			return null;
+		}
 	}
 
 	private static void printGraph( Node root, String indent )

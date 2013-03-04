@@ -9,7 +9,6 @@ import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 
@@ -87,22 +86,6 @@ public class StatisticHolderToolBox extends ToolBox<Node>
 
 		final ObservableList<ObservableList<StatisticVariable>> statisticVariables = transform( statisticHolders,
 				GET_VARIABLES );
-
-		statisticVariables.addListener( new ListChangeListener<ObservableList<StatisticVariable>>()
-		{
-			@Override
-			public void onChanged(
-					javafx.collections.ListChangeListener.Change<? extends ObservableList<StatisticVariable>> c )
-			{
-				for( ObservableList<StatisticVariable> l : statisticVariables )
-				{
-					System.out.println( "---" );
-					for( StatisticVariable v : l )
-						System.out.println( "  Variable: " + v );
-				}
-
-			}
-		} );
 
 		final ObservableList<ObservableList<StatisticVariable>> nonEmptyVariables = FXCollections.observableArrayList();
 		variableGroup = Observables.group();

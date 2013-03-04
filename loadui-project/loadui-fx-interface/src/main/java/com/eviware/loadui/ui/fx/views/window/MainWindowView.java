@@ -3,14 +3,13 @@ package com.eviware.loadui.ui.fx.views.window;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.Property;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.MenuButton;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -24,7 +23,7 @@ import com.eviware.loadui.api.model.ProjectRef;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.model.WorkspaceProvider;
-import com.eviware.loadui.api.testevents.TestEventManager.TestEventObserver;
+import com.eviware.loadui.api.testevents.TestEventManager;
 import com.eviware.loadui.api.traits.Labeled;
 import com.eviware.loadui.ui.fx.api.Inspector;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
@@ -36,6 +35,7 @@ import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.ObservableLists;
 import com.eviware.loadui.ui.fx.util.UIUtils;
 import com.eviware.loadui.ui.fx.views.about.AboutDialog;
+import com.eviware.loadui.ui.fx.views.analysis.FxExecutionsInfo;
 import com.eviware.loadui.ui.fx.views.inspector.InspectorView;
 import com.eviware.loadui.ui.fx.views.project.ProjectView;
 import com.eviware.loadui.ui.fx.views.project.SaveProjectDialog;
@@ -62,12 +62,14 @@ public class MainWindowView extends StackPane
 	private final WorkspaceProvider workspaceProvider;
 	private final Property<WorkspaceItem> workspaceProperty = new SimpleObjectProperty<>();
 	private final WorkspaceListener workspaceListener = new WorkspaceListener();
-	private final SimpleBooleanProperty isInitialized = new SimpleBooleanProperty( false );
+	private final FxExecutionsInfo executionsInfo;
+	private final TestEventManager tem;
 
-	public MainWindowView( WorkspaceProvider workspaceProvider )
+	public MainWindowView( WorkspaceProvider workspaceProvider, FxExecutionsInfo executionsInfo, TestEventManager tem )
 	{
 		this.workspaceProvider = Preconditions.checkNotNull( workspaceProvider );
-
+		this.executionsInfo = Preconditions.checkNotNull( executionsInfo );
+		this.tem = tem;
 		FXMLUtils.load( this );
 	}
 
@@ -76,6 +78,8 @@ public class MainWindowView extends StackPane
 	{
 		notificationPanel.setVisible( false );
 		notificationPanel.setMainWindowView( this );
+		notificationPanel.listenOnDetachedTabs();
+		tem.registerObserver( notificationPanel );
 		notificationPanel.setOnShowLog( new EventHandler<MouseEvent>()
 		{
 			@Override
@@ -112,45 +116,6 @@ public class MainWindowView extends StackPane
 			ErrorHandler.promptRestart();
 		}
 
-		synchronized( isInitialized )
-		{
-			isInitialized.set( true );
-		}
-
-	}
-
-	/**
-	 * The given runnable will be run immediately if this has already been
-	 * initialized, or at some time after this is initialized.
-	 * 
-	 * @param runnable
-	 */
-	public void runAfterInit( final Runnable runnable )
-	{
-		boolean runNow = false;
-		synchronized( isInitialized )
-		{
-			if( isInitialized.get() )
-			{
-				runNow = true; // do not run the runnable inside the synchronized block, do it outside
-			}
-			else
-			{
-				isInitialized.addListener( new ChangeListener<Boolean>()
-				{
-					@Override
-					public void changed( ObservableValue<? extends Boolean> observable, Boolean oldVal, Boolean newVal )
-					{
-						if( newVal )
-							runnable.run();
-					}
-				} );
-			}
-		}
-		if( runNow )
-		{
-			runnable.run();
-		}
 	}
 
 	public MenuButton getMainButton()
@@ -190,7 +155,7 @@ public class MainWindowView extends StackPane
 										@Override
 										public void run()
 										{
-											ProjectView projectView = new ProjectView( project );
+											ProjectView projectView = new ProjectView( project, executionsInfo );
 											container.getChildren().setAll( projectView );
 											PerspectiveEvent.fireEvent( PerspectiveEvent.PERSPECTIVE_PROJECT, projectView );
 										}
@@ -198,7 +163,6 @@ public class MainWindowView extends StackPane
 								}
 								catch( Exception e )
 								{
-									// TODO Auto-generated catch block
 									e.printStackTrace();
 								}
 
@@ -274,15 +238,20 @@ public class MainWindowView extends StackPane
 	{
 		WorkspaceView workspaceView = new WorkspaceView( workspaceProvider.getWorkspace() );
 		container.getChildren().setAll( workspaceView );
-		//		fireEvent( new PerspectiveEvent( PerspectiveEvent.PERSPECTIVE_WORKSPACE ) );
 		PerspectiveEvent.fireEvent( PerspectiveEvent.PERSPECTIVE_WORKSPACE, workspaceView );
 	}
-	
-	public WorkspaceView getWorkspaceView() {
-		if (container != null && container.getChildren().isEmpty() == false)
-			return ( WorkspaceView )container.getChildren().get( 0 );
-		else
-			throw new RuntimeException( "WorkspaceView has not been created yet" );
+
+	@SuppressWarnings( "unchecked" )
+	public <T extends Parent> T getChildView( Class<T> expectedClass )
+	{
+		if( container != null && container.getChildren().isEmpty() == false )
+		{
+			Node childView = container.getChildren().get( 0 );
+			if( expectedClass.isInstance( childView ) )
+				return ( T )childView;
+		}
+		throw new IllegalStateException( MainWindowView.class.getName() + " does not hold a view of class "
+				+ expectedClass );
 	}
 
 	public void settings()
@@ -350,16 +319,6 @@ public class MainWindowView extends StackPane
 				workspaceProperty.setValue( workspaceProvider.getWorkspace() );
 			}
 		}
-	}
-
-	/**
-	 * @return notification panel. May return null if this is not initialized
-	 *         yet.
-	 * @see {@link MainWindowView#runAfterInit(Runnable)}
-	 */
-	public TestEventObserver getNotificationPanel()
-	{
-		return notificationPanel;
 	}
 
 }

@@ -31,7 +31,7 @@ public class SourceLineSegment implements LineSegment
 	private final String source;
 	private final EventForwarder eventForwarder = new EventForwarder();
 
-	private Statistic<?> statistic;
+	private Statistic<Number> statistic;
 
 	public SourceLineSegment( ChartLineSegment parent, String source )
 	{
@@ -65,13 +65,14 @@ public class SourceLineSegment implements LineSegment
 		return parent.getStatisticName();
 	}
 
+	@SuppressWarnings( "unchecked" )
 	@Override
-	public Statistic<?> getStatistic()
+	public Statistic<Number> getStatistic()
 	{
 		if( statistic == null )
 		{
-			statistic = getStatisticHolder().getStatisticVariable( parent.getVariableName() ).getStatistic(
-					parent.getStatisticName(), source );
+			statistic = ( Statistic<Number> )getStatisticHolder().getStatisticVariable( parent.getVariableName() )
+					.getStatistic( parent.getStatisticName(), source );
 		}
 		return statistic;
 	}
@@ -98,6 +99,12 @@ public class SourceLineSegment implements LineSegment
 	public Collection<String> getAttributes()
 	{
 		return parent.getAttributes();
+	}
+
+	@Override
+	public boolean isRemoved()
+	{
+		return false;
 	}
 
 	@Override

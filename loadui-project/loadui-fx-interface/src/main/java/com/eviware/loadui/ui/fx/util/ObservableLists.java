@@ -2,6 +2,7 @@ package com.eviware.loadui.ui.fx.util;
 
 import static com.google.common.base.Predicates.in;
 import static com.google.common.base.Predicates.not;
+import static com.google.common.collect.Sets.newHashSet;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -37,6 +38,7 @@ import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.events.EventFirer;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.WeakEventHandler;
+import com.eviware.loadui.api.statistics.model.chart.line.Segment;
 import com.eviware.loadui.ui.fx.views.projectref.ProjectRefView;
 import com.eviware.loadui.util.BeanInjector;
 import com.google.common.base.Function;
@@ -48,9 +50,11 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
+import com.google.common.collect.Sets;
 
 /**
  * Utility class for dealing with JavaFX ObservableLists.
@@ -789,5 +793,15 @@ public class ObservableLists
 			collection.addEventListener( BaseEvent.class, eventHandler );
 			list.addAll( collection.getChildren() );
 		}
+	}
+
+	public static <E> Set<E> getActuallyRemoved( ListChangeListener.Change<E> c )
+	{
+		if( c.wasRemoved() )
+		{
+			return ImmutableSet
+					.copyOf( Sets.difference( newHashSet( c.getRemoved() ), newHashSet( c.getAddedSubList() ) ) );
+		}
+		return ImmutableSet.of();
 	}
 }

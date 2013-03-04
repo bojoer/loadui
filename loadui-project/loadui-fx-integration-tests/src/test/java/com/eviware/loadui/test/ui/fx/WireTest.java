@@ -91,7 +91,7 @@ public class WireTest
 
 		controller.drag( Iterables.get( inputs, 0 ) ).to( Iterables.get( outputs, 2 ) );
 
-		controller.move( Iterables.get( inputs, 0 ) ).moveBy( 0, -20 ).click();
+		controller.move( Iterables.get( inputs, 0 ) ).moveBy( 0, -25 ).click();
 		assertThat( TestFX.findAll( ".connection-view" ).size(), is( 1 ) );
 
 		controller.type( KeyCode.DELETE );
@@ -112,7 +112,7 @@ public class WireTest
 		assertThat( TestFX.findAll( ".connection-view" ).size(), is( 2 ) );
 
 		Node terminal = Iterables.get( inputs, 0 );
-		controller.move( terminal ).moveBy( 0, -20 ).click().drag( terminal ).by( 0, -30 ).drop();
+		controller.move( terminal ).moveBy( 0, -25 ).click().drag( terminal ).by( 0, -30 ).drop();
 		assertThat( TestFX.findAll( ".connection-view" ).size(), is( 1 ) );
 
 		controller.drag( Iterables.get( outputs, 1 ) ).by( 0, 20 ).drop();

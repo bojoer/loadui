@@ -35,6 +35,8 @@ import com.eviware.loadui.api.messaging.MessageListener;
 import com.eviware.loadui.api.messaging.VersionMismatchException;
 import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.WorkspaceItem;
+import com.eviware.loadui.api.testevents.MessageLevel;
+import com.eviware.loadui.api.testevents.TestEventManager;
 import com.eviware.loadui.config.AgentItemConfig;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.ReleasableUtils;
@@ -182,6 +184,8 @@ public final class AgentItemImpl extends ModelItemImpl<AgentItemConfig> implemen
 				{
 					log.warn( "Unable to connect to agent {}: {}", getLabel(),
 							( ( VersionMismatchException )data ).getMessage() );
+					BeanInjector.getBean( TestEventManager.class ).logMessage( MessageLevel.ERROR,
+							"Tried to connect to an incompatible version of LoadUI!" );
 					setEnabled( false );
 				}
 			}

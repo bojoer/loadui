@@ -472,7 +472,7 @@ public class LoadUIIntegrator
 		return assertions;
 	}
 
-	private ProjectRef findProject( String loadUIProjectName, Collection<? extends ProjectRef> projectList )
+	private static ProjectRef findProject( String loadUIProjectName, Collection<? extends ProjectRef> projectList )
 	{
 		if( projectList != null )
 		{
@@ -543,7 +543,8 @@ public class LoadUIIntegrator
 		return loadUITestCaseName;
 	}
 
-	private String createProjectName( Collection<? extends ProjectRef> projectList, HashMap<String, Object> context )
+	private static String createProjectName( Collection<? extends ProjectRef> projectList,
+			HashMap<String, Object> context )
 	{
 
 		int i = projectList.size();

@@ -10,10 +10,10 @@
 <?import javafx.scene.control.MenuItem?>
 <?import java.net.URL?>
 
-<fx:root type="com.eviware.loadui.ui.fx.views.analysis.ChartGroupView"
+<fx:root type="com.eviware.loadui.ui.fx.views.analysis.ChartGroupViewImpl"
 	xmlns:fx="http://javafx.com/fxml" styleClass="chart-group-list-cell">
 	<stylesheets>
-		<URL value="@ChartGroupView.css" />
+		<URL value="@ChartGroupViewImpl.css" />
 		</stylesheets>	
 		<VBox fx:id="mainChartGroup" styleClass="main-chart-group">
 			<AnchorPane fx:id="componentGroupAnchor">

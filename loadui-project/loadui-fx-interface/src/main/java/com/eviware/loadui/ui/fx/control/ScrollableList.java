@@ -1,5 +1,7 @@
 package com.eviware.loadui.ui.fx.control;
 
+import java.util.LinkedHashSet;
+
 import javafx.beans.DefaultProperty;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
@@ -141,7 +143,7 @@ public class ScrollableList<E extends Node> extends StackPane
 				}
 				else
 				{
-					itemBox.getChildren().setAll( pager.getShownItems() );
+					itemBox.getChildren().setAll( new LinkedHashSet<>( pager.getShownItems() ) );
 				}
 			}
 		} );

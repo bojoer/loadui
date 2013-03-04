@@ -31,8 +31,6 @@ import javafx.scene.Group;
 import javafx.scene.GroupBuilder;
 import javafx.scene.Node;
 import javafx.scene.control.Labeled;
-import javafx.scene.control.Slider;
-import javafx.scene.control.SliderBuilder;
 import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Effect;
@@ -73,6 +71,7 @@ import com.eviware.loadui.ui.fx.input.MovableImpl;
 import com.eviware.loadui.ui.fx.input.MultiMovable;
 import com.eviware.loadui.ui.fx.input.SelectableImpl;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
+import com.eviware.loadui.ui.fx.util.ObservableLists;
 import com.eviware.loadui.ui.fx.views.canvas.component.ComponentView;
 import com.eviware.loadui.ui.fx.views.canvas.terminal.ConnectionView;
 import com.eviware.loadui.ui.fx.views.canvas.terminal.TerminalView;
@@ -90,7 +89,8 @@ public class CanvasView extends StackPane
 {
 	protected static final Logger log = LoggerFactory.getLogger( CanvasView.class );
 
-	private static final Effect selectedEffect = new DropShadow(BlurType.GAUSSIAN, new Color( 0.4, 0.4, 0.4, 0.5 ), 10.0, 3.0, 0, 0);
+	private static final Effect selectedEffect = new DropShadow( BlurType.GAUSSIAN, new Color( 0.4, 0.4, 0.4, 0.5 ),
+			10.0, 3.0, 0, 0 );
 	private static final int GRID_SIZE = 36;
 	private static final double PADDING = -45;
 	private final UninstallCanvasObjectView uninstallCanvasObject = new UninstallCanvasObjectView();
@@ -103,7 +103,7 @@ public class CanvasView extends StackPane
 			return string.toLowerCase();
 		}
 	};
-	
+
 	private static final Ordering<String> CATEGORY_COMPARATOR = Ordering.compound(
 			Arrays.asList( SafeExplicitOrdering.of( Lists.transform( Arrays.asList( "VU Scenario",
 					GeneratorCategory.CATEGORY, RunnerCategory.CATEGORY, FlowCategory.CATEGORY, SchedulerCategory.CATEGORY,
@@ -147,7 +147,8 @@ public class CanvasView extends StackPane
 
 			ConnectionView connectionView = new ConnectionView( connection, outputComponentView, inputComponentView );
 
-			ReadOnlyBooleanProperty selectedProperty = SelectableImpl.installSelectable( connectionView ).selectedProperty();
+			ReadOnlyBooleanProperty selectedProperty = SelectableImpl.installSelectable( connectionView )
+					.selectedProperty();
 			connectionView.fillProperty().bind(
 					Bindings.when( selectedProperty ).then( Color.web( "#00ADEE" ) ).otherwise( Color.GRAY ) );
 			connectionView.effectProperty().bind(
@@ -321,14 +322,11 @@ public class CanvasView extends StackPane
 
 		componentLayer.addEventFilter( DraggableEvent.ANY, new ConnectionDraggingFilter() );
 
-		Slider zoomSlider = SliderBuilder.create().min( 0.1 ).max( 1.0 ).value( 1.0 ).maxWidth( 100 ).build();
-		canvasLayer.scaleXProperty().bind( zoomSlider.valueProperty() );
-		canvasLayer.scaleYProperty().bind( zoomSlider.valueProperty() );
-		StackPane.setAlignment( zoomSlider, Pos.BOTTOM_RIGHT );
-
 		setAlignment( Pos.TOP_LEFT );
 
-		getChildren().addAll( createGrid(), componentWrapper, zoomSlider, descriptors );
+		getChildren().addAll(
+				StackPaneBuilder.create().id( "snapshotArea" ).children( createGrid(), componentWrapper ).build(),
+				descriptors );
 
 		SelectableImpl.installDragToSelectArea( this );
 		initScrolling();
@@ -520,19 +518,12 @@ public class CanvasView extends StackPane
 		{
 			while( change.next() )
 			{
-				if( change.wasRemoved() )
+				for( CanvasObjectView component : ObservableLists.getActuallyRemoved( change ) )
 				{
-					Set<CanvasObjectView> actuallyRemoved = Sets.difference( newHashSet( change.getRemoved() ),
-							newHashSet( change.getAddedSubList() ) );
-					log.debug( "ACTUALLY REMOVED: " + actuallyRemoved.size() );
-
-					for( CanvasObjectView component : actuallyRemoved )
-					{
-						log.debug( "UNINSTALL" );
-						MovableImpl.uninstall( component );
-						//Selectable.uninstall( component );
-						MultiMovable.uninstall( CanvasView.this, component );
-					}
+					log.debug( "UNINSTALL" );
+					MovableImpl.uninstall( component );
+					//Selectable.uninstall( component );
+					MultiMovable.uninstall( CanvasView.this, component );
 				}
 			}
 		}

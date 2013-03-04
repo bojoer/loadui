@@ -20,7 +20,7 @@
 				<Insets top="223" right="62" />
 			</padding>
 			<Label style="-fx-text-fill: #ff7f00; -fx-font-weight: bold;"
-				text="loadUI Pro" />
+				text="LoadUI Pro" />
 			<Label style="-fx-text-fill: #ff7f00;" text="Version 2.5" />
 		</HBox>
 	</StackPane>

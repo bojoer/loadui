@@ -15,7 +15,9 @@ import javafx.scene.SceneBuilder;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBuilder;
 import javafx.scene.control.Tab;
-import javafx.scene.layout.RegionBuilder;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.PaneBuilder;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.StackPaneBuilder;
 import javafx.stage.Stage;
 import javafx.stage.StageBuilder;
@@ -26,6 +28,7 @@ import com.eviware.loadui.ui.fx.api.intent.BlockingTask;
 public class DetachableTab extends Tab
 {
 	private final BooleanProperty detachedProperty = new SimpleBooleanProperty( false );
+	private int detachedId;
 
 	public final BooleanProperty detachedProperty()
 	{
@@ -42,85 +45,55 @@ public class DetachableTab extends Tab
 		detachedProperty.set( detached );
 	}
 
-	private final ObjectProperty<Node> detachableContentProperty = new SimpleObjectProperty<>();
+	private final ObjectProperty<Pane> detachableContentProperty = new SimpleObjectProperty<>();
 
-	public final ObjectProperty<Node> detachableContentProperty()
+	public final ObjectProperty<? extends Pane> detachableContentProperty()
 	{
 		return detachableContentProperty;
 	}
 
-	public final Node getDetachableContent()
+	public final Pane getDetachableContent()
 	{
 		return detachableContentProperty.get();
 	}
 
-	public final void setDetachableContent( Node detachableContent )
+	public final void setDetachableContent( Pane detachableContent )
 	{
 		detachableContentProperty.set( detachableContent );
 	}
 
 	private Stage detachedStage;
+	private final DetachedTabsHolder tabRefs;
 
 	public DetachableTab()
 	{
-		this( null );
+		this( null, DetachedTabsHolder.get() );
 	}
 
-	public DetachableTab( String label )
+	public DetachableTab( String label, DetachedTabsHolder tabRefs )
 	{
 		super( label );
+		this.tabRefs = tabRefs;
 
 		getStyleClass().add( "detachable-tab" );
 
 		contentProperty().bind(
 				Bindings
 						.when( detachedProperty )
-						.<Node> then(
-								RegionBuilder.create().id( "placeholder" ).style( "-fx-background-color: darkgrey;" ).build() )
+						.<Pane> then(
+								PaneBuilder.create().id( "placeholder" ).style( "-fx-background-color: darkgrey;" ).build() )
 						.otherwise( detachableContentProperty ) );
 
 		detachedProperty.addListener( new ChangeListener<Boolean>()
 		{
+			
 			@Override
-			public void changed( ObservableValue<? extends Boolean> arg0, Boolean arg1, Boolean arg2 )
+			public void changed( ObservableValue<? extends Boolean> _, Boolean oldValue, Boolean hasToDetach )
 			{
-				if( isDetached() )
-				{
-					final Node detachableContent = getDetachableContent();
-					Scene scene;
-					detachedStage = StageBuilder
-							.create()
-							.icons( ( ( Stage )getTabPane().getScene().getWindow() ).getIcons() )
-							.title( getText() )
-							.width( getTabPane().getWidth() )
-							.height( getTabPane().getHeight() )
-							.scene(
-									scene = SceneBuilder.create()
-											.root( StackPaneBuilder.create().children( detachableContent ).styleClass( "detached-content" ).build() )
-											.stylesheets( "/com/eviware/loadui/ui/fx/loadui-style.css" )
-											.build() ).build();
-					detachableContent.setVisible( true );
-					detachedStage.setOnHidden( new EventHandler<WindowEvent>()
-					{
-						@Override
-						public void handle( WindowEvent event )
-						{
-							setDetached( false );
-						}
-					} );
-					//TODO: Forward all IntentEvents to the parent scene?
-					BlockingTask.install( scene );
-					detachedStage.show();
-				}
+				if( hasToDetach )
+					doDetach();
 				else
-				{
-					if( detachedStage != null )
-					{
-						detachedStage.setOnHidden( null );
-						detachedStage.close();
-						detachedStage = null;
-					}
-				}
+					doReattach();
 			}
 		} );
 
@@ -136,4 +109,49 @@ public class DetachableTab extends Tab
 		detachButton.visibleProperty().bind( selectedProperty() );
 		setGraphic( detachButton );
 	}
+	
+	private void doDetach()
+	{
+		final StackPane detachedTabContainer;
+		final Node detachableContent = getDetachableContent();
+		Scene scene;
+		detachedStage = StageBuilder
+				.create()
+				.icons( ( ( Stage )getTabPane().getScene().getWindow() ).getIcons() )
+				.title( getText() )
+				.width( getTabPane().getWidth() )
+				.height( getTabPane().getHeight() )
+				.scene(
+						scene = SceneBuilder
+								.create()
+								.root(
+										detachedTabContainer = StackPaneBuilder.create().children( detachableContent )
+												.styleClass( "detached-content" ).build() )
+								.stylesheets( "/com/eviware/loadui/ui/fx/loadui-style.css" ).build() ).build();
+		detachableContent.setVisible( true );
+		detachedStage.setOnHidden( new EventHandler<WindowEvent>()
+		{
+			@Override
+			public void handle( WindowEvent event )
+			{
+				setDetached( false );
+			}
+		} );
+		//TODO: Forward all IntentEvents to the parent scene?
+		BlockingTask.install( scene );
+		detachedId = tabRefs.add( detachedTabContainer );
+		detachedStage.show();
+	}
+	
+	private void doReattach()
+	{
+		if( detachedStage != null )
+		{
+			tabRefs.remove( detachedId );
+			detachedStage.setOnHidden( null );
+			detachedStage.close();
+			detachedStage = null;
+		}
+	}
+	
 }

@@ -37,7 +37,7 @@ public interface ExecutionManager extends EventFirer
 	 * CollectionEvent key for archived Executions.
 	 */
 	public static final String ARCHIVE_EXECUTIONS = ExecutionManager.class.getName() + "@archivedexecutions";
-	
+
 	/**
 	 * Gets the current Execution. Returns null if no Execution is currently
 	 * running.
@@ -82,9 +82,10 @@ public interface ExecutionManager extends EventFirer
 	 * @return
 	 */
 	public void stopExecution();
-	
+
 	/**
 	 * Archive the execution with the given id.
+	 * 
 	 * @param executionId
 	 */
 	public void archiveExecution( String executionId );
@@ -228,7 +229,7 @@ public interface ExecutionManager extends EventFirer
 	 */
 	public enum State
 	{
-		STARTED, PAUSED, STOPPED
+		STARTED, STOPPED
 	}
 
 	/**

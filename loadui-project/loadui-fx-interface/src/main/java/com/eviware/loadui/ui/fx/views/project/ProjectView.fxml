@@ -21,10 +21,10 @@
 	<stylesheets>
 		<URL value="@ProjectView.css" />
 	</stylesheets>
-	<VBox spacing="10" fillWidth="true" AnchorPane.topAnchor="0"
+	<VBox spacing="7" fillWidth="true" AnchorPane.topAnchor="0"
 		AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="0"
 		AnchorPane.leftAnchor="0">
-		<ToolBar minHeight="60" styleClass="header"/>
+		<ToolBar minHeight="50" styleClass="header"/>
 		<StackPane VBox.vgrow="always">
 			<padding>
 				<Insets top="-37" />
@@ -32,16 +32,14 @@
 			<children>
 				<TabPane id="project-tab-pane" tabClosingPolicy="unavailable">
 					<DetachableTab fx:id="designTab" id="designTab" text="Design" />
-					<DetachableTab fx:id="resultTab" id="resultTab" text="Statistics" />
+					<DetachableTab fx:id="statsTab" id="statsTab" text="Statistics" />
 				</TabPane>
 			</children>
 		</StackPane>
 	</VBox>
 	<MenuButton maxWidth="240" fx:id="menuButton"
-		AnchorPane.topAnchor="18" AnchorPane.leftAnchor="80">
+		AnchorPane.topAnchor="13" AnchorPane.leftAnchor="80">
 		<items>
-			<MenuItem fx:id="newProject" id="newProject" text="New Project Wizard"
-				onAction="#newProjectWizard" />
 			<MenuItem fx:id="clone" id="clone" text="Rename..."
 				onAction="#renameProject" />
 			<MenuItem fx:id="save" id="save" text="Save" onAction="#saveProject" />
@@ -52,7 +50,7 @@
 			<MenuItem fx:id="close" id="close" text="Close" onAction="#closeProject" />
 		</items>
 	</MenuButton>
-	<HBox maxWidth="200" maxHeight="60" alignment="CENTER_RIGHT" AnchorPane.topAnchor="18" AnchorPane.rightAnchor="10">
+	<HBox maxWidth="200" maxHeight="60" alignment="CENTER_RIGHT" AnchorPane.topAnchor="7" AnchorPane.rightAnchor="10">
 		<Button fx:id="summaryButton" id="summaryButton" styleClass="styleable-graphic, toolbar-button" onAction="#openSummaryPage" />
 		<Button fx:id="settingsButton" id="settingsButton" styleClass="styleable-graphic, toolbar-button" onAction="#openSettings" />
 		<Button fx:id="openHelpPageButton" id="openHelpPageButton" styleClass="styleable-graphic, toolbar-button" onAction="#openHelpPage" />

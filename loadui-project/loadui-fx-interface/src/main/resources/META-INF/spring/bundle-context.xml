@@ -12,9 +12,11 @@
 	<bean id="assertionInspector" class="com.eviware.loadui.ui.fx.views.assertions.AssertionInspector" >
 		<constructor-arg ref="statisticsManager" />
 	</bean>
+	<bean id="executionsInfo" class="com.eviware.loadui.ui.fx.views.analysis.FxExecutionsInfo"/>
 	<bean id="mainWindowCreator" class="com.eviware.loadui.ui.fx.LoadUiMainWindowCreator">
 		<constructor-arg ref="workspaceProvider" />
 		<constructor-arg ref="testEventManager" />
+		<constructor-arg ref="executionsInfo" />
 	</bean>
 	<bean id="uiUtils" class="com.eviware.loadui.ui.fx.util.UIUtils">
 		<property name="imageResolvers" ref="imageResolvers" />
