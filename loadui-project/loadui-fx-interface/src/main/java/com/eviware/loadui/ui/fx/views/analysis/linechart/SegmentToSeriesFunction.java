@@ -92,8 +92,11 @@ public final class SegmentToSeriesFunction implements Function<Segment, XYChart.
 					{
 						double scaleValue = Math.pow( 10,
 								Integer.parseInt( segment.getAttribute( LineSegmentView.SCALE_ATTRIBUTE, "0" ) ) );
-						return new XYChart.Data<Number, Number>( point.getXValue(), point.getYValue().doubleValue()
-								* scaleValue );
+
+						XYChart.Data<Number, Number> data = new XYChart.Data<Number, Number>( point.getXValue(), point
+								.getYValue().doubleValue() * scaleValue );
+						data.nodeProperty().setValue( new MaxsStackPane() );
+						return data;
 					}
 				};
 
