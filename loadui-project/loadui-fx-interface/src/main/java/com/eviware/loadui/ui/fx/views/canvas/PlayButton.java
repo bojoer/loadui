@@ -5,6 +5,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.geometry.Insets;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleButtonBuilder;
@@ -26,7 +27,8 @@ import com.eviware.loadui.util.execution.TestExecutionUtils;
 
 public class PlayButton extends StackPane
 {
-	private final ToggleButton toggleButton = ToggleButtonBuilder.create().styleClass( "styleable-graphic", "play-button" ).build();
+	private final ToggleButton toggleButton = ToggleButtonBuilder.create()
+			.styleClass( "styleable-graphic", "play-button" ).build();
 	private final CanvasItem canvas;
 	private final BooleanProperty playingProperty = new SimpleBooleanProperty();
 
@@ -95,6 +97,8 @@ public class PlayButton extends StackPane
 
 		TestExecutionUtils.testRunner.registerTask( executionTask, Phase.PRE_START, Phase.POST_STOP );
 
-		getChildren().setAll(RegionBuilder.create().styleClass( "outer-spinner-overlay" ).build(), playSpinner, RegionBuilder.create().styleClass("inner-spinner-overlay").build(),toggleButton );
+		setPadding( new Insets( 0, 6, 0, 6 ) );
+		getChildren().setAll( RegionBuilder.create().styleClass( "outer-spinner-overlay" ).build(), playSpinner,
+				RegionBuilder.create().styleClass( "inner-spinner-overlay" ).build(), toggleButton );
 	}
 }

@@ -1,5 +1,6 @@
 package com.eviware.loadui.ui.fx.views.canvas.scenario;
 
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 
@@ -13,11 +14,12 @@ public class ScenarioCounterDisplay extends CounterDisplay
 	public ScenarioCounterDisplay( @Nonnull String name, @Nonnull Formatting format )
 	{
 		this.formatting = format;
+
 		numberDisplay = numberDisplay();
-
 		Label label = label( name );
-
 		getChildren().setAll( numberDisplay, label );
+
+		setPadding( new Insets( 0, 3, 0, 3 ) );
 		setAlignment( Pos.CENTER );
 		setMinWidth( 45 );
 	}

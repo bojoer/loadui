@@ -12,11 +12,12 @@ final public class ProjectPlaybackPanel extends ToolbarPlaybackPanel<ProjectItem
 		super( canvas );
 
 		getStyleClass().add( "project-playback-panel" );
-		setMaxHeight( 15 );
+		setSpacing( 6 );
+		setMaxHeight( 27 );
 		setMaxWidth( 610 );
 		setAlignment( Pos.CENTER );
 
-		getChildren().setAll( playButton, separator(), time, separator(), requests, separator(), failures, separator(),
-				resetButton(), limitsButton() );
+		getChildren().setAll( separator(), playButton, separator(), time, requests, failures, resetButton(),
+				limitsButton() );
 	}
 }

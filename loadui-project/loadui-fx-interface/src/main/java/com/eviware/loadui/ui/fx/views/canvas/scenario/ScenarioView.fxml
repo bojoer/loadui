@@ -11,7 +11,7 @@
 <?import javafx.geometry.Insets?>
 <?import java.net.URL?>
 
-<fx:root type="javafx.scene.layout.StackPane" xmlns:fx="http://javafx.com/fxml">
+<fx:root type="javafx.scene.layout.StackPane" xmlns:fx="http://javafx.com/fxml" styleClass="scenario-view">
 	<stylesheets>
 		<URL value="@ScenarioView.css" />
 	</stylesheets>

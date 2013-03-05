@@ -11,7 +11,7 @@ public abstract class ToolbarPlaybackPanel<C extends CanvasItem> extends Playbac
 {
 	protected Button limitsButton()
 	{
-		return ButtonBuilder.create().id( "set-limits" ).text( "Set Limits\u2026" ).style( "-fx-font-size: 10px;" )
+		return ButtonBuilder.create().id( "set-limits" ).text( "Set limits" ).style( "-fx-font-size: 9px;" )
 				.onAction( openLimitsDialog ).build();
 	}
 
@@ -28,7 +28,9 @@ public abstract class ToolbarPlaybackPanel<C extends CanvasItem> extends Playbac
 			public void handleEvent( BaseEvent event )
 			{
 				time.setLimit( canvas.getLimit( TIME_LABEL ) );
-				requests.setLimit( canvas.getLimit( REQUESTS_LABEL ) );
+				
+				//TODO Label renamed to "sent" due to UX, but refers to a commonly used static within CanvasItem.REQUEST_COUNTER. 
+				requests.setLimit( canvas.getLimit( CanvasItem.REQUEST_COUNTER ) );
 				failures.setLimit( canvas.getLimit( FAILURES_LABEL ) );
 			}
 		} );
@@ -43,6 +45,7 @@ public abstract class ToolbarPlaybackPanel<C extends CanvasItem> extends Playbac
 	@Override
 	protected ToolbarCounterDisplay timeRequests()
 	{
+		
 		return new ToolbarCounterDisplay( REQUESTS_LABEL );
 	}
 

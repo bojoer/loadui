@@ -8,6 +8,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
 import com.eviware.loadui.api.model.SceneItem;
@@ -62,7 +63,6 @@ public class ScenarioView extends CanvasObjectView
 		void initialize()
 		{
 			vBox.getChildren().add( 0, new MiniScenarioPlaybackPanel( getScenario() ) );
-
 			String base64 = getCanvasObject().getAttribute( "miniature_fx2", null );
 
 			if( base64 != null )

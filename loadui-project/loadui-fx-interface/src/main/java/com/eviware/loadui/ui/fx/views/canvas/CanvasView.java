@@ -210,8 +210,6 @@ public class CanvasView extends StackPane
 				fx( ofCollection( canvas, CanvasItem.CONNECTIONS, Connection.class, canvas.getConnections() ) ),
 				CONNECTION_TO_VIEW );
 
-		getStyleClass().add( "canvas-view" );
-
 		FXMLUtils.load( this, this, CanvasView.class.getResource( CanvasView.class.getSimpleName() + ".fxml" ) );
 	}
 
