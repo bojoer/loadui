@@ -178,10 +178,11 @@ public class AnalysisView extends StackPane
 			} );
 			tabPane.getTabs().setAll( allTabs );
 
+			// add a listener to the tabPane tabs collection itself, which is not the same as allTabs!
 			tabPane.getTabs().addListener( new ListChangeListener<Tab>()
 			{
 				@Override
-				public void onChanged( javafx.collections.ListChangeListener.Change<? extends Tab> c )
+				public void onChanged( ListChangeListener.Change<? extends Tab> c )
 				{
 					while( c.next() )
 					{

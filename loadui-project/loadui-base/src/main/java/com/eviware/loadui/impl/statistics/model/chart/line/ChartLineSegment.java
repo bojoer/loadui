@@ -33,7 +33,7 @@ public class ChartLineSegment extends AbstractChartSegment implements LineSegmen
 	private final String statisticName;
 	private final String source;
 
-	private Statistic<?> statistic;
+	private Statistic<Number> statistic;
 
 	protected static final Logger log = LoggerFactory.getLogger( ChartLineSegment.class );
 
@@ -74,15 +74,18 @@ public class ChartLineSegment extends AbstractChartSegment implements LineSegmen
 		return statisticName;
 	}
 
+	@SuppressWarnings( "unchecked" )
 	@Override
-	public Statistic<?> getStatistic()
+	public Statistic<Number> getStatistic()
 	{
 		if( statistic == null )
 		{
 			final StatisticVariable statisticVariable = getStatisticHolder().getStatisticVariable( variableName );
 			if( statisticVariable != null )
 			{
-				statistic = statisticVariable.getStatistic( statisticName, source );
+
+				statistic = ( Statistic<Number> )statisticVariable.getStatistic( statisticName, source );
+
 			}
 		}
 

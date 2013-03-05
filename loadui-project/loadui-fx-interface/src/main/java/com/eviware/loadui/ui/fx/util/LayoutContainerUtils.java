@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.eviware.loadui.api.layout.ActionLayoutComponent;
 import com.eviware.loadui.api.layout.LayoutComponent;
 import com.eviware.loadui.api.layout.LayoutContainer;
 import com.eviware.loadui.api.layout.PropertyLayoutComponent;
@@ -34,6 +35,11 @@ public class LayoutContainerUtils
 			{
 				PropertyLayoutComponent<?> propertyComponent = ( PropertyLayoutComponent<?> )component;
 				tabBuilder.field( propertyComponent.getLabel(), propertyComponent.getProperty() );
+			}
+			else if( component instanceof ActionLayoutComponent)
+			{
+				ActionLayoutComponent action = (ActionLayoutComponent) component;
+				tabBuilder.button(action);
 			}
 			else if( component instanceof LayoutContainer )
 			{
