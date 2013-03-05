@@ -41,7 +41,6 @@ import com.eviware.loadui.api.reporting.ReportingManager;
 import com.eviware.loadui.api.statistics.model.StatisticPage;
 import com.eviware.loadui.api.statistics.model.chart.ChartView;
 import com.eviware.loadui.api.statistics.store.Execution;
-import com.eviware.loadui.api.traits.Labeled;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.control.DetachableTab;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
@@ -51,7 +50,6 @@ import com.eviware.loadui.ui.fx.util.UIUtils;
 import com.eviware.loadui.ui.fx.views.analysis.FxExecutionsInfo;
 import com.eviware.loadui.ui.fx.views.analysis.reporting.LineChartUtils;
 import com.eviware.loadui.ui.fx.views.canvas.CanvasView;
-import com.eviware.loadui.ui.fx.views.rename.RenameDialog;
 import com.eviware.loadui.ui.fx.views.scenario.ScenarioToolbar;
 import com.eviware.loadui.ui.fx.views.statistics.StatisticsView;
 import com.eviware.loadui.ui.fx.views.workspace.CloneProjectDialog;
@@ -190,13 +188,6 @@ public class ProjectView extends AnchorPane
 						log.debug( "Unhandled intent: %s", event );
 						return;
 					}
-				}
-				else if( event.getEventType() == IntentEvent.INTENT_RENAME )
-				{
-					final Object arg = event.getArg();
-					Preconditions.checkArgument( arg instanceof Labeled.Mutable );
-					new RenameDialog( ( Labeled.Mutable )arg, ProjectView.this ).show();
-					event.consume();
 				}
 				else if( event.getEventType() == IntentEvent.INTENT_OPEN )
 				{
