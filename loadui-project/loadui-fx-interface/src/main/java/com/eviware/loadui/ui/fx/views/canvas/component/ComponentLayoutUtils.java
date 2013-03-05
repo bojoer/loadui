@@ -6,6 +6,7 @@ import java.util.Observer;
 import java.util.concurrent.ExecutorService;
 
 import javafx.application.Platform;
+import javafx.beans.InvalidationListener;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -42,11 +43,13 @@ import com.eviware.loadui.api.layout.OptionsProvider;
 import com.eviware.loadui.api.layout.PropertyLayoutComponent;
 import com.eviware.loadui.api.layout.SeparatorLayoutComponent;
 import com.eviware.loadui.api.layout.TableLayoutComponent;
+import com.eviware.loadui.api.model.PropertyHolder;
 import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.impl.layout.OptionsProviderImpl;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.control.Knob;
 import com.eviware.loadui.ui.fx.control.OptionsSlider;
+import com.eviware.loadui.ui.fx.input.SelectableImpl;
 import com.eviware.loadui.ui.fx.util.Properties;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.layout.FormattedString;
@@ -276,7 +279,15 @@ public class ComponentLayoutUtils
 	@SuppressWarnings( "unchecked" )
 	private static Node createTextNode( PropertyLayoutComponent<?> propLayoutComp, Label propertyLabel )
 	{
-		TextField textField = new TextField();
+		final TextField textField = new TextField();
+		textField.focusedProperty().addListener(new InvalidationListener() {
+			@Override
+			public void invalidated(javafx.beans.Observable _) {
+				if ( textField.isFocused() )
+					SelectableImpl.deselectAll();
+			}
+		});
+		
 		javafx.beans.property.Property<String> jfxProp = Properties.convert( ( Property<String> )propLayoutComp
 				.getProperty() );
 		textField.textProperty().bindBidirectional( jfxProp );
