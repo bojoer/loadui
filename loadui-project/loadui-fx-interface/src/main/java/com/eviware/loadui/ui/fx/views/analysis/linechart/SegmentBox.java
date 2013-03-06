@@ -47,7 +47,7 @@ public class SegmentBox extends VBox
 				}
 			} ).build();
 
-	private final ManualObservable scaleUpdate = new ManualObservable();
+	private final ManualObservable chartUpdate = new ManualObservable();
 	private final BooleanProperty scaling = new SimpleBooleanProperty( false );
 	private final ToggleButton expandCollapseSegments;
 	private final Label statisticsLabel;
@@ -65,8 +65,8 @@ public class SegmentBox extends VBox
 
 		statisticsLabel = LabelBuilder.create().text( "Statistics" ).id( "statistics-label" ).alignment( Pos.CENTER_LEFT )
 				.build();
-		expandCollapseSegments = ToggleButtonBuilder.create().id( "expander").styleClass( "styleable-graphic" ).alignment( Pos.CENTER_RIGHT )
-				.build();
+		expandCollapseSegments = ToggleButtonBuilder.create().id( "expander" ).styleClass( "styleable-graphic" )
+				.alignment( Pos.CENTER_RIGHT ).build();
 
 		AnchorPane topBox = AnchorPaneBuilder.create().children( statisticsLabel, expandCollapseSegments ).build();
 
@@ -120,6 +120,8 @@ public class SegmentBox extends VBox
 
 					}
 				}
+
+				chartUpdate.fireInvalidation();
 			}
 		} );
 
@@ -150,14 +152,14 @@ public class SegmentBox extends VBox
 		return segmentViewContainer;
 	}
 
-	public void updateScale()
+	public void updateChart()
 	{
-		scaleUpdate.fireInvalidation();
+		chartUpdate.fireInvalidation();
 	}
 
-	public Observable scaleUpdate()
+	public Observable chartUpdate()
 	{
-		return scaleUpdate;
+		return chartUpdate;
 	}
 
 	public void enableScaling()

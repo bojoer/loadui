@@ -4,6 +4,7 @@ import javafx.beans.Observable;
 import javafx.beans.value.ObservableValue;
 
 import com.eviware.loadui.api.statistics.model.ChartGroup;
+import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.ui.fx.api.NonSingletonFactory;
 import com.eviware.loadui.ui.fx.api.analysis.ChartGroupView;
@@ -26,9 +27,9 @@ public class DefaultNonSingletonFactory implements NonSingletonFactory
 		// singleton
 	}
 
-	public ExecutionChart createExecutionChart()
+	public ExecutionChart createExecutionChart( LineChartView lineChartView )
 	{
-		return new ScrollableLineChart();
+		return new ScrollableLineChart( lineChartView );
 	}
 
 	@Override

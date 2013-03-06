@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.concurrent.Callable;
 
+import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
@@ -14,9 +15,14 @@ import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Series;
+import javafx.scene.shape.CircleBuilder;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.LineBuilder;
+import javafx.scene.shape.Path;
 import javafx.scene.shape.StrokeType;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.statistics.DataPoint;
 import com.eviware.loadui.api.statistics.model.chart.line.LineSegment;
@@ -25,6 +31,7 @@ import com.eviware.loadui.api.statistics.model.chart.line.TestEventSegment;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.testevents.TestEvent;
 import com.eviware.loadui.ui.fx.api.analysis.ExecutionChart;
+import com.eviware.loadui.ui.fx.util.Observables;
 import com.google.common.base.Function;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Iterables;
@@ -37,13 +44,15 @@ public final class SegmentToSeriesFunction implements Function<Segment, XYChart.
 	LoadingCache<XYChart.Series<?, ?>, StringProperty> eventSeriesStyles;
 	final public long hash; //TODO: this is debugging code, remove me.
 
+	protected static final Logger log = LoggerFactory.getLogger( SegmentToSeriesFunction.class );
+
 	public SegmentToSeriesFunction( ObservableValue<Execution> execution, ObservableList<Observable> observables,
-			ExecutionChart chart, LoadingCache<XYChart.Series<?, ?>, StringProperty> eventSeriesStyles )
+			ExecutionChart chart )//, LoadingCache<XYChart.Series<?, ?>, StringProperty> eventSeriesStyles )
 	{
 		this.execution = execution;
 		this.observables = observables;
 		this.chart = chart;
-		this.eventSeriesStyles = eventSeriesStyles;
+		//this.eventSeriesStyles = eventSeriesStyles;
 		this.hash = System.currentTimeMillis() % 1000;
 	}
 
@@ -92,8 +101,24 @@ public final class SegmentToSeriesFunction implements Function<Segment, XYChart.
 					{
 						double scaleValue = Math.pow( 10,
 								Integer.parseInt( segment.getAttribute( LineSegmentView.SCALE_ATTRIBUTE, "0" ) ) );
-						return new XYChart.Data<Number, Number>( point.getXValue(), point.getYValue().doubleValue()
-								* scaleValue );
+
+						XYChart.Data<Number, Number> dataPoint = new XYChart.Data<Number, Number>( point.getXValue(), point
+								.getYValue().doubleValue() * scaleValue );
+
+						dataPoint.setNode( CircleBuilder.create().fill( chart.getColor( segment, execution.getValue() ) )
+								.radius( 3d ).build() );
+
+						//						dataPoint.nodeProperty().addListener( new ChangeListener<Node>()
+						//						{
+						//							@Override
+						//							public void changed( ObservableValue<? extends Node> arg0, Node arg1, Node newNode )
+						//							{
+						//								if( newNode instanceof StackPane )
+						//									( ( StackPane )newNode ).getsetStroke( chart.getColor( segment, execution.getValue() ) );
+						//							}
+						//						} );
+
+						return dataPoint;
 					}
 				};
 
@@ -101,6 +126,50 @@ public final class SegmentToSeriesFunction implements Function<Segment, XYChart.
 
 			}
 		}, observables ) );
+
+		Observables.group( observables ).addListener( new InvalidationListener()
+		{
+
+			@Override
+			public void invalidated( Observable arg0 )
+			{
+				if( series.getNode() instanceof Path )
+				{
+					( ( Path )series.getNode() ).setStroke( chart.getColor( segment, execution.getValue() ) );
+					//					if( execution.getValue() != null )
+					//					{
+					//						log.debug( "2path got painted for exec: " + execution.getValue().getLabel() );
+					//					}
+					//					else
+					//					{
+					//						log.debug( "2path got painted for exec: " + execution.getValue() );
+					//					}
+				}
+
+			}
+		} );
+
+		// for startup
+		//		series.nodeProperty().addListener( new ChangeListener<Node>()
+		//		{
+		//			@Override
+		//			public void changed( ObservableValue<? extends Node> arg0, Node arg1, Node newNode )
+		//			{
+		//				if( newNode instanceof Path )
+		//				{
+		//					( ( Path )newNode ).setStroke( chart.getColor( segment, execution.getValue() ) );
+		//					if( execution.getValue() != null )
+		//					{
+		//						log.debug( "path got painted for exec: " + execution.getValue().getLabel() );
+		//					}
+		//					else
+		//					{
+		//						log.debug( "path got painted for exec: " + execution.getValue() );
+		//					}
+		//				}
+		//
+		//			}
+		//		} );
 
 		return series;
 	}
@@ -132,7 +201,8 @@ public final class SegmentToSeriesFunction implements Function<Segment, XYChart.
 										10.0 );
 								Line eventLine = LineBuilder.create().endY( 600 ).managed( false )
 										.strokeType( StrokeType.OUTSIDE ).build();
-								eventLine.setStyle( eventSeriesStyles.getUnchecked( series ).get() );
+								eventLine.setStroke( chart.getColor( segment, execution.getValue() ) );
+								//eventLine.setStyle( eventSeriesStyles.getUnchecked( series ).get() );
 								data.setNode( eventLine );
 								return data;
 							}

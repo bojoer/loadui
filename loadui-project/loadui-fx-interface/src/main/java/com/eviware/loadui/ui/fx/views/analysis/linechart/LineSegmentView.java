@@ -19,6 +19,7 @@ import javafx.scene.layout.Region;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.eviware.loadui.api.statistics.model.chart.ChartView;
 import com.eviware.loadui.api.statistics.model.chart.line.LineSegment;
 import com.eviware.loadui.ui.fx.control.skin.StyleableGraphicSlider;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
@@ -26,7 +27,6 @@ import com.eviware.loadui.ui.fx.views.analysis.ShortName;
 
 public class LineSegmentView extends SegmentView<LineSegment>
 {
-	public static final String COLOR_ATTRIBUTE = "color";
 	public static final String STROKE_ATTRIBUTE = "stroke";
 	public static final String WIDTH_ATTRIBUTE = "width";
 	public static final String SCALE_ATTRIBUTE = "scale";
@@ -37,8 +37,8 @@ public class LineSegmentView extends SegmentView<LineSegment>
 	private SegmentBox parent;
 
 	private Slider slider;
-	
-	private Region sliderNob; 
+
+	private Region sliderNob;
 
 	private final String scalingStyleClass = "scaling";
 
@@ -48,9 +48,9 @@ public class LineSegmentView extends SegmentView<LineSegment>
 	private int scale = 0;
 	private final ReadOnlyBooleanProperty isExpandedProperty;
 
-	public LineSegmentView( LineSegment segment, ReadOnlyBooleanProperty isExpandedProperty )
+	public LineSegmentView( LineSegment segment, ChartView chartView, ReadOnlyBooleanProperty isExpandedProperty )
 	{
-		super( segment );
+		super( segment, chartView );
 		this.isExpandedProperty = isExpandedProperty;
 		FXMLUtils.load( this );
 	}
@@ -58,14 +58,13 @@ public class LineSegmentView extends SegmentView<LineSegment>
 	@FXML
 	private void initialize()
 	{
-
-		slider = SliderBuilder.create().snapToTicks( true ).pickOnBounds( true ).visible( false ).min( -6 ).max( 6 ).majorTickUnit( 1 )
-				.minorTickCount( 0 ).build();
+		super.init();
+		slider = SliderBuilder.create().snapToTicks( true ).pickOnBounds( true ).visible( false ).min( -6 ).max( 6 )
+				.majorTickUnit( 1 ).minorTickCount( 0 ).build();
 
 		segmentLabel.minWidthProperty().bind( Bindings.when( isExpandedProperty ).then( 250 ).otherwise( 180 ) );
 		segmentLabel.maxWidthProperty().bind( Bindings.when( isExpandedProperty ).then( 320 ).otherwise( 200 ) );
 
-		
 		String fullName = segment.getStatisticHolder().getLabel() + " " + segment.getVariableName() + " "
 				+ segment.getStatisticName();
 		String shortName = ShortName.forStatistic( segment.getVariableName(), segment.getStatisticName() );
@@ -85,7 +84,8 @@ public class LineSegmentView extends SegmentView<LineSegment>
 					getChildren().addAll( slider );
 					getStyleClass().addAll( scalingStyleClass );
 					slider.visibleProperty().set( true );
-					if(sliderNob != null){
+					if( sliderNob != null )
+					{
 						loadNob( slider );
 					}
 				}
@@ -111,7 +111,7 @@ public class LineSegmentView extends SegmentView<LineSegment>
 				{
 					scale = snappedZoom;
 					segment.setAttribute( SCALE_ATTRIBUTE, String.valueOf( scale ) );
-					parent.updateScale();
+					parent.updateChart();
 				}
 			}
 		} );
@@ -123,7 +123,8 @@ public class LineSegmentView extends SegmentView<LineSegment>
 			{
 				while( change.next() )
 				{
-					for (Node node : change.getAddedSubList()) {
+					for( Node node : change.getAddedSubList() )
+					{
 						if( node instanceof StyleableGraphicSlider )
 						{
 							loadNob( node );
@@ -133,19 +134,25 @@ public class LineSegmentView extends SegmentView<LineSegment>
 			}
 		} );
 	}
-	
-	private void loadNob(final Node node){
-		Platform.runLater( new Runnable(){
-			public void run(){
+
+	private void loadNob( final Node node )
+	{
+		Platform.runLater( new Runnable()
+		{
+			public void run()
+			{
 				Node nob = node.lookup( ".graphic" );
-				if(nob instanceof Region && nob != null){
-					sliderNob = (Region)nob;
-					sliderNob.setStyle( "-fx-background-color: " + color + ";");
-				}else{
+				if( nob instanceof Region && nob != null )
+				{
+					sliderNob = ( Region )nob;
+					sliderNob.setStyle( "-fx-background-color: " + color + ";" );
+				}
+				else
+				{
 					log.warn( "Cannot find sliderNob for slider" );
 				}
 			}
-		});
+		} );
 	}
 
 	private void loadStyles()
