@@ -76,15 +76,18 @@ public class SettingsTab extends Tab
 		else if( property.getType().isEnum() )
 		{
 			Object[] enumValues = new Object[0];
-			try {
-				enumValues = (Object[]) property.getType().getMethod( "values" ).invoke( null );
-			} catch (IllegalAccessException | IllegalArgumentException
-					| InvocationTargetException | NoSuchMethodException
-					| SecurityException e) {
+			try
+			{
+				enumValues = ( Object[] )property.getType().getMethod( "values" ).invoke( null );
+			}
+			catch( IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
+					| SecurityException e )
+			{
 				e.printStackTrace();
 			}
-			ValidatableComboBoxField combo = new ValidatableComboBoxField(  );
-			combo.setItems ( FXCollections.observableArrayList( enumValues ) );
+			ValidatableComboBoxField combo = new ValidatableComboBoxField();
+			combo.setItems( FXCollections.observableArrayList( enumValues ) );
+			combo.getSelectionModel().select( property.getValue() );
 			combo.setId( UIUtils.toCssId( label ) );
 			vBox.getChildren().add( combo );
 
@@ -94,8 +97,8 @@ public class SettingsTab extends Tab
 		else
 		{
 			ValidatableTextField<?> textField;
-			
-			if( property.getType().equals( String.class ))
+
+			if( property.getType().equals( String.class ) )
 			{
 				textField = new ValidatableStringField();
 				textField.setText( Objects.firstNonNull( property.getValue(), "" ).toString() );
@@ -152,68 +155,88 @@ public class SettingsTab extends Tab
 					+ initialValue.getClass().getName() );
 		}
 	}
-	
-	void addActionButton(final ActionLayoutComponent action){
-		
-		//TODO: Fix property-bug. Still never gets the correct properties, so this is currently not working, but the button is in place and does not do anyone harm.
-		try {
-			final Text label = TextBuilder.create().text(((Callable)action.get("status")).call().toString()).build();
-			final Button button = ButtonBuilder.create().text( action.getLabel() ).disable( !action.isEnabled() ).build();
-		
-			final Runnable status = new Runnable(){
-			public void run(){
-				if(action.get("status") instanceof Callable<?>){
-					 try {
-							 
-						@SuppressWarnings("rawtypes")
-						Object obj = ((Callable)action.get("status")).call();
 
-						 if(obj instanceof Boolean){
-							 Boolean connected = (Boolean)obj;
-							 if(connected){
-								 label.setText("Connected to monitor!");
-							 }else{
-								 label.setText("Unable to connect to monitor!");
-							 }
-						 }else{
-							 label.setText(obj.toString());
-						 }
-					} catch (Exception e) {
-						e.printStackTrace();
+	void addActionButton( final ActionLayoutComponent action )
+	{
+
+		//TODO: Fix property-bug. Still never gets the correct properties, so this is currently not working, but the button is in place and does not do anyone harm.
+		try
+		{
+			final Text label = TextBuilder.create().text( ( ( Callable )action.get( "status" ) ).call().toString() )
+					.build();
+			final Button button = ButtonBuilder.create().text( action.getLabel() ).disable( !action.isEnabled() ).build();
+
+			final Runnable status = new Runnable()
+			{
+				public void run()
+				{
+					if( action.get( "status" ) instanceof Callable<?> )
+					{
+						try
+						{
+
+							@SuppressWarnings( "rawtypes" )
+							Object obj = ( ( Callable )action.get( "status" ) ).call();
+
+							if( obj instanceof Boolean )
+							{
+								Boolean connected = ( Boolean )obj;
+								if( connected )
+								{
+									label.setText( "Connected to monitor!" );
+								}
+								else
+								{
+									label.setText( "Unable to connect to monitor!" );
+								}
+							}
+							else
+							{
+								label.setText( obj.toString() );
+							}
+						}
+						catch( Exception e )
+						{
+							e.printStackTrace();
+						}
 					}
 				}
-			}
-		};
-		
-		button.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent arg0) {
+			};
 
-				 for(Object field : fieldToLoaduiProperty.keySet()){
-					 if(field instanceof TextField){
-						 Property<?> prop = fieldToLoaduiProperty.get(field);
-						 prop.setValue(((TextField) field).getText()); 									 
-					 }
-					 
-					 if(field instanceof CheckBox){
-						 Property<?> prop = fieldToLoaduiProperty.get(field);
-						 prop.setValue(((CheckBox) field).isSelected()); 		
-					 }
-				 }				
+			button.setOnAction( new EventHandler<ActionEvent>()
+			{
+				@Override
+				public void handle( ActionEvent arg0 )
+				{
 
-				button.fireEvent(IntentEvent.create(
-						IntentEvent.INTENT_RUN_BLOCKING, action.getAction()));
-				button.fireEvent(IntentEvent.create(
-						IntentEvent.INTENT_RUN_BLOCKING, status));
-			}
-		});		
+					for( Object field : fieldToLoaduiProperty.keySet() )
+					{
+						if( field instanceof TextField )
+						{
+							Property<?> prop = fieldToLoaduiProperty.get( field );
+							prop.setValue( ( ( TextField )field ).getText() );
+						}
 
-		vBox.getChildren().addAll(button, label);
-		} catch (Exception e1) {
+						if( field instanceof CheckBox )
+						{
+							Property<?> prop = fieldToLoaduiProperty.get( field );
+							prop.setValue( ( ( CheckBox )field ).isSelected() );
+						}
+					}
+
+					button.fireEvent( IntentEvent.create( IntentEvent.INTENT_RUN_BLOCKING, action.getAction() ) );
+					button.fireEvent( IntentEvent.create( IntentEvent.INTENT_RUN_BLOCKING, status ) );
+				}
+			} );
+
+			vBox.getChildren().addAll( button, label );
+		}
+		catch( Exception e1 )
+		{
 			e1.printStackTrace();
 		}
 	}
-	
+
 	boolean validate()
 	{
 		boolean wasValid = true;
@@ -261,11 +284,12 @@ public class SettingsTab extends Tab
 		{
 			tab = new SettingsTab( label );
 		}
-		
-		public Builder button( ActionLayoutComponent action){
-			
-			tab.addActionButton(action);
-			return this; 
+
+		public Builder button( ActionLayoutComponent action )
+		{
+
+			tab.addActionButton( action );
+			return this;
 		}
 
 		public <T> Builder field( @Nonnull String label, @Nonnull Property<T> loaduiProperty )
