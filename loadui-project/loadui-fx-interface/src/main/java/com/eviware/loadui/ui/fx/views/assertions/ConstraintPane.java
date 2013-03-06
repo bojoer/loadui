@@ -76,11 +76,11 @@ public class ConstraintPane extends VBox implements Validatable
 
 	public Constraint<Number> getConstraint()
 	{
-		return new RangeConstraint( minField.getValue(), maxField.getValue() );
+		return new RangeConstraint( minField.getFieldValue(), maxField.getFieldValue() );
 	}
 
 	public Pair<Integer, Integer> getTolerance()
 	{
-		return new Pair<Integer, Integer>( timesAllowed.getValue().intValue(), timeWindow.getValue().intValue() );
+		return new Pair<Integer, Integer>( timesAllowed.getFieldValue().intValue(), timeWindow.getFieldValue().intValue() );
 	}
 }

@@ -13,7 +13,7 @@ public class ValidatableCheckBox extends CheckBox implements Field<Boolean>, Val
 	}
 
 	@Override
-	public Boolean getValue()
+	public Boolean getFieldValue()
 	{
 		return isSelected();
 	}

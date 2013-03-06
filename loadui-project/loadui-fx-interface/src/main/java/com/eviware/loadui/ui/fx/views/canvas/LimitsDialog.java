@@ -53,9 +53,9 @@ public class LimitsDialog extends ConfirmationDialog
 			{
 				if( timeField.validate() && requestField.validate() && failureField.validate() )
 				{
-					canvas.setLimit( CanvasItem.TIMER_COUNTER, timeField.getValue() );
-					canvas.setLimit( CanvasItem.REQUEST_COUNTER, requestField.getValue() );
-					canvas.setLimit( CanvasItem.FAILURE_COUNTER, failureField.getValue() );
+					canvas.setLimit( CanvasItem.TIMER_COUNTER, timeField.getFieldValue() );
+					canvas.setLimit( CanvasItem.REQUEST_COUNTER, requestField.getFieldValue() );
+					canvas.setLimit( CanvasItem.FAILURE_COUNTER, failureField.getFieldValue() );
 					close();
 				}
 			}

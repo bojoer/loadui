@@ -39,7 +39,7 @@ public class LayoutContainerUtils
 			else if( component instanceof ActionLayoutComponent)
 			{
 				ActionLayoutComponent action = (ActionLayoutComponent) component;
-				tabBuilder.button(action);
+				tabBuilder.button( action );
 			}
 			else if( component instanceof LayoutContainer )
 			{

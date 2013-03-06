@@ -31,7 +31,7 @@ public class RenameDialog extends ConfirmationDialog
 			public void handle( ActionEvent event )
 			{
 				close();
-				labeled.setLabel( newNameField.getValue() );
+				labeled.setLabel( newNameField.getFieldValue() );
 			}
 		} );
 	}

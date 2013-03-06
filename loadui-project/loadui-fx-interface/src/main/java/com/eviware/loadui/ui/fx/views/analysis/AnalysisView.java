@@ -131,7 +131,7 @@ public class AnalysisView extends StackPane
 			@Override
 			public Void call( Data data )
 			{
-				setCurrentExecutionLabelTo( data.getCurrentExecution().getValue() );
+				setCurrentExecutionLabelTo( data.getCurrentExecution().getFieldValue() );
 				data.getCurrentExecution().addListener( new ChangeListener<Execution>()
 				{
 					@Override

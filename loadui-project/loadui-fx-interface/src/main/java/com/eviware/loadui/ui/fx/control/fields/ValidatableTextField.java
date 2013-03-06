@@ -57,7 +57,7 @@ public class ValidatableTextField<T> extends TextField implements Field<T>
 	}
 
 	@Override
-	public T getValue()
+	public T getFieldValue()
 	{
 		return convert.apply( getText() );
 	}

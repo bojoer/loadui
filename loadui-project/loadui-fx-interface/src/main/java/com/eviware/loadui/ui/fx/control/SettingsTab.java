@@ -1,13 +1,17 @@
 package com.eviware.loadui.ui.fx.control;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBuilder;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.ComboBoxBuilder;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
@@ -17,12 +21,15 @@ import javafx.scene.text.TextBuilder;
 
 import javax.annotation.Nonnull;
 
+import org.springframework.asm.Type;
+
 import com.eviware.loadui.api.layout.ActionLayoutComponent;
 import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.control.fields.Field;
 import com.eviware.loadui.ui.fx.control.fields.Validatable;
 import com.eviware.loadui.ui.fx.control.fields.ValidatableCheckBox;
+import com.eviware.loadui.ui.fx.control.fields.ValidatableComboBoxField;
 import com.eviware.loadui.ui.fx.control.fields.ValidatableLongField;
 import com.eviware.loadui.ui.fx.control.fields.ValidatableStringField;
 import com.eviware.loadui.ui.fx.control.fields.ValidatableTextField;
@@ -65,6 +72,24 @@ public class SettingsTab extends Tab
 			checkBox.setId( UIUtils.toCssId( label ) );
 			vBox.getChildren().add( checkBox );
 			fieldToLoaduiProperty.put( checkBox, property );
+		}
+		else if( property.getType().isEnum() )
+		{
+			Object[] enumValues = new Object[0];
+			try {
+				enumValues = (Object[]) property.getType().getMethod( "values" ).invoke( null );
+			} catch (IllegalAccessException | IllegalArgumentException
+					| InvocationTargetException | NoSuchMethodException
+					| SecurityException e) {
+				e.printStackTrace();
+			}
+			ValidatableComboBoxField combo = new ValidatableComboBoxField(  );
+			combo.setItems ( FXCollections.observableArrayList( enumValues ) );
+			combo.setId( UIUtils.toCssId( label ) );
+			vBox.getChildren().add( combo );
+
+			// TODO: We need a ValidatableComboBoxField for this.
+			fieldToLoaduiProperty.put( combo, property );
 		}
 		else
 		{
@@ -207,19 +232,19 @@ public class SettingsTab extends Tab
 		for( Entry<Field<?>, Property<?>> entry : fieldToLoaduiProperty.entrySet() )
 		{
 			Field<?> field = entry.getKey();
-			entry.getValue().setValue( field.getValue() );
+			entry.getValue().setValue( field.getFieldValue() );
 		}
 		for( Entry<Field<?>, javafx.beans.property.Property<?>> entry : fieldToJavafxProperty.entrySet() )
 		{
 			Field<?> field = entry.getKey();
 			javafx.beans.property.Property property = entry.getValue();
-			property.setValue( field.getValue() );
+			property.setValue( field.getFieldValue() );
 		}
 		for( Entry<Field<?>, FieldSaveHandler<?>> entry : fieldToFieldSaveHandler.entrySet() )
 		{
 			Field<?> field = entry.getKey();
 			FieldSaveHandler saveHandler = entry.getValue();
-			saveHandler.save( field.getValue() );
+			saveHandler.save( field.getFieldValue() );
 		}
 	}
 
