@@ -37,7 +37,7 @@ public class ProjectLoadedWithoutAgentsState extends TestState
 	protected void enterFromParent() throws Exception
 	{
 		log.debug( "Opening project." );
-		GUI.getController().click( ".project-ref-view #menuButton" ).click( "#open" );
+		GUI.getController().click( ".project-ref-view #menuButton" ).click( "#project-openItem" );
 
 		TestUtils.awaitCondition( new Callable<Boolean>()
 		{

@@ -14,10 +14,12 @@ import javafx.scene.layout.StackPane;
 
 import com.eviware.loadui.api.model.ProjectRef;
 import com.eviware.loadui.api.traits.Labeled;
-import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.NodeUtils;
 import com.eviware.loadui.ui.fx.util.Properties;
+import com.eviware.loadui.ui.fx.util.UIUtils;
+import com.eviware.loadui.ui.fx.views.workspace.ProjectMenuItemsProvider;
+import com.eviware.loadui.ui.fx.views.workspace.ProjectMenuItemsProvider.ProjectMenuItemHolder;
 import com.google.common.base.Preconditions;
 
 public class ProjectRefView extends StackPane implements Labeled
@@ -33,13 +35,16 @@ public class ProjectRefView extends StackPane implements Labeled
 
 	private final ProjectRef projectRef;
 	private final ReadOnlyStringProperty labelProperty;
+	private final ProjectMenuItemHolder menuItemProvider;
 
 	public ProjectRefView( final ProjectRef projectRef )
 	{
 		this.projectRef = Preconditions.checkNotNull( projectRef );
 		this.labelProperty = Properties.forLabel( projectRef );
+		menuItemProvider = ProjectMenuItemsProvider.createWith( this, projectRef );
 
 		FXMLUtils.load( this );
+
 	}
 
 	@FXML
@@ -47,6 +52,7 @@ public class ProjectRefView extends StackPane implements Labeled
 	{
 		setPrefWidth( 130 );
 		setMaxHeight( 95 );
+		setId( UIUtils.toCssId( projectRef.getLabel() ) );
 
 		menuButton.textProperty().bind( labelProperty );
 
@@ -60,6 +66,8 @@ public class ProjectRefView extends StackPane implements Labeled
 		menuTooltip.textProperty().bind(
 				Bindings.format( "%s (%s)", labelProperty, projectRef.getProjectFile().getAbsolutePath() ) );
 		menuButton.setTooltip( menuTooltip );
+		menuButton.getItems().setAll( menuItemProvider.items() );
+
 	}
 
 	public ReadOnlyStringProperty labelProperty()
@@ -78,43 +86,20 @@ public class ProjectRefView extends StackPane implements Labeled
 		return projectRef;
 	}
 
-	public void openProject()
-	{
-		fireEvent( IntentEvent.create( IntentEvent.INTENT_OPEN, projectRef ) );
-	}
-
 	@Override
 	public String toString()
 	{
 		return labelProperty.get();
 	}
 
-	public void open()
-	{
-		fireEvent( IntentEvent.create( IntentEvent.INTENT_OPEN, projectRef ) );
-	}
-
-	public void rename()
-	{
-		fireEvent( IntentEvent.create( IntentEvent.INTENT_RENAME, projectRef ) );
-	}
-
-	public void cloneProject()
-	{
-		fireEvent( IntentEvent.create( IntentEvent.INTENT_CLONE, projectRef ) );
-	}
-
-	public void delete()
-	{
-		//TODO: Show dialog.
-		projectRef.delete( false );
-	}
-
+	@FXML
 	public void regionClickHandler( MouseEvent event )
 	{
 		if( event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2 )
 		{
-			open();
+			menuItemProvider.openProject();
+			event.consume();
 		}
 	}
+
 }
