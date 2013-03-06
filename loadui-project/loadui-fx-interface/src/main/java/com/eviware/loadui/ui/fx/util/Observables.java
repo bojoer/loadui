@@ -1,5 +1,7 @@
 package com.eviware.loadui.ui.fx.util;
 
+import java.util.Arrays;
+
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.collections.FXCollections;
@@ -16,6 +18,11 @@ public class Observables
 	 */
 
 	public static Group group( Observable... observables )
+	{
+		return new Group( Arrays.asList( observables ) );
+	}
+
+	public static Group group( Iterable<Observable> observables )
 	{
 		return new Group( observables );
 	}
@@ -42,7 +49,7 @@ public class Observables
 			}
 		};
 
-		private Group( Observable... observables )
+		private Group( Iterable<Observable> observables )
 		{
 			this.observables.addListener( new ListChangeListener<Observable>()
 			{
