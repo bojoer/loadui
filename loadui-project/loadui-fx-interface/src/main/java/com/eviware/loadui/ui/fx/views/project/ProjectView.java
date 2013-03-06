@@ -195,7 +195,8 @@ public class ProjectView extends AnchorPane
 					final Object arg = event.getArg();
 					Preconditions.checkArgument( arg instanceof SceneItem );
 					SceneItem scenario = ( SceneItem )arg;
-					((ToolBar)lookup(".tool-bar")).setStyle("-fx-background-color: linear-gradient(-base-color-mid 0%, -base-color-mid 74%, #555555 75%, #DDDDDD 76%, -base-color-mid 77%, -base-color-mid 100%);");
+					( ( ToolBar )lookup( ".tool-bar" ) )
+							.setStyle( "-fx-background-color: linear-gradient(-base-color-mid 0%, -base-color-mid 74%, #555555 75%, #DDDDDD 76%, -base-color-mid 77%, -base-color-mid 100%);" );
 					ScenarioToolbar toolbar = new ScenarioToolbar( scenario );
 					StackPane.setAlignment( toolbar, Pos.TOP_CENTER );
 					CanvasView canvas = new CanvasView( scenario );
@@ -206,7 +207,8 @@ public class ProjectView extends AnchorPane
 				}
 				else if( event.getEventType() == IntentEvent.INTENT_CLOSE && event.getArg() instanceof SceneItem )
 				{
-					((ToolBar)lookup(".tool-bar")).setStyle("-fx-background-color: linear-gradient(to bottom, -base-color-mid 0%, -fx-header-color 75%, #000000 76%, #272727 81%);");
+					( ( ToolBar )lookup( ".tool-bar" ) )
+							.setStyle( "-fx-background-color: linear-gradient(to bottom, -base-color-mid 0%, -fx-header-color 75%, #000000 76%, #272727 81%);" );
 					Group canvas = ( Group )lookup( ".canvas-layer" );
 					StackPane grid = ( StackPane )lookup( ".grid-pane" );
 					StackPane parent = ( StackPane )grid.getParent();
@@ -355,8 +357,8 @@ public class ProjectView extends AnchorPane
 
 		Map<ChartView, Image> images = LineChartUtils.createImages( pages, executionProp, null );
 
-		reportingManager.createReport( project.getLabel(), executionProp.getValue(), pages, images, executionProp.getValue()
-				.getSummaryReport() );
+		reportingManager.createReport( project.getLabel(), executionProp.getValue(), pages, images, executionProp
+				.getValue().getSummaryReport() );
 	}
 
 	private class SaveAndCloseTask extends Task<ProjectRef>

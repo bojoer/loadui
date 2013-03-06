@@ -3,7 +3,6 @@ package com.eviware.loadui.ui.fx.control;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map.Entry;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -30,7 +29,6 @@ import com.eviware.loadui.ui.fx.control.fields.ValidatableLongField;
 import com.eviware.loadui.ui.fx.control.fields.ValidatableStringField;
 import com.eviware.loadui.ui.fx.control.fields.ValidatableTextField;
 import com.eviware.loadui.ui.fx.util.UIUtils;
-import com.eviware.loadui.util.BeanInjector;
 import com.google.common.base.Objects;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -162,8 +160,13 @@ public class SettingsTab extends Tab
 			{
 				@SuppressWarnings( "unchecked" )
 				final Text resultLabel = TextBuilder.create()
-						.text( ( ( Callable<String> )action.get( "status" ) ).call().toString() ).build();
-				final Button button = ButtonBuilder.create().text( action.getLabel() ).disable( !action.isEnabled() )
+						.text( ( ( Callable<String> )action.get( "status" ) ).call().toString() )
+						.id( UIUtils.toCssId( "status" ) )
+						.build();
+				final Button button = ButtonBuilder.create()
+						.text( action.getLabel() )
+						.disable( !action.isEnabled() )
+						.id( UIUtils.toCssId( action.getLabel() ) ) 
 						.build();
 
 				final Runnable statusCallback = new Runnable()
@@ -193,7 +196,6 @@ public class SettingsTab extends Tab
 									String response = ( String )obj;
 									if( response.contains( "Exception" ) )
 									{
-										//TODO Should make sure that Notification panel prints the detailed info into the eventlog when that is implemented
 										resultLabel.setText( "Cannot connect to monitor!" );
 									}
 									else
@@ -221,7 +223,7 @@ public class SettingsTab extends Tab
 						{
 							( ( SettingsTab )tab ).save();
 						}
-
+						
 						button.fireEvent( IntentEvent.create( IntentEvent.INTENT_RUN_BLOCKING, action.getAction() ) );
 						button.fireEvent( IntentEvent.create( IntentEvent.INTENT_RUN_BLOCKING, statusCallback ) );
 					}
