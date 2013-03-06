@@ -77,7 +77,9 @@ public final class SegmentToSeriesFunction implements Function<Segment, XYChart.
 			public Iterable<XYChart.Data<Number, Number>> call() throws Exception
 			{
 				if( segment.isRemoved() )
+				{
 					return new LinkedList<>();
+				}
 
 				Iterable<XYChart.Data<Number, Number>> chartdata = Iterables.transform(
 						segment.getStatistic().getPeriod( ( long )chart.getPosition() - 2000,

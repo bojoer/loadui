@@ -32,18 +32,20 @@ import com.eviware.loadui.api.statistics.model.StatisticPage;
 import com.eviware.loadui.api.statistics.model.StatisticPages;
 import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
 import com.eviware.loadui.api.statistics.store.Execution;
+import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.ui.fx.api.NonSingletonFactory;
 import com.eviware.loadui.ui.fx.api.analysis.ChartGroupView;
 import com.eviware.loadui.ui.fx.api.input.DraggableEvent;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.util.DefaultNonSingletonFactory;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
+import com.eviware.loadui.ui.fx.util.NodeUtils;
 import com.eviware.loadui.ui.fx.util.ObservableLists;
 import com.eviware.loadui.ui.fx.util.UIUtils;
 import com.eviware.loadui.util.BeanInjector;
 import com.google.common.base.Function;
 
-public class StatisticTab extends Tab
+public class StatisticTab extends Tab implements Releasable
 {
 	private static final Logger log = LoggerFactory.getLogger( StatisticTab.class );
 	private final StatisticPage page;
@@ -105,6 +107,7 @@ public class StatisticTab extends Tab
 			}
 		} );
 		chartGroupNodes = ObservableLists.transform( chartGroupViews, chartGroupViewToNode );
+		ObservableLists.releaseElementsWhenRemoved( chartGroupNodes );
 
 		Bindings.bindContent( chartList.getChildren(), chartGroupNodes );
 	}
@@ -129,9 +132,9 @@ public class StatisticTab extends Tab
 		deleteItem.setId( "tab-delete" );
 		deleteItem.setOnAction( new EventHandler<ActionEvent>()
 		{
-			public void handle( ActionEvent _ )
+			public void handle( ActionEvent e )
 			{
-				getOnClosed().handle( _ );
+				getOnClosed().handle( e );
 			}
 		} );
 
@@ -144,6 +147,7 @@ public class StatisticTab extends Tab
 			@Override
 			public void handle( Event _ )
 			{
+				release();
 				page.delete();
 			}
 		} );
@@ -178,6 +182,12 @@ public class StatisticTab extends Tab
 	public String toString()
 	{
 		return page.getLabel();
+	}
+
+	public void release()
+	{
+		for( Node node : chartGroupNodes )
+			NodeUtils.releaseRecursive( node );
 	}
 
 }

@@ -29,6 +29,7 @@ import javax.imageio.ImageIO;
 import org.apache.commons.codec.binary.Base64;
 
 import com.eviware.loadui.api.model.SceneItem;
+import com.eviware.loadui.api.traits.Releasable;
 
 public final class NodeUtils
 {
@@ -129,5 +130,25 @@ public final class NodeUtils
 			nodeToStyle.getStyleClass().add( styleClass );
 		else
 			nodeToStyle.getStyleClass().remove( styleClass );
+	}
+
+	public static void releaseRecursive( Node node )
+	{
+		tryRelease( node );
+		if( node instanceof Parent )
+		{
+			for( Node childNode : ( ( Parent )node ).getChildrenUnmodifiable() )
+			{
+				releaseRecursive( childNode );
+			}
+		}
+	}
+
+	private static void tryRelease( Node node )
+	{
+		if( node instanceof Releasable )
+		{
+			( ( Releasable )node ).release();
+		}
 	}
 }

@@ -11,6 +11,8 @@ import static javafx.beans.binding.Bindings.createStringBinding;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
+import javax.annotation.OverridingMethodsMustInvokeSuper;
+
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.property.BooleanProperty;
@@ -49,6 +51,7 @@ import com.eviware.loadui.api.statistics.model.chart.line.LineSegment;
 import com.eviware.loadui.api.statistics.model.chart.line.Segment;
 import com.eviware.loadui.api.statistics.model.chart.line.TestEventSegment;
 import com.eviware.loadui.api.statistics.store.Execution;
+import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.ui.fx.api.analysis.ExecutionChart;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.ManualObservable;
@@ -62,7 +65,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Sets;
 
-public class ScrollableLineChart extends HBox implements ExecutionChart
+public class ScrollableLineChart extends HBox implements ExecutionChart, Releasable
 {
 	protected ObservableValue<Execution> currentExecution;
 
@@ -323,10 +326,7 @@ public class ScrollableLineChart extends HBox implements ExecutionChart
 			{
 				while( c.next() )
 				{
-					for( Series s : ObservableLists.getActuallyRemoved( c ) )
-					{
-						s.setData( FXCollections.observableArrayList() );
-					}
+					clearSeries( ObservableLists.getActuallyRemoved( c ) );
 				}
 			}
 		} );
@@ -336,6 +336,23 @@ public class ScrollableLineChart extends HBox implements ExecutionChart
 		bindContent( getLineChart().getData(), seriesList );
 		bindContent( getSegments().getChildren(), segmentViews );
 
+	}
+
+	@Override
+	@OverridingMethodsMustInvokeSuper
+	public void release()
+	{
+		for( SegmentView segmentView : segmentViews )
+			segmentView.delete();
+		clearSeries( seriesList );
+	}
+
+	private static void clearSeries( Iterable<? extends Series> series )
+	{
+		for( Series s : series )
+		{
+			s.setData( FXCollections.observableArrayList() );
+		}
 	}
 
 	public DoubleProperty maxProperty()
@@ -407,5 +424,4 @@ public class ScrollableLineChart extends HBox implements ExecutionChart
 	{
 		return this;
 	}
-
 }

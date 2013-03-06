@@ -11,6 +11,7 @@ import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -86,8 +87,9 @@ public class ChartGroupViewImpl extends VBox implements ChartGroupView
 		this.currentExecution = currentExecution;
 		this.poll = poll;
 
-		componentSubcharts = transform( fx( transform( ofCollection( chartGroup ), chartToChartView ) ),
-				chartViewToLineChartViewNode );
+		componentSubcharts = FXCollections.emptyObservableList();
+		//		componentSubcharts = transform( fx( transform( ofCollection( chartGroup ), chartToChartView ) ),
+		//				chartViewToLineChartViewNode );
 
 		FXMLUtils.load( this );
 
@@ -128,7 +130,6 @@ public class ChartGroupViewImpl extends VBox implements ChartGroupView
 
 		componentGroupToggle.selectedProperty().addListener( new ChangeListener<Boolean>()
 		{
-
 			@Override
 			public void changed( ObservableValue<? extends Boolean> arg0, Boolean arg1, Boolean newValue )
 			{
