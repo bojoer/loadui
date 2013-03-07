@@ -2,10 +2,10 @@ package com.eviware.loadui.ui.fx.views.analysis.linechart;
 
 import static com.eviware.loadui.ui.fx.util.ObservableLists.fromExpression;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.concurrent.Callable;
 
+import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
@@ -14,9 +14,14 @@ import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Series;
+import javafx.scene.shape.CircleBuilder;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.LineBuilder;
+import javafx.scene.shape.Path;
 import javafx.scene.shape.StrokeType;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.statistics.DataPoint;
 import com.eviware.loadui.api.statistics.model.chart.line.LineSegment;
@@ -25,6 +30,7 @@ import com.eviware.loadui.api.statistics.model.chart.line.TestEventSegment;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.testevents.TestEvent;
 import com.eviware.loadui.ui.fx.api.analysis.ExecutionChart;
+import com.eviware.loadui.ui.fx.util.Observables;
 import com.google.common.base.Function;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Iterables;
@@ -35,16 +41,15 @@ public final class SegmentToSeriesFunction implements Function<Segment, XYChart.
 	ObservableList<Observable> observables;
 	ExecutionChart chart;
 	LoadingCache<XYChart.Series<?, ?>, StringProperty> eventSeriesStyles;
-	final public long hash; //TODO: this is debugging code, remove me.
+
+	protected static final Logger log = LoggerFactory.getLogger( SegmentToSeriesFunction.class );
 
 	public SegmentToSeriesFunction( ObservableValue<Execution> execution, ObservableList<Observable> observables,
-			ExecutionChart chart, LoadingCache<XYChart.Series<?, ?>, StringProperty> eventSeriesStyles )
+			ExecutionChart chart )
 	{
 		this.execution = execution;
 		this.observables = observables;
 		this.chart = chart;
-		this.eventSeriesStyles = eventSeriesStyles;
-		this.hash = System.currentTimeMillis() % 1000;
 	}
 
 	@Override
@@ -94,8 +99,14 @@ public final class SegmentToSeriesFunction implements Function<Segment, XYChart.
 					{
 						double scaleValue = Math.pow( 10,
 								Integer.parseInt( segment.getAttribute( LineSegmentView.SCALE_ATTRIBUTE, "0" ) ) );
-						return new XYChart.Data<Number, Number>( point.getXValue(), point.getYValue().doubleValue()
-								* scaleValue );
+
+						XYChart.Data<Number, Number> dataPoint = new XYChart.Data<Number, Number>( point.getXValue(), point
+								.getYValue().doubleValue() * scaleValue );
+
+						dataPoint.setNode( CircleBuilder.create().fill( chart.getColor( segment, execution.getValue() ) )
+								.radius( 3 ).build() );
+
+						return dataPoint;
 					}
 				};
 
@@ -104,10 +115,25 @@ public final class SegmentToSeriesFunction implements Function<Segment, XYChart.
 			}
 		}, observables ) );
 
+		// TODO: Make path color just update when new chart is added
+		Observables.group( observables ).addListener( new InvalidationListener()
+		{
+
+			@Override
+			public void invalidated( Observable arg0 )
+			{
+				if( series.getNode() instanceof Path )
+				{
+					( ( Path )series.getNode() ).setStroke( chart.getColor( segment, execution.getValue() ) );
+				}
+
+			}
+		} );
+
 		return series;
 	}
 
-	public XYChart.Series<Number, Number> eventSegmentToSeries( final TestEventSegment segment )
+	private XYChart.Series<Number, Number> eventSegmentToSeries( final TestEventSegment segment )
 	{
 		final XYChart.Series<Number, Number> series = new XYChart.Series<>();
 		series.setName( segment.getTypeLabel() );
@@ -133,10 +159,14 @@ public final class SegmentToSeriesFunction implements Function<Segment, XYChart.
 							{
 								XYChart.Data<Number, Number> data = new XYChart.Data<Number, Number>( event.getTimestamp(),
 										10.0 );
+
 								Line eventLine = LineBuilder.create().endY( 600 ).managed( false )
 										.strokeType( StrokeType.OUTSIDE ).build();
-								eventLine.setStyle( eventSeriesStyles.getUnchecked( series ).get() );
+
+								eventLine.setStroke( chart.getColor( segment, execution.getValue() ) );
+
 								data.setNode( eventLine );
+
 								return data;
 							}
 						} );
