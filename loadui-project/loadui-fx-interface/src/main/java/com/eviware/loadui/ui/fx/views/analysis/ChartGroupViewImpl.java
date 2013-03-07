@@ -87,9 +87,8 @@ public class ChartGroupViewImpl extends VBox implements ChartGroupView
 		this.currentExecution = currentExecution;
 		this.poll = poll;
 
-		componentSubcharts = FXCollections.emptyObservableList();
-		//		componentSubcharts = transform( fx( transform( ofCollection( chartGroup ), chartToChartView ) ),
-		//				chartViewToLineChartViewNode );
+		componentSubcharts = transform( fx( transform( ofCollection( chartGroup ), chartToChartView ) ),
+				chartViewToLineChartViewNode );
 
 		FXMLUtils.load( this );
 
