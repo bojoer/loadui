@@ -271,7 +271,7 @@ public class ScrollableLineChart extends HBox implements ExecutionChart, Releasa
 
 		final SegmentToSeriesFunction segmentToSeries = new SegmentToSeriesFunction( currentExecution,
 				javafx.collections.FXCollections.observableArrayList( currentExecution, position, poll,
-						segmentBox.chartUpdate(), manualDataUpdate, currentExecutionLenght ), this );//, eventSeriesStyles );
+						segmentBox.chartUpdate(), manualDataUpdate, currentExecutionLenght ), this );
 
 		final ObservableList<Segment> segmentsList = fx( ofCollection( chartView, LineChartView.SEGMENTS, Segment.class,
 				chartView.getSegments() ) );

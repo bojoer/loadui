@@ -2,7 +2,6 @@ package com.eviware.loadui.ui.fx.views.analysis.linechart;
 
 import static com.eviware.loadui.ui.fx.util.ObservableLists.fromExpression;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.concurrent.Callable;
 
@@ -42,18 +41,15 @@ public final class SegmentToSeriesFunction implements Function<Segment, XYChart.
 	ObservableList<Observable> observables;
 	ExecutionChart chart;
 	LoadingCache<XYChart.Series<?, ?>, StringProperty> eventSeriesStyles;
-	final public long hash; //TODO: this is debugging code, remove me.
 
 	protected static final Logger log = LoggerFactory.getLogger( SegmentToSeriesFunction.class );
 
 	public SegmentToSeriesFunction( ObservableValue<Execution> execution, ObservableList<Observable> observables,
-			ExecutionChart chart )//, LoadingCache<XYChart.Series<?, ?>, StringProperty> eventSeriesStyles )
+			ExecutionChart chart )
 	{
 		this.execution = execution;
 		this.observables = observables;
 		this.chart = chart;
-		//this.eventSeriesStyles = eventSeriesStyles;
-		this.hash = System.currentTimeMillis() % 1000;
 	}
 
 	@Override
