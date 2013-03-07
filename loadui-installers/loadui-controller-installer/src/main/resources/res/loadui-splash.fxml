@@ -4,6 +4,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.image.Image?>
 <?import javafx.geometry.Insets?>
@@ -15,13 +16,16 @@
 				<Image url="@loadui-splash.png" />
 			</image>
 		</ImageView>
-		<HBox spacing="4" alignment="top_right">
+		<VBox alignment="top_right" spacing="24">
 			<padding>
 				<Insets top="223" right="62" />
 			</padding>
-			<Label style="-fx-text-fill: #00eb26; -fx-font-weight: bold;"
-				text="LoadUI" />
-			<Label style="-fx-text-fill: #00eb26;" text="Version 2.5" />
-		</HBox>
+			<HBox spacing="4" alignment="top_right">
+				<Label style="-fx-text-fill: white; -fx-font-weight: bold;"
+					text="LoadUI" />
+				<Label style="-fx-text-fill: white;" text="2.5.0" />
+			</HBox>
+			<Label style="-fx-text-fill: white; -fx-text-alignment: right" text="Copyright SmartBear Software&#10;&#10;www.loadui.org&#10;www.smartbear.com" />
+		</VBox>
 	</StackPane>
 </Scene>

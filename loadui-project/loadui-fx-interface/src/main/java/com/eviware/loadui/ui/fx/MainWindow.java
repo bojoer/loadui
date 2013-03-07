@@ -34,8 +34,8 @@ public class MainWindow
 
 	public MainWindow withStage( Stage stage )
 	{
-		if (this.stage != null)
-			throw new IllegalStateException("Stage has already been set");
+		if( this.stage != null )
+			throw new IllegalStateException( "Stage has already been set" );
 		this.stage = stage;
 		stage.addEventHandler( WindowEvent.WINDOW_HIDING, new EventHandler<WindowEvent>()
 		{
@@ -49,25 +49,27 @@ public class MainWindow
 		loadDimensions();
 		return this;
 	}
-	
-	public MainWindow withTestEventManager( TestEventManager tem ) {
-		if (this.tem != null)
-			throw new IllegalStateException("TestEventManager has already been set");
+
+	public MainWindow withTestEventManager( TestEventManager tem )
+	{
+		if( this.tem != null )
+			throw new IllegalStateException( "TestEventManager has already been set" );
 		this.tem = tem;
 		return this;
 	}
-	
-	public MainWindow provideInfoFor( FxExecutionsInfo executionsInfo ) {
+
+	public MainWindow provideInfoFor( FxExecutionsInfo executionsInfo )
+	{
 		this.executionsInfo = executionsInfo;
 		return this;
 	}
 
 	public void show()
 	{
-		if (stage == null || tem == null )
-			throw new IllegalStateException("Stage or TestEventManager have not been set");
-		
-		stage.setTitle( System.getProperty( LoadUI.NAME, "loadUI" ) + " " + LoadUI.VERSION );
+		if( stage == null || tem == null )
+			throw new IllegalStateException( "Stage or TestEventManager have not been set" );
+
+		stage.setTitle( System.getProperty( LoadUI.NAME, "LoadUI" ) + " " + LoadUI.VERSION );
 
 		Platform.runLater( new Runnable()
 		{
