@@ -60,6 +60,47 @@ public class NotificationPanelTest
 		assertFalse( panelNode.isVisible() );
 
 	}
+	
+	@Test
+	public void notificationDoesNotChangeWithMultipleQuickMessages() throws Exception {
+		FXAppLoadedState.STATE.enter();
+		Node panelNode = getOrFail( ".notification-panel" );
+
+		BeanInjector.getBeanFuture( TestEventManager.class ).get( 500, TimeUnit.MILLISECONDS )
+				.logMessage( MessageLevel.WARNING, "A message" );
+
+		controller.sleep( 500 );
+		
+		BeanInjector.getBeanFuture( TestEventManager.class ).get( 500, TimeUnit.MILLISECONDS )
+		.logMessage( MessageLevel.WARNING, "Second message" );
+
+		controller.sleep( 500 );
+		
+		assertTrue( panelNode.isVisible() );
+		Set<Node> textNodes = TestFX.findAll( "#notification-text", panelNode );
+		Set<Node> msgCountNodes = TestFX.findAll( "#msgCount", panelNode );
+		
+		assertFalse( textNodes.isEmpty() );
+		assertTrue( textNodes.iterator().next() instanceof Label );
+		assertFalse( msgCountNodes.isEmpty() );
+		assertTrue( msgCountNodes.iterator().next() instanceof Label );
+		
+		Label msgLabel = ( Label )textNodes.iterator().next();
+		Label msgCountLabel = ( Label )msgCountNodes.iterator().next();
+		
+		assertEquals( "A message", msgLabel.getText() );
+		assertEquals( "1", msgCountLabel.getText() );
+		
+		BeanInjector.getBeanFuture( TestEventManager.class ).get( 500, TimeUnit.MILLISECONDS )
+		.logMessage( MessageLevel.WARNING, "Second message" );
+
+		controller.sleep( 500 );
+		
+		assertEquals( "A message", msgLabel.getText() );
+		assertEquals( "2", msgCountLabel.getText() );
+		controller.click( "#hide-notification-panel" );
+		
+	}
 
 	@Test
 	public void notificationShowsUpInProjectView() throws Exception
