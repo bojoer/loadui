@@ -4,7 +4,7 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.fxml.FXML;
 
-import com.eviware.loadui.api.statistics.model.chart.ChartView;
+import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
 import com.eviware.loadui.api.statistics.model.chart.line.TestEventSegment;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 
@@ -13,9 +13,10 @@ public class EventSegmentView extends SegmentView<TestEventSegment>
 
 	private final ReadOnlyBooleanProperty isExpandedProperty;
 
-	public EventSegmentView( TestEventSegment segment, ChartView chartView, ReadOnlyBooleanProperty isExpandedProperty )
+	public EventSegmentView( TestEventSegment segment, LineChartView lineChartView,
+			ReadOnlyBooleanProperty isExpandedProperty )
 	{
-		super( segment, chartView );
+		super( segment, lineChartView );
 		this.isExpandedProperty = isExpandedProperty;
 		FXMLUtils.load( this );
 	}

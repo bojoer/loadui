@@ -19,7 +19,7 @@ import javafx.scene.layout.Region;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.eviware.loadui.api.statistics.model.chart.ChartView;
+import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
 import com.eviware.loadui.api.statistics.model.chart.line.LineSegment;
 import com.eviware.loadui.ui.fx.control.skin.StyleableGraphicSlider;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
@@ -48,9 +48,9 @@ public class LineSegmentView extends SegmentView<LineSegment>
 	private int scale = 0;
 	private final ReadOnlyBooleanProperty isExpandedProperty;
 
-	public LineSegmentView( LineSegment segment, ChartView chartView, ReadOnlyBooleanProperty isExpandedProperty )
+	public LineSegmentView( LineSegment segment, LineChartView lineChartView, ReadOnlyBooleanProperty isExpandedProperty )
 	{
-		super( segment, chartView );
+		super( segment, lineChartView );
 		this.isExpandedProperty = isExpandedProperty;
 		FXMLUtils.load( this );
 	}

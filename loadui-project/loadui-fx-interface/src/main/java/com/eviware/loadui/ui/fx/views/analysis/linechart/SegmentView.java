@@ -1,6 +1,6 @@
 package com.eviware.loadui.ui.fx.views.analysis.linechart;
 
-import java.util.Random;
+import java.util.ArrayList;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -11,7 +11,7 @@ import javafx.scene.shape.Rectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.eviware.loadui.api.statistics.model.chart.ChartView;
+import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
 import com.eviware.loadui.api.statistics.model.chart.line.Segment;
 import com.eviware.loadui.util.statistics.ChartUtils;
 
@@ -21,7 +21,7 @@ public abstract class SegmentView<T extends Segment> extends StackPane
 	protected static final Logger log = LoggerFactory.getLogger( SegmentView.class );
 
 	protected final T segment;
-	protected final ChartView chartView;
+	protected final LineChartView lineChartView;
 
 	@FXML
 	protected Label segmentLabel;
@@ -31,11 +31,12 @@ public abstract class SegmentView<T extends Segment> extends StackPane
 
 	protected String color;
 
-	public SegmentView( T segment, ChartView chartView )
+	public SegmentView( T segment, LineChartView lineChartView )
 	{
 		this.segment = segment;
-		this.chartView = chartView;
+		this.lineChartView = lineChartView;
 		loadAttributes();
+
 	}
 
 	private void loadAttributes()
@@ -44,7 +45,6 @@ public abstract class SegmentView<T extends Segment> extends StackPane
 		try
 		{
 			color = segment.getAttribute( COLOR_ATTRIBUTE, "no_color" );
-			log.debug( "found color attribute:" + color );
 		}
 		catch( IllegalArgumentException e )
 		{
@@ -55,16 +55,28 @@ public abstract class SegmentView<T extends Segment> extends StackPane
 
 	private String newColor()
 	{
-		Random rand = new Random();
+		LineChartView mainChart = lineChartView;
 
-		int n = rand.nextInt( 8 );
+		if( lineChartView.getChartGroup().getChartView() instanceof LineChartView )
+		{
+			mainChart = ( LineChartView )( lineChartView.getChartGroup().getChartView() );
+		}
+		else
+		{
+			log.warn( "Not taking all segment´s colors into acount when making new color" );
+		}
+		ArrayList<String> currentColorList = new ArrayList<>();
 
-		return ChartUtils.lineToColor( n );
+		for( Segment s : mainChart.getSegments() )
+		{
+			currentColorList.add( s.getAttribute( COLOR_ATTRIBUTE, "no_color" ) );
+		}
+
+		return ChartUtils.getNewRandomColor( currentColorList );
 	}
 
 	public void setColor( String color )
 	{
-		log.debug( "COOOOOOOOOOOOOOOOOOOOOOOLOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOR: " + color );
 		this.color = color;
 		legendColorRectangle.setFill( Color.web( color ) );
 		segment.setAttribute( COLOR_ATTRIBUTE, color );
@@ -75,11 +87,14 @@ public abstract class SegmentView<T extends Segment> extends StackPane
 		if( color.equals( "no_color" ) )
 		{
 			setColor( newColor() );
-			log.debug( segment + " color reset to: " + color );
+			log.debug( "chart: " + lineChartView.getSegments().size()
+					+ ( lineChartView.getChartGroup().getChartView() == lineChartView ) + " new color: " + color );
 		}
 		else
 		{
 			setColor( color );
+			log.debug( "chart: " + lineChartView.getSegments().size()
+					+ ( lineChartView.getChartGroup().getChartView() == lineChartView ) + " old color: " + color );
 		}
 
 	}
