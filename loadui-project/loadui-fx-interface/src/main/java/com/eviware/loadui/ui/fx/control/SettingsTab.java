@@ -1,6 +1,8 @@
 package com.eviware.loadui.ui.fx.control;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 
@@ -37,8 +39,8 @@ import com.google.common.collect.Iterables;
 public class SettingsTab extends Tab
 {
 	private final BiMap<Field<?>, Property<?>> fieldToLoaduiProperty = HashBiMap.create();
-	private final BiMap<Field<?>, javafx.beans.property.Property<?>> fieldToJavafxProperty = HashBiMap.create();
 	private final BiMap<Field<?>, FieldSaveHandler<?>> fieldToFieldSaveHandler = HashBiMap.create();
+	private final BiMap<Field<?>, javafx.beans.property.Property<?>> fieldToJavafxProperty = HashBiMap.create();
 	private final VBox vBox = new VBox( SettingsDialog.VERTICAL_SPACING );
 
 	SettingsTab( String label )
@@ -151,6 +153,7 @@ public class SettingsTab extends Tab
 		}
 	}
 
+	@SuppressWarnings( "unchecked" )
 	void addActionButton( final ActionLayoutComponent action )
 	{
 
@@ -158,16 +161,18 @@ public class SettingsTab extends Tab
 		{
 			try
 			{
-				@SuppressWarnings( "unchecked" )
-				final Text resultLabel = TextBuilder.create()
-						.text( ( ( Callable<String> )action.get( "status" ) ).call().toString() )
-						.id( UIUtils.toCssId( "status" ) )
+				Object currentStatus = action.get( "status" );
+
+				if( !( currentStatus instanceof Callable<?> ) )
+				{
+					throw new IllegalArgumentException( "The status closure is currently not represented by a callable" );
+				}
+
+				final Text statusLabel = TextBuilder.create().text( "Untested..." ).id( UIUtils.toCssId( "status" ) )
 						.build();
-				final Button button = ButtonBuilder.create()
-						.text( action.getLabel() )
-						.disable( !action.isEnabled() )
-						.id( UIUtils.toCssId( action.getLabel() ) ) 
-						.build();
+
+				final Button button = ButtonBuilder.create().text( action.getLabel() ).disable( !action.isEnabled() )
+						.id( UIUtils.toCssId( action.getLabel() ) ).build();
 
 				final Runnable statusCallback = new Runnable()
 				{
@@ -177,18 +182,17 @@ public class SettingsTab extends Tab
 						{
 							try
 							{
-								@SuppressWarnings( "unchecked" )
-								Object obj = ( ( Callable<String> )action.get( "status" ) ).call();
+								Object obj = ( ( Callable<Object> )action.get( "status" ) ).call();
 								if( obj instanceof Boolean )
 								{
 									Boolean connected = ( Boolean )obj;
 									if( connected )
 									{
-										resultLabel.setText( "Connected to monitor!" );
+										statusLabel.setText( "Connected to monitor!" );
 									}
 									else
 									{
-										resultLabel.setText( "Unable to connect to monitor!" );
+										statusLabel.setText( "Unable to connect to monitor!" );
 									}
 								}
 								else if( obj instanceof String )
@@ -196,17 +200,21 @@ public class SettingsTab extends Tab
 									String response = ( String )obj;
 									if( response.contains( "Exception" ) )
 									{
-										resultLabel.setText( "Cannot connect to monitor!" );
+										statusLabel.setText( "Unable to connect to monitor!" );
 									}
 									else
 									{
-										resultLabel.setText( response );
+										statusLabel.setText( response );
 									}
 								}
 							}
 							catch( Exception e )
 							{
 								e.printStackTrace();
+							}
+							finally
+							{
+								restoreBackedUpSettings();
 							}
 						}
 					}
@@ -217,18 +225,13 @@ public class SettingsTab extends Tab
 					@Override
 					public void handle( ActionEvent arg0 )
 					{
-						@SuppressWarnings( "rawtypes" )
-						ObservableList tabList = getTabPane().getTabs();
-						for( Object tab : tabList )
-						{
-							( ( SettingsTab )tab ).save();
-						}
-						
+						backupCurrentSettings();
+
 						button.fireEvent( IntentEvent.create( IntentEvent.INTENT_RUN_BLOCKING, action.getAction() ) );
 						button.fireEvent( IntentEvent.create( IntentEvent.INTENT_RUN_BLOCKING, statusCallback ) );
 					}
 				} );
-				vBox.getChildren().addAll( button, resultLabel );
+				vBox.getChildren().addAll( button, statusLabel );
 			}
 			catch( Exception e1 )
 			{
@@ -239,6 +242,57 @@ public class SettingsTab extends Tab
 		{
 			throw new UnsupportedOperationException( "This operation is not yet available for label " + action.getLabel() );
 		}
+	}
+
+	private void backupCurrentSettings()
+	{
+		ObservableList<Tab> tabList = getTabPane().getTabs();
+
+		for( Tab tab : tabList )
+		{
+			if( tab instanceof SettingsTab )
+			{
+				SettingsTab stab = ( ( SettingsTab )tab );
+				stab.pushValueByField();
+				stab.save();
+			}
+		}
+	}
+
+	private void restoreBackedUpSettings()
+	{
+		ObservableList<Tab> tabList = getTabPane().getTabs();
+
+		for( Tab tab : tabList )
+		{
+			if( tab instanceof SettingsTab )
+			{
+				SettingsTab stab = ( ( SettingsTab )tab );
+				stab.popValueByField();
+			}
+		}
+	}
+
+	Map<Field<?>, Object> settingsStore = new HashMap<>();
+
+	private void pushValueByField()
+	{
+		for( Entry<Field<?>, Property<?>> entry : fieldToLoaduiProperty.entrySet() )
+		{
+			Field<?> field = entry.getKey();
+			Property<?> prop = entry.getValue();
+			settingsStore.put( field, prop.getValue() );
+		}
+	}
+
+	private void popValueByField()
+	{
+		for( Field<?> field : settingsStore.keySet() )
+		{
+			Object item = settingsStore.get( field );
+			fieldToLoaduiProperty.get( field ).setValue( item );
+		}
+		settingsStore.clear();
 	}
 
 	boolean validate()
