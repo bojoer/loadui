@@ -31,7 +31,7 @@
 	<VBox alignment="top_left" spacing="10" snapToPixel="true">
 		<ToolBar minHeight="60" id="topToolBar" styleClass="header">
 			<Label minWidth="60" />
-			<MenuButton fx:id="workspaceButton" id="workspaceButton">
+			<MenuButton fx:id="workspaceButton">
 				<items>
 					<MenuItem onAction="#importProject" text="Import project" />
 					<SeparatorMenuItem />
@@ -42,7 +42,7 @@
 			</MenuButton>
 			<BorderPane HBox.hgrow="ALWAYS">
 				<right>
-					<Button fx:id="openHelpPageButton" id="openHelpPageButton" styleClass="styleable-graphic, toolbar-button"  BorderPane.alignment="CENTER_RIGHT" onAction="#openHelpPage" />
+					<Button fx:id="openHelpPageButton" styleClass="styleable-graphic, toolbar-button"  BorderPane.alignment="CENTER_RIGHT" onAction="#openHelpPage" />
 				</right>
 			</BorderPane>
 		</ToolBar>

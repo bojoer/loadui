@@ -15,14 +15,7 @@
 	<stylesheets>
 			<URL value="@ProjectRefView.css" />
 		</stylesheets>
-		<MenuButton fx:id="menuButton" HBox.hgrow="SOMETIMES" maxWidth="200" >
-			<items>
-				<MenuItem fx:id="open" id="open" text="Open" onAction="#open" />
-				<MenuItem fx:id="rename" id="rename" text="Rename" onAction="#rename" />
-				<MenuItem fx:id="clone" id="clone" text="Clone" onAction="#cloneProject" />
-				<MenuItem fx:id="delete" id="delete" text="Delete" onAction="#delete" />
-			</items>
-		</MenuButton>
-		<ImageView fx:id="miniature" onMouseClicked="#regionClickHandler"/>
+		<MenuButton fx:id="menuButton" HBox.hgrow="SOMETIMES" maxWidth="200" styleClass="project-ref-menu-button" />
+		<ImageView fx:id="miniature" onMouseClicked="#regionClickHandler" />
 	</VBox>
 </fx:root>

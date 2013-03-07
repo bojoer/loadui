@@ -5,23 +5,18 @@ import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBuilder;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.ComboBoxBuilder;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextBuilder;
 
 import javax.annotation.Nonnull;
-
-import org.springframework.asm.Type;
 
 import com.eviware.loadui.api.layout.ActionLayoutComponent;
 import com.eviware.loadui.api.property.Property;
@@ -159,81 +154,90 @@ public class SettingsTab extends Tab
 	void addActionButton( final ActionLayoutComponent action )
 	{
 
-		//TODO: Fix property-bug. Still never gets the correct properties, so this is currently not working, but the button is in place and does not do anyone harm.
-		try
+		if( action.getLabel().compareTo( "Test Connection" ) == 0 )
 		{
-			final Text label = TextBuilder.create().text( ( ( Callable )action.get( "status" ) ).call().toString() )
-					.build();
-			final Button button = ButtonBuilder.create().text( action.getLabel() ).disable( !action.isEnabled() ).build();
-
-			final Runnable status = new Runnable()
+			try
 			{
-				public void run()
+				@SuppressWarnings( "unchecked" )
+				final Text resultLabel = TextBuilder.create()
+						.text( ( ( Callable<String> )action.get( "status" ) ).call().toString() )
+						.id( UIUtils.toCssId( "status" ) )
+						.build();
+				final Button button = ButtonBuilder.create()
+						.text( action.getLabel() )
+						.disable( !action.isEnabled() )
+						.id( UIUtils.toCssId( action.getLabel() ) ) 
+						.build();
+
+				final Runnable statusCallback = new Runnable()
 				{
-					if( action.get( "status" ) instanceof Callable<?> )
+					public void run()
 					{
-						try
+						if( action.get( "status" ) instanceof Callable<?> )
 						{
-
-							@SuppressWarnings( "rawtypes" )
-							Object obj = ( ( Callable )action.get( "status" ) ).call();
-
-							if( obj instanceof Boolean )
+							try
 							{
-								Boolean connected = ( Boolean )obj;
-								if( connected )
+								@SuppressWarnings( "unchecked" )
+								Object obj = ( ( Callable<String> )action.get( "status" ) ).call();
+								if( obj instanceof Boolean )
 								{
-									label.setText( "Connected to monitor!" );
+									Boolean connected = ( Boolean )obj;
+									if( connected )
+									{
+										resultLabel.setText( "Connected to monitor!" );
+									}
+									else
+									{
+										resultLabel.setText( "Unable to connect to monitor!" );
+									}
 								}
-								else
+								else if( obj instanceof String )
 								{
-									label.setText( "Unable to connect to monitor!" );
+									String response = ( String )obj;
+									if( response.contains( "Exception" ) )
+									{
+										resultLabel.setText( "Cannot connect to monitor!" );
+									}
+									else
+									{
+										resultLabel.setText( response );
+									}
 								}
 							}
-							else
+							catch( Exception e )
 							{
-								label.setText( obj.toString() );
+								e.printStackTrace();
 							}
 						}
-						catch( Exception e )
-						{
-							e.printStackTrace();
-						}
 					}
-				}
-			};
+				};
 
-			button.setOnAction( new EventHandler<ActionEvent>()
-			{
-				@Override
-				public void handle( ActionEvent arg0 )
+				button.setOnAction( new EventHandler<ActionEvent>()
 				{
-
-					for( Object field : fieldToLoaduiProperty.keySet() )
+					@Override
+					public void handle( ActionEvent arg0 )
 					{
-						if( field instanceof TextField )
+						@SuppressWarnings( "rawtypes" )
+						ObservableList tabList = getTabPane().getTabs();
+						for( Object tab : tabList )
 						{
-							Property<?> prop = fieldToLoaduiProperty.get( field );
-							prop.setValue( ( ( TextField )field ).getText() );
+							( ( SettingsTab )tab ).save();
 						}
-
-						if( field instanceof CheckBox )
-						{
-							Property<?> prop = fieldToLoaduiProperty.get( field );
-							prop.setValue( ( ( CheckBox )field ).isSelected() );
-						}
+						
+						button.fireEvent( IntentEvent.create( IntentEvent.INTENT_RUN_BLOCKING, action.getAction() ) );
+						button.fireEvent( IntentEvent.create( IntentEvent.INTENT_RUN_BLOCKING, statusCallback ) );
 					}
-
-					button.fireEvent( IntentEvent.create( IntentEvent.INTENT_RUN_BLOCKING, action.getAction() ) );
-					button.fireEvent( IntentEvent.create( IntentEvent.INTENT_RUN_BLOCKING, status ) );
-				}
-			} );
-
-			vBox.getChildren().addAll( button, label );
+				} );
+				vBox.getChildren().addAll( button, resultLabel );
+			}
+			catch( Exception e1 )
+			{
+				e1.printStackTrace();
+			}
 		}
-		catch( Exception e1 )
+		else
 		{
-			e1.printStackTrace();
+			throw new UnsupportedOperationException( "This operation is not yet available for label " + action.getLabel() );
 		}
 	}
 
