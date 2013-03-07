@@ -2,7 +2,6 @@ package com.eviware.loadui.ui.fx.views.analysis.linechart;
 
 import static com.eviware.loadui.ui.fx.util.ObservableLists.fromExpression;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.concurrent.Callable;
 
@@ -118,7 +117,7 @@ public final class SegmentToSeriesFunction implements Function<Segment, XYChart.
 			public Iterable<XYChart.Data<Number, Number>> call() throws Exception
 			{
 				System.out.println( "Called Assertion chart transform!" );
-				if( segment.isRemoved() && execution.getValue() == null )
+				if( segment.isRemoved() || execution.getValue() == null )
 				{
 					return new LinkedList<>();
 				}
