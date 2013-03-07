@@ -44,10 +44,12 @@ public class SettingsDialog extends ConfirmationDialog
 			{
 				final Region tabHeader = ( Region )tabPane.lookup( ".tab-header-area" );
 				final double headerHeight = tabHeader.getHeight();
+				
 				if( hasExactlyOneTab.get() )
 				{
 					SettingsDialog.this.setHeight( SettingsDialog.this.getHeight() - headerHeight );
 					tabHeader.setPrefHeight( 0.0 );
+
 				}
 			}
 		} );

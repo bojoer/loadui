@@ -1,9 +1,9 @@
 package com.eviware.loadui.ui.fx.control;
 
-import static javafx.beans.binding.Bindings.when;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
+import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 import javafx.application.Application;
@@ -16,6 +16,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Region;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import org.junit.Before;
@@ -27,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.property.Property;
+import com.eviware.loadui.impl.layout.ActionLayoutComponentImpl;
 import com.eviware.loadui.test.categories.GUITest;
 import com.eviware.loadui.ui.fx.control.SettingsTab.Builder;
 import com.eviware.loadui.ui.fx.util.StylingUtils;
@@ -34,10 +36,9 @@ import com.eviware.loadui.ui.fx.util.TestingProperty;
 import com.eviware.loadui.ui.fx.util.test.FXScreenController;
 import com.eviware.loadui.ui.fx.util.test.FXTestUtils;
 import com.eviware.loadui.ui.fx.util.test.TestFX;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.SettableFuture;
-
-//import com.javafx.experiments.scenicview.ScenicView;
 
 @Category( GUITest.class )
 public class SettingsDialogTest
@@ -45,6 +46,8 @@ public class SettingsDialogTest
 	private static final long INIT_LONG = 123L;
 	private static final boolean INIT_BOOLEAN = false;
 	private static final String INIT_STRING = "Old value";
+	private static final String CONNECTED = "Successfully connected to SkyNet!";
+
 	private static final SettableFuture<Stage> stageFuture = SettableFuture.create();
 	private static Stage stage;
 	private static TestFX controller;
@@ -72,6 +75,7 @@ public class SettingsDialogTest
 		stage = stageFuture.get( 5, TimeUnit.SECONDS );
 		TestFX.targetWindow( stage );
 		FXTestUtils.bringToFront( stage );
+
 	}
 
 	@Before
@@ -83,8 +87,43 @@ public class SettingsDialogTest
 		longProperty2.setValue( INIT_LONG );
 		generalTab = Builder.create( "General" ).id( "general-tab" ).field( "My string", stringProperty )
 				.field( "My boolean", booleanProperty ).build();
-		otherTab = Builder.create( "Other" ).field( "My long", longProperty ).field( "My other long", longProperty2 )
-				.build();
+
+		final Callable<String> statusCallback = new Callable<String>()
+		{
+			private boolean tested = false;
+
+			@Override
+			public String call() throws Exception
+			{
+				if( !tested )
+				{
+					tested = true;
+					return "Untested...";
+				}
+				else
+				{
+					tested = false;
+					return CONNECTED;
+				}
+			}
+		};
+
+		otherTab = Builder
+				.create( "Other" )
+				.id( "other-tab" )
+				.field( "My long", longProperty )
+				.field( "My other long", longProperty2 )
+				.button(
+						new ActionLayoutComponentImpl( ImmutableMap.<String, Object> builder()
+								.put( ActionLayoutComponentImpl.LABEL, "Test Connection" )
+								.put( ActionLayoutComponentImpl.ASYNC, false )
+								.put( ActionLayoutComponentImpl.ACTION, new Runnable()
+								{
+									@Override
+									public void run()
+									{
+									}
+								} ).put( "status", statusCallback ).build() ) ).build();
 
 		FXTestUtils.invokeAndWait( new Runnable()
 		{
@@ -108,6 +147,7 @@ public class SettingsDialogTest
 
 		controller.click( openDialogButton );
 
+		generalTab.getTabPane().getSelectionModel().select( generalTab );
 		controller.click( "#general-tab" );
 	}
 
@@ -132,11 +172,41 @@ public class SettingsDialogTest
 	}
 
 	@Test
+	public void actionComponentShouldBePlacedCorrectlyAndCallbackUsedWhenClicked()
+	{
+		try
+		{
+			generalTab.getTabPane().getSelectionModel().select( otherTab );
+			Button testConnection = ( ( Button )otherTab.getContent().lookup( "#test-connection" ) );
+			assertEquals( "Untested...", ( ( Text )otherTab.getContent().lookup( "#status" ) ).getText() );
+			testConnection.setOnAction( new EventHandler<ActionEvent>()
+			{
+				@Override
+				public void handle( ActionEvent arg0 )
+				{
+					( ( Text )otherTab.getContent().lookup( "#status" ) ).setText( CONNECTED );
+				}
+			} );
+
+			controller.click( "#other-tab" ).sleep( 500 );
+			controller.click( "#test-connection" ).sleep( 1000 );
+			assertEquals( CONNECTED, ( ( Text )otherTab.getContent().lookup( "#status" ) ).getText() );
+			controller.click( "#default" );
+			assertEquals( false, settingsDialog.isShowing() );
+
+		}
+		catch( Exception e )
+		{
+			org.junit.Assert.fail( "Label or Button of ActionLayoutComponent missplaced or missing." );
+		}
+	}
+
+	@Test
 	public void invalidNumbers_should_promptError_onSave() throws Exception
 	{
 		generalTab.getTabPane().getSelectionModel().select( otherTab );
-		controller.sleep( 100 ).click( "#my-long" ).press( KeyCode.CONTROL, KeyCode.A )
-				.release( KeyCode.CONTROL, KeyCode.A ).sleep( 100 );
+		controller.click( "#my-long" ).press( KeyCode.CONTROL, KeyCode.A ).release( KeyCode.CONTROL, KeyCode.A )
+				.sleep( 100 );
 		controller.type( "not a number" ).click( "#default" );
 
 		assertEquals( true, settingsDialog.isShowing() );

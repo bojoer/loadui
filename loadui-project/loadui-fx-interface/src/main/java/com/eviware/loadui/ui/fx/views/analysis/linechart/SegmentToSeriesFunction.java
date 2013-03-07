@@ -146,9 +146,10 @@ public final class SegmentToSeriesFunction implements Function<Segment, XYChart.
 			@Override
 			public Iterable<XYChart.Data<Number, Number>> call() throws Exception
 			{
-				if( execution.getValue() == null )
+				System.out.println( "Called Assertion chart transform!" );
+				if( segment.isRemoved() && execution.getValue() == null )
 				{
-					return new ArrayList<XYChart.Data<Number, Number>>();
+					return new LinkedList<>();
 				}
 
 				return Iterables.transform(
