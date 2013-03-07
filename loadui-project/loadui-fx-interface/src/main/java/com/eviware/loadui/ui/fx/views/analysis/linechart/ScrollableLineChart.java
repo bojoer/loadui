@@ -54,7 +54,6 @@ import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.ManualObservable;
 import com.eviware.loadui.ui.fx.util.ObservableLists;
 import com.eviware.loadui.util.execution.TestExecutionUtils;
-import com.eviware.loadui.util.statistics.ChartUtils;
 import com.google.common.base.Function;
 
 public class ScrollableLineChart extends HBox implements ExecutionChart, Releasable
@@ -63,16 +62,6 @@ public class ScrollableLineChart extends HBox implements ExecutionChart, Releasa
 
 	protected ObservableList<SegmentView<?>> segmentViews;
 	protected ObservableList<Series<Number, Number>> seriesList;
-
-	//	protected final LoadingCache<XYChart.Series<?, ?>, StringProperty> eventSeriesStyles = CacheBuilder.newBuilder()
-	//			.build( new CacheLoader<XYChart.Series<?, ?>, StringProperty>()
-	//			{
-	//				@Override
-	//				public StringProperty load( Series<?, ?> key ) throws Exception
-	//				{
-	//					return new SimpleStringProperty();
-	//				}
-	//			} );
 
 	public static final PeriodFormatter timeFormatter = new PeriodFormatterBuilder().printZeroNever().appendWeeks()
 			.appendSuffix( "w" ).appendSeparator( " " ).appendDays().appendSuffix( "d" ).appendSeparator( " " )
@@ -196,46 +185,6 @@ public class ScrollableLineChart extends HBox implements ExecutionChart, Releasa
 			}
 
 		} );
-
-		int i = 0;
-		for( Series<?, ?> series : getLineChart().getData() )
-		{
-			if( i < getSegments().getChildren().size() )
-			{
-				( ( SegmentView<Segment> )getSegments().getChildren().get( i ) ).setColor( ChartUtils.lineToColor( series,
-						getLineChart().getData() ) );
-				//						if( getSegments().getChildren().get( i ) instanceof EventSegmentView )
-				//							eventSeriesStyles.getUnchecked( series ).set(
-				//									"-fx-stroke: " + ChartUtils.lineToColor( series, getLineChart().getData() ) + ";" );
-				manualDataUpdate.fireInvalidation();
-			}
-
-			i++ ;
-		}
-
-		// legend colors and event colors
-		//		getSegments().getChildren().addListener( new InvalidationListener()
-		//		{
-		//			@Override
-		//			public void invalidated( Observable _ )
-		//			{
-		//				int i = 0;
-		//				for( Series<?, ?> series : getLineChart().getData() )
-		//				{
-		//					if( i < getSegments().getChildren().size() )
-		//					{
-		//						( ( SegmentView<Segment> )getSegments().getChildren().get( i ) ).setColor( ChartUtils.lineToColor(
-		//								series, getLineChart().getData() ) );
-		//						//						if( getSegments().getChildren().get( i ) instanceof EventSegmentView )
-		//						//							eventSeriesStyles.getUnchecked( series ).set(
-		//						//									"-fx-stroke: " + ChartUtils.lineToColor( series, getLineChart().getData() ) + ";" );
-		//						manualDataUpdate.fireInvalidation();
-		//					}
-		//
-		//					i++ ;
-		//				}
-		//			}
-		//		} );
 
 		log.debug( "initializing.. done" );
 	}

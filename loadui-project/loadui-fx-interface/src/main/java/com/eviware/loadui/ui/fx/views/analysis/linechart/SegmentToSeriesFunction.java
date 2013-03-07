@@ -110,16 +110,6 @@ public final class SegmentToSeriesFunction implements Function<Segment, XYChart.
 						dataPoint.setNode( CircleBuilder.create().fill( chart.getColor( segment, execution.getValue() ) )
 								.radius( 3d ).build() );
 
-						//						dataPoint.nodeProperty().addListener( new ChangeListener<Node>()
-						//						{
-						//							@Override
-						//							public void changed( ObservableValue<? extends Node> arg0, Node arg1, Node newNode )
-						//							{
-						//								if( newNode instanceof StackPane )
-						//									( ( StackPane )newNode ).getsetStroke( chart.getColor( segment, execution.getValue() ) );
-						//							}
-						//						} );
-
 						return dataPoint;
 					}
 				};
@@ -138,45 +128,15 @@ public final class SegmentToSeriesFunction implements Function<Segment, XYChart.
 				if( series.getNode() instanceof Path )
 				{
 					( ( Path )series.getNode() ).setStroke( chart.getColor( segment, execution.getValue() ) );
-					//					if( execution.getValue() != null )
-					//					{
-					//						log.debug( "2path got painted for exec: " + execution.getValue().getLabel() );
-					//					}
-					//					else
-					//					{
-					//						log.debug( "2path got painted for exec: " + execution.getValue() );
-					//					}
 				}
 
 			}
 		} );
 
-		// for startup
-		//		series.nodeProperty().addListener( new ChangeListener<Node>()
-		//		{
-		//			@Override
-		//			public void changed( ObservableValue<? extends Node> arg0, Node arg1, Node newNode )
-		//			{
-		//				if( newNode instanceof Path )
-		//				{
-		//					( ( Path )newNode ).setStroke( chart.getColor( segment, execution.getValue() ) );
-		//					if( execution.getValue() != null )
-		//					{
-		//						log.debug( "path got painted for exec: " + execution.getValue().getLabel() );
-		//					}
-		//					else
-		//					{
-		//						log.debug( "path got painted for exec: " + execution.getValue() );
-		//					}
-		//				}
-		//
-		//			}
-		//		} );
-
 		return series;
 	}
 
-	public XYChart.Series<Number, Number> eventSegmentToSeries( final TestEventSegment segment )
+	private XYChart.Series<Number, Number> eventSegmentToSeries( final TestEventSegment segment )
 	{
 		final XYChart.Series<Number, Number> series = new XYChart.Series<>();
 		series.setName( segment.getTypeLabel() );
@@ -201,11 +161,14 @@ public final class SegmentToSeriesFunction implements Function<Segment, XYChart.
 							{
 								XYChart.Data<Number, Number> data = new XYChart.Data<Number, Number>( event.getTimestamp(),
 										10.0 );
+
 								Line eventLine = LineBuilder.create().endY( 600 ).managed( false )
 										.strokeType( StrokeType.OUTSIDE ).build();
+
 								eventLine.setStroke( chart.getColor( segment, execution.getValue() ) );
-								//eventLine.setStyle( eventSeriesStyles.getUnchecked( series ).get() );
+
 								data.setNode( eventLine );
+
 								return data;
 							}
 						} );
