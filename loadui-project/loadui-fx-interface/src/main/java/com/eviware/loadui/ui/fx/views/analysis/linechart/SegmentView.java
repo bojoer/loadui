@@ -35,36 +35,13 @@ public abstract class SegmentView<T extends Segment> extends StackPane
 	{
 		this.segment = segment;
 		this.lineChartView = lineChartView;
-		loadAttributes();
-
-	}
-
-	private void loadAttributes()
-	{
-		String color;
-		try
-		{
-			color = segment.getAttribute( COLOR_ATTRIBUTE, "no_color" );
-		}
-		catch( IllegalArgumentException e )
-		{
-			color = "no_color";
-		}
-		this.color = color;
+		color = segment.getAttribute( COLOR_ATTRIBUTE, "no_color" );
 	}
 
 	private String newColor()
 	{
-		LineChartView mainChart = lineChartView;
+		LineChartView mainChart = ( LineChartView )( lineChartView.getChartGroup().getChartView() );
 
-		if( lineChartView.getChartGroup().getChartView() instanceof LineChartView )
-		{
-			mainChart = ( LineChartView )( lineChartView.getChartGroup().getChartView() );
-		}
-		else
-		{
-			log.warn( "Not taking all segment´s colors into acount when making new color" );
-		}
 		ArrayList<String> currentColorList = new ArrayList<>();
 
 		for( Segment s : mainChart.getSegments() )
@@ -87,16 +64,11 @@ public abstract class SegmentView<T extends Segment> extends StackPane
 		if( color.equals( "no_color" ) )
 		{
 			setColor( newColor() );
-			log.debug( "chart: " + lineChartView.getSegments().size()
-					+ ( lineChartView.getChartGroup().getChartView() == lineChartView ) + " new color: " + color );
 		}
 		else
 		{
-			setColor( color );
-			log.debug( "chart: " + lineChartView.getSegments().size()
-					+ ( lineChartView.getChartGroup().getChartView() == lineChartView ) + " old color: " + color );
+			legendColorRectangle.setFill( Color.web( color ) );
 		}
-
 	}
 
 	@FXML

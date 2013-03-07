@@ -104,7 +104,7 @@ public final class SegmentToSeriesFunction implements Function<Segment, XYChart.
 								.getYValue().doubleValue() * scaleValue );
 
 						dataPoint.setNode( CircleBuilder.create().fill( chart.getColor( segment, execution.getValue() ) )
-								.radius( 3d ).build() );
+								.radius( 3 ).build() );
 
 						return dataPoint;
 					}
@@ -115,6 +115,7 @@ public final class SegmentToSeriesFunction implements Function<Segment, XYChart.
 			}
 		}, observables ) );
 
+		// TODO: Make path color just update when new chart is added
 		Observables.group( observables ).addListener( new InvalidationListener()
 		{
 
