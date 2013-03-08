@@ -63,7 +63,6 @@ public class StatisticsView extends StackPane
 			{
 				Platform.runLater( new Runnable()
 				{
-
 					@Override
 					public void run()
 					{
@@ -99,7 +98,7 @@ public class StatisticsView extends StackPane
 
 		executionManager = BeanInjector.getBean( ExecutionManager.class );
 		final ProjectExecutionManager projectExecutionManager = BeanInjector.getBean( ProjectExecutionManager.class );
-		
+
 		final Collection<Execution> executions = executionManager.getExecutions();
 
 		recentExecutions = fx( filter(
@@ -155,7 +154,7 @@ public class StatisticsView extends StackPane
 		executionManager.addExecutionListener( execListener );
 
 	}
-	
+
 	public Execution getCurrentExecution()
 	{
 		return currentExecution.getValue();
@@ -165,7 +164,7 @@ public class StatisticsView extends StackPane
 	{
 		return currentExecution;
 	}
-	
+
 	public void close()
 	{
 		log.debug( "Closing StatisticView. Removing ExecutionListener" );

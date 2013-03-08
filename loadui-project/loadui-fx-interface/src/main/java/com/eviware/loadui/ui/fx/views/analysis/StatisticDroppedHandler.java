@@ -63,11 +63,11 @@ public class StatisticDroppedHandler implements EventHandler<DraggableEvent>
 
 	private static void addAssertion( ChartGroup chartGroup, AssertionItem<?> assertionItem, Chart chart )
 	{
-		String typeLabel = BeanInjector.getBean( TestEventRegistry.class )
-				.lookupFactory( ( ( TestEvent.Source<?> )assertionItem ).getType() ).getLabel();
 		ChartView chartView = chartGroup.getChartViewForChart( chart );
 		if( chartView instanceof ConfigurableLineChartView )
 		{
+			String typeLabel = BeanInjector.getBean( TestEventRegistry.class )
+					.lookupFactory( ( ( TestEvent.Source<?> )assertionItem ).getType() ).getLabel();
 			( ( ConfigurableLineChartView )chartView ).addSegment( typeLabel, assertionItem.getLabel() );
 		}
 	}

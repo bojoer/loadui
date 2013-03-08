@@ -75,7 +75,7 @@ public class ScenarioView extends CanvasObjectView
 				@Override
 				public void handle( MouseEvent event )
 				{
-					if( event.getButton().equals( MouseButton.PRIMARY ) )
+					if( event.getButton() == MouseButton.PRIMARY )
 					{
 						if( event.getClickCount() == 2 )
 						{

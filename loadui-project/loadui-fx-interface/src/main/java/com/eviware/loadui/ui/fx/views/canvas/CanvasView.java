@@ -594,11 +594,11 @@ public class CanvasView extends StackPane
 		{
 			if( event.getData() instanceof Terminal )
 			{
-				final Terminal draggedTerminal = ( Terminal )event.getData();
 				DragNode dragNode = ( DragNode )event.getDraggable();
 
 				if( event.getEventType() == DraggableEvent.DRAGGABLE_STARTED )
 				{
+					final Terminal draggedTerminal = ( Terminal )event.getData();
 					connectionView = Iterables.find( connections, new Predicate<ConnectionView>()
 					{
 						@Override

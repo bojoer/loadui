@@ -22,7 +22,7 @@ public class SettingsDialog extends ConfirmationDialog
 	public final TabPane tabPane = new TabPane();
 	@Nonnull
 	private final List<SettingsTab> tabs;
-	private final EventHandler<ActionEvent> onSaveHandler = new OnSaveHandler();
+ 
 	public final ObservableBooleanValue hasExactlyOneTab;
 
 	public SettingsDialog( @Nonnull Node owner, @Nonnull String title, @Nonnull List<SettingsTab> tabs )
@@ -31,7 +31,7 @@ public class SettingsDialog extends ConfirmationDialog
 		this.tabs = tabs;
 		tabPane.getTabs().addAll( tabs );
 		getItems().add( tabPane );
-		setOnConfirm( onSaveHandler );
+		setOnConfirm( new OnSaveHandler() );
 		addStyleClass( "settings-dialog" );
 
 		hasExactlyOneTab = size( tabPane.getTabs() ).isEqualTo( 1 );

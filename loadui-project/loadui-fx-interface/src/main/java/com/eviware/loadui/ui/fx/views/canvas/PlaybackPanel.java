@@ -86,7 +86,7 @@ public abstract class PlaybackPanel<T extends CounterDisplay, C extends CanvasIt
 		return new Separator( Orientation.VERTICAL );
 	}
 
-	protected Image image( String name )
+	final protected Image image( String name )
 	{
 		return new Image( getClass().getResourceAsStream( name ) );
 	}
