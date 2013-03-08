@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.IOException;
 
 import com.eviware.loadui.api.events.EventFirer;
+import com.eviware.loadui.api.traits.Deletable;
 import com.eviware.loadui.api.traits.Labeled;
 
 /**
@@ -27,7 +28,7 @@ import com.eviware.loadui.api.traits.Labeled;
  * 
  * @author dain.nilsson
  */
-public interface ProjectRef extends EventFirer, AttributeHolder, Labeled.Mutable
+public interface ProjectRef extends EventFirer, AttributeHolder, Labeled.Mutable, Deletable
 {
 	public static final String LOADED = ProjectRef.class.getName() + "@loaded";
 	public static final String UNLOADED = ProjectRef.class.getName() + "@unloaded";

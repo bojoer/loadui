@@ -12,18 +12,25 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 
+import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.ProjectRef;
 import com.eviware.loadui.api.traits.Labeled;
+import com.eviware.loadui.ui.fx.MenuItemsProvider;
+import com.eviware.loadui.ui.fx.MenuItemsProvider.HasMenuItems;
+import com.eviware.loadui.ui.fx.MenuItemsProvider.Options;
+import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.NodeUtils;
 import com.eviware.loadui.ui.fx.util.Properties;
 import com.eviware.loadui.ui.fx.util.UIUtils;
-import com.eviware.loadui.ui.fx.views.workspace.ProjectMenuItemsProvider;
-import com.eviware.loadui.ui.fx.views.workspace.ProjectMenuItemsProvider.ProjectMenuItemHolder;
+import com.eviware.loadui.ui.fx.views.workspace.WorkspaceView;
 import com.google.common.base.Preconditions;
 
 public class ProjectRefView extends StackPane implements Labeled
 {
+	public static final Options MENU_ITEM_OPTIONS = Options.are().open().clone()
+			.create( ProjectItem.class, WorkspaceView.CREATE_PROJECT );
+
 	@FXML
 	private ToggleButton onOffSwitch;
 
@@ -35,13 +42,13 @@ public class ProjectRefView extends StackPane implements Labeled
 
 	private final ProjectRef projectRef;
 	private final ReadOnlyStringProperty labelProperty;
-	private final ProjectMenuItemHolder menuItemProvider;
+	private final HasMenuItems menuItemProvider;
 
 	public ProjectRefView( final ProjectRef projectRef )
 	{
 		this.projectRef = Preconditions.checkNotNull( projectRef );
 		this.labelProperty = Properties.forLabel( projectRef );
-		menuItemProvider = ProjectMenuItemsProvider.createWith( this, projectRef );
+		menuItemProvider = MenuItemsProvider.createWith( this, projectRef, MENU_ITEM_OPTIONS );
 
 		FXMLUtils.load( this );
 
@@ -86,6 +93,11 @@ public class ProjectRefView extends StackPane implements Labeled
 		return projectRef;
 	}
 
+	public HasMenuItems getMenuItemProvider()
+	{
+		return menuItemProvider;
+	}
+
 	@Override
 	public String toString()
 	{
@@ -97,7 +109,7 @@ public class ProjectRefView extends StackPane implements Labeled
 	{
 		if( event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2 )
 		{
-			menuItemProvider.openProject();
+			fireEvent( IntentEvent.create( IntentEvent.INTENT_OPEN, projectRef ) );
 			event.consume();
 		}
 	}
