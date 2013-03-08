@@ -21,19 +21,17 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ContextMenuBuilder;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
+import javafx.scene.control.MenuItem;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.web.PopupFeatures;
-import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.FileChooserBuilder;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
-import javafx.util.Callback;
 
 import javax.annotation.Nullable;
 
@@ -44,6 +42,8 @@ import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.ProjectRef;
 import com.eviware.loadui.api.model.WorkspaceItem;
+import com.eviware.loadui.ui.fx.MenuItemsProvider;
+import com.eviware.loadui.ui.fx.MenuItemsProvider.Options;
 import com.eviware.loadui.ui.fx.api.input.DraggableEvent;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.control.Carousel;
@@ -62,6 +62,8 @@ import com.google.common.io.Files;
 
 public class WorkspaceView extends StackPane
 {
+	public static final String CREATE_PROJECT = "Create project";
+
 	protected static final Logger log = LoggerFactory.getLogger( WorkspaceView.class );
 
 	private static final String LATEST_DIRECTORY = "gui.latestDirectory";
@@ -209,9 +211,10 @@ public class WorkspaceView extends StackPane
 	private void initProjectRefCarousel()
 	{
 		final Observables.Group group = Observables.group();
+		final MenuItem[] carouselMenuItems = MenuItemsProvider.createWith( projectRefCarousel, null,
+				Options.are().noDelete().noRename().create( ProjectItem.class, CREATE_PROJECT ) ).items();
 
-		final ContextMenu ctxMenu = ContextMenuBuilder.create()
-				.items( ProjectMenuItemsProvider.createWith( projectRefCarousel ).items() ).build();
+		final ContextMenu ctxMenu = ContextMenuBuilder.create().items( carouselMenuItems ).build();
 		projectRefCarousel.setContextMenu( ctxMenu );
 
 		projectRefCarousel.setOnContextMenuRequested( new EventHandler<ContextMenuEvent>()
@@ -219,15 +222,12 @@ public class WorkspaceView extends StackPane
 			@Override
 			public void handle( ContextMenuEvent event )
 			{
-				if( isTargetOnMenuButton( ( Node )event.getTarget() ) )
-				{
+				if( projectRefCarousel.getItems().isEmpty() || isTargetOnMenuButton( ( Node )event.getTarget() ) )
 					ctxMenu.getItems().setAll();
-				}
 				else
 					ctxMenu.getItems().setAll(
-							( event.getTarget() instanceof Region ) ? ProjectMenuItemsProvider.createWith( projectRefCarousel )
-									.items() : ProjectMenuItemsProvider.createWith( toolbox,
-									projectRefCarousel.getSelected().getProjectRef() ).items() );
+							( event.getTarget() instanceof Region ) ? carouselMenuItems : projectRefCarousel.getSelected()
+									.getMenuItemProvider().items() );
 			}
 
 			boolean isTargetOnMenuButton( Node target )

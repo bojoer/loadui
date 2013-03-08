@@ -201,6 +201,12 @@ public final class ProjectRefImpl implements ProjectRef, Releasable
 	}
 
 	@Override
+	public void delete()
+	{
+		delete( false );
+	}
+
+	@Override
 	public void delete( boolean deleteFile )
 	{
 		if( deleteFile )

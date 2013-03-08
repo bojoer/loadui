@@ -65,7 +65,7 @@ public class ProjectCreatedWithoutAgentsStateTest
 	public void shouldRenameProjectThoughMenuButton()
 	{
 		final String newProjectName = "Renamed Project";
-		GUI.getController().click( "#projectRefCarousel .project-ref-view #menuButton" ).click( "#project-renameItem" )
+		GUI.getController().click( "#projectRefCarousel .project-ref-view #menuButton" ).click( "#rename-item" )
 				.type( newProjectName ).type( KeyCode.ENTER );
 		renameTest( newProjectName );
 	}
@@ -75,7 +75,7 @@ public class ProjectCreatedWithoutAgentsStateTest
 	{
 		String newProjectName = "Another Project";
 		GUI.getController().move( "#projectRefCarousel .project-ref-view" ).click( MouseButton.SECONDARY )
-				.click( "#project-renameItem" ).type( newProjectName ).type( KeyCode.ENTER );
+				.click( "#rename-item" ).type( newProjectName ).type( KeyCode.ENTER );
 		renameTest( newProjectName );
 	}
 
@@ -98,7 +98,7 @@ public class ProjectCreatedWithoutAgentsStateTest
 		WorkspaceItem workspace = BeanInjector.getBean( WorkspaceProvider.class ).getWorkspace();
 		String name = "Cloned";
 		int projectCount = workspace.getProjectRefs().size();
-		GUI.getController().click( "#projectRefCarousel .project-ref-view .menu-button" ).click( "#project-cloneItem" )
+		GUI.getController().click( "#projectRefCarousel .project-ref-view .menu-button" ).click( "#clone-item" )
 				.type( name ).click( ".check-box" ).click( "#default" );
 		projectCreatedTest( projectCount + 1, name );
 	}
@@ -109,7 +109,7 @@ public class ProjectCreatedWithoutAgentsStateTest
 		WorkspaceItem workspace = BeanInjector.getBean( WorkspaceProvider.class ).getWorkspace();
 		String name = "Copy";
 		int projectCount = workspace.getProjectRefs().size();
-		GUI.getController().click( "#projectRefCarousel .project-ref-view .menu-button" ).click( "#project-cloneItem" )
+		GUI.getController().click( "#projectRefCarousel .project-ref-view .menu-button" ).click( "#clone-item" )
 				.type( name ).click( ".check-box" ).click( "#default" );
 		projectCreatedTest( projectCount + 1, name );
 	}
@@ -121,7 +121,7 @@ public class ProjectCreatedWithoutAgentsStateTest
 		String name = "Awesome Project";
 		int projectCount = workspace.getProjectRefs().size();
 		GUI.getController().move( "#projectRefCarousel .prev" ).click( MouseButton.SECONDARY ).sleep( 500 )
-				.click( "#project-createItem" ).type( name ).click( ".check-box" ).click( "#default" );
+				.click( "#create-item" ).type( name ).click( ".check-box" ).click( "#default" );
 		projectCreatedTest( projectCount + 1, name );
 	}
 

@@ -78,7 +78,7 @@ public class PlayButton extends StackPane
 				canvas.triggerAction( CanvasItem.START_ACTION );
 				TestExecutionUtils.startCanvas( canvas );
 			}
-			else if( canvas.isRunning() )
+			else if( canvas.isRunning() && !isPlaying )
 			{
 				canvas.triggerAction( CanvasItem.STOP_ACTION );
 				TestExecutionUtils.stopCanvas( canvas );
