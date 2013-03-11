@@ -9,6 +9,7 @@ import java.util.concurrent.ExecutionException;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
+import javafx.beans.property.Property;
 import javafx.beans.property.ReadOnlyProperty;
 import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
@@ -21,6 +22,8 @@ import javafx.scene.Node;
 import javafx.scene.SceneBuilder;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuButton;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleButtonBuilder;
 import javafx.scene.control.ToolBar;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
@@ -78,6 +81,8 @@ public class ProjectView extends AnchorPane
 	private Button summaryButton;
 
 	private ProjectPlaybackPanel playbackPanel;
+	
+	private ToggleButton linkButton; 
 
 	private final FxExecutionsInfo executionsInfo;
 
@@ -102,7 +107,7 @@ public class ProjectView extends AnchorPane
 						{
 							try
 							{
-								execution.complete().get(); // Wait until execution is complete.
+								execution.complete().get(); 
 							}
 							catch( InterruptedException | ExecutionException e )
 							{
@@ -137,7 +142,7 @@ public class ProjectView extends AnchorPane
 		AnchorPane.setTopAnchor( playbackPanel, 6d );
 		AnchorPane.setLeftAnchor( playbackPanel, 440.0 );
 		getChildren().add( playbackPanel );
-
+				
 		menuButton.textProperty().bind( Properties.forLabel( project ) );
 		designTab.setDetachableContent( new ProjectCanvasView( project ) );
 		statsTab.setDetachableContent( new StatisticsView( project, executionsInfo ) );
@@ -198,17 +203,28 @@ public class ProjectView extends AnchorPane
 					( ( ToolBar )lookup( ".tool-bar" ) )
 							.setStyle( "-fx-background-color: linear-gradient(-base-color-mid 0%, -base-color-mid 74%, #555555 75%, #DDDDDD 76%, -base-color-mid 77%, -base-color-mid 100%);" );
 					ScenarioToolbar toolbar = new ScenarioToolbar( scenario );
+					
+					linkButton = ToggleButtonBuilder.create().id( "link-scenario" ).styleClass("styleable-graphic").build();
+					Property<Boolean> linkedProperty = Properties.convert( scenario.followProjectProperty() );
+					linkButton.selectedProperty().bindBidirectional( linkedProperty );
+					AnchorPane.setLeftAnchor( linkButton, 473d );
+					AnchorPane.setTopAnchor( linkButton, 55d );
+					ProjectView.this.getChildren().add(linkButton); 
+					
 					StackPane.setAlignment( toolbar, Pos.TOP_CENTER );
 					CanvasView canvas = new CanvasView( scenario );
 					StackPane.setMargin( canvas, new Insets( 60, 0, 0, 0 ) );
 					StackPane pane = StackPaneBuilder.create().children( canvas, toolbar ).build();
 					designTab.setDetachableContent( pane );
+					
 					event.consume();
 				}
 				else if( event.getEventType() == IntentEvent.INTENT_CLOSE && event.getArg() instanceof SceneItem )
 				{
 					( ( ToolBar )lookup( ".tool-bar" ) )
 							.setStyle( "-fx-background-color: linear-gradient(to bottom, -base-color-mid 0%, -fx-header-color 75%, #000000 76%, #272727 81%);" );
+					ProjectView.this.getChildren().remove(linkButton);
+
 					Group canvas = ( Group )lookup( ".canvas-layer" );
 					StackPane grid = ( StackPane )lookup( ".grid-pane" );
 					StackPane parent = ( StackPane )grid.getParent();

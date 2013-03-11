@@ -37,8 +37,9 @@ public class ScenarioToolbar extends AnchorPane
 		AnchorPane.setTopAnchor( playbackPanel, 1d );
 		AnchorPane.setLeftAnchor( playbackPanel, 440d );
 		getChildren().add( playbackPanel );
+		
 	}
-
+	
 	@FXML
 	public void renameScenario()
 	{

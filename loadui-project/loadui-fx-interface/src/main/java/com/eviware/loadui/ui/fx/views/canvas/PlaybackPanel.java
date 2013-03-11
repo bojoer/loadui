@@ -93,7 +93,7 @@ public abstract class PlaybackPanel<T extends CounterDisplay, C extends CanvasIt
 
 	protected ToggleButton linkScenarioButton( SceneItem scenario )
 	{
-		ToggleButton linkButton = ToggleButtonBuilder.create().id( "link-scenario" ).text( "L" ).build();
+		ToggleButton linkButton = ToggleButtonBuilder.create().id( "link-scenario" ).styleClass( "styleable-graphic" ).build();
 		Property<Boolean> linkedProperty = Properties.convert( scenario.followProjectProperty() );
 		linkButton.selectedProperty().bindBidirectional( linkedProperty );
 		return linkButton;

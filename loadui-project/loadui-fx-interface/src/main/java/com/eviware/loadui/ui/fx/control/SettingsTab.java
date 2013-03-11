@@ -273,8 +273,7 @@ public class SettingsTab extends Tab
 		}
 	}
 
-	Map<Field<?>, Object> settingsStore = new HashMap<>();
-
+	private Map<Field<?>, Object> settingsStore = new HashMap<>();
 	private void pushValueByField()
 	{
 		for( Entry<Field<?>, Property<?>> entry : fieldToLoaduiProperty.entrySet() )
