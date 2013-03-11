@@ -206,7 +206,7 @@ public class ScrollableLineChart extends HBox implements ExecutionChart, Releasa
 				text.setText( millisToTickMark.changeZoomLevel( text.getText(), fromTickZoomLevel ) );
 			}
 		}
-		if( zoomLevel.equals( ZoomLevel.ALL ) )
+		if( zoomLevel == ZoomLevel.ALL )
 		{
 			setTickMode( ZoomLevel.forSpan( scrollBar.maxProperty().longValue() / 1000 ) );
 			xScale.setValue( ( 1000.0 * tickZoomLevelProperty.get().getInterval() )

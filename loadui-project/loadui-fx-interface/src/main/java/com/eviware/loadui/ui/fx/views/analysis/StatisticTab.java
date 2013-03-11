@@ -77,16 +77,13 @@ public class StatisticTab extends Tab implements Releasable
 
 	public final static StatisticPage createStatisticPage( StatisticPages pages, @Nullable String label )
 	{
-		StatisticPage page = pages.createPage( isNullOrEmpty( label ) ? "Page " + ( pages.getChildCount() + 1 ) : label );
-		return page;
+		return pages.createPage( isNullOrEmpty( label ) ? "Page " + ( pages.getChildCount() + 1 ) : label );
 	}
 
 	public static final ChartGroup createChartGroup( StatisticPage page, String chartType, String label )
 	{
-		ChartGroup group = page.createChartGroup( isNullOrEmpty( chartType ) ? LineChartView.class.getName() : chartType,
+		return page.createChartGroup( isNullOrEmpty( chartType ) ? LineChartView.class.getName() : chartType,
 				isNullOrEmpty( label ) ? "Chart " + ( page.getChildCount() + 1 ) : label );
-
-		return group;
 	}
 
 	public StatisticTab( StatisticPage page, Observable poll )

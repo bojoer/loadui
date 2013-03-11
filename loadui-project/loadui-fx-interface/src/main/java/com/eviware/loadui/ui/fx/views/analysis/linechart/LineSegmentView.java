@@ -40,7 +40,7 @@ public class LineSegmentView extends SegmentView<LineSegment>
 
 	private Region sliderNob;
 
-	private final String scalingStyleClass = "scaling";
+	private static final String scalingStyleClass = "scaling";
 
 	protected static final Logger log = LoggerFactory.getLogger( LineSegmentView.class );
 

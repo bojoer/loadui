@@ -41,7 +41,7 @@ public class NotificationPanel extends VBox implements TestEventObserver, EventH
 {
 
 	private static final Logger log = LoggerFactory.getLogger( NotificationPanel.class );
-	private static final DateFormat dateFormat = new SimpleDateFormat( "EEE MMM dd HH:mm:ss", Locale.ENGLISH );
+	private final DateFormat dateFormat = new SimpleDateFormat( "EEE MMM dd HH:mm:ss", Locale.ENGLISH );
 	private static final List<NotificationPanel> allPanels = new ArrayList<>();
 
 	private final DetachedTabsHolder tabsHolder;
@@ -87,7 +87,7 @@ public class NotificationPanel extends VBox implements TestEventObserver, EventH
 				return;
 
 			mouseOnPanel = false;
-			
+
 			if( anime.getCurrentState() == State.VISIBLE )
 				for( NotificationPanel panel : allPanels )
 					panel.anime.fadeAway();
@@ -102,7 +102,7 @@ public class NotificationPanel extends VBox implements TestEventObserver, EventH
 		{
 			if( anime.getCurrentState() == State.SLIDING_DOWN )
 				return;
-			
+
 			mouseOnPanel = true;
 			State state = anime.getCurrentState();
 			if( state == State.VISIBLE || state == State.FADING_AWAY )

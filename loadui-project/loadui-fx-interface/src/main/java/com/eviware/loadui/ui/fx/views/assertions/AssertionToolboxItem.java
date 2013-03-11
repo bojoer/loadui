@@ -15,7 +15,7 @@ import com.eviware.loadui.ui.fx.views.canvas.CanvasView;
 
 public class AssertionToolboxItem extends Label
 {
-	protected static final Logger log = LoggerFactory.getLogger( CanvasView.class );
+	protected static final Logger log = LoggerFactory.getLogger( AssertionToolboxItem.class );
 
 	private final AssertionItem<?> assertion;
 

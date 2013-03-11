@@ -37,9 +37,6 @@ public class ExecutionView extends Pane
 	@FXML
 	private MenuButton menuButton;
 
-	@FXML
-	private Rectangle graphArea;
-
 	private final Task<Void> loadAndOpenExecution;
 	private final boolean isDragIcon;
 	private final Execution execution;
@@ -170,7 +167,7 @@ public class ExecutionView extends Pane
 		{
 			log.debug( "Opening Execution " + execution.getLabel() );
 			fireEvent( IntentEvent.create( IntentEvent.INTENT_RUN_BLOCKING, loadAndOpenExecution ) );
-			
+
 			// cannot run this now or will have ConcurrentModificationException
 			Platform.runLater( new Runnable()
 			{

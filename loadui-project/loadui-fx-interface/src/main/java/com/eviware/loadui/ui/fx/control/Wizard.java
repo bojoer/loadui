@@ -30,8 +30,6 @@ public class Wizard extends ConfirmationDialog
 {
 	@Nonnull
 	private final TabPane tabPane = new TabPane();
-	@Nonnull
-	private final List<SettingsTab> tabs;
 
 	private final BooleanProperty isFirstStep = new SimpleBooleanProperty();
 	private final BooleanProperty isLastStep = new SimpleBooleanProperty();
@@ -39,7 +37,6 @@ public class Wizard extends ConfirmationDialog
 	public Wizard( Node owner, String title, @Nonnull final List<SettingsTab> tabs )
 	{
 		super( owner, title, "", true );
-		this.tabs = tabs;
 		tabPane.getTabs().addAll( tabs );
 		addStyleClass( "wizard" );
 		isFirstStep.bind( equal( 0, tabPane.getSelectionModel().selectedIndexProperty() ) );

@@ -16,7 +16,7 @@
 		<HBox styleClass="topExecMenu">
 			<MenuButton fx:id="menuButton" />
 		</HBox>
-		<Rectangle fx:id="graphArea" onMouseClicked="#openExecution" width="100"
+		<Rectangle onMouseClicked="#openExecution" width="100"
 			height="75" styleClass="execution-background" />
 	</VBox>
 
