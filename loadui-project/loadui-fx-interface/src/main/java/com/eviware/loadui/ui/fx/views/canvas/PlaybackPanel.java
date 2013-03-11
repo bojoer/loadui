@@ -45,7 +45,6 @@ public abstract class PlaybackPanel<T extends CounterDisplay, C extends CanvasIt
 		this.canvas = canvas;
 
 		playButton = new PlayButton( canvas );
-
 		time = timeCounter();
 		requests = timeRequests();
 		failures = timeFailures();
@@ -79,7 +78,7 @@ public abstract class PlaybackPanel<T extends CounterDisplay, C extends CanvasIt
 
 	protected Button resetButton()
 	{
-		return ButtonBuilder.create().text( "Reset" ).style( "-fx-font-size: 10px;" ).onAction( resetCounters ).build();
+		return ButtonBuilder.create().text( "Reset" ).style( "-fx-font-size: 9px;" ).onAction( resetCounters ).build();
 	}
 
 	protected static Separator separator()
@@ -87,14 +86,14 @@ public abstract class PlaybackPanel<T extends CounterDisplay, C extends CanvasIt
 		return new Separator( Orientation.VERTICAL );
 	}
 
-	protected Image image( String name )
+	final protected Image image( String name )
 	{
 		return new Image( getClass().getResourceAsStream( name ) );
 	}
 
 	protected ToggleButton linkScenarioButton( SceneItem scenario )
 	{
-		ToggleButton linkButton = ToggleButtonBuilder.create().id( "link-scenario" ).text( "L" ).build();
+		ToggleButton linkButton = ToggleButtonBuilder.create().id( "link-scenario" ).styleClass( "styleable-graphic" ).build();
 		Property<Boolean> linkedProperty = Properties.convert( scenario.followProjectProperty() );
 		linkButton.selectedProperty().bindBidirectional( linkedProperty );
 		return linkButton;

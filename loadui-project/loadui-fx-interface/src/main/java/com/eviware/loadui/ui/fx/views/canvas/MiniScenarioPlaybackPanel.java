@@ -13,12 +13,11 @@ public class MiniScenarioPlaybackPanel extends PlaybackPanel<CounterDisplay, Sce
 		super( canvas );
 
 		getStyleClass().setAll( "mini-playback-panel" );
-		setMaxHeight( 32 );
-		setMaxWidth( 255 );
+		setSpacing( 6 );
+		setPrefWidth( 310 );
 		setAlignment( Pos.CENTER );
-
-		getChildren().setAll( playButton, separator(), linkScenarioButton( canvas ), separator(), time, separator(),
-				requests, separator(), failures );
+		getChildren().setAll( separator(), playButton, separator(), linkScenarioButton( canvas ), time, requests,
+				failures );
 	}
 
 	@Override
@@ -30,12 +29,12 @@ public class MiniScenarioPlaybackPanel extends PlaybackPanel<CounterDisplay, Sce
 	@Override
 	protected CounterDisplay timeRequests()
 	{
-		return new ScenarioCounterDisplay( TIME_LABEL );
+		return new ScenarioCounterDisplay( REQUESTS_LABEL );
 	}
 
 	@Override
 	protected CounterDisplay timeFailures()
 	{
-		return new ScenarioCounterDisplay( TIME_LABEL );
+		return new ScenarioCounterDisplay( FAILURES_LABEL );
 	}
 }

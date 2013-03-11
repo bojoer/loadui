@@ -83,11 +83,6 @@
 	-fx-background-color: #111111;
 }
 
-.chart-line-symbol {
-    -fx-background-insets: 0, 5;
-    -fx-background-radius: 5px;
-    -fx-padding: 4px;
-}
 
 .chart-alternative-row-fill {
     -fx-fill: #111111;

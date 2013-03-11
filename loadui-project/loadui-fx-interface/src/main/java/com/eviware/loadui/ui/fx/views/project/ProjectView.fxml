@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.eviware.loadui.ui.fx.control.DetachableTab?>
+<?import com.eviware.loadui.ui.fx.views.project.ProjectPlaybackPanel?>
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
@@ -15,19 +16,21 @@
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.Separator?>
+
 
 <fx:root type="javafx.scene.layout.AnchorPane" styleClass="project-view"
 	xmlns:fx="http://javafx.com/fxml">
 	<stylesheets>
 		<URL value="@ProjectView.css" />
 	</stylesheets>
-	<VBox spacing="7" fillWidth="true" AnchorPane.topAnchor="0"
+	<VBox spacing="9" fillWidth="true" AnchorPane.topAnchor="0"
 		AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="0"
 		AnchorPane.leftAnchor="0">
-		<ToolBar minHeight="50" styleClass="header"/>
+		<ToolBar minHeight="55" styleClass="header"/>
 		<StackPane VBox.vgrow="always">
 			<padding>
-				<Insets top="-37" />
+				<Insets top="-45" />
 			</padding>
 			<children>
 				<TabPane id="project-tab-pane" tabClosingPolicy="unavailable">
@@ -37,8 +40,15 @@
 			</children>
 		</StackPane>
 	</VBox>
+	<HBox maxWidth="200" maxHeight="60" alignment="CENTER_RIGHT" AnchorPane.topAnchor="9" AnchorPane.rightAnchor="12" spacing="12">
+		<Separator orientation="vertical"/>
+		<Button fx:id="summaryButton" id="summaryButton" styleClass="styleable-graphic, toolbar-button" onAction="#openSummaryPage" />
+		<Button fx:id="settingsButton" id="settingsButton" styleClass="styleable-graphic, toolbar-button" onAction="#openSettings" />
+		<Button fx:id="openHelpPageButton" id="openHelpPageButton" styleClass="styleable-graphic, toolbar-button" onAction="#openHelpPage" />
+		<Button fx:id="closeProjectButton" id="closeProjectButton" styleClass="styleable-graphic, toolbar-button" onAction="#closeProject" />
+	</HBox>	
 	<MenuButton maxWidth="240" fx:id="menuButton"
-		AnchorPane.topAnchor="13" AnchorPane.leftAnchor="80">
+		AnchorPane.topAnchor="10" AnchorPane.leftAnchor="80">
 		<items>
 			<MenuItem fx:id="clone" id="clone" text="Rename..."
 				onAction="#renameProject" />
@@ -50,10 +60,4 @@
 			<MenuItem fx:id="close" id="close" text="Close" onAction="#closeProject" />
 		</items>
 	</MenuButton>
-	<HBox maxWidth="200" maxHeight="60" alignment="CENTER_RIGHT" AnchorPane.topAnchor="7" AnchorPane.rightAnchor="10">
-		<Button fx:id="summaryButton" id="summaryButton" styleClass="styleable-graphic, toolbar-button" onAction="#openSummaryPage" />
-		<Button fx:id="settingsButton" id="settingsButton" styleClass="styleable-graphic, toolbar-button" onAction="#openSettings" />
-		<Button fx:id="openHelpPageButton" id="openHelpPageButton" styleClass="styleable-graphic, toolbar-button" onAction="#openHelpPage" />
-		<Button fx:id="closeProjectButton" id="closeProjectButton" styleClass="styleable-graphic, toolbar-button" onAction="#closeProject" />
-	</HBox>
 </fx:root>

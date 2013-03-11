@@ -34,10 +34,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.LoadUI;
+import com.eviware.loadui.api.execution.TestState;
 import com.eviware.loadui.api.messaging.ConnectionListener;
 import com.eviware.loadui.api.messaging.MessageEndpoint;
 import com.eviware.loadui.api.messaging.MessageListener;
 import com.eviware.loadui.api.messaging.VersionMismatchException;
+import com.eviware.loadui.api.testevents.MessageLevel;
+import com.eviware.loadui.api.testevents.TestEventManager;
+import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.messaging.ChannelRoutingSupport;
 import com.google.common.collect.Queues;
 import com.google.common.collect.Sets;
@@ -171,8 +175,10 @@ public class ClientSocketMessageEndpoint implements MessageEndpoint
 					{
 						if( !LoadUI.AGENT_VERSION.equals( data ) )
 						{
-							log.warn( "Cannot connect to server with different version number than the client: {} != {}",
-									LoadUI.AGENT_VERSION, data );
+							BeanInjector.getBean( TestEventManager.class ).logMessage(
+									MessageLevel.ERROR,
+									"Cannot connect to server with different version number than the client: "
+											+ LoadUI.AGENT_VERSION + " != " + data );
 							routingSupport.fireMessage( ERROR_CHANNEL, ClientSocketMessageEndpoint.this,
 									new VersionMismatchException( data.toString() ) );
 						}

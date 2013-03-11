@@ -41,7 +41,7 @@ public class NotificationPanel extends VBox implements TestEventObserver, EventH
 {
 
 	private static final Logger log = LoggerFactory.getLogger( NotificationPanel.class );
-	private static final DateFormat dateFormat = new SimpleDateFormat( "EEE MMM dd HH:mm:ss", Locale.ENGLISH );
+	private final DateFormat dateFormat = new SimpleDateFormat( "EEE MMM dd HH:mm:ss", Locale.ENGLISH );
 	private static final List<NotificationPanel> allPanels = new ArrayList<>();
 
 	private final DetachedTabsHolder tabsHolder;
@@ -59,6 +59,7 @@ public class NotificationPanel extends VBox implements TestEventObserver, EventH
 	private Label msgText;
 
 	private Pane mainView;
+	private boolean mouseOnPanel = false;
 
 	private final Rectangle wholeWindowRec = new Rectangle( 5000, 5000, Color.TRANSPARENT );
 
@@ -72,6 +73,41 @@ public class NotificationPanel extends VBox implements TestEventObserver, EventH
 			for( Node child : getChildren() )
 				totalHeight += ( ( Pane )child ).getHeight();
 			setMaxHeight( totalHeight );
+			detectMouseMovementAnywhere( true );
+		}
+
+	};
+
+	private EventHandler<MouseEvent> mouseExitedPanelHandler = new EventHandler<MouseEvent>()
+	{
+		@Override
+		public void handle( MouseEvent event )
+		{
+			if( !mouseOnPanel )
+				return;
+
+			mouseOnPanel = false;
+
+			if( anime.getCurrentState() == State.VISIBLE )
+				for( NotificationPanel panel : allPanels )
+					panel.anime.fadeAway();
+		}
+	};
+
+	private EventHandler<MouseEvent> mouseEnteredPanelHandler = new EventHandler<MouseEvent>()
+	{
+
+		@Override
+		public void handle( MouseEvent event )
+		{
+			if( anime.getCurrentState() == State.SLIDING_DOWN )
+				return;
+
+			mouseOnPanel = true;
+			State state = anime.getCurrentState();
+			if( state == State.VISIBLE || state == State.FADING_AWAY )
+				for( NotificationPanel panel : allPanels )
+					panel.thisOnMouseEnteredPanel();
 		}
 
 	};
@@ -95,6 +131,8 @@ public class NotificationPanel extends VBox implements TestEventObserver, EventH
 		this.tabsHolder = tabsHolder;
 		FXMLUtils.load( this );
 		allPanels.add( this );
+		setOnMouseEntered( mouseEnteredPanelHandler );
+		setOnMouseExited( mouseExitedPanelHandler );
 	}
 
 	@FXML
@@ -103,10 +141,6 @@ public class NotificationPanel extends VBox implements TestEventObserver, EventH
 		log.debug( "Initializing" );
 		setVisible( false );
 		wholeWindowRec.addEventHandler( MouseEvent.MOUSE_MOVED, this );
-
-		setOnMouseEntered( mouseEnteredHandler() );
-		setOnMouseExited( mouseExitedHandler() );
-
 	}
 
 	@FXML
@@ -170,7 +204,7 @@ public class NotificationPanel extends VBox implements TestEventObserver, EventH
 		else
 		{
 			msgCount.setText( "" );
-			detectMouseMovement( false );
+			detectMouseMovementAnywhere( false );
 			final String dateStr = dateFormat.format( new Date() );
 			msgText.setText( message );
 			dateText.setText( dateStr );
@@ -199,14 +233,14 @@ public class NotificationPanel extends VBox implements TestEventObserver, EventH
 			{
 				setMaxHeight( -1 );
 				anime.slideDown().then( resizePanel );
-				detectMouseMovement( true );
 			}
 		} );
 
 	}
 
-	private void detectMouseMovement( boolean enable )
+	private void detectMouseMovementAnywhere( boolean enable )
 	{
+		log.debug( "Detecting mouse movements? " + enable );
 		if( enable )
 			mainView.getChildren().add( wholeWindowRec );
 		else
@@ -217,12 +251,13 @@ public class NotificationPanel extends VBox implements TestEventObserver, EventH
 	public void handle( MouseEvent event )
 	{
 		for( NotificationPanel panel : allPanels )
-			panel.thisHandle();
+			panel.mouseMovedSomehwere();
 	}
 
-	private void thisHandle()
+	private void mouseMovedSomehwere()
 	{
-		detectMouseMovement( false );
+		log.debug( "Moused moved somewhere" );
+		detectMouseMovementAnywhere( false );
 		fadeAwayTask = new TimerTask()
 		{
 			@Override
@@ -271,46 +306,10 @@ public class NotificationPanel extends VBox implements TestEventObserver, EventH
 
 	}
 
-	private EventHandler<MouseEvent> mouseExitedHandler()
+	private void thisOnMouseEnteredPanel()
 	{
-		return new EventHandler<MouseEvent>()
-		{
-			@Override
-			public void handle( MouseEvent event )
-			{
-				log.debug( "Mouse Existed" );
-				if( anime.getCurrentState() == State.VISIBLE )
-				{
-					for( NotificationPanel panel : allPanels )
-						panel.anime.fadeAway();
-				}
-			}
-		};
-	}
-
-	private EventHandler<MouseEvent> mouseEnteredHandler()
-	{
-		return new EventHandler<MouseEvent>()
-		{
-
-			@Override
-			public void handle( MouseEvent event )
-			{
-				log.debug( "Mouse ENTERED" );
-				State state = anime.getCurrentState();
-				if( state == State.VISIBLE || state == State.FADING_AWAY )
-				{
-					for( NotificationPanel panel : allPanels )
-						panel.thisOnMouseEntered();
-				}
-			}
-
-		};
-	}
-
-	private void thisOnMouseEntered()
-	{
-		anime.stopAnyRunningAnimation();
+		if( anime.getCurrentState() != State.SLIDING_DOWN )
+			anime.stopAnyRunningAnimation();
 		if( fadeAwayTask != null )
 			fadeAwayTask.cancel();
 	}

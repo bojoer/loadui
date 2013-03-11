@@ -3,12 +3,10 @@ package com.eviware.loadui.ui.fx.views.analysis.linechart;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.fx;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.ofCollection;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.transform;
-import static com.google.common.collect.Sets.newHashSet;
 import static javafx.beans.binding.Bindings.bindContent;
 import static javafx.beans.binding.Bindings.createLongBinding;
 import static javafx.beans.binding.Bindings.createStringBinding;
 
-import java.util.Set;
 import java.util.concurrent.Callable;
 
 import javafx.beans.InvalidationListener;
@@ -19,7 +17,6 @@ import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -30,12 +27,14 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+
+import javax.annotation.OverridingMethodsMustInvokeSuper;
 
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatter;
@@ -49,35 +48,20 @@ import com.eviware.loadui.api.statistics.model.chart.line.LineSegment;
 import com.eviware.loadui.api.statistics.model.chart.line.Segment;
 import com.eviware.loadui.api.statistics.model.chart.line.TestEventSegment;
 import com.eviware.loadui.api.statistics.store.Execution;
+import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.ui.fx.api.analysis.ExecutionChart;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.ManualObservable;
 import com.eviware.loadui.ui.fx.util.ObservableLists;
-import com.eviware.loadui.ui.fx.views.canvas.CanvasObjectView;
 import com.eviware.loadui.util.execution.TestExecutionUtils;
-import com.eviware.loadui.util.statistics.ChartUtils;
 import com.google.common.base.Function;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import com.google.common.collect.Sets;
 
-public class ScrollableLineChart extends HBox implements ExecutionChart
+public class ScrollableLineChart extends HBox implements ExecutionChart, Releasable
 {
 	protected ObservableValue<Execution> currentExecution;
 
 	protected ObservableList<SegmentView<?>> segmentViews;
 	protected ObservableList<Series<Number, Number>> seriesList;
-
-	protected final LoadingCache<XYChart.Series<?, ?>, StringProperty> eventSeriesStyles = CacheBuilder.newBuilder()
-			.build( new CacheLoader<XYChart.Series<?, ?>, StringProperty>()
-			{
-				@Override
-				public StringProperty load( Series<?, ?> key ) throws Exception
-				{
-					return new SimpleStringProperty();
-				}
-			} );
 
 	public static final PeriodFormatter timeFormatter = new PeriodFormatterBuilder().printZeroNever().appendWeeks()
 			.appendSuffix( "w" ).appendSeparator( " " ).appendDays().appendSuffix( "d" ).appendSeparator( " " )
@@ -99,6 +83,8 @@ public class ScrollableLineChart extends HBox implements ExecutionChart
 	protected final DoubleProperty currentExecutionLenght = new SimpleDoubleProperty( 0 );
 
 	protected final ManualObservable manualDataUpdate = new ManualObservable();
+
+	protected final LineChartView chartView;
 
 	protected static final Logger log = LoggerFactory.getLogger( ScrollableLineChart.class );
 	private final MillisToTickMark millisToTickMark = new MillisToTickMark( tickZoomLevelProperty, timeFormatter );
@@ -124,8 +110,9 @@ public class ScrollableLineChart extends HBox implements ExecutionChart
 	@FXML
 	protected Label zoomLevel;
 
-	public ScrollableLineChart()
+	public ScrollableLineChart( LineChartView lineChartView )
 	{
+		this.chartView = lineChartView;
 		FXMLUtils.load( this, this,
 				ScrollableLineChart.class.getResource( ScrollableLineChart.class.getSimpleName() + ".fxml" ) );
 	}
@@ -199,30 +186,6 @@ public class ScrollableLineChart extends HBox implements ExecutionChart
 
 		} );
 
-		// legend colors and event colors
-		getSegments().getChildren().addListener( new InvalidationListener()
-		{
-			@Override
-			public void invalidated( Observable _ )
-			{
-				int i = 0;
-				for( Series<?, ?> series : getLineChart().getData() )
-				{
-					if( i < getSegments().getChildren().size() )
-					{
-						( ( SegmentView<Segment> )getSegments().getChildren().get( i ) ).setColor( ChartUtils.lineToColor(
-								series, getLineChart().getData() ) );
-						if( getSegments().getChildren().get( i ) instanceof EventSegmentView )
-							eventSeriesStyles.getUnchecked( series ).set(
-									"-fx-stroke: " + ChartUtils.lineToColor( series, getLineChart().getData() ) + ";" );
-						manualDataUpdate.fireInvalidation();
-					}
-
-					i++ ;
-				}
-			}
-		} );
-
 		log.debug( "initializing.. done" );
 	}
 
@@ -243,7 +206,7 @@ public class ScrollableLineChart extends HBox implements ExecutionChart
 				text.setText( millisToTickMark.changeZoomLevel( text.getText(), fromTickZoomLevel ) );
 			}
 		}
-		if( zoomLevel.equals( ZoomLevel.ALL ) )
+		if( zoomLevel == ZoomLevel.ALL )
 		{
 			setTickMode( ZoomLevel.forSpan( scrollBar.maxProperty().longValue() / 1000 ) );
 			xScale.setValue( ( 1000.0 * tickZoomLevelProperty.get().getInterval() )
@@ -290,8 +253,7 @@ public class ScrollableLineChart extends HBox implements ExecutionChart
 	}
 
 	@Override
-	public void setChartProperties( final ObservableValue<Execution> currentExecution, LineChartView chartView,
-			Observable poll )
+	public void setChartProperties( final ObservableValue<Execution> currentExecution, Observable poll )
 	{
 		this.currentExecution = currentExecution;
 
@@ -309,7 +271,7 @@ public class ScrollableLineChart extends HBox implements ExecutionChart
 
 		final SegmentToSeriesFunction segmentToSeries = new SegmentToSeriesFunction( currentExecution,
 				javafx.collections.FXCollections.observableArrayList( currentExecution, position, poll,
-						segmentBox.scaleUpdate(), manualDataUpdate, currentExecutionLenght ), this, eventSeriesStyles );
+						segmentBox.chartUpdate(), manualDataUpdate, currentExecutionLenght ), this );
 
 		final ObservableList<Segment> segmentsList = fx( ofCollection( chartView, LineChartView.SEGMENTS, Segment.class,
 				chartView.getSegments() ) );
@@ -323,10 +285,7 @@ public class ScrollableLineChart extends HBox implements ExecutionChart
 			{
 				while( c.next() )
 				{
-					for( Series s : ObservableLists.getActuallyRemoved( c ) )
-					{
-						s.setData( FXCollections.observableArrayList() );
-					}
+					clearSeries( ObservableLists.getActuallyRemoved( c ) );
 				}
 			}
 		} );
@@ -336,6 +295,23 @@ public class ScrollableLineChart extends HBox implements ExecutionChart
 		bindContent( getLineChart().getData(), seriesList );
 		bindContent( getSegments().getChildren(), segmentViews );
 
+	}
+
+	@Override
+	@OverridingMethodsMustInvokeSuper
+	public void release()
+	{
+		for( SegmentView segmentView : segmentViews )
+			segmentView.delete();
+		clearSeries( seriesList );
+	}
+
+	private static void clearSeries( Iterable<? extends Series> series )
+	{
+		for( Series s : series )
+		{
+			s.setData( FXCollections.observableArrayList() );
+		}
 	}
 
 	public DoubleProperty maxProperty()
@@ -396,9 +372,9 @@ public class ScrollableLineChart extends HBox implements ExecutionChart
 		public SegmentView<?> apply( final Segment segment )
 		{
 			if( segment instanceof LineSegment )
-				return new LineSegmentView( ( LineSegment )segment, segmentBox.isExpandedProperty() );
+				return new LineSegmentView( ( LineSegment )segment, chartView, segmentBox.isExpandedProperty() );
 			else
-				return new EventSegmentView( ( TestEventSegment )segment, segmentBox.isExpandedProperty() );
+				return new EventSegmentView( ( TestEventSegment )segment, chartView, segmentBox.isExpandedProperty() );
 		}
 	}
 
@@ -406,6 +382,12 @@ public class ScrollableLineChart extends HBox implements ExecutionChart
 	public Node getNode()
 	{
 		return this;
+	}
+
+	@Override
+	public Color getColor( Segment segment, Execution execution )
+	{
+		return Color.web( segment.getAttribute( SegmentView.COLOR_ATTRIBUTE, "#FFFFFF" ) );
 	}
 
 }

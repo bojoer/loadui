@@ -26,11 +26,16 @@
 	-fx-shape-icon-detach-arrow: "M 292.013,415.784 292.013,417.784 299.599,417.784 291.599,425.782 293.013,427.196 301.013,419.198 301.013,426.786 303.013,426.786 303.013,415.784 Z";
 	
 	/** Reusable color variables */
-	-fx-header-color: #808080;
+	-fx-header-color: #888888;
 	-base-color-dark: #545454;
-	-base-color-mid: #b3b3b3;
+	-base-color-mid: #b2b2b2;
 	-base-color-light: #ededed;
+	-dropshadow-dark: dropshadow( gaussian, #000000, 6, 0.8, 0, 0 );
+	-dropshadow-light: dropshadow( gaussian, #DDDDDD, 6, 0.8, 0, 0 );
+	-innershadow-dark: innershadow( three-pass-box, #EEEEEE, 5, 0.1, 0, 5);
+	-innershadow-light: innershadow( three-pass-box, #111111, 5, 0.1, 0, 5);
 }
+
 
 /**
  * Text 
@@ -99,8 +104,7 @@
 	-fx-padding: 3;
 	-fx-background-radius: 50;
 	-graphic-color: lightgray;
-	
-	
+		
 	-fx-background-color: 
 		black,
 		-graphic-color;
@@ -210,7 +214,6 @@
 	-fx-effect: null;
 }
 
-
 /**
  * Navigation button styles
  */
@@ -233,6 +236,17 @@
 	-fx-shape: -fx-shape-navigation-down;
 }
 
+.toggle-button{
+	-fx-background-color: transparent; 
+	-fx-border-color: transparent;
+	-fx-border-radius: 4;
+}
+
+.toggle-button:hover{
+	-fx-background-color: linear-gradient(to bottom, #AAAAAA 0%, #CCCCCC 50%, #999999 100%); 		
+	-fx-border-radius: 4;
+}
+
 /**
  * Menu-Button
  */
@@ -251,16 +265,90 @@
 	-fx-border-radius: 0;
 }
 
-.toggle-button{
-	-fx-background-color: transparent; 
-	-fx-border-color: transparent;
-	-fx-border-radius: 4;
+.menu-button .label{
+	-fx-font-size: 12;
 }
 
-.toggle-button:hover{
-	-fx-background-color: linear-gradient(to bottom, #AAAAAA 0%, #CCCCCC 50%, #999999 100%); 		
-	-fx-border-radius: 4;
+/**
+ * Regular playback button
+ */
+.play-button .toggle-button{
+	-fx-background-color: linear-gradient(to bottom, #DBDBDB 0%, #757575 100%); 
+	-fx-border-color: linear-gradient(to bottom, #424242 0%, A7A7A 100%);
+	-fx-padding: 2;
+	-fx-background-radius: 40;  
+	-fx-background-insets: 5;
+	-fx-border-radius: 25; 
+	-fx-border-width: 4; 
+	-fx-border-color: linear-gradient(to bottom, #424242 0%, #797979 100%); 
 }
+
+.play-button .toggle-button:hover{
+	-fx-background-color: linear-gradient(to bottom, #F0F0F0 0%, #CECECE 100%);
+	-fx-border-radius: 20; 
+	-fx-background-insets: 5;
+}
+
+.play-button .toggle-button:pressed{
+	-fx-background-color: linear-gradient(to bottom, #959595 0%, #cdcdcd 100%)
+}
+
+.play-button .toggle-button:selected{
+	-fx-background-color: linear-gradient(to bottom, #5A5A5A 0%, #989898 100%); 
+	-fx-padding: 6;
+	-fx-background-insets: 6;
+	-fx-border-width: 2; 
+	-fx-border-color: #000000; 
+}
+
+.play-button .toggle-button:selected:hover{
+	-fx-border-radius: 20; 
+	-fx-background-color: linear-gradient(to bottom, #ADADAD 0%, #898989 100%);
+}
+
+.play-button .toggle-button:selected:hover:pressed{
+	-fx-background-color: linear-gradient(to bottom, #7A7A7A 0%, #898989 100%)
+}
+
+.play-button .toggle-button .graphic{
+	-fx-shape: "m261.03247,246.33658l43.49469,-46.59081l43.49469,46.59081l-86.98938,0z"; 
+	-fx-effect: dropshadow( gaussian, #D6D6D6, 0.5, 1, 1, -1 ); 
+	-fx-rotate: 90;
+	-fx-translate-x: 1; 
+	-fx-scale-x: 0.6;
+	-fx-scale-y: 0.4; 
+	-fx-padding: 10; 
+	-fx-background-color: #6D6D6D;    
+}
+
+.play-button .toggle-button .secondary-graphic{
+	-fx-padding: 0; 
+	-fx-scale-x: 0.6; 
+	-fx-scale-y: 0.6;
+	-fx-background-color: #6D6D6D;    
+}
+
+.play-button .toggle-button:selected .secondary-graphic{
+	-fx-padding: 8; 
+	-fx-background-color: linear-gradient(to bottom, #C8C8C8, #E5E5E5);   
+}
+
+.play-button .toggle-button:selected .graphic{
+	-fx-padding: 0;
+}
+
+
+/*Inner and outer area that overlaps spinner to make it look like it should. */
+.outer-spinner-overlay{
+	-fx-background-radius: 25; 
+	-fx-background-color: #404040; 
+}
+
+.inner-spinner-overlay{
+	-fx-background-color: #202020; 
+	-fx-background-insets: 4; 
+	-fx-background-radius: 25;
+ }
 
 /*
  * Combo-box
@@ -351,7 +439,6 @@
 /**
  * MainButton styles
  */
- 
 .main-button {
 	-fx-background-radius: 32;
 	-fx-padding: 2 -26 -8 -6;
@@ -428,7 +515,6 @@
 	-fx-padding: 0 0 0 0;
 	-fx-alignment: center;
 }
-
 .tool-box .nav {
 	/* changes size for nav buttons */
 	-fx-padding:  -2 14;
@@ -678,7 +764,7 @@
 }
 
 .knob.bounded .ticks {
-	-fx-shape:   "M 0,0 L 99,-2 99,2 0,0 93,35 91,41 0,0 72,68 68,72 0,0 38,92 38,92 0,0 0,100 0,100 0,0 -38,92 -38,92 0,0 -68,72 -72,68 0,0 -91,41 -93,35 0,0 -99,2 -99,-2 0,0 -93,-35 -91,-41 0,0 -72,-68 -68,-72 0,0 -41,-91 -35,-93 0,0 -2,-99 2,-99 0,0 35,-93 41,-91 0,0 68,-72 72,-68 0,0 91,-41 93,-35 0,0";
+	-fx-shape: "M 0,0 L 99,-2 99,2 0,0 93,35 91,41 0,0 72,68 68,72 0,0 38,92 38,92 0,0 0,100 0,100 0,0 -38,92 -38,92 0,0 -68,72 -72,68 0,0 -91,41 -93,35 0,0 -99,2 -99,-2 0,0 -93,-35 -91,-41 0,0 -72,-68 -68,-72 0,0 -41,-91 -35,-93 0,0 -2,-99 2,-99 0,0 35,-93 41,-91 0,0 68,-72 72,-68 0,0 91,-41 93,-35 0,0";
 	-fx-background-color: #999999;
 	-fx-background-insets: -3;
 }
@@ -784,7 +870,6 @@
  * Separators
  * 
  */
-
 .separator .line{
 	-fx-border-color: #B4B4B4; 
 	-fx-border-style: solid; 
@@ -809,11 +894,26 @@
 	-fx-padding: 0;	
 }
 
+
+.progress-bar .bar{
+	-fx-background-color: #7FF400; 
+	-fx-scale-y: 0.5;
+}
+
+.progress-bar .track{
+	-fx-background-color: #646464; 
+	-fx-scale-y: 0.5; 
+}
+
+.progress-bar{
+	-fx-scale-y: 0.7;
+	-fx-background-color: transparent; 
+}
+
 /**
  * Controls
  */
- 
-.invalid {
+ .invalid {
 	-fx-background: #f26f6f;
 	-fx-control-inner-background: #fbecec;
 }

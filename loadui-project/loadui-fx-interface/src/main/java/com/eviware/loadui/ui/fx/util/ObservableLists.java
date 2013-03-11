@@ -23,6 +23,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.WeakListChangeListener;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
@@ -39,8 +41,10 @@ import com.eviware.loadui.api.events.EventFirer;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.WeakEventHandler;
 import com.eviware.loadui.api.statistics.model.chart.line.Segment;
+import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.ui.fx.views.projectref.ProjectRefView;
 import com.eviware.loadui.util.BeanInjector;
+import com.eviware.loadui.util.ReleasableUtils;
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
@@ -81,7 +85,7 @@ public class ObservableLists
 		}
 		catch( InvalidSyntaxException e )
 		{
-			//This should never happen.
+			// This should never happen.
 			e.printStackTrace();
 			throw new InternalError();
 		}
@@ -675,8 +679,11 @@ public class ObservableLists
 			readOnlyList = FXCollections.unmodifiableObservableList( list );
 
 			context.addServiceListener( new WeakServiceListener( context, serviceListener ), filter );
-			//TODO: We can't use generics here until the OSGi jars stop using compilation flags that are not compatible with Java7.
-			//We MIGHT get duplicates here, since it's possible a service was added in-between the addServiceListener() and the getServiceReferences() calls.
+			// TODO: We can't use generics here until the OSGi jars stop using
+			// compilation flags that are not compatible with Java7.
+			// We MIGHT get duplicates here, since it's possible a service was
+			// added in-between the addServiceListener() and the
+			// getServiceReferences() calls.
 			for( ServiceReference/* <E> */ref : Objects.firstNonNull(
 					context.getServiceReferences( type.getName(), filter ), new ServiceReference[0] ) )
 			{
@@ -803,5 +810,23 @@ public class ObservableLists
 					.copyOf( Sets.difference( newHashSet( c.getRemoved() ), newHashSet( c.getAddedSubList() ) ) );
 		}
 		return ImmutableSet.of();
+	}
+
+	public static void releaseElementsWhenRemoved( ObservableList<? extends Node> list )
+	{
+		list.addListener( new ListChangeListener<Node>()
+		{
+			@Override
+			public void onChanged( javafx.collections.ListChangeListener.Change<? extends Node> c )
+			{
+				while( c.next() )
+				{
+					for( Node node : getActuallyRemoved( c ) )
+					{
+						NodeUtils.releaseRecursive( node );
+					}
+				}
+			}
+		} );
 	}
 }

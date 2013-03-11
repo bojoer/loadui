@@ -22,21 +22,20 @@
 	<stylesheets>
 		<URL value="@ScenarioToolbar.css" />
 	</stylesheets>
-
 	<VBox fillWidth="true" AnchorPane.topAnchor="0"
 		AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="0"
 		AnchorPane.leftAnchor="0">
-		<ToolBar minHeight="60" />
+		<ToolBar minHeight="40" />
 	</VBox>
 	<MenuButton fx:id="menuButton" maxWidth="240"
-		AnchorPane.topAnchor="18" AnchorPane.leftAnchor="80">
+		AnchorPane.topAnchor="6" AnchorPane.leftAnchor="81">
 		<items>
 			<MenuItem fx:id="clone" id="clone" text="Rename" onAction="#renameScenario" />
 			<MenuItem fx:id="close" id="close" text="Close" onAction="#closeScenario" />
 		</items>
 	</MenuButton>
 	<HBox maxWidth="200" maxHeight="60" alignment="CENTER_RIGHT"
-		AnchorPane.topAnchor="18" AnchorPane.rightAnchor="10">
+		AnchorPane.topAnchor="3" AnchorPane.rightAnchor="9">
 		<Button fx:id="openHelpPageButton" id="openHelpPageButton" styleClass="styleable-graphic, toolbar-button" onAction="#openHelpPage" />
 		<Button fx:id="closeScenarioButton" id="closeScenarioButton" styleClass="styleable-graphic, toolbar-button" onAction="#closeScenario" />
 	</HBox>

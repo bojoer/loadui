@@ -208,7 +208,7 @@ public class SelectableImpl implements Selectable
 			s.select();
 	}
 
-	private static void deselectAll()
+	public static void deselectAll()
 	{
 		for( Iterator<SelectableImpl> i = currentlySelected.iterator(); i.hasNext(); )
 		{

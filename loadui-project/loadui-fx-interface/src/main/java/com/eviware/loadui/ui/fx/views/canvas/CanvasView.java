@@ -210,8 +210,6 @@ public class CanvasView extends StackPane
 				fx( ofCollection( canvas, CanvasItem.CONNECTIONS, Connection.class, canvas.getConnections() ) ),
 				CONNECTION_TO_VIEW );
 
-		getStyleClass().add( "canvas-view" );
-
 		FXMLUtils.load( this, this, CanvasView.class.getResource( CanvasView.class.getSimpleName() + ".fxml" ) );
 	}
 
@@ -596,11 +594,11 @@ public class CanvasView extends StackPane
 		{
 			if( event.getData() instanceof Terminal )
 			{
-				final Terminal draggedTerminal = ( Terminal )event.getData();
 				DragNode dragNode = ( DragNode )event.getDraggable();
 
 				if( event.getEventType() == DraggableEvent.DRAGGABLE_STARTED )
 				{
+					final Terminal draggedTerminal = ( Terminal )event.getData();
 					connectionView = Iterables.find( connections, new Predicate<ConnectionView>()
 					{
 						@Override

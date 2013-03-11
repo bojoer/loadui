@@ -52,7 +52,7 @@ public class ProjectCreatedWithoutAgentsState extends TestState
 	protected void exitToParent() throws Exception
 	{
 		log.debug( "Deleting project." );
-		GUI.getController().click( "#projectRefCarousel .project-ref-view .menu-button" ).click( "#delete" );
+		GUI.getController().click( "#projectRefCarousel .project-ref-view .menu-button" ).click( "#delete-item" );
 		final Node projectCarousel = find( "#projectRefCarousel" );
 
 		awaitCondition( new Callable<Boolean>()

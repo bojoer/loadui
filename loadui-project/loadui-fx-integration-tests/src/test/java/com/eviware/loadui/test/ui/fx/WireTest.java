@@ -8,14 +8,15 @@ import java.util.concurrent.Callable;
 
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import com.eviware.loadui.test.categories.IntegrationTest;
-import com.eviware.loadui.test.ui.fx.GUI;
 import com.eviware.loadui.test.ui.fx.states.ProjectLoadedWithoutAgentsState;
 import com.eviware.loadui.ui.fx.util.test.TestFX;
 import com.eviware.loadui.util.test.TestUtils;
@@ -79,7 +80,7 @@ public class WireTest
 	{
 		for( int components = 2; components > 0; components-- )
 		{
-			controller.click( ".component-view #menu" ).click( "#delete" );
+			controller.click( ".component-view #menu" ).click( "#delete-item" );
 		}
 	}
 
@@ -95,6 +96,23 @@ public class WireTest
 		assertThat( TestFX.findAll( ".connection-view" ).size(), is( 1 ) );
 
 		controller.type( KeyCode.DELETE );
+		assertThat( TestFX.findAll( ".connection-view" ).size(), is( 0 ) );
+	}
+
+	@Test
+	@Ignore( "LOADUI-64 - Skipped this for release 2.5 as implementation would be too time-consuming" )
+	public void shouldDeleteSelectedWiresByRightClickMenu()
+	{
+		Set<Node> outputs = TestFX.findAll( ".canvas-object-view .terminal-view.output-terminal" );
+		Set<Node> inputs = TestFX.findAll( ".canvas-object-view .terminal-view.input-terminal" );
+
+		controller.drag( Iterables.get( inputs, 0 ) ).to( Iterables.get( outputs, 2 ) );
+
+		assertThat( TestFX.findAll( ".connection-view" ).size(), is( 1 ) );
+		
+		controller.move( Iterables.get( inputs, 0 ) ).moveBy( 0, -25 ).click( MouseButton.SECONDARY )
+				.click( "#delete-wire" );
+		
 		assertThat( TestFX.findAll( ".connection-view" ).size(), is( 0 ) );
 	}
 

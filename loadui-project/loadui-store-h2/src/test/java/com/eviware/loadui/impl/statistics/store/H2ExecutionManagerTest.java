@@ -171,7 +171,7 @@ public class H2ExecutionManagerTest
 	@Test
 	public void testWriteTestEvent()
 	{
-		Execution e = h2.startExecution( "test event sample execution", System.currentTimeMillis() );
+		Execution e = h2.startExecution( "test event execution", System.currentTimeMillis() );
 
 		StringBuffer sb = new StringBuffer();
 		for( int i = 0; i < 10000; i++ )
@@ -223,6 +223,45 @@ public class H2ExecutionManagerTest
 		assertTrue( source1List.size() == 10 );
 
 		h2.delete( e.getId() );
+	}
+
+	@Test
+	public void testReadWithInterpolationlevel()
+	{
+		Execution e = h2.startExecution( "test event execution2", System.currentTimeMillis() );
+		try
+		{
+			StringBuffer sb = new StringBuffer();
+			for( int i = 0; i < 1000; i++ )
+				sb.append( "large-amount-of-data-" );
+			byte[] data = sb.toString().getBytes();
+
+			@SuppressWarnings( "unchecked" )
+			Source<TestEvent> source1 = mock( TestEvent.Source.class );
+			when( source1.getLabel() ).thenReturn( "sample-source-label-1" );
+			when( source1.getHash() ).thenReturn( "-sample-source-hash-1" );
+			when( source1.getData() ).thenReturn( data );
+			when( source1.getType() ).thenReturn( TestEvent.class );
+
+			for( int i = 0; i < 30; i++ )
+			{
+				h2.writeTestEvent( "test-event-type-label", source1, i, data, 0 );
+			}
+
+			for( int i = 0; i < 10; i++ )
+			{
+				h2.writeTestEvent( "test-event-type-label", source1, i + 10, data, 1 );
+			}
+
+			assertEquals( 30, Iterables.size( h2.readTestEventRange( e.getId(), Long.MIN_VALUE, Long.MAX_VALUE, 0,
+					new ArrayList<TestEventSourceConfig>() ) ) );
+			assertEquals( 10, Iterables.size( h2.readTestEventRange( e.getId(), Long.MIN_VALUE, Long.MAX_VALUE, 1,
+					new ArrayList<TestEventSourceConfig>() ) ) );
+		}
+		finally
+		{
+			h2.delete( e.getId() );
+		}
 	}
 
 	@Test

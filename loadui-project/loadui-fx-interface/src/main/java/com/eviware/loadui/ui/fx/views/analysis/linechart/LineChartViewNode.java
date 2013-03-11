@@ -73,7 +73,7 @@ public class LineChartViewNode extends VBox
 		log.debug( "new LineChartViewNode created! " );
 
 		NonSingletonFactory nonSingletonFactory = getNonSingletonFactory();
-		executionChart = nonSingletonFactory.createExecutionChart();
+		executionChart = nonSingletonFactory.createExecutionChart( chartView );
 
 		BeanInjector.getBean( TestRunner.class ).registerTask( executionTask, Phase.START, Phase.STOP );
 
@@ -102,7 +102,7 @@ public class LineChartViewNode extends VBox
 
 		chartContainer.getChildren().add( executionChart.getNode() );
 
-		executionChart.setChartProperties( currentExecution, chartView, poll );
+		executionChart.setChartProperties( currentExecution, poll );
 
 		executionChart.titleProperty().bind( Properties.forLabel( chartView ) );
 

@@ -13,14 +13,17 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ContextMenuBuilder;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
-import javafx.scene.control.MenuItemBuilder;
+import javafx.scene.control.MenuItem;
+import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
@@ -39,6 +42,8 @@ import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.ProjectRef;
 import com.eviware.loadui.api.model.WorkspaceItem;
+import com.eviware.loadui.ui.fx.MenuItemsProvider;
+import com.eviware.loadui.ui.fx.MenuItemsProvider.Options;
 import com.eviware.loadui.ui.fx.api.input.DraggableEvent;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.control.Carousel;
@@ -57,6 +62,8 @@ import com.google.common.io.Files;
 
 public class WorkspaceView extends StackPane
 {
+	public static final String CREATE_PROJECT = "Create project";
+
 	protected static final Logger log = LoggerFactory.getLogger( WorkspaceView.class );
 
 	private static final String LATEST_DIRECTORY = "gui.latestDirectory";
@@ -90,6 +97,7 @@ public class WorkspaceView extends StackPane
 		this.workspace = workspace;
 		projectRefList = ObservableLists.fx( ObservableLists.ofCollection( workspace, WorkspaceItem.PROJECT_REFS,
 				ProjectRef.class, workspace.getProjectRefs() ) );
+
 		projectRefViews = ObservableLists.transform( projectRefList, new Function<ProjectRef, ProjectRefView>()
 		{
 			@Override
@@ -203,6 +211,37 @@ public class WorkspaceView extends StackPane
 	private void initProjectRefCarousel()
 	{
 		final Observables.Group group = Observables.group();
+		final MenuItem[] carouselMenuItems = MenuItemsProvider.createWith( projectRefCarousel, null,
+				Options.are().noDelete().noRename().create( ProjectItem.class, CREATE_PROJECT ) ).items();
+
+		final ContextMenu ctxMenu = ContextMenuBuilder.create().items( carouselMenuItems ).build();
+		projectRefCarousel.setContextMenu( ctxMenu );
+
+		projectRefCarousel.setOnContextMenuRequested( new EventHandler<ContextMenuEvent>()
+		{
+			@Override
+			public void handle( ContextMenuEvent event )
+			{
+				if( projectRefCarousel.getItems().isEmpty() || isTargetOnMenuButton( ( Node )event.getTarget() ) )
+					ctxMenu.getItems().setAll();
+				else
+					ctxMenu.getItems().setAll(
+							( event.getTarget() instanceof Region ) ? carouselMenuItems : projectRefCarousel.getSelected()
+									.getMenuItemProvider().items() );
+			}
+
+			boolean isTargetOnMenuButton( Node target )
+			{
+				String classNames = className( target.getParent() ) + className( target.getParent().getParent() )
+						+ className( target.getParent().getParent().getParent() );
+				return classNames.contains( "MenuButton" );
+			}
+
+			String className( Object obj )
+			{
+				return obj.getClass().getSimpleName();
+			}
+		} );
 
 		bindSorted( projectRefCarousel.getItems(), projectRefViews, Ordering.usingToString(), group );
 
@@ -243,16 +282,6 @@ public class WorkspaceView extends StackPane
 				}
 			}
 		} );
-
-		projectRefCarousel.setContextMenu( ContextMenuBuilder.create()
-				.items( MenuItemBuilder.create().text( "Create Project" ).onAction( new EventHandler<ActionEvent>()
-				{
-					@Override
-					public void handle( ActionEvent arg0 )
-					{
-						fireEvent( IntentEvent.create( IntentEvent.INTENT_CREATE, ProjectItem.class ) );
-					}
-				} ).build() ).build() );
 	}
 
 	public void importProject()

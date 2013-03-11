@@ -1,16 +1,19 @@
 package com.eviware.loadui.ui.fx.control;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBuilder;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextBuilder;
@@ -23,6 +26,7 @@ import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.control.fields.Field;
 import com.eviware.loadui.ui.fx.control.fields.Validatable;
 import com.eviware.loadui.ui.fx.control.fields.ValidatableCheckBox;
+import com.eviware.loadui.ui.fx.control.fields.ValidatableComboBoxField;
 import com.eviware.loadui.ui.fx.control.fields.ValidatableLongField;
 import com.eviware.loadui.ui.fx.control.fields.ValidatableStringField;
 import com.eviware.loadui.ui.fx.control.fields.ValidatableTextField;
@@ -35,8 +39,8 @@ import com.google.common.collect.Iterables;
 public class SettingsTab extends Tab
 {
 	private final BiMap<Field<?>, Property<?>> fieldToLoaduiProperty = HashBiMap.create();
-	private final BiMap<Field<?>, javafx.beans.property.Property<?>> fieldToJavafxProperty = HashBiMap.create();
 	private final BiMap<Field<?>, FieldSaveHandler<?>> fieldToFieldSaveHandler = HashBiMap.create();
+	private final BiMap<Field<?>, javafx.beans.property.Property<?>> fieldToJavafxProperty = HashBiMap.create();
 	private final VBox vBox = new VBox( SettingsDialog.VERTICAL_SPACING );
 
 	SettingsTab( String label )
@@ -66,11 +70,32 @@ public class SettingsTab extends Tab
 			vBox.getChildren().add( checkBox );
 			fieldToLoaduiProperty.put( checkBox, property );
 		}
+		else if( property.getType().isEnum() )
+		{
+			Object[] enumValues = new Object[0];
+			try
+			{
+				enumValues = ( Object[] )property.getType().getMethod( "values" ).invoke( null );
+			}
+			catch( IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
+					| SecurityException e )
+			{
+				e.printStackTrace();
+			}
+			ValidatableComboBoxField combo = new ValidatableComboBoxField();
+			combo.setItems( FXCollections.observableArrayList( enumValues ) );
+			combo.getSelectionModel().select( property.getValue() );
+			combo.setId( UIUtils.toCssId( label ) );
+			vBox.getChildren().add( combo );
+
+			// TODO: We need a ValidatableComboBoxField for this.
+			fieldToLoaduiProperty.put( combo, property );
+		}
 		else
 		{
 			ValidatableTextField<?> textField;
-			
-			if( property.getType().equals( String.class ))
+
+			if( property.getType().equals( String.class ) )
 			{
 				textField = new ValidatableStringField();
 				textField.setText( Objects.firstNonNull( property.getValue(), "" ).toString() );
@@ -127,68 +152,148 @@ public class SettingsTab extends Tab
 					+ initialValue.getClass().getName() );
 		}
 	}
-	
-	void addActionButton(final ActionLayoutComponent action){
-		
-		//TODO: Fix property-bug. Still never gets the correct properties, so this is currently not working, but the button is in place and does not do anyone harm.
-		try {
-			final Text label = TextBuilder.create().text(((Callable)action.get("status")).call().toString()).build();
-			final Button button = ButtonBuilder.create().text( action.getLabel() ).disable( !action.isEnabled() ).build();
-		
-			final Runnable status = new Runnable(){
-			public void run(){
-				if(action.get("status") instanceof Callable<?>){
-					 try {
-							 
-						@SuppressWarnings("rawtypes")
-						Object obj = ((Callable)action.get("status")).call();
 
-						 if(obj instanceof Boolean){
-							 Boolean connected = (Boolean)obj;
-							 if(connected){
-								 label.setText("Connected to monitor!");
-							 }else{
-								 label.setText("Unable to connect to monitor!");
-							 }
-						 }else{
-							 label.setText(obj.toString());
-						 }
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
+	@SuppressWarnings( "unchecked" )
+	void addActionButton( final ActionLayoutComponent action )
+	{
+
+		if( action.getLabel().compareTo( "Test Connection" ) == 0 )
+		{
+			try
+			{
+				Object currentStatus = action.get( "status" );
+
+				if( !( currentStatus instanceof Callable<?> ) )
+				{
+					throw new IllegalArgumentException( "The status closure is currently not represented by a callable" );
 				}
+
+				final Text statusLabel = TextBuilder.create().text( "Untested..." ).id( UIUtils.toCssId( "status" ) )
+						.build();
+
+				final Button button = ButtonBuilder.create().text( action.getLabel() ).disable( !action.isEnabled() )
+						.id( UIUtils.toCssId( action.getLabel() ) ).build();
+
+				final Runnable statusCallback = new Runnable()
+				{
+					public void run()
+					{
+						if( action.get( "status" ) instanceof Callable<?> )
+						{
+							try
+							{
+								Object obj = ( ( Callable<Object> )action.get( "status" ) ).call();
+								if( obj instanceof Boolean )
+								{
+									Boolean connected = ( Boolean )obj;
+									if( connected )
+									{
+										statusLabel.setText( "Connected to monitor!" );
+									}
+									else
+									{
+										statusLabel.setText( "Unable to connect to monitor!" );
+									}
+								}
+								else if( obj instanceof String )
+								{
+									String response = ( String )obj;
+									if( response.contains( "Exception" ) )
+									{
+										statusLabel.setText( "Unable to connect to monitor!" );
+									}
+									else
+									{
+										statusLabel.setText( response );
+									}
+								}
+							}
+							catch( Exception e )
+							{
+								e.printStackTrace();
+							}
+							finally
+							{
+								restoreBackedUpSettings();
+							}
+						}
+					}
+				};
+
+				button.setOnAction( new EventHandler<ActionEvent>()
+				{
+					@Override
+					public void handle( ActionEvent arg0 )
+					{
+						backupCurrentSettings();
+
+						button.fireEvent( IntentEvent.create( IntentEvent.INTENT_RUN_BLOCKING, action.getAction() ) );
+						button.fireEvent( IntentEvent.create( IntentEvent.INTENT_RUN_BLOCKING, statusCallback ) );
+					}
+				} );
+				vBox.getChildren().addAll( button, statusLabel );
 			}
-		};
-		
-		button.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent arg0) {
-
-				 for(Object field : fieldToLoaduiProperty.keySet()){
-					 if(field instanceof TextField){
-						 Property<?> prop = fieldToLoaduiProperty.get(field);
-						 prop.setValue(((TextField) field).getText()); 									 
-					 }
-					 
-					 if(field instanceof CheckBox){
-						 Property<?> prop = fieldToLoaduiProperty.get(field);
-						 prop.setValue(((CheckBox) field).isSelected()); 		
-					 }
-				 }				
-
-				button.fireEvent(IntentEvent.create(
-						IntentEvent.INTENT_RUN_BLOCKING, action.getAction()));
-				button.fireEvent(IntentEvent.create(
-						IntentEvent.INTENT_RUN_BLOCKING, status));
+			catch( Exception e1 )
+			{
+				e1.printStackTrace();
 			}
-		});		
-
-		vBox.getChildren().addAll(button, label);
-		} catch (Exception e1) {
-			e1.printStackTrace();
+		}
+		else
+		{
+			throw new UnsupportedOperationException( "This operation is not yet available for label " + action.getLabel() );
 		}
 	}
-	
+
+	private void backupCurrentSettings()
+	{
+		ObservableList<Tab> tabList = getTabPane().getTabs();
+
+		for( Tab tab : tabList )
+		{
+			if( tab instanceof SettingsTab )
+			{
+				SettingsTab stab = ( ( SettingsTab )tab );
+				stab.pushValueByField();
+				stab.save();
+			}
+		}
+	}
+
+	private void restoreBackedUpSettings()
+	{
+		ObservableList<Tab> tabList = getTabPane().getTabs();
+
+		for( Tab tab : tabList )
+		{
+			if( tab instanceof SettingsTab )
+			{
+				SettingsTab stab = ( ( SettingsTab )tab );
+				stab.popValueByField();
+			}
+		}
+	}
+
+	private Map<Field<?>, Object> settingsStore = new HashMap<>();
+	private void pushValueByField()
+	{
+		for( Entry<Field<?>, Property<?>> entry : fieldToLoaduiProperty.entrySet() )
+		{
+			Field<?> field = entry.getKey();
+			Property<?> prop = entry.getValue();
+			settingsStore.put( field, prop.getValue() );
+		}
+	}
+
+	private void popValueByField()
+	{
+		for( Field<?> field : settingsStore.keySet() )
+		{
+			Object item = settingsStore.get( field );
+			fieldToLoaduiProperty.get( field ).setValue( item );
+		}
+		settingsStore.clear();
+	}
+
 	boolean validate()
 	{
 		boolean wasValid = true;
@@ -207,19 +312,19 @@ public class SettingsTab extends Tab
 		for( Entry<Field<?>, Property<?>> entry : fieldToLoaduiProperty.entrySet() )
 		{
 			Field<?> field = entry.getKey();
-			entry.getValue().setValue( field.getValue() );
+			entry.getValue().setValue( field.getFieldValue() );
 		}
 		for( Entry<Field<?>, javafx.beans.property.Property<?>> entry : fieldToJavafxProperty.entrySet() )
 		{
 			Field<?> field = entry.getKey();
 			javafx.beans.property.Property property = entry.getValue();
-			property.setValue( field.getValue() );
+			property.setValue( field.getFieldValue() );
 		}
 		for( Entry<Field<?>, FieldSaveHandler<?>> entry : fieldToFieldSaveHandler.entrySet() )
 		{
 			Field<?> field = entry.getKey();
 			FieldSaveHandler saveHandler = entry.getValue();
-			saveHandler.save( field.getValue() );
+			saveHandler.save( field.getFieldValue() );
 		}
 	}
 
@@ -236,11 +341,12 @@ public class SettingsTab extends Tab
 		{
 			tab = new SettingsTab( label );
 		}
-		
-		public Builder button( ActionLayoutComponent action){
-			
-			tab.addActionButton(action);
-			return this; 
+
+		public Builder button( ActionLayoutComponent action )
+		{
+
+			tab.addActionButton( action );
+			return this;
 		}
 
 		public <T> Builder field( @Nonnull String label, @Nonnull Property<T> loaduiProperty )

@@ -18,6 +18,7 @@ package com.eviware.loadui.test.ui.fx.states;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -61,39 +62,83 @@ public class ProjectCreatedWithoutAgentsStateTest
 	}
 
 	@Test
-	public void shouldRenameProject()
+	public void shouldRenameProjectThoughMenuButton()
 	{
-		GUI.getController().click( "#projectRefCarousel .project-ref-view #menuButton" ).click( "#rename" )
-				.type( "Renamed Project" ).type( KeyCode.ENTER );
+		final String newProjectName = "Renamed Project";
+		GUI.getController().click( "#projectRefCarousel .project-ref-view #menuButton" ).click( "#rename-item" )
+				.type( newProjectName ).type( KeyCode.ENTER );
+		renameTest( newProjectName );
+	}
 
+	@Test
+	public void shouldRenameProjectThoughContextMenu()
+	{
+		String newProjectName = "Another Project";
+		GUI.getController().move( "#projectRefCarousel .project-ref-view" ).click( MouseButton.SECONDARY )
+				.click( "#rename-item" ).type( newProjectName ).type( KeyCode.ENTER );
+		renameTest( newProjectName );
+	}
+
+	private void renameTest( final String expectedName )
+	{
 		WorkspaceItem workspace = BeanInjector.getBean( WorkspaceProvider.class ).getWorkspace();
 		Iterables.find( workspace.getProjectRefs(), new Predicate<ProjectRef>()
 		{
 			@Override
 			public boolean apply( ProjectRef input )
 			{
-				return input.getLabel().equals( "Renamed Project" );
+				return input.getLabel().equals( expectedName );
 			}
 		} );
 	}
 
 	@Test
-	public void shouldCloneProject()
+	public void shouldCloneProjectThroughMenuButton()
 	{
-		GUI.getController().click( "#projectRefCarousel .project-ref-view .menu-button" ).click( "#clone" ).type( "Copy" )
-				.click( ".check-box" ).click( "#default" );
-
 		WorkspaceItem workspace = BeanInjector.getBean( WorkspaceProvider.class ).getWorkspace();
-		assertThat( workspace.getProjectRefs().size(), is( 2 ) );
+		String name = "Cloned";
+		int projectCount = workspace.getProjectRefs().size();
+		GUI.getController().click( "#projectRefCarousel .project-ref-view .menu-button" ).click( "#clone-item" )
+				.type( name ).click( ".check-box" ).click( "#default" );
+		projectCreatedTest( projectCount + 1, name );
+	}
+
+	@Test
+	public void shouldCloneProjectThroughContextMenu()
+	{
+		WorkspaceItem workspace = BeanInjector.getBean( WorkspaceProvider.class ).getWorkspace();
+		String name = "Copy";
+		int projectCount = workspace.getProjectRefs().size();
+		GUI.getController().click( "#projectRefCarousel .project-ref-view .menu-button" ).click( "#clone-item" )
+				.type( name ).click( ".check-box" ).click( "#default" );
+		projectCreatedTest( projectCount + 1, name );
+	}
+
+	@Test
+	public void shouldCreateProjectThroughContextMenu()
+	{
+		WorkspaceItem workspace = BeanInjector.getBean( WorkspaceProvider.class ).getWorkspace();
+		String name = "Awesome Project";
+		int projectCount = workspace.getProjectRefs().size();
+		GUI.getController().move( "#projectRefCarousel .prev" ).click( MouseButton.SECONDARY ).sleep( 500 )
+				.click( "#create-item" ).type( name ).click( ".check-box" ).click( "#default" );
+		projectCreatedTest( projectCount + 1, name );
+	}
+
+	private void projectCreatedTest( int expectedCount, final String name )
+	{
+		WorkspaceItem workspace = BeanInjector.getBean( WorkspaceProvider.class ).getWorkspace();
+		assertThat( workspace.getProjectRefs().size(), is( expectedCount ) );
 		ProjectRef clonedRef = Iterables.find( workspace.getProjectRefs(), new Predicate<ProjectRef>()
 		{
 			@Override
 			public boolean apply( ProjectRef input )
 			{
-				return input.getLabel().equals( "Copy" );
+				return input.getLabel().equals( name );
 			}
 		} );
 
 		clonedRef.delete( true );
 	}
+
 }

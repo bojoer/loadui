@@ -155,9 +155,8 @@ public class StatisticTree extends TreeView<Labeled> implements Validatable
 	{
 		List<TreeItem<Labeled>> selectedItems = getSelectionModel().getSelectedItems();
 		List<Selection> selections = new ArrayList<>( selectedItems.size() );
-		for( int i = 0; i < selectedItems.size(); i++ )
+		for( TreeItem<Labeled> item : selectedItems )
 		{
-			TreeItem<Labeled> item = selectedItems.get( i );
 			if( item.getChildren().isEmpty() ) // forbid selecting a parent (which is possible in multi-selections)
 				selections.add( new Selection( item, isSource( item ) ) );
 		}

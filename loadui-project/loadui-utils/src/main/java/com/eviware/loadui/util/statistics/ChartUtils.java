@@ -1,37 +1,41 @@
 package com.eviware.loadui.util.statistics;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Random;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.ImmutableList;
 
 public class ChartUtils
 {
-	public static String lineToColor( Object line, List<?> listOfLines )
-	{
-		int seriesOrder = listOfLines.indexOf( line );
+	private static final List<String> colors = ImmutableList.of( "#f9d900", "#a9e200", "#22bad9", "#0181e2", "#2f357f",
+			"#860061", "#c62b00", "#ff5700" );
 
-		return lineToColor( seriesOrder );
-	}
+	public final static Logger log = LoggerFactory.getLogger( ChartUtils.class );
 
-	public static String lineToColor( int number )
+	public static String getNewRandomColor( Collection<String> currentColorList )
 	{
-		switch( number % 8 )
+		String color;
+		ArrayList<String> newColors = new ArrayList<>();
+
+		newColors.addAll( colors );
+		newColors.removeAll( currentColorList );
+
+		Random rand = new Random();
+		if( !newColors.isEmpty() )
 		{
-		case 0 :
-			return "#f9d900";
-		case 1 :
-			return "#a9e200";
-		case 2 :
-			return "#22bad9";
-		case 3 :
-			return "#0181e2";
-		case 4 :
-			return "#2f357f";
-		case 5 :
-			return "#860061";
-		case 6 :
-			return "#c62b00";
-		case 7 :
-			return "#ff5700";
+			color = newColors.get( rand.nextInt( newColors.size() ) );
 		}
-		throw new RuntimeException( "This is mathematically impossible!" );
+		else
+		{
+			log.debug( "no new colors in list, randomising a new one ( will be duplicate of already used color)" );
+			color = colors.get( rand.nextInt( colors.size() ) );
+		}
+
+		return color;
 	}
 }

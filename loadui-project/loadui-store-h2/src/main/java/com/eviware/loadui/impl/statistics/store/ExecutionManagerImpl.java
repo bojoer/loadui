@@ -713,7 +713,7 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 			try
 			{
 				eventTable.insert( data );
-				log.debug( "Wrote TestEvent[{}] from {}", typeLabel, source );
+				log.debug( "Wrote TestEvent[{}] from {} with interpolation level " + interpolationLevel, typeLabel, source );
 			}
 			catch( Exception e )
 			{
@@ -758,7 +758,7 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 				throw new RuntimeException( "Unable to create test event data table!", e );
 			}
 		}
-		return ( TestEventTable )tableRegistry.getTable( dbName, buildTestEventTableName( 0 ) );
+		return ( TestEventTable )tableRegistry.getTable( dbName, name );
 	}
 
 	private TestEventSourceConfig getConfigForSource( String typeLabel, TestEvent.Source<?> source )
