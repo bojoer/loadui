@@ -758,7 +758,7 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 				throw new RuntimeException( "Unable to create test event data table!", e );
 			}
 		}
-		return ( TestEventTable )tableRegistry.getTable( dbName, buildTestEventTableName( interpolationLevel ) );
+		return ( TestEventTable )tableRegistry.getTable( dbName, name );
 	}
 
 	private TestEventSourceConfig getConfigForSource( String typeLabel, TestEvent.Source<?> source )
