@@ -5,15 +5,14 @@ import javafx.beans.Observable;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
-import javafx.scene.control.MenuItemBuilder;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleButtonBuilder;
 
 import com.eviware.loadui.api.component.categories.OnOffCategory;
 import com.eviware.loadui.api.model.ComponentItem;
-import com.eviware.loadui.ui.fx.control.SettingsDialog;
+import com.eviware.loadui.ui.fx.MenuItemsProvider;
+import com.eviware.loadui.ui.fx.MenuItemsProvider.Options;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
-import com.eviware.loadui.ui.fx.util.LayoutContainerUtils;
 import com.eviware.loadui.ui.fx.util.Properties;
 import com.eviware.loadui.ui.fx.views.canvas.CanvasObjectView;
 
@@ -30,15 +29,9 @@ public class ComponentView extends CanvasObjectView
 
 		FXMLUtils.load( this, null, ComponentView.class.getResource( ComponentView.class.getSimpleName() + ".fxml" ) );
 
-		menuButton.getItems().add(
-				MenuItemBuilder.create().id( "settings" ).text( "Settings" ).onAction( new EventHandler<ActionEvent>()
-				{
-					@Override
-					public void handle( ActionEvent arg0 )
-					{
-						settings();
-					}
-				} ).build() );
+		menuButton.getItems().setAll(
+				MenuItemsProvider.createWith( this, getCanvasObject(),
+						Options.are().settings( "Component Settings", getComponent().getSettingsTabs() ) ).items() );
 
 		compactModeButton = ToggleButtonBuilder.create().id( "compact" ).text( "C" )
 				.selected( Boolean.parseBoolean( component.getAttribute( COMPACT_MODE_ATTRIBUTE, "false" ) ) )
@@ -70,13 +63,6 @@ public class ComponentView extends CanvasObjectView
 		return ( ComponentItem )getCanvasObject();
 	}
 
-	public void settings()
-	{
-		SettingsDialog settingsDialog = new SettingsDialog( this, "Component Settings",
-				LayoutContainerUtils.settingsTabsFromLayoutContainers( getComponent().getSettingsTabs() ) );
-		settingsDialog.show();
-	}
-
 	private void rebuildLayout()
 	{
 		Node layout = null;
@@ -102,5 +88,12 @@ public class ComponentView extends CanvasObjectView
 		{
 			return new ComponentView( component );
 		}
+	}
+
+	@Override
+	public void delete()
+	{
+		// TODO Auto-generated method stub
+
 	}
 }

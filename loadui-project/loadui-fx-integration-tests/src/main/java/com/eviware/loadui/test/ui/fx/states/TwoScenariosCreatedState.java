@@ -43,8 +43,8 @@ public class TwoScenariosCreatedState extends TestState
 	{
 		log.debug( "Deleting scenarios." );
 
-		GUI.getController().click( ".scenario-view #menu" ).click( "#delete" );
-		GUI.getController().click( ".scenario-view #menu" ).click( "#delete" );
+		GUI.getController().click( ".scenario-view #menu" ).click( "#delete-item" );
+		GUI.getController().click( ".scenario-view #menu" ).click( "#delete-item" );
 
 		TestUtils.awaitCondition( new Callable<Boolean>()
 		{

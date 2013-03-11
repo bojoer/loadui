@@ -80,7 +80,7 @@ public class WireTest
 	{
 		for( int components = 2; components > 0; components-- )
 		{
-			controller.click( ".component-view #menu" ).click( "#delete" );
+			controller.click( ".component-view #menu" ).click( "#delete-item" );
 		}
 	}
 

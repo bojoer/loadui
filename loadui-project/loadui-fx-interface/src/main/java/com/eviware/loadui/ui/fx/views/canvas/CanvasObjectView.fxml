@@ -30,12 +30,7 @@
 					</HBox>
 				</right>
 				<bottom>
-					<MenuButton fx:id="menuButton" id="menu" text="Menu">
-						<items>
-							<MenuItem fx:id="rename" id="rename" text="Rename" onAction="#rename" />
-							<MenuItem fx:id="delete" id="delete" text="Delete" onAction="#delete" />
-						</items>
-					</MenuButton>
+					<MenuButton fx:id="menuButton" id="menu" text="Menu" />
 				</bottom>
 			</BorderPane>
 			<StackPane fx:id="content" id="content" minWidth="80" minHeight="50">
