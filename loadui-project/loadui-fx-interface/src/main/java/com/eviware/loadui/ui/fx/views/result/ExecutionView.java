@@ -15,7 +15,6 @@ import javafx.scene.control.MenuItemBuilder;
 import javafx.scene.control.SeparatorMenuItemBuilder;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.shape.Rectangle;
 
 import javax.annotation.Nullable;
 

@@ -5,14 +5,19 @@ import javafx.beans.Observable;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.ContextMenuBuilder;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleButtonBuilder;
+import javafx.scene.input.ContextMenuEvent;
 
 import com.eviware.loadui.api.component.categories.OnOffCategory;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.ui.fx.MenuItemsProvider;
 import com.eviware.loadui.ui.fx.MenuItemsProvider.Options;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
+import com.eviware.loadui.ui.fx.util.NodeUtils;
 import com.eviware.loadui.ui.fx.util.Properties;
 import com.eviware.loadui.ui.fx.views.canvas.CanvasObjectView;
 
@@ -29,9 +34,21 @@ public class ComponentView extends CanvasObjectView
 
 		FXMLUtils.load( this, null, ComponentView.class.getResource( ComponentView.class.getSimpleName() + ".fxml" ) );
 
-		menuButton.getItems().setAll(
-				MenuItemsProvider.createWith( this, getCanvasObject(),
-						Options.are().settings( "Component Settings", getComponent().getSettingsTabs() ) ).items() );
+		MenuItem[] menuItems = MenuItemsProvider.createWith( this, getCanvasObject(),
+				Options.are().settings( "Component Settings", getComponent().getSettingsTabs() ) ).items();
+		menuButton.getItems().setAll( menuItems );
+		final ContextMenu ctxMenu = ContextMenuBuilder.create().items( menuItems ).build();
+
+		setOnContextMenuRequested( new EventHandler<ContextMenuEvent>()
+		{
+			@Override
+			public void handle( ContextMenuEvent _ )
+			{
+				// never show contextMenu when on top of the menuButton
+				if( !NodeUtils.isMouseOn( menuButton ) )
+					MenuItemsProvider.showContextMenu( menuButton, ctxMenu );
+			}
+		} );
 
 		compactModeButton = ToggleButtonBuilder.create().id( "compact" ).text( "C" )
 				.selected( Boolean.parseBoolean( component.getAttribute( COMPACT_MODE_ATTRIBUTE, "false" ) ) )
@@ -65,16 +82,9 @@ public class ComponentView extends CanvasObjectView
 
 	private void rebuildLayout()
 	{
-		Node layout = null;
-		boolean compact = compactModeButton.isSelected();
-		if( compact )
-		{
-			layout = ComponentLayoutUtils.instantiateLayout( getComponent().getCompactLayout() );
-		}
-		else
-		{
-			layout = ComponentLayoutUtils.instantiateLayout( getComponent().getLayout() );
-		}
+		Node layout = ComponentLayoutUtils.instantiateLayout( compactModeButton.isSelected() ? getComponent()
+				.getCompactLayout() : getComponent().getLayout() );
+
 		content.getChildren().setAll( layout );
 	}
 
@@ -90,10 +100,4 @@ public class ComponentView extends CanvasObjectView
 		}
 	}
 
-	@Override
-	public void delete()
-	{
-		// TODO Auto-generated method stub
-
-	}
 }

@@ -15,7 +15,6 @@
  */
 package com.eviware.loadui.impl.model;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EventObject;
@@ -1046,6 +1045,8 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 				break;
 			case POST_STOP :
 				terminalsEnabled = false;
+				break;
+			default :
 				break;
 			}
 		}

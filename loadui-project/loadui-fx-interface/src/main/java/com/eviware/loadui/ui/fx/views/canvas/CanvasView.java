@@ -6,10 +6,8 @@ import static com.eviware.loadui.ui.fx.util.ObservableLists.fx;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.ofCollection;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.ofServices;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.transform;
-import static com.google.common.collect.Sets.newHashSet;
 
 import java.util.Arrays;
-import java.util.Set;
 import java.util.concurrent.Callable;
 
 import javafx.application.Platform;
@@ -83,7 +81,6 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
-import com.google.common.collect.Sets;
 
 public class CanvasView extends StackPane
 {
@@ -145,7 +142,7 @@ public class CanvasView extends StackPane
 				}
 			} );
 
-			ConnectionView connectionView = new ConnectionView( connection, outputComponentView, inputComponentView );
+			final ConnectionView connectionView = new ConnectionView( connection, outputComponentView, inputComponentView );
 
 			ReadOnlyBooleanProperty selectedProperty = SelectableImpl.installSelectable( connectionView )
 					.selectedProperty();

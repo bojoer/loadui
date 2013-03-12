@@ -15,7 +15,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ContextMenuBuilder;
@@ -23,7 +22,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.ContextMenuEvent;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
@@ -49,6 +47,7 @@ import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.control.Carousel;
 import com.eviware.loadui.ui.fx.control.ToolBox;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
+import com.eviware.loadui.ui.fx.util.NodeUtils;
 import com.eviware.loadui.ui.fx.util.ObservableLists;
 import com.eviware.loadui.ui.fx.util.Observables;
 import com.eviware.loadui.ui.fx.util.Properties;
@@ -215,31 +214,21 @@ public class WorkspaceView extends StackPane
 				Options.are().noDelete().noRename().create( ProjectItem.class, CREATE_PROJECT ) ).items();
 
 		final ContextMenu ctxMenu = ContextMenuBuilder.create().items( carouselMenuItems ).build();
-		projectRefCarousel.setContextMenu( ctxMenu );
 
 		projectRefCarousel.setOnContextMenuRequested( new EventHandler<ContextMenuEvent>()
 		{
 			@Override
 			public void handle( ContextMenuEvent event )
 			{
-				if( projectRefCarousel.getItems().isEmpty() || isTargetOnMenuButton( ( Node )event.getTarget() ) )
-					ctxMenu.getItems().setAll();
-				else
-					ctxMenu.getItems().setAll(
-							( event.getTarget() instanceof Region ) ? carouselMenuItems : projectRefCarousel.getSelected()
-									.getMenuItemProvider().items() );
-			}
+				boolean hasProject = !projectRefCarousel.getItems().isEmpty();
+				if( hasProject && NodeUtils.isMouseOn( projectRefCarousel.getSelected().getMenuButton() ) )
+					return; // never show contextMenu when on top of the menuButton
 
-			boolean isTargetOnMenuButton( Node target )
-			{
-				String classNames = className( target.getParent() ) + className( target.getParent().getParent() )
-						+ className( target.getParent().getParent().getParent() );
-				return classNames.contains( "MenuButton" );
-			}
+				ctxMenu.getItems().setAll(
+						hasProject && NodeUtils.isMouseOn( projectRefCarousel.getSelected() ) ? projectRefCarousel
+								.getSelected().getMenuItemProvider().items() : carouselMenuItems );
+				MenuItemsProvider.showContextMenu( projectRefCarousel, ctxMenu );
 
-			String className( Object obj )
-			{
-				return obj.getClass().getSimpleName();
 			}
 		} );
 

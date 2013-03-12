@@ -1,34 +1,29 @@
 package com.eviware.loadui.ui.fx.util;
 
+import java.awt.MouseInfo;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.beans.value.ObservableValue;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.SnapshotResult;
 import javafx.scene.image.Image;
-import javafx.scene.image.WritableImage;
-import javafx.util.Callback;
 
 import javax.annotation.Nonnull;
 import javax.imageio.ImageIO;
 
 import org.apache.commons.codec.binary.Base64;
 
-import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.traits.Releasable;
 
 public final class NodeUtils
@@ -151,4 +146,25 @@ public final class NodeUtils
 			( ( Releasable )node ).release();
 		}
 	}
+	
+	/**
+	 * @param node
+	 * @return true if and only if the mouse pointer is on the given Node. The node's bounds are used to decide
+	 * whether this is the case or not.
+	 */
+	public static boolean isMouseOn(Node node) {
+		Point mouseLocation = MouseInfo.getPointerInfo().getLocation();
+		double windowX = node.getScene().getWindow().getX();
+		double windowY = node.getScene().getWindow().getY();
+		double sceneX = node.getScene().getX();
+		double sceneY = node.getScene().getY();
+		Bounds boundsInScene = node.localToScene( node.getBoundsInLocal() );
+		Point2D mouseLocationInScene = new Point2D(
+				mouseLocation.getX() - windowX - sceneX,
+				mouseLocation.getY() - windowY - sceneY );
+		boolean result = boundsInScene.contains( mouseLocationInScene );
+		return result;
+	}
+	
+	
 }

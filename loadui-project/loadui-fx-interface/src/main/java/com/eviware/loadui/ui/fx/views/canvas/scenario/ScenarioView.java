@@ -2,8 +2,12 @@ package com.eviware.loadui.ui.fx.views.canvas.scenario;
 
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.ContextMenuBuilder;
+import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
@@ -30,7 +34,21 @@ public class ScenarioView extends CanvasObjectView
 		FXMLUtils.load( content, new Controller(),
 				ScenarioView.class.getResource( ScenarioView.class.getSimpleName() + ".fxml" ) );
 
-		menuButton.getItems().setAll( MenuItemsProvider.createWith( this, getCanvasObject(), MENU_ITEM_OPTIONS ).items() );
+		MenuItem[] menuItems = MenuItemsProvider.createWith( this, getCanvasObject(), MENU_ITEM_OPTIONS ).items();
+		menuButton.getItems().setAll( menuItems );
+		final ContextMenu ctxMenu = ContextMenuBuilder.create().items( menuItems ).build();
+
+		setOnContextMenuRequested( new EventHandler<ContextMenuEvent>()
+		{
+			@Override
+			public void handle( ContextMenuEvent _ )
+			{
+				// never show contextMenu when on top of the menuButton
+				if( !NodeUtils.isMouseOn( menuButton ) )
+					MenuItemsProvider.showContextMenu( menuButton, ctxMenu );
+			}
+		} );
+
 	}
 
 	public SceneItem getScenario()
