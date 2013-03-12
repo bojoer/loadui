@@ -146,25 +146,24 @@ public final class NodeUtils
 			( ( Releasable )node ).release();
 		}
 	}
-	
+
 	/**
 	 * @param node
-	 * @return true if and only if the mouse pointer is on the given Node. The node's bounds are used to decide
-	 * whether this is the case or not.
+	 * @return true if and only if the mouse pointer is on the given Node. The
+	 *         node's bounds are used to decide whether this is the case or not.
 	 */
-	public static boolean isMouseOn(Node node) {
+	public static boolean isMouseOn( Node node )
+	{
 		Point mouseLocation = MouseInfo.getPointerInfo().getLocation();
 		double windowX = node.getScene().getWindow().getX();
 		double windowY = node.getScene().getWindow().getY();
 		double sceneX = node.getScene().getX();
 		double sceneY = node.getScene().getY();
 		Bounds boundsInScene = node.localToScene( node.getBoundsInLocal() );
-		Point2D mouseLocationInScene = new Point2D(
-				mouseLocation.getX() - windowX - sceneX,
-				mouseLocation.getY() - windowY - sceneY );
+		Point2D mouseLocationInScene = new Point2D( mouseLocation.getX() - windowX - sceneX, mouseLocation.getY()
+				- windowY - sceneY );
 		boolean result = boundsInScene.contains( mouseLocationInScene );
 		return result;
 	}
-	
-	
+
 }
