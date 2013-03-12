@@ -273,21 +273,22 @@
 /**
  * Regular playback button
  */
+
+
 .play-button .toggle-button{
 	-fx-background-color: linear-gradient(to bottom, #DBDBDB 0%, #757575 100%); 
-	-fx-border-color: linear-gradient(to bottom, #424242 0%, A7A7A 100%);
-	-fx-padding: 0.5;
-	-fx-background-radius: 40;  
-	-fx-background-insets: 5;
+	-fx-padding: 0;
+	-fx-background-radius: 25;  
+	-fx-background-insets: 0;
 	-fx-border-radius: 25; 
-	-fx-border-width: 4; 
-	-fx-border-color: linear-gradient(to bottom, #424242 0%, #797979 100%); 
+	-fx-border-width: 0; 
+	-fx-border-color: transparent; 
 }
 
 .play-button .toggle-button:hover{
 	-fx-background-color: linear-gradient(to bottom, #F0F0F0 0%, #CECECE 100%);
 	-fx-border-radius: 20; 
-	-fx-background-insets: 5;
+	-fx-background-insets: 0;
 }
 
 .play-button .toggle-button:pressed{
@@ -296,9 +297,9 @@
 
 .play-button .toggle-button:selected{
 	-fx-background-color: linear-gradient(to bottom, #5A5A5A 0%, #989898 100%); 
-	-fx-padding: 3.5;
+	-fx-padding: 5.5;
 	-fx-background-insets: 6;
-	-fx-border-width: 2; 
+	-fx-border-width: 0; 
 	-fx-border-color: #000000; 
 }
 
@@ -340,25 +341,33 @@
 	-fx-padding: 0;
 }
 
+.play-button-border{
+	-fx-fill: linear-gradient(to bottom, #424242 0%, #797979 100%); 
+	-fx-smooth: true; 
+}
 
 /*Inner and outer area that overlaps spinner to make it look like it should. */
 .outer-spinner-overlay{
 	-fx-background-radius: 25; 
-	-fx-background-color: #404040; 
+	-fx-background-color: transparent; 
+	-fx-border-color: black; 
+	-fx-border-width: 2; 
+	-fx-border-radius: 25; 
 }
 
 .inner-spinner-overlay{
-	-fx-background-color: #202020; 
+	-fx-background-color: black; 
 	-fx-background-insets: 4; 
 	-fx-background-radius: 25;
  }
+
  
  /*
   * Linking Buttons
   */
 #link-scenario.toggle-button{
 	-fx-background-color: linear-gradient(to bottom, #E1E1E1 0%, #767676 100%);
-	-fx-padding: 0 0 0 0; 
+	-fx-padding: 0; 
 	-fx-background-insets: 3 17 3 7; 
 	-fx-translate-x: 10;
 	-fx-translate-y: 0; 
@@ -939,12 +948,13 @@
 .spinner{
 	-fx-background-color: black; 
 	-fx-background-radius: 20; 
+	-fx-background-insets: 1; 
 	-fx-padding: 0; 
 }
 
 .progress-indicator{
 	-fx-progress-color: #FF0000; 
-	-fx-padding: 0;	
+	-fx-padding: 2;	
 }
 
 
@@ -975,14 +985,12 @@
 /**
  * Assertion bottom panel.
  */
- 
- .assertion-view {
+  .assertion-view {
  	-fx-background-color: #d6d6d6;
 	-fx-background-radius: 10;
 	-fx-padding: 2 10 10 10;
  }
- 
- 
+  
  /**
  * Chart Area Background.
  */
