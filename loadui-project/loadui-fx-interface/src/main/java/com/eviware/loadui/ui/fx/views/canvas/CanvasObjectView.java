@@ -26,6 +26,7 @@ import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.api.terminal.TerminalHolder;
 import com.eviware.loadui.api.traits.Deletable;
+import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.Properties;
 import com.eviware.loadui.ui.fx.views.canvas.component.ComponentView;
@@ -137,9 +138,13 @@ public abstract class CanvasObjectView extends StackPane implements Deletable
 			@Override
 			public void handle( MouseEvent event )
 			{
+				if( event.getEventType() == MouseEvent.MOUSE_CLICKED )
+					requestFocus();
+				
 				event.consume();
 			}
 		} );
+
 	}
 
 	public CanvasObjectItem getCanvasObject()
@@ -156,4 +161,12 @@ public abstract class CanvasObjectView extends StackPane implements Deletable
 	{
 		return inputTerminals;
 	}
+
+	@Override
+	public void delete()
+	{
+		// The CanvasObject will usually be a ComponentItemImpl which knows how to delete() itself
+		fireEvent( IntentEvent.create( IntentEvent.INTENT_DELETE, canvasObject ) );
+	}
+
 }
