@@ -1,34 +1,46 @@
 package com.eviware.loadui.ui.fx;
 
+import java.awt.MouseInfo;
+import java.awt.Point;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.scene.Node;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.MenuItemBuilder;
 import javafx.scene.control.SeparatorMenuItemBuilder;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.stage.WindowEvent;
 
-import com.eviware.loadui.api.layout.SettingsLayoutContainer;
 import com.eviware.loadui.api.traits.Deletable;
 import com.eviware.loadui.api.traits.Labeled.Mutable;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.control.SettingsDialog;
-import com.eviware.loadui.ui.fx.util.LayoutContainerUtils;
+import com.eviware.loadui.ui.fx.control.SettingsTab;
+import com.eviware.loadui.ui.fx.views.window.MainWindowView;
 import com.google.common.base.Preconditions;
 
 /**
- * Any standard GUI component which has a menu should use this provider to get its menu items.
+ * Any standard GUI component which has a menu should use this provider to get
+ * its menu items.
  * <p/>
- * Supported menu items include Open, Close, Clone, Rename, Delete, Save, Create and Settings. 
+ * Supported menu items include Open, Close, Clone, Rename, Delete, Save, Create
+ * and Settings.
+ * 
  * @author renato
- *
+ * 
  */
 public class MenuItemsProvider
 {
+
+	private static final ContextMenuEventHandler ctxMenuHandler = new ContextMenuEventHandler();
 
 	public static HasMenuItems createWith( Node eventFirer, Object eventArg, Options options )
 	{
@@ -39,7 +51,8 @@ public class MenuItemsProvider
 	{
 		List<MenuItem> items = new ArrayList<>( 6 );
 		if( options.open )
-			items.add( itemFor( "open-item", options.openLabel, eventHandler( IntentEvent.INTENT_OPEN, firer, eventArg ) ) );
+			items.add( itemFor( "open-item", options.openLabel,
+					eventHandler( IntentEvent.INTENT_OPEN, firer, eventArg, options.openActions ) ) );
 		if( options.rename && eventArg instanceof Mutable )
 			items.add( itemFor( "rename-item", options.renameLabel,
 					eventHandler( IntentEvent.INTENT_RENAME, firer, ( Mutable )eventArg ) ) );
@@ -49,7 +62,7 @@ public class MenuItemsProvider
 			items.add( itemFor( "clone-item", options.cloneLabel, eventHandler( IntentEvent.INTENT_CLONE, firer, eventArg ) ) );
 		if( options.delete && eventArg instanceof Deletable )
 			items.add( itemFor( "delete-item", options.deleteLabel,
-					eventHandler( IntentEvent.INTENT_DELETE, firer, ( Deletable )eventArg ) ) );
+					eventHandler( IntentEvent.INTENT_DELETE, firer, ( Deletable )eventArg, options.deleteActions ) ) );
 		if( options.close )
 			items.add( itemFor( "close-item", options.closeLabel, eventHandler( IntentEvent.INTENT_CLOSE, firer, eventArg ) ) );
 		if( options.settings )
@@ -98,15 +111,14 @@ public class MenuItemsProvider
 			@Override
 			public void handle( ActionEvent _ )
 			{
-				SettingsDialog settingsDialog = new SettingsDialog( firer, data.dialogTitle,
-						LayoutContainerUtils.settingsTabsFromLayoutContainers( data.tabs ) );
+				SettingsDialog settingsDialog = new SettingsDialog( firer, data.dialogTitle, data.tabs );
 				settingsDialog.show();
 			}
 		};
 	}
 
 	private static <T> EventHandler<ActionEvent> eventHandler( final EventType<IntentEvent<? extends T>> eventType,
-			final Node firer, final T target )
+			final Node firer, final T target, final Runnable... actions )
 	{
 		return new EventHandler<ActionEvent>()
 		{
@@ -114,8 +126,66 @@ public class MenuItemsProvider
 			public void handle( ActionEvent _ )
 			{
 				firer.fireEvent( IntentEvent.create( eventType, target ) );
+				for( Runnable action : actions )
+					Platform.runLater( action );
 			}
 		};
+	}
+
+	/**
+	 * This should be used when you want to add a context menu to a component
+	 * which does not support it. In JavaFX, only Control sub-classes support
+	 * ContextMenu natively.
+	 * 
+	 * @param owner
+	 *           any node in the DOM
+	 * @param ctxMenu
+	 *           to be shown
+	 */
+	public static void showContextMenu( Node owner, ContextMenu ctxMenu )
+	{
+		ctxMenuHandler.requestContextMenu( owner, ctxMenu );
+	}
+
+	private static class ContextMenuEventHandler implements EventHandler<MouseEvent>
+	{
+
+		final Rectangle wholeWindowRec = new Rectangle( 5000, 5000, Color.TRANSPARENT );
+		MainWindowView mainWindowView;
+		ContextMenu currentMenu;
+
+		@Override
+		public void handle( MouseEvent _ )
+		{
+			System.out.println( "Clicked on the wholeWindow Rectangle!!!!!" );
+			mainWindowView.getChildren().remove( wholeWindowRec );
+			currentMenu.hide();
+			currentMenu.removeEventHandler( MouseEvent.MOUSE_CLICKED, this );
+		}
+
+		void requestContextMenu( Node owner, final ContextMenu ctxMenu )
+		{
+			if( mainWindowView == null )
+			{
+				mainWindowView = ( MainWindowView )owner.getScene().getRoot();
+				wholeWindowRec.addEventHandler( MouseEvent.MOUSE_CLICKED, this );
+			}
+
+			Point mouseLocation = MouseInfo.getPointerInfo().getLocation();
+			currentMenu = ctxMenu;
+			ctxMenu.show( owner, mouseLocation.getX(), mouseLocation.getY() );
+			mainWindowView.getChildren().add( wholeWindowRec );
+			ctxMenu.setOnHiding( new EventHandler<WindowEvent>()
+			{
+				@Override
+				public void handle( WindowEvent _ )
+				{
+					ContextMenuEventHandler.this.handle( null );
+					ctxMenu.setOnHiding( null );
+				}
+			} );
+		}
+
 	}
 
 	/**
@@ -152,12 +222,14 @@ public class MenuItemsProvider
 		private final SettingsData settingsData = new SettingsData();
 		private String renameLabel = "Rename";
 		private String deleteLabel = "Delete";
+		private Runnable[] openActions;
+		private Runnable[] deleteActions;
 
 		private class SettingsData
 		{
 			private String label = "Settings";
 			private String dialogTitle;
-			private Collection<? extends SettingsLayoutContainer> tabs;
+			private List<? extends SettingsTab> tabs;
 		}
 
 		public static Options are()
@@ -165,16 +237,17 @@ public class MenuItemsProvider
 			return new Options();
 		}
 
-		public Options open()
+		public Options open( Runnable... actions )
 		{
 			open = true;
+			openActions = actions;
 			return this;
 		}
 
-		public Options open( String label )
+		public Options open( String label, Runnable... actions )
 		{
 			openLabel = label;
-			return open();
+			return open( actions );
 		}
 
 		public Options close()
@@ -226,7 +299,7 @@ public class MenuItemsProvider
 			return save();
 		}
 
-		public Options settings( String dialogTitle, Collection<? extends SettingsLayoutContainer> tabs )
+		public Options settings( String dialogTitle, List<? extends SettingsTab> tabs )
 		{
 			settings = true;
 			settingsData.dialogTitle = dialogTitle;
@@ -234,7 +307,7 @@ public class MenuItemsProvider
 			return this;
 		}
 
-		public Options settings( String dialogTitle, Collection<? extends SettingsLayoutContainer> tabs, String label )
+		public Options settings( String dialogTitle, List<? extends SettingsTab> tabs, String label )
 		{
 			settingsData.label = label;
 			return settings( dialogTitle, tabs );
@@ -258,10 +331,16 @@ public class MenuItemsProvider
 			return this;
 		}
 
-		public Options delete( String label )
+		public Options delete( Runnable... actions )
+		{
+			deleteActions = actions;
+			return this;
+		}
+
+		public Options delete( String label, Runnable... actions )
 		{
 			deleteLabel = label;
-			return this;
+			return delete( actions );
 		}
 
 	}

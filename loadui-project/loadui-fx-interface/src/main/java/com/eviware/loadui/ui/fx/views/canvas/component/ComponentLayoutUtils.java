@@ -43,7 +43,6 @@ import com.eviware.loadui.api.layout.OptionsProvider;
 import com.eviware.loadui.api.layout.PropertyLayoutComponent;
 import com.eviware.loadui.api.layout.SeparatorLayoutComponent;
 import com.eviware.loadui.api.layout.TableLayoutComponent;
-import com.eviware.loadui.api.model.PropertyHolder;
 import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.impl.layout.OptionsProviderImpl;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
@@ -280,14 +279,16 @@ public class ComponentLayoutUtils
 	private static Node createTextNode( PropertyLayoutComponent<?> propLayoutComp, Label propertyLabel )
 	{
 		final TextField textField = new TextField();
-		textField.focusedProperty().addListener(new InvalidationListener() {
+		textField.focusedProperty().addListener( new InvalidationListener()
+		{
 			@Override
-			public void invalidated(javafx.beans.Observable _) {
-				if ( textField.isFocused() )
+			public void invalidated( javafx.beans.Observable _ )
+			{
+				if( textField.isFocused() )
 					SelectableImpl.deselectAll();
 			}
-		});
-		
+		} );
+
 		javafx.beans.property.Property<String> jfxProp = Properties.convert( ( Property<String> )propLayoutComp
 				.getProperty() );
 		textField.textProperty().bindBidirectional( jfxProp );

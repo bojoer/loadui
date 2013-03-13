@@ -98,6 +98,11 @@ public class ProjectRefView extends StackPane implements Labeled
 		return menuItemProvider;
 	}
 
+	public MenuButton getMenuButton()
+	{
+		return menuButton;
+	}
+
 	@Override
 	public String toString()
 	{
