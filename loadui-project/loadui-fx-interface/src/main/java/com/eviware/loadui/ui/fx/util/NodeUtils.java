@@ -143,6 +143,7 @@ public final class NodeUtils
 	{
 		if( node instanceof Releasable )
 		{
+			System.out.println( "!!!!! RELEASING " + node );
 			( ( Releasable )node ).release();
 		}
 	}

@@ -7,7 +7,7 @@ import java.util.concurrent.Callable;
 
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
-import javafx.beans.property.StringProperty;
+import javafx.beans.WeakInvalidationListener;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -25,26 +25,23 @@ import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.statistics.DataPoint;
 import com.eviware.loadui.api.statistics.model.chart.line.LineSegment;
-import com.eviware.loadui.api.statistics.model.chart.line.Segment;
 import com.eviware.loadui.api.statistics.model.chart.line.TestEventSegment;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.testevents.TestEvent;
 import com.eviware.loadui.ui.fx.api.analysis.ExecutionChart;
 import com.eviware.loadui.ui.fx.util.Observables;
 import com.google.common.base.Function;
-import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Iterables;
 
-public final class SegmentToSeriesFunction implements Function<Segment, XYChart.Series<Number, Number>>
+public final class SegmentViewToSeriesFunction implements Function<SegmentView<?>, XYChart.Series<Number, Number>>
 {
-	ObservableValue<Execution> execution;
-	ObservableList<Observable> observables;
-	ExecutionChart chart;
-	LoadingCache<XYChart.Series<?, ?>, StringProperty> eventSeriesStyles;
+	private final ObservableValue<Execution> execution;
+	private final ObservableList<Observable> observables;
+	private final ExecutionChart chart;
 
-	protected static final Logger log = LoggerFactory.getLogger( SegmentToSeriesFunction.class );
+	protected static final Logger log = LoggerFactory.getLogger( SegmentViewToSeriesFunction.class );
 
-	public SegmentToSeriesFunction( ObservableValue<Execution> execution, ObservableList<Observable> observables,
+	public SegmentViewToSeriesFunction( ObservableValue<Execution> execution, ObservableList<Observable> observables,
 			ExecutionChart chart )
 	{
 		this.execution = execution;
@@ -53,14 +50,14 @@ public final class SegmentToSeriesFunction implements Function<Segment, XYChart.
 	}
 
 	@Override
-	public XYChart.Series<Number, Number> apply( final Segment segment )
+	public XYChart.Series<Number, Number> apply( final SegmentView<?> segment )
 	{
 		System.out.println( "Segment: " + segment );
 
-		if( segment instanceof LineSegment )
-			return lineSegmentToSeries( ( LineSegment )segment );
-		else if( segment instanceof TestEventSegment )
-			return eventSegmentToSeries( ( TestEventSegment )segment );
+		if( segment instanceof LineSegmentView )
+			return lineSegmentToSeries( ( LineSegmentView )segment );
+		else if( segment instanceof EventSegmentView )
+			return eventSegmentToSeries( ( EventSegmentView )segment );
 		else
 			throw new RuntimeException( "Unsupported Segment type" );
 	}
@@ -74,8 +71,9 @@ public final class SegmentToSeriesFunction implements Function<Segment, XYChart.
 		}
 	};
 
-	private Series<Number, Number> lineSegmentToSeries( final LineSegment segment )
+	private Series<Number, Number> lineSegmentToSeries( final LineSegmentView segmentView )
 	{
+		final LineSegment segment = segmentView.getSegment();
 		final XYChart.Series<Number, Number> series = new XYChart.Series<>();
 		series.setName( segment.getStatisticName() );
 
@@ -116,28 +114,31 @@ public final class SegmentToSeriesFunction implements Function<Segment, XYChart.
 				return Iterables.transform( chartdata, chartdataToScaledChartdata );
 
 			}
-		}, observables ) );
+		}, observables, segment.getStatisticName() ) );
 
-		// TODO: Make path color just update when new chart is added
-		Observables.group( observables ).addListener( new InvalidationListener()
+		final InvalidationListener colorUpdater = new InvalidationListener()
 		{
-
 			@Override
-			public void invalidated( Observable arg0 )
+			public void invalidated( Observable _ )
 			{
 				if( series.getNode() instanceof Path )
 				{
 					( ( Path )series.getNode() ).setStroke( chart.getColor( segment, execution.getValue() ) );
 				}
-
 			}
-		} );
+		};
+		segmentView.getProperties().put( "ReferenceToWeakListener", colorUpdater );
+
+		// TODO: Make path color just update when new chart is added
+		Observables.group( observables ).addListener( new WeakInvalidationListener( colorUpdater ) );
 
 		return series;
 	}
 
-	private XYChart.Series<Number, Number> eventSegmentToSeries( final TestEventSegment segment )
+	private XYChart.Series<Number, Number> eventSegmentToSeries( final EventSegmentView segmentView )
 	{
+		final TestEventSegment segment = segmentView.getSegment();
+
 		final XYChart.Series<Number, Number> series = new XYChart.Series<>();
 		series.setName( segment.getTypeLabel() );
 

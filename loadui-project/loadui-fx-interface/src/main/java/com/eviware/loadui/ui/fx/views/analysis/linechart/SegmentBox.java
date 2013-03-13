@@ -55,7 +55,7 @@ public class SegmentBox extends VBox
 	private final HBox betweenStatisticsAndLineSegmentViews;
 	private final HBox betweenScalingAndScalingButtons;
 
-	private final String styleClass = "chart-segment-box";
+	private static final String styleClass = "chart-segment-box";
 
 	public SegmentBox()
 	{

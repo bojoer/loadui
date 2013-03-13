@@ -51,7 +51,9 @@ public class AttributeHolderSupport implements AttributeHolder, Releasable
 	{
 		if( released )
 		{
-			log.warn( "Cannot get attribute {}, AttributeHolderSupport has been released, returning default value.", key );
+			log.warn(
+					"Cannot get attribute {}, AttributeHolderSupport has been released, returning default value. This message should not be shown after a garbage collect.",
+					key );
 			return defaultValue;
 		}
 		return attributes.containsKey( key ) ? attributes.get( key ) : defaultValue;

@@ -307,7 +307,13 @@ public class ObservableLists
 	public static <E, T extends Iterable<E>> ObservableList<E> fromExpression( Callable<T> expression,
 			ObservableList<? extends Observable> observables )
 	{
-		return new ExpressionList<E>( expression, observables ).readOnlyList;
+		return new ExpressionList<E>( expression, observables, "NO NAME" ).readOnlyList;
+	}
+
+	public static <E, T extends Iterable<E>> ObservableList<E> fromExpression( Callable<T> expression,
+			ObservableList<? extends Observable> observables, String name )
+	{
+		return new ExpressionList<E>( expression, observables, name ).readOnlyList;
 	}
 
 	private static final LoadingCache<List<?>, ListChangeListener<?>> contentListeners = CacheBuilder.newBuilder()
@@ -599,10 +605,12 @@ public class ObservableLists
 		private final Callable<? extends Iterable<E>> expression;
 		@SuppressWarnings( "unused" )
 		private final ObservableList<? extends Observable> observables;
+		public String name = "NO NAME";
 
 		private ExpressionList( Callable<? extends Iterable<E>> expression,
-				ObservableList<? extends Observable> observables )
+				ObservableList<? extends Observable> observables, String name )
 		{
+			this.name = name;
 			this.expression = expression;
 			this.observables = observables;
 

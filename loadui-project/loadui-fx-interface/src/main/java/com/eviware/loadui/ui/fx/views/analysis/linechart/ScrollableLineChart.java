@@ -181,9 +181,7 @@ public class ScrollableLineChart extends HBox implements ExecutionChart, Releasa
 						setTickMode( tickLevel );
 					}
 				}
-
 			}
-
 		} );
 
 		log.debug( "initializing.. done" );
@@ -269,15 +267,36 @@ public class ScrollableLineChart extends HBox implements ExecutionChart, Releasa
 
 		scrollBar.maxProperty().bind( currentExecutionLenght );
 
-		final SegmentToSeriesFunction segmentToSeries = new SegmentToSeriesFunction( currentExecution,
+		final SegmentViewToSeriesFunction segmentViewToSeries = new SegmentViewToSeriesFunction( currentExecution,
 				javafx.collections.FXCollections.observableArrayList( currentExecution, position, poll,
 						segmentBox.chartUpdate(), manualDataUpdate, currentExecutionLenght ), this );
 
 		final ObservableList<Segment> segmentsList = fx( ofCollection( chartView, LineChartView.SEGMENTS, Segment.class,
 				chartView.getSegments() ) );
+		if( chartView == chartView.getChartGroup().getChartView() )
+		{
+			segmentsList.addListener( new ListChangeListener<Segment>()
+			{
+				@Override
+				public void onChanged( javafx.collections.ListChangeListener.Change<? extends Segment> change )
+				{
+					while( change.next() )
+					{
+						for( Segment s : ObservableLists.getActuallyRemoved( change ) )
+						{
+							log.debug( "!!!!!! " + s );
+							( ( Segment.Removable )s ).remove();
+						}
+					}
+				}
+			} );
 
-		seriesList = transform( segmentsList, segmentToSeries );
+		}
 
+		segmentViews = transform( segmentsList, segmentToView );
+		ObservableLists.releaseElementsWhenRemoved( segmentViews );
+
+		seriesList = transform( segmentViews, segmentViewToSeries );
 		seriesList.addListener( new ListChangeListener<Series>()
 		{
 			@Override
@@ -290,8 +309,6 @@ public class ScrollableLineChart extends HBox implements ExecutionChart, Releasa
 			}
 		} );
 
-		segmentViews = transform( segmentsList, segmentToView );
-
 		bindContent( getLineChart().getData(), seriesList );
 		bindContent( getSegments().getChildren(), segmentViews );
 
@@ -301,15 +318,20 @@ public class ScrollableLineChart extends HBox implements ExecutionChart, Releasa
 	@OverridingMethodsMustInvokeSuper
 	public void release()
 	{
-		for( SegmentView segmentView : segmentViews )
-			segmentView.delete();
+		if( chartView == chartView.getChartGroup().getChartView() )
+		{
+			log.debug( "Main chart view removed" );
+			for( SegmentView segmentView : segmentViews )
+				segmentView.delete();
+		}
 		clearSeries( seriesList );
 	}
 
-	private static void clearSeries( Iterable<? extends Series> series )
+	protected static void clearSeries( Iterable<? extends Series> series )
 	{
 		for( Series s : series )
 		{
+			log.debug( "!!!!! CLEANING SERIES " + series );
 			s.setData( FXCollections.observableArrayList() );
 		}
 	}

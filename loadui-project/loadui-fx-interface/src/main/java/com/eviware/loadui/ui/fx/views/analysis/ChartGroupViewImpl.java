@@ -6,12 +6,15 @@ import static com.eviware.loadui.ui.fx.util.ObservableLists.transform;
 import static com.eviware.loadui.ui.fx.util.Properties.forLabel;
 import static javafx.beans.binding.Bindings.bindContent;
 import static javafx.beans.binding.Bindings.size;
+import static javafx.beans.binding.Bindings.unbindContent;
+import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -40,6 +43,8 @@ import com.eviware.loadui.ui.fx.api.analysis.ChartGroupView;
 import com.eviware.loadui.ui.fx.api.input.DraggableEvent;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
+import com.eviware.loadui.ui.fx.util.NodeUtils;
+import com.eviware.loadui.ui.fx.util.ObservableLists;
 import com.eviware.loadui.ui.fx.views.analysis.linechart.LineChartViewNode;
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
@@ -79,16 +84,14 @@ public class ChartGroupViewImpl extends VBox implements ChartGroupView
 	@FXML
 	private StackPane chartView;
 
-	private final ObservableList<LineChartViewNode> componentSubcharts;
+	private ObservableList<Chart> subCharts;
+	private ObservableList<LineChartViewNode> componentSubcharts = FXCollections.emptyObservableList();
 
 	public ChartGroupViewImpl( ChartGroup chartGroup, ObservableValue<Execution> currentExecution, Observable poll )
 	{
 		this.chartGroup = chartGroup;
 		this.currentExecution = currentExecution;
 		this.poll = poll;
-
-		componentSubcharts = transform( fx( transform( ofCollection( chartGroup ), chartToChartView ) ),
-				chartViewToLineChartViewNode );
 
 		FXMLUtils.load( this );
 
@@ -107,43 +110,57 @@ public class ChartGroupViewImpl extends VBox implements ChartGroupView
 	@FXML
 	private void initialize()
 	{
-
+		subCharts = ofCollection( chartGroup );
 		chartGroupToggleGroup = new ToggleGroup();
 		componentGroupToggle.setToggleGroup( chartGroupToggleGroup );
-		componentGroupToggle.disableProperty().bind( Bindings.greaterThan( 2, size( componentSubcharts ) ) );
+		componentGroupToggle.disableProperty().bind( Bindings.greaterThan( 2, size( subCharts ) ) );
 
 		componentGroupToggle.disableProperty().addListener( new ChangeListener<Boolean>()
 		{
-
 			@Override
 			public void changed( ObservableValue<? extends Boolean> arg0, Boolean arg1, Boolean newValue )
 			{
 				// deselects Expand button when it gets disabled == removes subcharts from view
 				if( newValue && componentGroupToggle.selectedProperty().getValue() )
 				{
-					componentGroupToggle.setSelected( false );
+					Platform.runLater( new Runnable()
+					{
+						public void run()
+						{
+							componentGroupToggle.setSelected( false );
+						}
+					} );
 				}
-
 			}
 		} );
 
 		componentGroupToggle.selectedProperty().addListener( new ChangeListener<Boolean>()
 		{
+
 			@Override
 			public void changed( ObservableValue<? extends Boolean> arg0, Boolean arg1, Boolean newValue )
 			{
 				if( newValue )
 				{
+					componentSubcharts = transform( fx( transform( subCharts, chartToChartView ) ),
+							chartViewToLineChartViewNode );
+					ObservableLists.releaseElementsWhenRemoved( componentSubcharts );
+					bindContent( componentGroup.getChildren(), componentSubcharts );
 					ChartGroupViewImpl.this.getChildren().add( componentGroup );
 				}
 				else
 				{
 					ChartGroupViewImpl.this.getChildren().remove( componentGroup );
+					unbindContent( componentGroup.getChildren(), componentSubcharts );
+					for( LineChartViewNode chart : componentSubcharts )
+					{
+						NodeUtils.releaseRecursive( chart );
+					}
+					componentGroup.getChildren().clear();
 				}
 			}
 		} );
 
-		bindContent( componentGroup.getChildren(), componentSubcharts );
 		chartMenuButton.textProperty().bind( forLabel( chartGroup ) );
 		chartView.getChildren().setAll( createChart( chartGroup.getType() ) );
 		addEventHandler( DraggableEvent.ANY, new StatisticDroppedHandler( this, chartGroup ) );

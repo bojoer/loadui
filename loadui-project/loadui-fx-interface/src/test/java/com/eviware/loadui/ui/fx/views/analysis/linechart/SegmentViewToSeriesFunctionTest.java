@@ -26,12 +26,11 @@ import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.ui.fx.api.analysis.ExecutionChart;
 import com.eviware.loadui.util.statistics.DataPointImpl;
 
-public class SegmentToSeriesFunctionTest
+public class SegmentViewToSeriesFunctionTest
 {
 
-
 	@Test
-	public void testSegmentToSeriesWithZoomLevelALL()
+	public void testSegmentViewToSeriesWithZoomLevelALL()
 	{
 		Execution execution = mock( Execution.class );
 		ObservableValue<Execution> executionObs = new SimpleObjectProperty<Execution>( execution );
@@ -43,24 +42,27 @@ public class SegmentToSeriesFunctionTest
 		when( chart.getPosition() ).thenReturn( 0D );
 		when( chart.getSpan() ).thenReturn( 0L );
 		when( chart.getTickZoomLevel() ).thenReturn( ZoomLevel.ALL );
-		
-		SegmentToSeriesFunction f = new SegmentToSeriesFunction( executionObs, observables, chart );
+
+		SegmentViewToSeriesFunction f = new SegmentViewToSeriesFunction( executionObs, observables, chart );
 
 		Statistic<Number> stat = mock( Statistic.class );
 		Iterable<DataPoint<Number>> period = createDataPoints();
 
 		when( stat.getPeriod( -2000L, 2000L, ZoomLevel.ALL.getLevel(), execution ) ).thenReturn( period );
 
+		SegmentView segmentView = mock( LineSegmentView.class );
 		LineSegment segment = mock( LineSegment.class );
+
+		when( segmentView.getSegment() ).thenReturn( segment );
 		when( segment.getStatistic() ).thenReturn( stat );
 		when( segment.getAttribute( LineSegmentView.SCALE_ATTRIBUTE, "0" ) ).thenReturn( "1" );
 
-		when( chart.getColor( segment, execution )).thenReturn( Color.BLACK );
-		
-		Series<Number, Number> series = f.apply( segment );
-		
-		assertEquals( Color.BLACK, ((Circle) series.getData().iterator().next().getNode()).getFill() );
-		
+		when( chart.getColor( segment, execution ) ).thenReturn( Color.BLACK );
+
+		Series<Number, Number> series = f.apply( segmentView );
+
+		assertEquals( Color.BLACK, ( ( Circle )series.getData().iterator().next().getNode() ).getFill() );
+
 		//TODO check the series is correct
 	}
 

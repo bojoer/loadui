@@ -10,7 +10,6 @@ import com.eviware.loadui.ui.fx.util.FXMLUtils;
 
 public class EventSegmentView extends SegmentView<TestEventSegment>
 {
-
 	private final ReadOnlyBooleanProperty isExpandedProperty;
 
 	public EventSegmentView( TestEventSegment segment, LineChartView lineChartView,

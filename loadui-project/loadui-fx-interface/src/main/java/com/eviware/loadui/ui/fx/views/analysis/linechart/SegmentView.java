@@ -13,14 +13,16 @@ import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
 import com.eviware.loadui.api.statistics.model.chart.line.Segment;
+import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.util.statistics.ChartUtils;
 
-public abstract class SegmentView<T extends Segment> extends StackPane
+public abstract class SegmentView<T extends Segment> extends StackPane implements Releasable
 {
 	public static final String COLOR_ATTRIBUTE = "color";
 	protected static final Logger log = LoggerFactory.getLogger( SegmentView.class );
 
 	protected final T segment;
+
 	protected final LineChartView lineChartView;
 
 	@FXML
@@ -36,6 +38,11 @@ public abstract class SegmentView<T extends Segment> extends StackPane
 		this.segment = segment;
 		this.lineChartView = lineChartView;
 		color = segment.getAttribute( COLOR_ATTRIBUTE, "no_color" );
+	}
+
+	public T getSegment()
+	{
+		return segment;
 	}
 
 	private String newColor()
@@ -75,5 +82,11 @@ public abstract class SegmentView<T extends Segment> extends StackPane
 	protected void delete()
 	{
 		( ( Segment.Removable )segment ).remove();
+	}
+
+	@Override
+	public void release()
+	{
+		getProperties().clear();
 	}
 }
