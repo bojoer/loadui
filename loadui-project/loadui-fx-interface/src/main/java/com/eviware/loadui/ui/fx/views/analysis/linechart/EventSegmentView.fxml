@@ -4,7 +4,6 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.MenuButton?>
-<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ScrollBar?>
 <?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.shape.Rectangle?>
@@ -13,13 +12,14 @@
 <fx:root type="javafx.scene.layout.StackPane" xmlns:fx="http://javafx.com/fxml"
 	styleClass="slim-icon">
 	<AnchorPane styleClass="line-segment-view">
-		<Rectangle AnchorPane.leftAnchor="9" AnchorPane.topAnchor="3" AnchorPane.bottomAnchor="3" height="21" width="21" fill="red" /> 
-		<Rectangle fx:id="legendColorRectangle" AnchorPane.leftAnchor="36" AnchorPane.topAnchor="9" AnchorPane.bottomAnchor="9" height="9" width="9" />
-		<Label fx:id="segmentLabel" AnchorPane.leftAnchor="48" AnchorPane.topAnchor="6" text="Label"/>
-		<MenuButton fx:id="menuButton" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.leftAnchor="0" minHeight="27">
-			<items>
-				<MenuItem text="Delete" onAction="#delete" />
-			</items>
-		</MenuButton>
+		<Rectangle AnchorPane.leftAnchor="9" AnchorPane.topAnchor="3"
+			AnchorPane.bottomAnchor="3" height="21" width="21" fill="red" />
+		<Rectangle fx:id="legendColorRectangle"
+			AnchorPane.leftAnchor="36" AnchorPane.topAnchor="9"
+			AnchorPane.bottomAnchor="9" height="9" width="9" />
+		<Label fx:id="segmentLabel" AnchorPane.leftAnchor="48"
+			AnchorPane.topAnchor="6" text="Label" />
+		<MenuButton fx:id="menuButton" AnchorPane.topAnchor="0"
+			AnchorPane.rightAnchor="0" minWidth="56" minHeight="27" />
 	</AnchorPane>
 </fx:root>

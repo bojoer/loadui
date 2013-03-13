@@ -9,9 +9,12 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.ListChangeListener;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.MenuButton;
+import javafx.scene.control.MenuItemBuilder;
 import javafx.scene.control.Slider;
 import javafx.scene.control.SliderBuilder;
 import javafx.scene.layout.Region;
@@ -95,6 +98,7 @@ public class LineSegmentView extends SegmentView<LineSegment>
 			{
 				if( scaling.get() )
 				{
+					log.debug( "Started scaling chart" );
 					menuButton.setDisable( true );
 					getChildren().addAll( slider );
 					getStyleClass().addAll( scalingStyleClass );
@@ -106,7 +110,9 @@ public class LineSegmentView extends SegmentView<LineSegment>
 				}
 				else
 				{
+					log.debug( "Finished scaling chart" );
 					menuButton.setDisable( false );
+					menuButton.setVisible( true );
 					getChildren().removeAll( slider );
 					getStyleClass().removeAll( scalingStyleClass );
 				}
@@ -148,6 +154,24 @@ public class LineSegmentView extends SegmentView<LineSegment>
 				}
 			}
 		} );
+		
+		setMenuItemsFor( menuButton );
+		menuButton.getItems().add(
+				MenuItemBuilder.create().id( "scale-item" ).text( "Scale" ).onAction( scaleHandler() ).build() );
+		
+	}
+	
+	private EventHandler<ActionEvent> scaleHandler()
+	{
+		return new EventHandler<ActionEvent>()
+		{
+			@Override
+			public void handle( ActionEvent event )
+			{
+				enableParentScaling();
+				event.consume();
+			}
+		};
 	}
 
 	private void loadNob( final Node node )
@@ -199,8 +223,7 @@ public class LineSegmentView extends SegmentView<LineSegment>
 		parent = segmentBox;
 	}
 
-	@FXML
-	public void enableScaling()
+	private void enableParentScaling()
 	{
 		if( parent != null )
 		{
