@@ -19,6 +19,7 @@ import javafx.scene.layout.Region;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
 import com.eviware.loadui.api.statistics.model.chart.line.LineSegment;
 import com.eviware.loadui.ui.fx.control.skin.StyleableGraphicSlider;
@@ -65,8 +66,20 @@ public class LineSegmentView extends SegmentView<LineSegment>
 		segmentLabel.minWidthProperty().bind( Bindings.when( isExpandedProperty ).then( 250 ).otherwise( 180 ) );
 		segmentLabel.maxWidthProperty().bind( Bindings.when( isExpandedProperty ).then( 320 ).otherwise( 200 ) );
 
-		String fullName = segment.getStatisticHolder().getLabel() + " " + segment.getVariableName() + " "
-				+ segment.getStatisticName();
+		String fullName;
+		if( LoadUI.isPro() )
+		{
+			fullName = segment.getSource() + " " + segment.getStatisticHolder().getLabel() + " "
+					+ segment.getVariableName() + " " + segment.getStatisticName();
+		}
+		else
+		{
+			fullName = segment.getStatisticHolder().getLabel() + " " + segment.getVariableName() + " "
+					+ segment.getStatisticName();
+		}
+
+		log.debug( "fullName: {}", fullName );
+
 		String shortName = ShortName.forStatistic( segment.getVariableName(), segment.getStatisticName() );
 		segmentLabel.textProperty().bind( when( isExpandedProperty ).then( fullName ).otherwise( shortName ) );
 
