@@ -6,16 +6,15 @@ import java.io.IOException;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.ContextMenuBuilder;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.MenuItemBuilder;
-import javafx.scene.control.SeparatorMenuItemBuilder;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.shape.Rectangle;
 
 import javax.annotation.Nullable;
 
@@ -23,9 +22,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.statistics.store.Execution;
+import com.eviware.loadui.ui.fx.MenuItemsProvider;
+import com.eviware.loadui.ui.fx.MenuItemsProvider.Options;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.control.DragNode;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
+import com.eviware.loadui.ui.fx.util.NodeUtils;
 import com.eviware.loadui.ui.fx.util.Properties;
 import com.eviware.loadui.ui.fx.views.result.ResultView.ExecutionState;
 
@@ -33,6 +35,15 @@ public class ExecutionView extends Pane
 {
 
 	protected static final Logger log = LoggerFactory.getLogger( ExecutionView.class );
+
+	private Runnable openExecution = new Runnable()
+	{
+		@Override
+		public void run()
+		{
+			openExecution( null );
+		}
+	};
 
 	@FXML
 	private MenuButton menuButton;
@@ -78,6 +89,7 @@ public class ExecutionView extends Pane
 					fireEvent( IntentEvent.create( IntentEvent.INTENT_OPEN, execution ) );
 				}
 			} );
+
 			log.debug( "Created Execution View " + execution.getLabel() );
 		}
 		else
@@ -96,68 +108,33 @@ public class ExecutionView extends Pane
 		{
 			log.debug( "Initializing Execution " + execution.getLabel() );
 			menuButton.textProperty().bind( Properties.forLabel( execution ) );
-			initMenu();
-			DragNode.install( this, new ExecutionView( execution, state, true, null ) ).setData( execution );
-		}
-	}
 
-	private void initMenu()
-	{
-		if( state == ExecutionState.ARCHIVED )
-		{
-			addToMenuButton( -1, "Rename", new EventHandler<ActionEvent>()
+			DragNode.install( this, new ExecutionView( execution, state, true, null ) ).setData( execution );
+
+			Options menuOptions = Options.are().open( openExecution );
+
+			if( state == ExecutionState.RECENT )
+				menuOptions.noRename();
+
+			MenuItem[] menuItems = MenuItemsProvider.createWith( this, execution, menuOptions ).items();
+			menuButton.getItems().setAll( menuItems );
+			final ContextMenu ctxMenu = ContextMenuBuilder.create().items( menuItems ).build();
+
+			setOnContextMenuRequested( new EventHandler<ContextMenuEvent>()
 			{
 				@Override
-				public void handle( ActionEvent arg0 )
+				public void handle( ContextMenuEvent event )
 				{
-					rename();
+					// never show contextMenu when on top of the menuButton
+					if( !NodeUtils.isMouseOn( menuButton ) )
+					{
+						MenuItemsProvider.showContextMenu( menuButton, ctxMenu );
+						event.consume();
+					}
 				}
 			} );
-			menuButton.getItems().add( 0, SeparatorMenuItemBuilder.create().build() );
+
 		}
-
-		addToMenuButton( -1, "Delete", new EventHandler<ActionEvent>()
-		{
-			@Override
-			public void handle( ActionEvent arg0 )
-			{
-				deleteExecution();
-			}
-		} );
-
-		addToMenuButton( 0, "Open", new EventHandler<ActionEvent>()
-		{
-			@Override
-			public void handle( ActionEvent arg0 )
-			{
-				openExecution( null );
-			}
-		} );
-
-	}
-
-	// set index to negative number to append menuItem as last item
-	private void addToMenuButton( int index, String label, EventHandler<ActionEvent> handler )
-	{
-		MenuItem item = MenuItemBuilder.create().text( label ).id( "menu-" + label ).build();
-		if( index >= 0 )
-			menuButton.getItems().add( index, item );
-		else
-			menuButton.getItems().add( item );
-		if( handler != null )
-			item.setOnAction( handler );
-	}
-
-	private void rename()
-	{
-		log.debug( "Rename" );
-		fireEvent( IntentEvent.create( IntentEvent.INTENT_RENAME, execution ) );
-	}
-
-	private void deleteExecution()
-	{
-		log.debug( "Delete" );
-		execution.delete();
 	}
 
 	@FXML
@@ -165,26 +142,29 @@ public class ExecutionView extends Pane
 	{
 		if( event == null || event.getClickCount() == 2 )
 		{
-			log.debug( "Opening Execution " + execution.getLabel() );
+			log.info( "Opening Execution " + execution.getLabel() );
 			fireEvent( IntentEvent.create( IntentEvent.INTENT_RUN_BLOCKING, loadAndOpenExecution ) );
 
-			// cannot run this now or will have ConcurrentModificationException
-			Platform.runLater( new Runnable()
+			if( toClose != null )
 			{
-				@Override
-				public void run()
+				// cannot run this now or will have ConcurrentModificationException
+				Platform.runLater( new Runnable()
 				{
-					try
+					@Override
+					public void run()
 					{
-						if( toClose != null )
+						try
+						{
 							toClose.close();
+						}
+						catch( IOException e )
+						{
+							log.warn( "Problem closing ResultsPopup", e );
+						}
 					}
-					catch( IOException e )
-					{
-						log.warn( "Problem closing ResultsPopup", e );
-					}
-				}
-			} );
+				} );
+			}
+
 		}
 	}
 

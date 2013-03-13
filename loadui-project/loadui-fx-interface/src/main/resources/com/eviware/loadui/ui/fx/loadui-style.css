@@ -269,24 +269,26 @@
 	-fx-font-size: 12;
 }
 
+
 /**
  * Regular playback button
  */
+
+
 .play-button .toggle-button{
 	-fx-background-color: linear-gradient(to bottom, #DBDBDB 0%, #757575 100%); 
-	-fx-border-color: linear-gradient(to bottom, #424242 0%, A7A7A 100%);
-	-fx-padding: 2;
-	-fx-background-radius: 40;  
-	-fx-background-insets: 5;
+	-fx-padding: 0;
+	-fx-background-radius: 25;  
+	-fx-background-insets: 0;
 	-fx-border-radius: 25; 
-	-fx-border-width: 4; 
-	-fx-border-color: linear-gradient(to bottom, #424242 0%, #797979 100%); 
+	-fx-border-width: 0; 
+	-fx-border-color: transparent; 
 }
 
 .play-button .toggle-button:hover{
 	-fx-background-color: linear-gradient(to bottom, #F0F0F0 0%, #CECECE 100%);
 	-fx-border-radius: 20; 
-	-fx-background-insets: 5;
+	-fx-background-insets: 0;
 }
 
 .play-button .toggle-button:pressed{
@@ -295,9 +297,9 @@
 
 .play-button .toggle-button:selected{
 	-fx-background-color: linear-gradient(to bottom, #5A5A5A 0%, #989898 100%); 
-	-fx-padding: 6;
+	-fx-padding: 5.5;
 	-fx-background-insets: 6;
-	-fx-border-width: 2; 
+	-fx-border-width: 0; 
 	-fx-border-color: #000000; 
 }
 
@@ -315,21 +317,23 @@
 	-fx-effect: dropshadow( gaussian, #D6D6D6, 0.5, 1, 1, -1 ); 
 	-fx-rotate: 90;
 	-fx-translate-x: 1; 
-	-fx-scale-x: 0.6;
+	-fx-scale-x: 0.5;
 	-fx-scale-y: 0.4; 
-	-fx-padding: 10; 
+	-fx-padding: 9; 
 	-fx-background-color: #6D6D6D;    
 }
 
 .play-button .toggle-button .secondary-graphic{
 	-fx-padding: 0; 
-	-fx-scale-x: 0.6; 
-	-fx-scale-y: 0.6;
+	-fx-scale-x: 0.5; 
+	-fx-scale-y: 0.5;
 	-fx-background-color: #6D6D6D;    
 }
 
 .play-button .toggle-button:selected .secondary-graphic{
-	-fx-padding: 8; 
+	-fx-padding: 8;
+	-fx-scale-x: 0.5;
+	-fx-scale-y: 0.5; 
 	-fx-background-color: linear-gradient(to bottom, #C8C8C8, #E5E5E5);   
 }
 
@@ -337,19 +341,77 @@
 	-fx-padding: 0;
 }
 
+.play-button-border{
+	-fx-fill: linear-gradient(to bottom, #424242 0%, #797979 100%); 
+	-fx-smooth: true; 
+}
 
 /*Inner and outer area that overlaps spinner to make it look like it should. */
 .outer-spinner-overlay{
 	-fx-background-radius: 25; 
-	-fx-background-color: #404040; 
+	-fx-background-color: transparent; 
+	-fx-border-color: black; 
+	-fx-border-width: 2; 
+	-fx-border-radius: 25; 
 }
 
 .inner-spinner-overlay{
-	-fx-background-color: #202020; 
+	-fx-background-color: black; 
 	-fx-background-insets: 4; 
 	-fx-background-radius: 25;
  }
 
+ 
+ /*
+  * Linking Buttons
+  */
+#link-scenario.toggle-button{
+	-fx-background-color: linear-gradient(to bottom, #E1E1E1 0%, #767676 100%);
+	-fx-padding: 0; 
+	-fx-background-insets: 3 17 3 7; 
+	-fx-translate-x: 10;
+	-fx-translate-y: 0; 
+	-fx-translate-z: 1; 
+}
+
+#link-scenario.toggle-button:hover{
+	-fx-background-color: #BEBEBE; 
+}
+
+#link-scenario.toggle-button.styleable-graphic:focused{
+	-fx-background-insets: 3 17 3 7; 
+}
+
+#link-scenario.toggle-button:selected{
+	-fx-background-color: linear-gradient(to bottom, #353535 0%, #474747 100%);
+}
+
+#link-scenario.toggle-button:selected:hover{
+	-fx-background-color: #7E7E7E; 
+}
+
+#link-scenario.toggle-button .graphic{
+	-fx-shape: "M301.791,418.198c-1.882,0-3.45,0.879-3.806,2.046h-0.801c-0.444-1.087-1.94-1.892-3.736-1.892c-2.143,0-3.881,1.141-3.881,2.549s1.738,2.55,3.881,2.55c1.849,0,3.389-0.851,3.78-1.986h0.855c0.474,1.057,1.945,1.833,3.708,1.833c2.144,0,3.882-1.143,3.882-2.551S303.935,418.198,301.791,418.198z M293.448,422.544c-1.381,0-2.5-0.734-2.5-1.643c0-0.906,1.119-1.643,2.5-1.643c1.025,0,1.904,0.406,2.29,0.985h-1.54v1.221h1.591C295.438,422.094,294.527,422.544,293.448,422.544z M301.791,422.39c-0.988,0-1.834-0.379-2.241-0.925h1.194v-1.221h-1.323c0.325-0.659,1.258-1.14,2.37-1.14c1.381,0,2.501,0.736,2.501,1.643C304.292,421.655,303.172,422.39,301.791,422.39z";
+	-fx-background-insets: 5 2 5 1; 
+	-fx-background-color: #636363; 
+	-fx-padding: 0 10 0 10;
+	-fx-translate-x: 7;  
+}
+
+#link-scenario.toggle-button .secondary-graphic{
+	-fx-padding: 6 10 6 10; 
+	-fx-border-width: 1; 
+	-fx-border-color: #333333; 
+	-fx-border-radius: 4; 
+	-fx-scale-x: 0.9;
+	-fx-scale-y: 0.7;
+	-fx-translate-x: -15; 
+}
+
+#link-scenario.toggle-button:selected .graphic{
+	-fx-background-color: #DEDEDE; 
+}
+ 
 /*
  * Combo-box
  **/
@@ -870,13 +932,13 @@
  * Separators
  * 
  */
-.separator .line{
+.separator:vertical .line{
 	-fx-border-color: #B4B4B4; 
 	-fx-border-style: solid; 
 	-fx-border-width: 0 1 0 0; 
 }
 
-.separator{
+.separator:vertical{
 	-fx-background-color: #6D6D6D; 	
 }
 
@@ -886,12 +948,13 @@
 .spinner{
 	-fx-background-color: black; 
 	-fx-background-radius: 20; 
+	-fx-background-insets: 1; 
 	-fx-padding: 0; 
 }
 
 .progress-indicator{
 	-fx-progress-color: #FF0000; 
-	-fx-padding: 0;	
+	-fx-padding: 2;	
 }
 
 
@@ -922,14 +985,12 @@
 /**
  * Assertion bottom panel.
  */
- 
- .assertion-view {
+  .assertion-view {
  	-fx-background-color: #d6d6d6;
 	-fx-background-radius: 10;
 	-fx-padding: 2 10 10 10;
  }
- 
- 
+  
  /**
  * Chart Area Background.
  */
