@@ -37,8 +37,7 @@
 				<configuration>
 					<instructions>
 						<Bundle-Activator>com.eviware.loadui.ui.fx.JavaFXActivator</Bundle-Activator>
-						<Export-Package>com.eviware.loadui.ui.fx.api*,com.eviware.loadui.ui.fx.util*,com.eviware.loadui.ui.fx.control*,com.eviware.loadui.ui.fx.views*</Export-Package>
-						<Import-Package>*;javafx.*</Import-Package>
+						<Export-Package>com.eviware.loadui.ui.fx*</Export-Package>
 						<Embed-Dependency>*;scope=provided</Embed-Dependency>
 					</instructions>
 				</configuration>
