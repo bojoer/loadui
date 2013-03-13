@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
@@ -129,7 +130,7 @@ public class MenuItemsProvider
 			{
 				firer.fireEvent( IntentEvent.create( eventType, target ) );
 				for( Runnable action : actions )
-					action.run();
+					Platform.runLater( action );
 			}
 		};
 	}
