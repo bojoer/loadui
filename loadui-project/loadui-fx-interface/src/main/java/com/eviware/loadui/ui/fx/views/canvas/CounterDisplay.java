@@ -27,7 +27,7 @@ public abstract class CounterDisplay extends VBox
 				.create()
 				.maxWidth( Double.MAX_VALUE )
 				.style(
-						"-fx-background-color: linear-gradient(to bottom, #545454 0%, #000000 50%, #000000 100%); -fx-text-fill: #f2f2f2; -fx-background-radius: 5; -fx-font-size: 9px; -fx-label-padding: 3 9 3 9; -fx-border-width: 2; -fx-border-color: #333333; -fx-border-radius: 4; " )
+						"-fx-background-color: linear-gradient(to bottom, #545454 0%, #000000 50%, #000000 100%); -fx-text-fill: #f2f2f2; -fx-background-radius: 5; -fx-font-size: 9px; -fx-label-padding: 1 7 1 7; -fx-border-width: 2; -fx-border-color: #333333; -fx-border-radius: 4; " )
 				.build();
 	}
 }

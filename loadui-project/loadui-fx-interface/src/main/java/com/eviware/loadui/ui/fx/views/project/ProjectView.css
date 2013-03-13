@@ -10,7 +10,6 @@
 	-fx-font-size: 20px;
 }
 
-
 /**
  * Button-graphics
  */
@@ -33,7 +32,8 @@
 
 /**
  * Detachable-tabs
- */
+ */
+
 .tab-header-background {
 	-fx-background-color: transparent;
 }
@@ -74,17 +74,22 @@
 		-2 -1 6 2;	
 }
 
-
-
 .detachable-tab .styleable-graphic:hover {
 	-color-button-gradient:  linear-gradient(to bottom, derive(-base-color-mid, 50%),  derive(-base-color-mid, 10%));
 	-color-button-border: #666666;
 	-color-arrow: #666666;
 }
+
 .detachable-tab .graphic {
 	-fx-background-color: -color-arrow;
 	-fx-background-insets: 1 2 9 5;
 	-fx-padding: 0 6;
 	-fx-shape: -fx-shape-icon-detach-arrow;
 	
+}
+
+.project-view #link-scenario.toggle-button{
+	-fx-translate-x: -22;
+	-fx-translate-y: -20;
+	-fx-translate-z: 1; 
 }

@@ -7,3 +7,9 @@
 	-fx-border-color: #555555;  
 	-fx-border-radius: 4; 
 }
+
+.scenario-view #link-scenario.toggle-button{
+	-fx-translate-x: 5;
+	-fx-translate-y: 0; 
+	-fx-translate-z: 1; 
+}

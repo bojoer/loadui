@@ -8,6 +8,7 @@ import javafx.beans.property.Property;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBuilder;
 import javafx.scene.control.Separator;
@@ -44,6 +45,8 @@ public abstract class PlaybackPanel<T extends CounterDisplay, C extends CanvasIt
 	{
 		this.canvas = canvas;
 
+		setAlignment( Pos.CENTER );
+		setMaxHeight( 27 );
 		playButton = new PlayButton( canvas );
 		time = timeCounter();
 		requests = timeRequests();
@@ -93,7 +96,7 @@ public abstract class PlaybackPanel<T extends CounterDisplay, C extends CanvasIt
 
 	protected ToggleButton linkScenarioButton( SceneItem scenario )
 	{
-		ToggleButton linkButton = ToggleButtonBuilder.create().id( "link-scenario" ).text( "L" ).build();
+		ToggleButton linkButton = ToggleButtonBuilder.create().id( "link-scenario" ).styleClass( "styleable-graphic" ).build();
 		Property<Boolean> linkedProperty = Properties.convert( scenario.followProjectProperty() );
 		linkButton.selectedProperty().bindBidirectional( linkedProperty );
 		return linkButton;

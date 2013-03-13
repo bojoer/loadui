@@ -59,7 +59,10 @@ public final class SegmentToSeriesFunction implements Function<Segment, XYChart.
 
 		if( segment instanceof LineSegment )
 			return lineSegmentToSeries( ( LineSegment )segment );
-		return eventSegmentToSeries( ( TestEventSegment )segment );
+		else if( segment instanceof TestEventSegment )
+			return eventSegmentToSeries( ( TestEventSegment )segment );
+		else
+			throw new RuntimeException( "Unsupported Segment type" );
 	}
 
 	private static final Function<DataPoint<?>, XYChart.Data<Number, Number>> datapointToChartdata = new Function<DataPoint<?>, XYChart.Data<Number, Number>>()
@@ -143,7 +146,6 @@ public final class SegmentToSeriesFunction implements Function<Segment, XYChart.
 			@Override
 			public Iterable<XYChart.Data<Number, Number>> call() throws Exception
 			{
-				System.out.println( "Called Assertion chart transform!" );
 				if( segment.isRemoved() || execution.getValue() == null )
 				{
 					return new LinkedList<>();

@@ -29,7 +29,6 @@ public abstract class ToolbarPlaybackPanel<C extends CanvasItem> extends Playbac
 			{
 				time.setLimit( canvas.getLimit( TIME_LABEL ) );
 				
-				//TODO Label renamed to "sent" due to UX, but refers to a commonly used static within CanvasItem.REQUEST_COUNTER. 
 				requests.setLimit( canvas.getLimit( CanvasItem.REQUEST_COUNTER ) );
 				failures.setLimit( canvas.getLimit( FAILURES_LABEL ) );
 			}
