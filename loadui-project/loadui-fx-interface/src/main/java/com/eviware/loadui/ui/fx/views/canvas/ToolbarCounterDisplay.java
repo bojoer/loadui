@@ -9,6 +9,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.BorderPaneBuilder;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.HBoxBuilder;
+import javafx.scene.layout.Priority;
 
 import javax.annotation.Nonnull;
 
@@ -50,6 +51,10 @@ public class ToolbarCounterDisplay extends CounterDisplay
 		HBox labelAndProgress = HBoxBuilder.create().children( label, progress ).spacing( 3 ).alignment( Pos.BOTTOM_LEFT )
 				.build();
 
+		HBox.setHgrow( label, Priority.NEVER );
+		HBox.setHgrow( progress, Priority.ALWAYS );
+		
+		
 		getChildren().setAll( numberAndLimitDisplay, labelAndProgress );
 		setSpacing( 1 );
 		setAlignment( Pos.CENTER );
@@ -59,8 +64,8 @@ public class ToolbarCounterDisplay extends CounterDisplay
 	private Label limitDisplay(){
 		return LabelBuilder
 				.create()
-				.minWidth(44)
-				.prefWidth(50)
+				.minWidth(40)
+				.prefWidth(45)
 				.alignment( Pos.CENTER_RIGHT )
 				.style("-fx-text-fill: #f2f2f2; -fx-font-size: 10px; ")
 				.build();
@@ -89,8 +94,6 @@ public class ToolbarCounterDisplay extends CounterDisplay
 						
 			if(formatting == Formatting.TIME){
 				limitDisplay.setText(StringUtils.toHhMmSs( limit ) );
-			}else if(formatting == Formatting.SUFFIX){
-				
 			}else{
 				limitDisplay.setText(String.valueOf( limit) );
 			}		
@@ -103,6 +106,6 @@ public class ToolbarCounterDisplay extends CounterDisplay
 
 	private static ProgressBar progressBar()
 	{
-		return ProgressBarBuilder.create().maxWidth(70).style( "-fx-scale-y: 0.6; " ).visible( false ).build();
+		return ProgressBarBuilder.create().prefWidth( 70 ).style( "-fx-scale-y: 0.6; " ).visible( false ).build();
 	}
 }

@@ -13,14 +13,14 @@ public abstract class CounterDisplay extends VBox
 
 	public enum Formatting
 	{
-		NONE, TIME, SUFFIX
+		NONE, TIME
 	}
 
 	public abstract void setValue( long value );
 
 	public static Label label( String name )
 	{
-		return LabelBuilder.create().text( name ).minWidth(20).style( "-fx-font-size: 10px;" ).build();
+		return LabelBuilder.create().text( name ).minWidth(25).style( "-fx-font-size: 10px;" ).build();
 	}
 
 	public static Label numberDisplay()

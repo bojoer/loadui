@@ -23,11 +23,11 @@ public class ScenarioCounterDisplay extends CounterDisplay
 				.create()
 				.children( numberDisplay )
 				.alignment( Pos.CENTER )
-				.style("-fx-background-color: linear-gradient(to bottom, #545454 0%, #000000 50%, #000000 100%); -fx-padding: 1 2 1 2;  -fx-background-radius: 5; -fx-border-width: 1; -fx-border-color: #333333; -fx-border-radius: 4; " )
+				.style("-fx-background-color: linear-gradient(to bottom, #545454 0%, #000000 50%, #000000 100%); -fx-padding: 1 2 1 2; -fx-background-radius: 5; -fx-border-width: 1; -fx-border-color: #333333; -fx-border-radius: 4; " )
 				.build();
 		
 		getChildren().setAll( numberDisplayBox, label );
-		setSpacing( 2 );
+		setSpacing( 1 );
 		setAlignment( Pos.CENTER );
 		setMinWidth( 35 );
 	}
