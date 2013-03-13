@@ -41,11 +41,14 @@ public class ScenarioView extends CanvasObjectView
 		setOnContextMenuRequested( new EventHandler<ContextMenuEvent>()
 		{
 			@Override
-			public void handle( ContextMenuEvent _ )
+			public void handle( ContextMenuEvent event )
 			{
 				// never show contextMenu when on top of the menuButton
 				if( !NodeUtils.isMouseOn( menuButton ) )
+				{
 					MenuItemsProvider.showContextMenu( menuButton, ctxMenu );
+					event.consume();
+				}
 			}
 		} );
 

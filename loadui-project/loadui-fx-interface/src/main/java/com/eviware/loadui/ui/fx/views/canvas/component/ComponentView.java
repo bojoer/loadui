@@ -17,6 +17,7 @@ import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.ui.fx.MenuItemsProvider;
 import com.eviware.loadui.ui.fx.MenuItemsProvider.Options;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
+import com.eviware.loadui.ui.fx.util.LayoutContainerUtils;
 import com.eviware.loadui.ui.fx.util.NodeUtils;
 import com.eviware.loadui.ui.fx.util.Properties;
 import com.eviware.loadui.ui.fx.views.canvas.CanvasObjectView;
@@ -34,19 +35,25 @@ public class ComponentView extends CanvasObjectView
 
 		FXMLUtils.load( this, null, ComponentView.class.getResource( ComponentView.class.getSimpleName() + ".fxml" ) );
 
-		MenuItem[] menuItems = MenuItemsProvider.createWith( this, getCanvasObject(),
-				Options.are().settings( "Component Settings", getComponent().getSettingsTabs() ) ).items();
+		MenuItem[] menuItems = MenuItemsProvider.createWith(
+				this,
+				getCanvasObject(),
+				Options.are().settings( "Component Settings",
+						LayoutContainerUtils.settingsTabsFromLayoutContainers( getComponent().getSettingsTabs() ) ) ).items();
 		menuButton.getItems().setAll( menuItems );
 		final ContextMenu ctxMenu = ContextMenuBuilder.create().items( menuItems ).build();
 
 		setOnContextMenuRequested( new EventHandler<ContextMenuEvent>()
 		{
 			@Override
-			public void handle( ContextMenuEvent _ )
+			public void handle( ContextMenuEvent event )
 			{
 				// never show contextMenu when on top of the menuButton
 				if( !NodeUtils.isMouseOn( menuButton ) )
+				{
 					MenuItemsProvider.showContextMenu( menuButton, ctxMenu );
+					event.consume();
+				}
 			}
 		} );
 
