@@ -108,8 +108,6 @@ public class PlayButton extends StackPane
 		border.visibleProperty().bind( toggleButton.selectedProperty().not() );
 				
 		TestExecutionUtils.testRunner.registerTask( executionTask, Phase.PRE_START, Phase.POST_STOP );
-
-		setPadding( new Insets( 0, 6, 0, 6 ) );
 		getChildren().setAll( outer, indicator,
 				inner, border, toggleButton );
 	}

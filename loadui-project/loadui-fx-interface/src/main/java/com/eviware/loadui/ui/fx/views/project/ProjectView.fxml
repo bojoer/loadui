@@ -47,7 +47,7 @@
 		<Button fx:id="openHelpPageButton" id="openHelpPageButton" styleClass="styleable-graphic, toolbar-button" onAction="#openHelpPage" />
 		<Button fx:id="closeProjectButton" id="closeProjectButton" styleClass="styleable-graphic, toolbar-button" onAction="#closeProject" />
 	</HBox>	
-	<MenuButton maxWidth="240" fx:id="menuButton"
+	<MenuButton maxWidth="170" fx:id="menuButton"
 		AnchorPane.topAnchor="10" AnchorPane.leftAnchor="80">
 		<items>
 			<MenuItem fx:id="clone" id="clone" text="Rename..."
