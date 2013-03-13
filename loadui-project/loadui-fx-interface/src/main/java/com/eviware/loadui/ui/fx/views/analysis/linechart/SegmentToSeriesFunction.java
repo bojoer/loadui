@@ -55,7 +55,16 @@ public final class SegmentToSeriesFunction implements Function<Segment, XYChart.
 	@Override
 	public XYChart.Series<Number, Number> apply( final Segment segment )
 	{
-		System.out.println( "Segment: " + segment );
+		log.debug( "Segment: " + segment );
+
+		if( chart == null )
+		{
+			throw new NullPointerException( "Chart is null" );
+		}
+		if( execution == null )
+		{
+			throw new NullPointerException( "Execution is null" );
+		}
 
 		if( segment instanceof LineSegment )
 			return lineSegmentToSeries( ( LineSegment )segment );
@@ -86,6 +95,27 @@ public final class SegmentToSeriesFunction implements Function<Segment, XYChart.
 			{
 				if( segment.isRemoved() )
 				{
+					return new LinkedList<>();
+				}
+
+				if( execution.getValue() == null )
+				{
+					log.error( "Execution is null on data update" );
+					//throw new NullPointerException( "Execution is null on data update" );
+					return new LinkedList<>();
+				}
+
+				if( chart == null )
+				{
+					log.error( "chart is null on data update" );
+					//throw new NullPointerException( "Execution is null on data update" );
+					return new LinkedList<>();
+				}
+
+				if( segment.getStatistic() == null )
+				{
+					log.error( "segment.getStatistic() is null on data update" );
+					//throw new NullPointerException( "Execution is null on data update" );
 					return new LinkedList<>();
 				}
 
