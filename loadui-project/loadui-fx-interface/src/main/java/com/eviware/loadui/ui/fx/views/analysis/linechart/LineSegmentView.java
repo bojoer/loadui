@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.LoadUI;
+import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
 import com.eviware.loadui.api.statistics.model.chart.line.LineSegment;
 import com.eviware.loadui.ui.fx.control.skin.StyleableGraphicSlider;
@@ -69,8 +70,9 @@ public class LineSegmentView extends SegmentView<LineSegment>
 		String fullName;
 		if( LoadUI.isPro() )
 		{
-			fullName = segment.getSource() + " " + segment.getStatisticHolder().getLabel() + " "
-					+ segment.getVariableName() + " " + segment.getStatisticName();
+			fullName = ( StatisticVariable.MAIN_SOURCE.equals( segment.getSource() ) ? "Total" : segment.getSource() )
+					+ " " + segment.getStatisticHolder().getLabel() + " " + segment.getVariableName() + " "
+					+ segment.getStatisticName();
 		}
 		else
 		{
