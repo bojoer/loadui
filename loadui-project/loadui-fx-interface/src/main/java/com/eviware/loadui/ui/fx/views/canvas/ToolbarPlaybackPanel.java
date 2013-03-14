@@ -1,5 +1,6 @@
 package com.eviware.loadui.ui.fx.views.canvas;
 
+import javafx.application.Platform;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBuilder;
 
@@ -11,7 +12,7 @@ public abstract class ToolbarPlaybackPanel<C extends CanvasItem> extends Playbac
 {
 	protected Button limitsButton()
 	{
-		return ButtonBuilder.create().id( "set-limits" ).text( "Set limits" ).style( "-fx-font-size: 9px;" )
+		return ButtonBuilder.create().id( "set-limits" ).text( "Set limits" ).style( "-fx-font-size: 10px; -fx-translate-x: -3;" )
 				.onAction( openLimitsDialog ).build();
 	}
 
@@ -22,15 +23,20 @@ public abstract class ToolbarPlaybackPanel<C extends CanvasItem> extends Playbac
 		requests.setLimit( canvas.getLimit( CanvasItem.REQUEST_COUNTER ) );
 		failures.setLimit( canvas.getLimit( CanvasItem.FAILURE_COUNTER ) );
 
+		setSpacing( 9 );
+		
 		canvas.addEventListener( BaseEvent.class, new com.eviware.loadui.api.events.EventHandler<BaseEvent>()
 		{
 			@Override
 			public void handleEvent( BaseEvent event )
 			{
-				time.setLimit( canvas.getLimit( TIME_LABEL ) );
-				
-				requests.setLimit( canvas.getLimit( CanvasItem.REQUEST_COUNTER ) );
-				failures.setLimit( canvas.getLimit( FAILURES_LABEL ) );
+				Platform.runLater(new Runnable(){
+					public void run(){
+						time.setLimit( canvas.getLimit( TIME_LABEL ) );
+						requests.setLimit( canvas.getLimit( CanvasItem.REQUEST_COUNTER ) );
+						failures.setLimit( canvas.getLimit( FAILURES_LABEL ) );
+					}
+				});
 			}
 		} );
 	}
