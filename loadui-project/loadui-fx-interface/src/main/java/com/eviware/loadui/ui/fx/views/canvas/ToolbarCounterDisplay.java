@@ -42,7 +42,7 @@ public class ToolbarCounterDisplay extends CounterDisplay
 				.maxWidth( 160)
 				.center(HBoxBuilder.create().spacing(2).children(numberDisplay, separationSlash).build())
 				.right(limitDisplay)
-				.style("-fx-background-color: linear-gradient(to bottom, #545454 0%, #000000 50%, #000000 100%); -fx-padding: 1 0 1 0; -fx-background-radius: 5; -fx-border-width: 1; -fx-border-color: #333333; -fx-border-radius: 4; " )
+				.style("-fx-background-color: linear-gradient(to bottom, #545454 0%, #000000 50%, #000000 100%); -fx-padding: 1 6 1 6; -fx-background-radius: 5; -fx-border-width: 1; -fx-border-color: #333333; -fx-border-radius: 4; " )
 				.build();
 			
 		progress = progressBar();
@@ -106,6 +106,6 @@ public class ToolbarCounterDisplay extends CounterDisplay
 
 	private static ProgressBar progressBar()
 	{
-		return ProgressBarBuilder.create().prefWidth( 70 ).style( "-fx-scale-y: 0.6; " ).visible( false ).build();
+		return ProgressBarBuilder.create().prefWidth( 78 ).style( "-fx-scale-y: 0.6; " ).visible( false ).build();
 	}
 }
