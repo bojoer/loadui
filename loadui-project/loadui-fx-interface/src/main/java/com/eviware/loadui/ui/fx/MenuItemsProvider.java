@@ -3,9 +3,9 @@ package com.eviware.loadui.ui.fx;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
@@ -19,12 +19,11 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.WindowEvent;
 
-import com.eviware.loadui.api.layout.SettingsLayoutContainer;
 import com.eviware.loadui.api.traits.Deletable;
 import com.eviware.loadui.api.traits.Labeled.Mutable;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.control.SettingsDialog;
-import com.eviware.loadui.ui.fx.util.LayoutContainerUtils;
+import com.eviware.loadui.ui.fx.control.SettingsTab;
 import com.eviware.loadui.ui.fx.views.window.MainWindowView;
 import com.google.common.base.Preconditions;
 
@@ -63,7 +62,7 @@ public class MenuItemsProvider
 			items.add( itemFor( "clone-item", options.cloneLabel, eventHandler( IntentEvent.INTENT_CLONE, firer, eventArg ) ) );
 		if( options.delete && eventArg instanceof Deletable )
 			items.add( itemFor( "delete-item", options.deleteLabel,
-					eventHandler( IntentEvent.INTENT_DELETE, firer, ( Deletable )eventArg ) ) );
+					eventHandler( IntentEvent.INTENT_DELETE, firer, ( Deletable )eventArg, options.deleteActions ) ) );
 		if( options.close )
 			items.add( itemFor( "close-item", options.closeLabel, eventHandler( IntentEvent.INTENT_CLOSE, firer, eventArg ) ) );
 		if( options.settings )
@@ -112,8 +111,7 @@ public class MenuItemsProvider
 			@Override
 			public void handle( ActionEvent _ )
 			{
-				SettingsDialog settingsDialog = new SettingsDialog( firer, data.dialogTitle,
-						LayoutContainerUtils.settingsTabsFromLayoutContainers( data.tabs ) );
+				SettingsDialog settingsDialog = new SettingsDialog( firer, data.dialogTitle, data.tabs );
 				settingsDialog.show();
 			}
 		};
@@ -129,7 +127,7 @@ public class MenuItemsProvider
 			{
 				firer.fireEvent( IntentEvent.create( eventType, target ) );
 				for( Runnable action : actions )
-					action.run();
+					Platform.runLater( action );
 			}
 		};
 	}
@@ -225,12 +223,13 @@ public class MenuItemsProvider
 		private String renameLabel = "Rename";
 		private String deleteLabel = "Delete";
 		private Runnable[] openActions;
+		private Runnable[] deleteActions;
 
 		private class SettingsData
 		{
 			private String label = "Settings";
 			private String dialogTitle;
-			private Collection<? extends SettingsLayoutContainer> tabs;
+			private List<? extends SettingsTab> tabs;
 		}
 
 		public static Options are()
@@ -300,7 +299,7 @@ public class MenuItemsProvider
 			return save();
 		}
 
-		public Options settings( String dialogTitle, Collection<? extends SettingsLayoutContainer> tabs )
+		public Options settings( String dialogTitle, List<? extends SettingsTab> tabs )
 		{
 			settings = true;
 			settingsData.dialogTitle = dialogTitle;
@@ -308,7 +307,7 @@ public class MenuItemsProvider
 			return this;
 		}
 
-		public Options settings( String dialogTitle, Collection<? extends SettingsLayoutContainer> tabs, String label )
+		public Options settings( String dialogTitle, List<? extends SettingsTab> tabs, String label )
 		{
 			settingsData.label = label;
 			return settings( dialogTitle, tabs );
@@ -332,10 +331,16 @@ public class MenuItemsProvider
 			return this;
 		}
 
-		public Options delete( String label )
+		public Options delete( Runnable... actions )
+		{
+			deleteActions = actions;
+			return this;
+		}
+
+		public Options delete( String label, Runnable... actions )
 		{
 			deleteLabel = label;
-			return this;
+			return delete( actions );
 		}
 
 	}

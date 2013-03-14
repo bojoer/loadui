@@ -21,11 +21,11 @@ public class SettingsDialog extends ConfirmationDialog
 	@Nonnull
 	public final TabPane tabPane = new TabPane();
 	@Nonnull
-	private final List<SettingsTab> tabs;
+	private final List<? extends SettingsTab> tabs;
  
 	public final ObservableBooleanValue hasExactlyOneTab;
 
-	public SettingsDialog( @Nonnull Node owner, @Nonnull String title, @Nonnull List<SettingsTab> tabs )
+	public SettingsDialog( @Nonnull Node owner, @Nonnull String title, @Nonnull List<? extends SettingsTab> tabs )
 	{
 		super( owner, title, "Save" );
 		this.tabs = tabs;

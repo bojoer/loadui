@@ -191,7 +191,12 @@ public class ScrollableLineChart extends HBox implements ExecutionChart, Releasa
 	public void setZoomLevel( ZoomLevel zoomLevel )
 	{
 		long prePosition = position.get();
+
+		// Temporarily unbinding position to keep it from triggering chartupdates during zoomlevel change.
+		position.unbind();
+
 		ZoomLevel fromTickZoomLevel = tickZoomLevelProperty.get();
+
 		zoomLevelProperty.set( zoomLevel );
 		log.debug( "chart:(" + titleProperty().get() + ") ZoomLevel set to: " + zoomLevel.name()
 				+ " fromTickZoomLevel is: " + fromTickZoomLevel.name() );
@@ -230,10 +235,13 @@ public class ScrollableLineChart extends HBox implements ExecutionChart, Releasa
 			scrollBar.updateFollow();
 			log.debug( "chart:(" + titleProperty().get() + ") Set position to: " + position.get() + " (following)" );
 		}
-		// recalculates the position after the span has changed
+
+		// resets the position after the span has changed
+		position.bind( scrollBar.leftSidePositionProperty() );
 		scrollBar.setLeftSidePosition( prePosition );
 
 		manualDataUpdate.fireInvalidation();
+
 	}
 
 	private void setTickMode( ZoomLevel level )

@@ -17,6 +17,7 @@ import javafx.scene.Node;
 import javafx.scene.SceneBuilder;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBuilder;
+import javafx.scene.control.Label;
 import javafx.scene.control.SplitPaneBuilder;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextAreaBuilder;
@@ -41,34 +42,24 @@ import com.google.common.io.Files;
 
 public class StyleTester extends Application
 {
-	
+
 	private Node createTestNode()
 	{
-				final Pane container = new FlowPane();
-				container.getStyleClass().add( "container" );
-				
-				TestEventManager tem = mock( TestEventManager.class );
-				final NotificationPanel panel = new NotificationPanel();
-				//panel.getMsgText().setWrapText( true );
-				//HBox.setHgrow( panel, null );
-				tem.registerObserver( panel );
-				
-				Button butt = new Button("Hello there");
-				butt.setOnAction( new EventHandler<ActionEvent>()
-				{
-					@Override
-					public void handle( ActionEvent arg0 )
-					{
-						Entry entry = mock( Entry.class );
-						when( entry.getTestEvent() ).thenReturn(
-								new MessageTestEvent( 1L, MessageLevel.NOTIFICATION, "This is my message&&&&&&&&&&&&&&&&&&&&&&&  &&&&&&&&&&&&&&&&&&&&&&&&&& &&&&&&&&&&&&&&&&&&&&&&&&&&& &&&&&&&&&&&&&&&&&&&&&&&&&&&& &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&" ) );
-						panel.onTestEvent( entry );
-					}
-				} );
-				
-				container.getChildren().addAll( panel, butt );
-				
-				return container;
+		final Pane container = new FlowPane();
+		container.getStyleClass().add( "container" );
+
+		TestEventManager tem = mock( TestEventManager.class );
+		final NotificationPanel panel = new NotificationPanel();
+		//panel.getMsgText().setWrapText( true );
+		//HBox.setHgrow( panel, null );
+		tem.registerObserver( panel );
+
+		Label butt = new Label( "Lorem Ipsum" );
+		butt.setStyle( "-fx-font-size: 80" );
+
+		container.getChildren().addAll( panel, butt );
+
+		return container;
 
 	}
 

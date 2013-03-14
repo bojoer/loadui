@@ -228,7 +228,7 @@ public class WorkspaceView extends StackPane
 						hasProject && NodeUtils.isMouseOn( projectRefCarousel.getSelected() ) ? projectRefCarousel
 								.getSelected().getMenuItemProvider().items() : carouselMenuItems );
 				MenuItemsProvider.showContextMenu( projectRefCarousel, ctxMenu );
-
+				event.consume();
 			}
 		} );
 

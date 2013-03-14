@@ -9,9 +9,12 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.ListChangeListener;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.MenuButton;
+import javafx.scene.control.MenuItemBuilder;
 import javafx.scene.control.Slider;
 import javafx.scene.control.SliderBuilder;
 import javafx.scene.layout.Region;
@@ -19,6 +22,8 @@ import javafx.scene.layout.Region;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.eviware.loadui.LoadUI;
+import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
 import com.eviware.loadui.api.statistics.model.chart.line.LineSegment;
 import com.eviware.loadui.ui.fx.control.skin.StyleableGraphicSlider;
@@ -65,8 +70,21 @@ public class LineSegmentView extends SegmentView<LineSegment>
 		segmentLabel.minWidthProperty().bind( Bindings.when( isExpandedProperty ).then( 250 ).otherwise( 180 ) );
 		segmentLabel.maxWidthProperty().bind( Bindings.when( isExpandedProperty ).then( 320 ).otherwise( 200 ) );
 
-		String fullName = segment.getStatisticHolder().getLabel() + " " + segment.getVariableName() + " "
-				+ segment.getStatisticName();
+		String fullName;
+		if( LoadUI.isPro() )
+		{
+			fullName = ( StatisticVariable.MAIN_SOURCE.equals( segment.getSource() ) ? "Total" : segment.getSource() )
+					+ " " + segment.getStatisticHolder().getLabel() + " " + segment.getVariableName() + " "
+					+ segment.getStatisticName();
+		}
+		else
+		{
+			fullName = segment.getStatisticHolder().getLabel() + " " + segment.getVariableName() + " "
+					+ segment.getStatisticName();
+		}
+
+		log.debug( "fullName: {}", fullName );
+
 		String shortName = ShortName.forStatistic( segment.getVariableName(), segment.getStatisticName() );
 		segmentLabel.textProperty().bind( when( isExpandedProperty ).then( fullName ).otherwise( shortName ) );
 
@@ -80,6 +98,7 @@ public class LineSegmentView extends SegmentView<LineSegment>
 			{
 				if( scaling.get() )
 				{
+					log.debug( "Started scaling chart" );
 					menuButton.setDisable( true );
 					getChildren().addAll( slider );
 					getStyleClass().addAll( scalingStyleClass );
@@ -91,7 +110,9 @@ public class LineSegmentView extends SegmentView<LineSegment>
 				}
 				else
 				{
+					log.debug( "Finished scaling chart" );
 					menuButton.setDisable( false );
+					menuButton.setVisible( true );
 					getChildren().removeAll( slider );
 					getStyleClass().removeAll( scalingStyleClass );
 				}
@@ -133,6 +154,24 @@ public class LineSegmentView extends SegmentView<LineSegment>
 				}
 			}
 		} );
+		
+		setMenuItemsFor( menuButton );
+		menuButton.getItems().add(
+				MenuItemBuilder.create().id( "scale-item" ).text( "Scale" ).onAction( scaleHandler() ).build() );
+		
+	}
+	
+	private EventHandler<ActionEvent> scaleHandler()
+	{
+		return new EventHandler<ActionEvent>()
+		{
+			@Override
+			public void handle( ActionEvent event )
+			{
+				enableParentScaling();
+				event.consume();
+			}
+		};
 	}
 
 	private void loadNob( final Node node )
@@ -184,8 +223,7 @@ public class LineSegmentView extends SegmentView<LineSegment>
 		parent = segmentBox;
 	}
 
-	@FXML
-	public void enableScaling()
+	private void enableParentScaling()
 	{
 		if( parent != null )
 		{

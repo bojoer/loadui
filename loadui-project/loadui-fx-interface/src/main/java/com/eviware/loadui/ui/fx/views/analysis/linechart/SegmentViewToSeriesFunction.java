@@ -52,7 +52,7 @@ public final class SegmentViewToSeriesFunction implements Function<SegmentView<?
 	@Override
 	public XYChart.Series<Number, Number> apply( final SegmentView<?> segment )
 	{
-		System.out.println( "Segment: " + segment );
+		log.debug( "Segment: " + segment );
 
 		if( segment instanceof LineSegmentView )
 			return lineSegmentToSeries( ( LineSegmentView )segment );

@@ -26,6 +26,7 @@ import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.traits.Labeled;
 import com.eviware.loadui.ui.fx.control.fields.Validatable;
+import com.eviware.loadui.ui.fx.util.TreeUtils.LabeledStringValue;
 import com.eviware.loadui.ui.fx.views.assertions.LabeledTreeCell;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
@@ -116,7 +117,8 @@ public class StatisticTree extends TreeView<Labeled> implements Validatable
 				}
 				for( AgentItem agent : agents )
 				{
-					statisticItem.getChildren().add( new TreeItem<Labeled>( agent ) );
+					statisticItem.getChildren().add(
+							new TreeItem<Labeled>( new LabeledStringValue( agent.getLabel(), agent.getLabel() ) ) );
 				}
 			}
 		}

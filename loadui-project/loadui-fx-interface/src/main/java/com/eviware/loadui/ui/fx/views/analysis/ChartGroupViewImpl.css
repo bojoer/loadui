@@ -95,30 +95,6 @@
 	visibility: visible;
 }
 
-.chart-segment-box .line-segment-view:hover{
-	-fx-background-color: linear-gradient(to bottom, derive(#DDDDDD, -30%) 0%, derive(#888888, -30%) 100%); 		
-	-fx-background-radius: 4;
-	visibility: visible;
-}
-
-.chart-segment-box .line-segment-view .menu-button{
-	-fx-background-color: transparent;
-	-fx-border-color: transparent; 
-	visibility: visible; 
-}
-
-.chart-segment-box .line-segment-view .menu-button:hover{
-	-fx-background-color: transparent;
-	-fx-border-color: transparent; 
-	visibility: visible; 
-}
-
-.chart-segment-box .line-segment-view .menu-button:focus{
-	-fx-background-color: transparent;
-	-fx-border-color: transparent; 
-	visibility: visible; 
-}
-
 .chart-segment-box .button{
  	-fx-background-color: linear-gradient(to bottom, #DDDDDD 0%, #AAAAAA 100%);
  	-fx-border-color: #888888;

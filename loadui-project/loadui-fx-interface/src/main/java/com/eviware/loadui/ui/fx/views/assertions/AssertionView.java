@@ -1,14 +1,15 @@
 package com.eviware.loadui.ui.fx.views.assertions;
 
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.ContextMenuBuilder;
 import javafx.scene.control.Label;
 import javafx.scene.control.LabelBuilder;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuButtonBuilder;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.MenuItemBuilder;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.HBoxBuilder;
 import javafx.scene.layout.Priority;
@@ -22,39 +23,49 @@ import com.eviware.loadui.api.assertion.AssertionItem;
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.traits.Deletable;
 import com.eviware.loadui.api.traits.Labeled;
-import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
+import com.eviware.loadui.ui.fx.MenuItemsProvider;
+import com.eviware.loadui.ui.fx.MenuItemsProvider.Options;
+import com.eviware.loadui.ui.fx.util.NodeUtils;
 import com.eviware.loadui.ui.fx.util.Properties;
 
 public class AssertionView extends VBox implements Deletable
 {
 	protected static final Logger log = LoggerFactory.getLogger( AssertionView.class );
-	private final AssertionItem<?> assertion;
+
+	private final Runnable deleteAction = new Runnable()
+	{
+		@Override
+		public void run()
+		{
+			delete();
+		}
+	};
 
 	public AssertionView( final AssertionItem<?> assertion )
 	{
-		this.assertion = assertion;
-
 		getStyleClass().add( "assertion-view" );
 
-		MenuItem rename = MenuItemBuilder.create().text( "Rename" ).onAction( new EventHandler<ActionEvent>()
-		{
-			@Override
-			public void handle( ActionEvent event )
-			{
-				rename();
-			}
-		} ).build();
-		MenuItem delete = MenuItemBuilder.create().text( "Delete" ).onAction( new EventHandler<ActionEvent>()
-		{
-			@Override
-			public void handle( ActionEvent event )
-			{
-				delete();
-			}
-		} ).build();
+		MenuItem[] menuItems = MenuItemsProvider.createWith( this, assertion, Options.are().delete( deleteAction ) )
+				.items();
 
-		MenuButton menu = MenuButtonBuilder.create().items( rename, delete ).build();
-		menu.textProperty().bind( Properties.forLabel( assertion ) );
+		final MenuButton menuButton = MenuButtonBuilder.create().items( menuItems ).build();
+		menuButton.textProperty().bind( Properties.forLabel( assertion ) );
+		menuButton.getItems().setAll( menuItems );
+		final ContextMenu ctxMenu = ContextMenuBuilder.create().items( menuItems ).build();
+
+		setOnContextMenuRequested( new EventHandler<ContextMenuEvent>()
+		{
+			@Override
+			public void handle( ContextMenuEvent event )
+			{
+				// never show contextMenu when on top of the menuButton
+				if( !NodeUtils.isMouseOn( menuButton ) )
+				{
+					MenuItemsProvider.showContextMenu( menuButton, ctxMenu );
+					event.consume();
+				}
+			}
+		} );
 
 		final Label failures = new Label( "0" );
 		assertion.addEventListener( BaseEvent.class, new com.eviware.loadui.api.events.EventHandler<BaseEvent>()
@@ -105,18 +116,14 @@ public class AssertionView extends VBox implements Deletable
 				.styleClass( "content-pane" ).spacing( 30 ).build();
 		HBox.setHgrow( assertionLegend, Priority.ALWAYS );
 
-		getChildren().setAll( menu, contentPane );
+		getChildren().setAll( menuButton, contentPane );
 	}
 
 	@Override
 	public void delete()
 	{
-		fireEvent( IntentEvent.create( IntentEvent.INTENT_DELETE, assertion ) );
+		log.debug( "Deleting Assertion" );
+		//TODO remove assertion from any charts it may be in
 	}
 
-	public void rename()
-	{
-		if( assertion instanceof AssertionItem.Mutable<?> )
-			fireEvent( IntentEvent.create( IntentEvent.INTENT_RENAME, ( AssertionItem.Mutable<?> )assertion ) );
-	}
 }
