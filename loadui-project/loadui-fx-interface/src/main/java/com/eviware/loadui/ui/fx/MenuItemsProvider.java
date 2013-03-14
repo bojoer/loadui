@@ -222,8 +222,8 @@ public class MenuItemsProvider
 		private final SettingsData settingsData = new SettingsData();
 		private String renameLabel = "Rename";
 		private String deleteLabel = "Delete";
-		private Runnable[] openActions;
-		private Runnable[] deleteActions;
+		private Runnable[] openActions = new Runnable[0];
+		private Runnable[] deleteActions = new Runnable[0];
 
 		private class SettingsData
 		{

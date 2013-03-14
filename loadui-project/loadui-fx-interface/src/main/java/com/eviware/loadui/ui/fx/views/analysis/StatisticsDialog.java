@@ -10,6 +10,8 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.TreeItem;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.HBoxBuilder;
 
@@ -28,7 +30,6 @@ import com.eviware.loadui.ui.fx.control.ConfirmationDialog;
 
 public class StatisticsDialog extends ConfirmationDialog
 {
-
 	private static final Logger log = LoggerFactory.getLogger( StatisticsDialog.class );
 
 	private final StatisticTree tree;
@@ -60,7 +61,6 @@ public class StatisticsDialog extends ConfirmationDialog
 				}
 				close();
 			}
-
 		} );
 
 		setOnCancel( new EventHandler<ActionEvent>()

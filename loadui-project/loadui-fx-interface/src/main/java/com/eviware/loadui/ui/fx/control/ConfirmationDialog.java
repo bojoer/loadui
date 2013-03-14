@@ -11,6 +11,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBuilder;
 import javafx.scene.control.Separator;
 import javafx.scene.control.SeparatorBuilder;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 
 import javax.annotation.Nonnull;
@@ -64,6 +66,20 @@ public class ConfirmationDialog extends ButtonDialog
 			getButtons().setAll( cancelButton, confirmButton );
 		else
 			getButtons().setAll( confirmButton, cancelButton );
+
+		// If a control is taking focus (preventing the default button to receive KeyCode.ENTER), we do this as a workaround/backup 
+		addEventFilter( KeyEvent.ANY, new EventHandler<KeyEvent>()
+		{
+			@Override
+			public void handle( KeyEvent e )
+			{
+				if( e.getCode() == KeyCode.ENTER )
+				{
+					confirm();
+					e.consume();
+				}
+			}
+		} );
 	}
 
 	public ObjectProperty<EventHandler<ActionEvent>> onConfirmProperty()
@@ -114,5 +130,10 @@ public class ConfirmationDialog extends ButtonDialog
 	public StringProperty confirmationTextProperty()
 	{
 		return confirmButton.textProperty();
+	}
+
+	public void confirm()
+	{
+		confirmButton.fire();
 	}
 }

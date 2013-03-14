@@ -20,7 +20,7 @@ public class MillisToTickmarkTest
 	}
 
 	@Test
-	public final void testToStringT()
+	public final void testToString()
 	{
 		assertEquals( "19", millisToTickMark.toString( 19001 ) );
 		assertEquals( "34", millisToTickMark.toString( 94669 ) );

@@ -17,19 +17,21 @@ public class ScenarioCounterDisplay extends CounterDisplay
 		this.formatting = format;
 
 		numberDisplay = numberDisplay();
+		numberDisplay.setAlignment( Pos.CENTER_RIGHT );
+		
 		Label label = label( name );
 
-		HBox numberDisplayBox = HBoxBuilder
+		HBox counterDisplay = HBoxBuilder
 				.create()
 				.children( numberDisplay )
-				.alignment( Pos.CENTER )
+				.alignment( Pos.CENTER_RIGHT )
 				.style("-fx-background-color: linear-gradient(to bottom, #545454 0%, #000000 50%, #000000 100%); -fx-padding: 1 2 1 2; -fx-background-radius: 5; -fx-border-width: 1; -fx-border-color: #333333; -fx-border-radius: 4; " )
 				.build();
 		
-		getChildren().setAll( numberDisplayBox, label );
+		getChildren().setAll( counterDisplay, label );
 		setSpacing( 1 );
-		setAlignment( Pos.CENTER );
-		setMinWidth( 35 );
+		setAlignment( Pos.CENTER_LEFT );
+		setMaxWidth( 34 );
 	}
 
 	public ScenarioCounterDisplay( String name )
