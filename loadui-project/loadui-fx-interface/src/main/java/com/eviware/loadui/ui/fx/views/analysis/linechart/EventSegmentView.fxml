@@ -7,6 +7,8 @@
 <?import javafx.scene.control.ScrollBar?>
 <?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Separator?>
 
 
 <fx:root type="javafx.scene.layout.StackPane" xmlns:fx="http://javafx.com/fxml"
@@ -19,7 +21,9 @@
 			AnchorPane.bottomAnchor="9" height="9" width="9" />
 		<Label fx:id="segmentLabel" AnchorPane.leftAnchor="48"
 			AnchorPane.topAnchor="6" text="Label" />
-		<MenuButton fx:id="menuButton" AnchorPane.topAnchor="0"
-			AnchorPane.rightAnchor="0" minWidth="56" minHeight="27" />
+		<HBox AnchorPane.topAnchor="0" AnchorPane.rightAnchor="0" spacing="4" >
+			<Separator orientation="vertical" />
+			<MenuButton fx:id="menuButton" minWidth="50" minHeight="27" />
+		</HBox>
 	</AnchorPane>
 </fx:root>

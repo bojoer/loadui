@@ -11,16 +11,18 @@ import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.ContextMenuBuilder;
 import javafx.scene.control.LabelBuilder;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -35,11 +37,13 @@ import com.eviware.loadui.api.statistics.model.ChartGroup;
 import com.eviware.loadui.api.statistics.model.chart.ChartView;
 import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
 import com.eviware.loadui.api.statistics.store.Execution;
+import com.eviware.loadui.ui.fx.MenuItemsProvider;
+import com.eviware.loadui.ui.fx.MenuItemsProvider.Options;
 import com.eviware.loadui.ui.fx.api.PostActionEvent;
 import com.eviware.loadui.ui.fx.api.analysis.ChartGroupView;
 import com.eviware.loadui.ui.fx.api.input.DraggableEvent;
-import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
+import com.eviware.loadui.ui.fx.util.NodeUtils;
 import com.eviware.loadui.ui.fx.views.analysis.linechart.LineChartViewNode;
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
@@ -54,13 +58,7 @@ public class ChartGroupViewImpl extends VBox implements ChartGroupView
 	private final Observable poll;
 
 	@FXML
-	private MenuButton chartMenuButton;
-
-	@FXML
-	private MenuItem renameChartViewItem;
-
-	@FXML
-	private MenuItem deleteChartViewItem;
+	private MenuButton menuButton;
 
 	@FXML
 	private ToggleButton componentGroupToggle;
@@ -144,21 +142,30 @@ public class ChartGroupViewImpl extends VBox implements ChartGroupView
 		} );
 
 		bindContent( componentGroup.getChildren(), componentSubcharts );
-		chartMenuButton.textProperty().bind( forLabel( chartGroup ) );
+		menuButton.textProperty().bind( forLabel( chartGroup ) );
 		chartView.getChildren().setAll( createChart( chartGroup.getType() ) );
+
+		MenuItem[] menuItems = MenuItemsProvider.createWith( this, chartGroup, Options.are() ).items();
+		menuButton.getItems().setAll( menuItems );
+		final ContextMenu ctxMenu = ContextMenuBuilder.create().items( menuItems ).build();
+
+		Bindings.bindContentBidirectional( ctxMenu.getItems(), menuButton.getItems() );
+
+		setOnContextMenuRequested( new EventHandler<ContextMenuEvent>()
+		{
+			@Override
+			public void handle( ContextMenuEvent event )
+			{
+				// never show contextMenu when on top of the menuButton
+				if( !NodeUtils.isMouseOn( menuButton ) )
+				{
+					MenuItemsProvider.showContextMenu( menuButton, ctxMenu );
+					event.consume();
+				}
+			}
+		} );
+
 		addEventHandler( DraggableEvent.ANY, new StatisticDroppedHandler( this, chartGroup ) );
-	}
-
-	@FXML
-	protected void renameChart( ActionEvent evt )
-	{
-		fireEvent( IntentEvent.create( IntentEvent.INTENT_RENAME, chartGroup ) );
-	}
-
-	@FXML
-	protected void deleteChart( ActionEvent evt )
-	{
-		fireEvent( IntentEvent.create( IntentEvent.INTENT_DELETE, chartGroup ) );
 	}
 
 	@Override
@@ -242,6 +249,6 @@ public class ChartGroupViewImpl extends VBox implements ChartGroupView
 	@Override
 	public MenuButton getMenuButton()
 	{
-		return chartMenuButton;
+		return menuButton;
 	}
 }
