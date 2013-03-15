@@ -7,7 +7,6 @@ import java.util.concurrent.Callable;
 
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
-import javafx.beans.WeakInvalidationListener;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -30,6 +29,7 @@ import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.testevents.TestEvent;
 import com.eviware.loadui.ui.fx.api.analysis.ExecutionChart;
 import com.eviware.loadui.ui.fx.util.Observables;
+import com.eviware.loadui.ui.fx.util.Observables.Group;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 
@@ -116,6 +116,8 @@ public final class SegmentViewToSeriesFunction implements Function<SegmentView<?
 			}
 		}, observables, segment.getStatisticName() ) );
 
+		Group group = Observables.group( observables );
+
 		final InvalidationListener colorUpdater = new InvalidationListener()
 		{
 			@Override
@@ -128,9 +130,10 @@ public final class SegmentViewToSeriesFunction implements Function<SegmentView<?
 			}
 		};
 		segmentView.getProperties().put( "ReferenceToWeakListener", colorUpdater );
+		segmentView.getProperties().put( "ListenerTarget", group );
 
 		// TODO: Make path color just update when new chart is added
-		Observables.group( observables ).addListener( new WeakInvalidationListener( colorUpdater ) );
+		group.addListener( colorUpdater );
 
 		return series;
 	}
