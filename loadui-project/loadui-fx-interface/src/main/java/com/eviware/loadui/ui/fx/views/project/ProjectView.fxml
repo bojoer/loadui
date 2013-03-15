@@ -43,7 +43,6 @@
 	<HBox maxWidth="200" maxHeight="27" alignment="CENTER_RIGHT" AnchorPane.topAnchor="7" AnchorPane.rightAnchor="12" spacing="12">
 		<Separator orientation="vertical"/>
 		<Button fx:id="summaryButton" id="summaryButton" styleClass="styleable-graphic, toolbar-button" onAction="#openSummaryPage" />
-		<Button fx:id="settingsButton" id="settingsButton" styleClass="styleable-graphic, toolbar-button" onAction="#openSettings" />
 		<Button fx:id="openHelpPageButton" id="openHelpPageButton" styleClass="styleable-graphic, toolbar-button" onAction="#openHelpPage" />
 		<Button fx:id="closeProjectButton" id="closeProjectButton" styleClass="styleable-graphic, toolbar-button" onAction="#closeProject" />
 	</HBox>	

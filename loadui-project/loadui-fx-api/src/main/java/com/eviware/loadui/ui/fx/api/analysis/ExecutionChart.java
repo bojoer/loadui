@@ -24,7 +24,7 @@ public interface ExecutionChart
 
 	public void setPosition( double position );
 
-	public LineChart<Number, Number> getLineChart();
+	public LineChart<Long, Number> getLineChart();
 
 	public long getSpan();
 
