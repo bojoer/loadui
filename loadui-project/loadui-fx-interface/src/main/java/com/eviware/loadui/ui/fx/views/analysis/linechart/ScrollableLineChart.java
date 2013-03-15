@@ -55,13 +55,14 @@ import com.eviware.loadui.ui.fx.util.ManualObservable;
 import com.eviware.loadui.ui.fx.util.ObservableLists;
 import com.eviware.loadui.util.execution.TestExecutionUtils;
 import com.google.common.base.Function;
+import com.google.common.base.Splitter;
 
 public class ScrollableLineChart extends HBox implements ExecutionChart, Releasable
 {
 	protected ObservableValue<Execution> currentExecution;
 
 	protected ObservableList<SegmentView<?>> segmentViews;
-	protected ObservableList<Series<Number, Number>> seriesList;
+	protected ObservableList<Series<Long, Number>> seriesList;
 
 	public static final PeriodFormatter timeFormatter = new PeriodFormatterBuilder().printZeroNever().appendWeeks()
 			.appendSuffix( "w" ).appendSeparator( " " ).appendDays().appendSuffix( "d" ).appendSeparator( " " )
@@ -93,7 +94,7 @@ public class ScrollableLineChart extends HBox implements ExecutionChart, Releasa
 	protected SegmentBox segmentBox;
 
 	@FXML
-	protected LineChart<Number, Number> lineChart;
+	protected LineChart<Long, Number> lineChart;
 
 	@FXML
 	protected NumberAxis xAxis;
@@ -156,18 +157,16 @@ public class ScrollableLineChart extends HBox implements ExecutionChart, Releasa
 		position.addListener( new InvalidationListener()
 		{
 			@Override
-			public void invalidated( Observable arg0 )
+			public void invalidated( Observable _ )
 			{
+				log.debug( "INVALIDATED" );
 				long millis = ( long )getPosition();
-				Period period = new Period( millis );
-				String formattedTime = timeFormatter.print( period.normalizedStandard() );
-				ellapsedTime.setText( formattedTime );
+				ellapsedTime.setText( millisToTickMark.generatePositionString( millis ) );
 			}
 		} );
 
 		scrollBar.maxProperty().addListener( new InvalidationListener()
 		{
-
 			@Override
 			public void invalidated( Observable _ )
 			{
@@ -183,8 +182,6 @@ public class ScrollableLineChart extends HBox implements ExecutionChart, Releasa
 				}
 			}
 		} );
-
-		log.debug( "initializing.. done" );
 	}
 
 	@Override
@@ -231,7 +228,6 @@ public class ScrollableLineChart extends HBox implements ExecutionChart, Releasa
 
 		if( scrollBar.followStateProperty().get() && TestExecutionUtils.isExecutionRunning() )
 		{
-			//setPositionToLeftSide();
 			scrollBar.updateFollow();
 			log.debug( "chart:(" + titleProperty().get() + ") Set position to: " + position.get() + " (following)" );
 		}
@@ -367,7 +363,7 @@ public class ScrollableLineChart extends HBox implements ExecutionChart, Releasa
 	}
 
 	@Override
-	public LineChart<Number, Number> getLineChart()
+	public LineChart<Long, Number> getLineChart()
 	{
 		return lineChart;
 	}

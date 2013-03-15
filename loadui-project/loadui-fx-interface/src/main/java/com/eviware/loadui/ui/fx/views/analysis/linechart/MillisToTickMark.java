@@ -3,6 +3,8 @@ package com.eviware.loadui.ui.fx.views.analysis.linechart;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.util.StringConverter;
 
+import javax.annotation.Nonnull;
+
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatter;
 
@@ -20,18 +22,13 @@ final class MillisToTickMark extends StringConverter<Number>
 	}
 
 	@Override
-	public String toString( Number n )
+	public String toString( @Nonnull final Number n )
 	{
 		long value = n.longValue();
-
-		if( value == 0 )
-			return "0";
 
 		ZoomLevel zoomLevel = zoomLevelProperty.get();
 		ZoomLevel parentZoomLevel = zoomLevel.zoomOut();
 		long parentInterval = parentZoomLevel.getInterval();
-		//		System.out.println( "" + value / 1000 + " % " + parentInterval + " >= " + zoomLevel.getInterval() );
-
 		if( value / 1000 % parentInterval >= zoomLevel.getInterval() )
 		{
 			return Long.toString( value / 1000 / zoomLevel.getInterval()
@@ -40,11 +37,34 @@ final class MillisToTickMark extends StringConverter<Number>
 		return prettyPrintTime( n );
 	}
 
-	private String prettyPrintTime( Number n )
+	private String prettyPrintTime( final Number n )
 	{
-
 		Period period = new Period( n.longValue() );
-		return timeFormatter.print( period.normalizedStandard() );
+
+		period = trimPeriod( period );
+
+		String res = timeFormatter.print( period );
+		String[] timeUnits = res.split( " " );
+		return timeUnits[timeUnits.length - 1];
+	}
+
+	private Period trimPeriod( Period period )
+	{
+		period = period.normalizedStandard();
+		switch( zoomLevelProperty.get() )
+		{
+		case WEEKS :
+			period = period.withWeeks( 0 );
+		case DAYS :
+			period = period.withDays( 0 );
+		case HOURS :
+			period = period.withHours( 0 );
+		case MINUTES :
+			period = period.withMinutes( 0 );
+		default :
+			break;
+		}
+		return period;
 	}
 
 	private Number fromString( String s, ZoomLevel fromZoomLevel )
@@ -68,5 +88,10 @@ final class MillisToTickMark extends StringConverter<Number>
 	public Number fromString( String _ )
 	{
 		throw new UnsupportedOperationException();
+	}
+
+	public String generatePositionString( final long millis )
+	{
+		return timeFormatter.print( trimPeriod( new Period( millis ) ) );
 	}
 }
