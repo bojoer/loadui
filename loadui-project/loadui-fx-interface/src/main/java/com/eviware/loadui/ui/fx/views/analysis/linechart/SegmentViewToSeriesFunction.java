@@ -114,8 +114,6 @@ public final class SegmentViewToSeriesFunction implements Function<SegmentView<?
 			}
 		}, observables, segment.getStatisticName() ) );
 
-		Group group = Observables.group( observables );
-
 		final InvalidationListener colorUpdater = new InvalidationListener()
 		{
 			@Override
