@@ -133,5 +133,6 @@ public abstract class SegmentView<T extends Segment> extends StackPane implement
 			( ( Observable )target ).removeListener( ( InvalidationListener )listener );
 		}
 		getProperties().clear();
+
 	}
 }

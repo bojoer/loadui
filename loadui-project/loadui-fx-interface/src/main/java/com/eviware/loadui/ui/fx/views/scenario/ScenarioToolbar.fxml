@@ -16,6 +16,7 @@
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.Separator?>
 
 <fx:root type="javafx.scene.layout.AnchorPane" minHeight="60"
 	maxHeight="60" styleClass="scenario-toolbar" xmlns:fx="http://javafx.com/fxml">
@@ -35,7 +36,8 @@
 		</items>
 	</MenuButton>
 	<HBox maxWidth="200" maxHeight="60" alignment="CENTER_RIGHT"
-		AnchorPane.topAnchor="3" AnchorPane.rightAnchor="9">
+		AnchorPane.topAnchor="3" AnchorPane.rightAnchor="12" spacing="9">
+		<Separator orientation="vertical"/>
 		<Button fx:id="openHelpPageButton" id="openHelpPageButton" styleClass="styleable-graphic, toolbar-button" onAction="#openHelpPage" />
 		<Button fx:id="closeScenarioButton" id="closeScenarioButton" styleClass="styleable-graphic, toolbar-button" onAction="#closeScenario" />
 	</HBox>
