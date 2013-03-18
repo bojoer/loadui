@@ -35,7 +35,7 @@
 	
 	<bean id="testExecutionAddonFactory" class="com.eviware.loadui.impl.execution.TestExecutionAddon$Factory" />
 	
-	<bean id="messageAwaiterFactory" class="com.eviware.loadui.impl.messaging.MessageAwaiterImpl.Factory" />
+	<bean id="messageAwaiterFactory" class="com.eviware.loadui.impl.messaging.Factory" />
 	
 	<!-- <bean id="demoEventFactory" class="com.eviware.loadui.impl.eventlog.DemoEvent$Factory" /> -->
 </beans>

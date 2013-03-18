@@ -31,6 +31,7 @@ import com.eviware.loadui.api.execution.TestExecution;
 import com.eviware.loadui.api.execution.TestExecutionTask;
 import com.eviware.loadui.api.execution.TestRunner;
 import com.eviware.loadui.api.messaging.MessageAwaiter;
+import com.eviware.loadui.api.messaging.MessageAwaiterFactory;
 import com.eviware.loadui.api.messaging.MessageEndpoint;
 import com.eviware.loadui.api.messaging.MessageListener;
 import com.eviware.loadui.api.model.AgentItem;
@@ -55,14 +56,14 @@ public class AgentTestExecutionAddon implements Addon, Releasable
 	private final ProjectItem project;
 	private final DistributePhaseTask task = new DistributePhaseTask();
 	private final SceneReloadedListener reloadListener = new SceneReloadedListener();
-	private MessageAwaiter.MessageAwaiterFactory factory;
+	private MessageAwaiterFactory factory;
 
 	private AgentTestExecutionAddon( ProjectItem project )
 	{
 		this.project = project;
 
 		BeanInjector.getBean( TestRunner.class ).registerTask( task, Phase.values() );
-		factory = BeanInjector.getBean( MessageAwaiter.MessageAwaiterFactory.class );
+		factory = BeanInjector.getBean( MessageAwaiterFactory.class );
 	}
 
 	@Override

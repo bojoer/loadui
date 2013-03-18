@@ -102,16 +102,5 @@ public class MessageAwaiterImpl implements MessageListener, ConnectionListener, 
 	}
 	
 	
-	public static class Factory implements MessageAwaiter.MessageAwaiterFactory {
-
-		@Override
-		public MessageAwaiter create( AgentItem agent, String canvasId, Phase phase )
-		{
-			return new MessageAwaiterImpl( agent, canvasId, phase );
-		}
-		
-	}
-	
-	
 	
 }
