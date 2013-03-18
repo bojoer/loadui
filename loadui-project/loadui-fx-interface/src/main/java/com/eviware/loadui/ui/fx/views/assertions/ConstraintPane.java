@@ -7,6 +7,9 @@ import static com.eviware.loadui.ui.fx.control.fields.ValidatableLongField.IS_EM
 import static com.google.common.base.Predicates.or;
 import static javafx.beans.binding.Bindings.and;
 import static javafx.beans.binding.Bindings.when;
+
+import javax.annotation.Nullable;
+
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -24,6 +27,7 @@ import com.eviware.loadui.api.assertion.Constraint;
 import com.eviware.loadui.ui.fx.control.fields.Validatable;
 import com.eviware.loadui.ui.fx.control.fields.ValidatableLongField;
 import com.eviware.loadui.util.assertion.RangeConstraint;
+import com.google.common.base.Predicate;
 
 public class ConstraintPane extends VBox implements Validatable
 {
@@ -38,7 +42,14 @@ public class ConstraintPane extends VBox implements Validatable
 		minField = ValidatableLongField.Builder.create().build();
 		VBox minBox = VBoxBuilder.create().spacing( VERTICAL_SPACING ).children( new Label( "Min" ), minField ).build();
 
-		maxField = ValidatableLongField.Builder.create().build();
+		maxField = ValidatableLongField.Builder.create().longConstraint( new Predicate<Long>()
+		{
+			@Override
+			public boolean apply( @Nullable Long input )
+			{
+				return minField.getFieldValue() <= maxField.getFieldValue();
+			}
+		} ).build();
 		VBox maxBox = VBoxBuilder.create().spacing( VERTICAL_SPACING ).children( new Label( "Max" ), maxField ).build();
 
 		Label constrainLabel = LabelBuilder.create().text( "Constraint" ).build();
