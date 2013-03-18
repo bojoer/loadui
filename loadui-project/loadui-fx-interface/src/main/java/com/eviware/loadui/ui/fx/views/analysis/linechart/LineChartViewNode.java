@@ -164,7 +164,7 @@ public class LineChartViewNode extends VBox
 
 	}
 
-	public LineChart<Number, Number> getLineChart()
+	public LineChart<Long, Number> getLineChart()
 	{
 		return executionChart.getLineChart();
 	}

@@ -11,6 +11,9 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -59,6 +62,21 @@ public class StyleTester extends Application
 
 		container.getChildren().addAll( panel, butt );
 
+		ObservableList<String> l = FXCollections.observableArrayList( "One", "Two", "Three" );
+		l.addListener( new ListChangeListener<String>()
+		{
+
+			@Override
+			public void onChanged( javafx.collections.ListChangeListener.Change<? extends String> c )
+			{
+				while( c.next() )
+				{
+					System.out.println( c.getRemovedSize() );
+				}
+			}
+
+		} );
+		l.clear();
 		return container;
 
 	}

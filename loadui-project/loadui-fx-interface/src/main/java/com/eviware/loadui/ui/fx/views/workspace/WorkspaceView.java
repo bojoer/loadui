@@ -76,9 +76,6 @@ public class WorkspaceView extends StackPane
 	private final ObservableList<ProjectRefView> projectRefViews;
 
 	@FXML
-	private MenuButton workspaceButton;
-
-	@FXML
 	private VBox carouselArea;
 
 	@FXML
@@ -138,8 +135,6 @@ public class WorkspaceView extends StackPane
 				}
 			}
 		} );
-
-		workspaceButton.textProperty().bind( Bindings.format( "Workspace: %s", Properties.forLabel( workspace ) ) );
 
 		initProjectRefCarousel();
 

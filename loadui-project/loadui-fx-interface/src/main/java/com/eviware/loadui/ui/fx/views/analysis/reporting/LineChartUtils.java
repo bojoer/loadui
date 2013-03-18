@@ -104,7 +104,7 @@ public class LineChartUtils
 		final LineChartViewNode chartViewNode = new LineChartViewNode( executionProperty, chartView, chartUpdater );
 		chartViewNode.setZoomLevel( ZoomLevel.ALL );
 
-		final LineChart<Number, Number> node = chartViewNode.getLineChart();
+		final LineChart<Long, Number> node = chartViewNode.getLineChart();
 
 		Snapshotter snapshotter = new Snapshotter( chartViewNode, node );
 		return snapshotter.createSnapshot();

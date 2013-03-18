@@ -3,6 +3,7 @@ package com.eviware.loadui.ui.fx.control;
 import static com.eviware.loadui.ui.fx.util.test.TestFX.find;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
@@ -11,12 +12,15 @@ import static org.junit.Assert.assertTrue;
 import java.util.concurrent.TimeUnit;
 
 import javafx.application.Application;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.SceneBuilder;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TabPaneBuilder;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.PaneBuilder;
 import javafx.stage.Stage;
 
@@ -25,6 +29,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import com.eviware.loadui.test.categories.GUITest;
+import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.util.test.FXScreenController;
 import com.eviware.loadui.ui.fx.util.test.FXTestUtils;
 import com.eviware.loadui.ui.fx.util.test.TestFX;
@@ -45,12 +50,15 @@ public class DetachableTabTest
 			Tab normalTab = new Tab( "Normal tab" );
 			normalTab.setId( "normaltab" );
 
+			TabPane tabPane = TabPaneBuilder.create().id( "tabpane" ).build();
+
 			DetachableTab detachableTab = new DetachableTab( "Detachable tab", DetachedTabsHolder.get() );
 			detachableTab.setId( "detachabletab" );
-			detachableTab.setDetachableContent( PaneBuilder.create().id( "detachablecontent" ).build() );
+			detachableTab.setDetachableContent( tabPane, PaneBuilder.create().id( "detachablecontent" ).build() );
 
-			primaryStage.setScene( SceneBuilder.create().width( 300 ).height( 200 )
-					.root( TabPaneBuilder.create().id( "tabpane" ).tabs( normalTab, detachableTab ).build() ).build() );
+			tabPane.getTabs().addAll( normalTab, detachableTab );
+
+			primaryStage.setScene( SceneBuilder.create().width( 300 ).height( 200 ).root( tabPane ).build() );
 			primaryStage.show();
 
 			stageFuture.set( primaryStage );
@@ -150,5 +158,76 @@ public class DetachableTabTest
 		assertThat( tab.isDetached(), is( false ) );
 		assertThat( tab.getContent(), is( ( Node )tab.getDetachableContent() ) );
 		assertTrue( DetachedTabsHolder.get().isEmpty() );
+	}
+
+	@Test
+	public void eventsShouldBeForwardedIfNotHandled() throws Throwable
+	{
+		final TabPane tabpane = find( "#tabpane" );
+		assertNotNull( tabpane );
+
+		final SettableFuture<Event> future = SettableFuture.create();
+
+		tabpane.addEventHandler( IntentEvent.INTENT_CREATE, new EventHandler<Event>()
+		{
+			@Override
+			public void handle( Event event )
+			{
+				System.out.println( "Handling event " + event );
+				if( !future.isDone() )
+					future.set( event );
+			}
+		} );
+
+		final Button detachButton = find( ".button", tabpane );
+		assertNotNull( detachButton );
+
+		final DetachableTab tab = Iterables.getOnlyElement( Iterables.filter( tabpane.getTabs(), DetachableTab.class ) );
+		assertNotNull( tab );
+
+		tab.getDetachableContent().addEventHandler( IntentEvent.INTENT_CREATE, new EventHandler<Event>()
+		{
+			int count = 0;
+
+			@Override
+			public void handle( Event event )
+			{
+				if( count > 0 )
+					event.consume();
+				count++ ;
+			}
+		} );
+
+		FXTestUtils.invokeAndWait( new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				tab.setDetached( true );
+			}
+		}, 2 );
+
+		FXTestUtils.invokeAndWait( new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				assertThat( tab.isDetached(), is( true ) );
+				Pane content = tab.getDetachableContent();
+
+				// first event should not be consumed, so will be propagated to tabPane
+				content.fireEvent( IntentEvent.create( IntentEvent.INTENT_CREATE, String.class ) );
+				// second event will be consumed, hence it should not be propagated
+				content.fireEvent( IntentEvent.create( IntentEvent.INTENT_CREATE, Boolean.class ) );
+
+				Stage detachedStage = ( Stage )tab.getDetachableContent().getScene().getWindow();
+				detachedStage.close();
+			}
+		}, 2 );
+
+		Event event = future.get( 3, TimeUnit.SECONDS );
+		assertEquals( event.getEventType(), IntentEvent.INTENT_CREATE );
+		assertEquals( ( ( IntentEvent<?> )event ).getArg(), String.class );
+
 	}
 }

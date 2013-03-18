@@ -31,13 +31,11 @@
 	<VBox alignment="top_left" spacing="10" snapToPixel="true">
 		<ToolBar minHeight="60" id="topToolBar" styleClass="header">
 			<Label minWidth="60" />
-			<MenuButton fx:id="workspaceButton">
+			<MenuButton text="Workspace">
 				<items>
 					<MenuItem onAction="#importProject" text="Import project" />
 					<SeparatorMenuItem />
 					<MenuItem onAction="#gettingStarted" text="Getting Started..." />
-					<SeparatorMenuItem />
-					<MenuItem onAction="#exit" text="Exit" />
 				</items>
 			</MenuButton>
 			<BorderPane HBox.hgrow="ALWAYS">

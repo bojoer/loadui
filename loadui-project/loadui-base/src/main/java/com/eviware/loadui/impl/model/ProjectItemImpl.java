@@ -18,6 +18,7 @@ package com.eviware.loadui.impl.model;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -27,6 +28,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -53,6 +55,7 @@ import com.eviware.loadui.api.execution.TestExecution;
 import com.eviware.loadui.api.execution.TestExecutionTask;
 import com.eviware.loadui.api.execution.TestRunner;
 import com.eviware.loadui.api.messaging.BroadcastMessageEndpoint;
+import com.eviware.loadui.api.messaging.MessageAwaiterFactory;
 import com.eviware.loadui.api.messaging.MessageEndpoint;
 import com.eviware.loadui.api.messaging.MessageListener;
 import com.eviware.loadui.api.messaging.SceneCommunication;
@@ -107,6 +110,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 {
 	protected static final Logger log = LoggerFactory.getLogger( ProjectItemImpl.class );
 
+	
 	private final WorkspaceItem workspace;
 	private final LoaduiProjectDocumentConfig doc;
 	private final CollectionEventSupport<Assignment, Void> assignments = new CollectionEventSupport<>( this, ASSIGNMENTS );
@@ -116,6 +120,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	private final SceneComponentListener sceneComponentListener = new SceneComponentListener();
 	private final Map<SceneItem, BroadcastMessageEndpoint> sceneEndpoints = Maps.newHashMap();
 	private final AgentReadyAwaiterTask agentAwaiter = new AgentReadyAwaiterTask();
+	private final MessageAwaiterFactory messageAwaiterFactory; 
 	private final ConversionService conversionService;
 	private final PropertySynchronizer propertySynchronizer;
 	private final CounterSynchronizer counterSynchronizer;
@@ -153,6 +158,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		conversionService = BeanInjector.getBean( ConversionService.class );
 		propertySynchronizer = BeanInjector.getBean( PropertySynchronizer.class );
 		counterSynchronizer = BeanInjector.getBean( CounterSynchronizer.class );
+		messageAwaiterFactory = BeanInjector.getBean( MessageAwaiterFactory.class ); 
 		saveReport = createProperty( SAVE_REPORT_PROPERTY, Boolean.class, false );
 		reportFolder = createProperty( REPORT_FOLDER_PROPERTY, String.class, "" );
 		reportFormat = createProperty( REPORT_FORMAT_PROPERTY, String.class, "" );
@@ -391,6 +397,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	public void assignScene( SceneItem scene, AgentItem agent )
 	{
 		AssignmentImpl assignment = getOrCreateAssignment( scene, agent );
+		
 		if( assignments.addItem( assignment ) )
 		{
 			sceneEndpoints.get( scene ).registerEndpoint( agent );
@@ -400,6 +407,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 			conf.setAgentRef( agent.getId() );
 			conf.setAgentLabel( agent.getLabel() );
 			conf.setAgentAddress( agent.getUrl() );
+						
 			sendAssignMessage( agent, scene );
 		}
 	}
@@ -797,7 +805,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		public void handleMessage( String channel, MessageEndpoint endpoint, Object data )
 		{
 			Preconditions.checkArgument( endpoint instanceof AgentItem, "Endpoint: %s is not an AgentItem", endpoint );
-			AgentItem agent = ( AgentItem )endpoint;
+			final AgentItem agent = ( AgentItem )endpoint;
 
 			Map<String, String> message = ( Map<String, String> )data;
 			if( message.containsKey( AgentItem.DEFINE_SCENE ) )
@@ -837,9 +845,29 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 			{
 				SceneItem scene = ( SceneItem )addressableRegistry.lookup( message.get( AgentItem.STARTED ) );
 				AssignmentImpl assignment = getAssignment( scene, agent );
+				
 				if( assignment != null )
 					assignment.setLoaded( true );
 
+				if(scene.isRunning() && !workspace.isLocalMode() ) {
+					
+					if( scene != null && scene.isRunning() && !scene.getProject().getWorkspace().isLocalMode() )
+					{
+						final String canvasId = message.get( AgentItem.STARTED );
+						BeanInjector.getBean( ExecutorService.class ).execute( new Runnable()
+						{
+							@Override
+							public void run()
+							{
+								for( Phase phase : Arrays.asList( Phase.PRE_START, Phase.START, Phase.POST_START ) )
+								{
+									messageAwaiterFactory.create( ( AgentItem )agent, canvasId, phase ).await();
+								}
+							}
+						} );
+					}
+				}
+				
 				if( scene.isRunning() && !workspace.isLocalMode() )
 				{
 					agent.sendMessage( SceneCommunication.CHANNEL,
@@ -849,7 +877,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 			}
 		}
 	}
-
+	
 	private class AgentContextListener implements MessageListener
 	{
 		@Override

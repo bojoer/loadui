@@ -8,7 +8,7 @@
 		<constructor-arg ref="executionManager" />
 		<constructor-arg ref="testEventManager" />
 	</bean>
-	<bean id="systemLogInspector" class="com.eviware.loadui.ui.fx.views.syslog.SystemLogInspector" />
+	<!-- <bean id="systemLogInspector" class="com.eviware.loadui.ui.fx.views.syslog.SystemLogInspector" /> -->
 	<bean id="assertionInspector" class="com.eviware.loadui.ui.fx.views.assertions.AssertionInspector" >
 		<constructor-arg ref="statisticsManager" />
 	</bean>

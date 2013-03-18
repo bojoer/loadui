@@ -30,4 +30,6 @@
 	
 	<osgi:service ref="testExecutionAddonFactory" interface="com.eviware.loadui.api.addon.Addon$Factory" />
 	
+	<osgi:service ref="messageAwaiterFactory" interface="com.eviware.loadui.api.messaging.MessageAwaiterFactory" />
+	
 </beans>

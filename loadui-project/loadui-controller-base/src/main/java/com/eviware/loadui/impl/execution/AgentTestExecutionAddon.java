@@ -30,7 +30,7 @@ import com.eviware.loadui.api.execution.Phase;
 import com.eviware.loadui.api.execution.TestExecution;
 import com.eviware.loadui.api.execution.TestExecutionTask;
 import com.eviware.loadui.api.execution.TestRunner;
-import com.eviware.loadui.api.messaging.ConnectionListener;
+import com.eviware.loadui.api.messaging.MessageAwaiter;
 import com.eviware.loadui.api.messaging.MessageEndpoint;
 import com.eviware.loadui.api.messaging.MessageListener;
 import com.eviware.loadui.api.model.AgentItem;
@@ -50,18 +50,19 @@ import com.google.common.collect.Sets;
  */
 public class AgentTestExecutionAddon implements Addon, Releasable
 {
-	private static final Logger log = LoggerFactory.getLogger( AgentTestExecutionAddon.class );
-	private static final String CHANNEL = "/agentTestExecutionAddon";
-
+	static final Logger log = LoggerFactory.getLogger( AgentTestExecutionAddon.class );
+	
 	private final ProjectItem project;
 	private final DistributePhaseTask task = new DistributePhaseTask();
 	private final SceneReloadedListener reloadListener = new SceneReloadedListener();
+	private com.eviware.loadui.api.messaging.MessageAwaiterFactory factory;
 
 	private AgentTestExecutionAddon( ProjectItem project )
 	{
 		this.project = project;
 
 		BeanInjector.getBean( TestRunner.class ).registerTask( task, Phase.values() );
+		factory = BeanInjector.getBean( com.eviware.loadui.api.messaging.MessageAwaiterFactory.class );
 	}
 
 	@Override
@@ -108,7 +109,7 @@ public class AgentTestExecutionAddon implements Addon, Releasable
 				{
 					if( agent.isEnabled() && agents.add( agent ) )
 					{
-						waiters.add( new MessageAwaiter( agent, execution.getCanvas().getId(), phase ) );
+						waiters.add( factory.create( agent, execution.getCanvas().getId(), phase ) );
 					}
 				}
 			}
@@ -120,7 +121,7 @@ public class AgentTestExecutionAddon implements Addon, Releasable
 		}
 	}
 
-	private static class SceneReloadedListener implements MessageListener
+	private class SceneReloadedListener implements MessageListener
 	{
 		@Override
 		public void handleMessage( String channel, final MessageEndpoint endpoint, Object data )
@@ -138,100 +139,11 @@ public class AgentTestExecutionAddon implements Addon, Releasable
 					{
 						for( Phase phase : Arrays.asList( Phase.PRE_START, Phase.START, Phase.POST_START ) )
 						{
-							new MessageAwaiter( ( AgentItem )endpoint, canvasId, phase ).await();
+							factory.create( ( AgentItem )endpoint, canvasId, phase ).await();
 						}
 					}
 				} );
 			}
-		}
-	}
-
-	private static class MessageAwaiter implements MessageListener, ConnectionListener
-	{
-		private static final int TIMEOUT = 10000;
-
-		private final AgentItem agent;
-		private final String canvasId;
-		private final Phase phase;
-		private boolean done = false;
-		private long deadline;
-
-		private MessageAwaiter( AgentItem agent, String canvasId, Phase phase )
-		{
-			this.agent = agent;
-			this.canvasId = canvasId;
-			this.phase = phase;
-
-			agent.addMessageListener( CHANNEL, this );
-			agent.addConnectionListener( this );
-			agent.sendMessage( CHANNEL, new Object[] { canvasId, phase.toString() } );
-		}
-
-		private synchronized void complete()
-		{
-			agent.removeMessageListener( this );
-			agent.removeConnectionListener( this );
-			done = true;
-			notifyAll();
-		}
-
-		private boolean await()
-		{
-			synchronized( this )
-			{
-				deadline = System.currentTimeMillis() + TIMEOUT;
-				while( !done )
-				{
-					try
-					{
-						if( agent.isReady() )
-						{
-							wait( deadline - System.currentTimeMillis() );
-						}
-						if( !done && System.currentTimeMillis() >= deadline )
-						{
-							log.error( "Timed out waiting for Agent: {}", agent );
-							complete();
-							return false;
-						}
-					}
-					catch( InterruptedException e )
-					{
-						e.printStackTrace();
-					}
-				}
-
-				return true;
-			}
-		}
-
-		@Override
-		public void handleMessage( String channel, MessageEndpoint endpoint, Object data )
-		{
-			if( CHANNEL.equals( channel ) )
-			{
-				Object[] strings = ( Object[] )data;
-				if( canvasId.equals( strings[0] ) && phase == Phase.valueOf( ( String )strings[1] ) )
-				{
-					if( Boolean.parseBoolean( ( String )strings[2] ) )
-					{
-						complete();
-					}
-					else
-					{
-						synchronized( this )
-						{
-							deadline = System.currentTimeMillis() + TIMEOUT;
-						}
-					}
-				}
-			}
-		}
-
-		@Override
-		public void handleConnectionChange( MessageEndpoint endpoint, boolean connected )
-		{
-			complete();
 		}
 	}
 

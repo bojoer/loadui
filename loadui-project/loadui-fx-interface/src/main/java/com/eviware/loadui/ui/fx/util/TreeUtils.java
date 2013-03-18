@@ -1,10 +1,10 @@
 package com.eviware.loadui.ui.fx.util;
 
+import javafx.scene.control.TreeItem;
+
 import javax.annotation.Nonnull;
 
 import com.eviware.loadui.api.traits.Labeled;
-
-import javafx.scene.control.TreeItem;
 
 public class TreeUtils
 {
@@ -27,6 +27,11 @@ public class TreeUtils
 		{
 			this.label = label;
 			this.value = value;
+		}
+
+		public LabeledStringValue( @Nonnull final String label )
+		{
+			this( label, label );
 		}
 
 		@Override

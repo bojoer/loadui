@@ -59,7 +59,7 @@ public class SegmentViewToSeriesFunctionTest
 
 		when( chart.getColor( segment, execution ) ).thenReturn( Color.BLACK );
 
-		Series<Number, Number> series = f.apply( segmentView );
+		Series<Long, Number> series = f.apply( segmentView );
 
 		assertEquals( Color.BLACK, ( ( Circle )series.getData().iterator().next().getNode() ).getFill() );
 

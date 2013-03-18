@@ -33,7 +33,7 @@ import com.eviware.loadui.ui.fx.util.Observables.Group;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 
-public final class SegmentViewToSeriesFunction implements Function<SegmentView<?>, XYChart.Series<Number, Number>>
+public final class SegmentViewToSeriesFunction implements Function<SegmentView<?>, XYChart.Series<Long, Number>>
 {
 	private final ObservableValue<Execution> execution;
 	private final ObservableList<Observable> observables;
@@ -50,7 +50,7 @@ public final class SegmentViewToSeriesFunction implements Function<SegmentView<?
 	}
 
 	@Override
-	public XYChart.Series<Number, Number> apply( final SegmentView<?> segment )
+	public XYChart.Series<Long, Number> apply( final SegmentView<?> segment )
 	{
 		log.debug( "Segment: " + segment );
 
@@ -62,46 +62,46 @@ public final class SegmentViewToSeriesFunction implements Function<SegmentView<?
 			throw new RuntimeException( "Unsupported Segment type" );
 	}
 
-	private static final Function<DataPoint<?>, XYChart.Data<Number, Number>> datapointToChartdata = new Function<DataPoint<?>, XYChart.Data<Number, Number>>()
+	private static final Function<DataPoint<?>, XYChart.Data<Long, Number>> datapointToChartdata = new Function<DataPoint<?>, XYChart.Data<Long, Number>>()
 	{
 		@Override
-		public XYChart.Data<Number, Number> apply( DataPoint<?> point )
+		public XYChart.Data<Long, Number> apply( DataPoint<?> point )
 		{
-			return new XYChart.Data<Number, Number>( point.getTimestamp(), point.getValue() );
+			return new XYChart.Data<Long, Number>( point.getTimestamp(), point.getValue() );
 		}
 	};
 
-	private Series<Number, Number> lineSegmentToSeries( final LineSegmentView segmentView )
+	private Series<Long, Number> lineSegmentToSeries( final LineSegmentView segmentView )
 	{
 		final LineSegment segment = segmentView.getSegment();
-		final XYChart.Series<Number, Number> series = new XYChart.Series<>();
+		final XYChart.Series<Long, Number> series = new XYChart.Series<>();
 		series.setName( segment.getStatisticName() );
 
-		series.setData( fromExpression( new Callable<Iterable<XYChart.Data<Number, Number>>>()
+		series.setData( fromExpression( new Callable<Iterable<XYChart.Data<Long, Number>>>()
 		{
 			@Override
-			public Iterable<XYChart.Data<Number, Number>> call() throws Exception
+			public Iterable<XYChart.Data<Long, Number>> call() throws Exception
 			{
 				if( segment.isRemoved() )
 				{
 					return new LinkedList<>();
 				}
 
-				Iterable<XYChart.Data<Number, Number>> chartdata = Iterables.transform(
+				Iterable<XYChart.Data<Long, Number>> chartdata = Iterables.transform(
 						segment.getStatistic().getPeriod( ( long )chart.getPosition() - 2000,
 								( long )chart.getPosition() + chart.getSpan() + 2000, chart.getTickZoomLevel().getLevel(),
 								execution.getValue() ), datapointToChartdata );
 
 				// applies the scale to each point
-				final Function<XYChart.Data<Number, Number>, XYChart.Data<Number, Number>> chartdataToScaledChartdata = new Function<XYChart.Data<Number, Number>, XYChart.Data<Number, Number>>()
+				final Function<XYChart.Data<Long, Number>, XYChart.Data<Long, Number>> chartdataToScaledChartdata = new Function<XYChart.Data<Long, Number>, XYChart.Data<Long, Number>>()
 				{
 					@Override
-					public XYChart.Data<Number, Number> apply( XYChart.Data<Number, Number> point )
+					public XYChart.Data<Long, Number> apply( XYChart.Data<Long, Number> point )
 					{
 						double scaleValue = Math.pow( 10,
 								Integer.parseInt( segment.getAttribute( LineSegmentView.SCALE_ATTRIBUTE, "0" ) ) );
 
-						XYChart.Data<Number, Number> dataPoint = new XYChart.Data<Number, Number>( point.getXValue(), point
+						XYChart.Data<Long, Number> dataPoint = new XYChart.Data<Long, Number>( point.getXValue(), point
 								.getYValue().doubleValue() * scaleValue );
 
 						dataPoint.setNode( CircleBuilder.create().fill( chart.getColor( segment, execution.getValue() ) )
@@ -110,9 +110,7 @@ public final class SegmentViewToSeriesFunction implements Function<SegmentView<?
 						return dataPoint;
 					}
 				};
-
 				return Iterables.transform( chartdata, chartdataToScaledChartdata );
-
 			}
 		}, observables, segment.getStatisticName() ) );
 
@@ -129,6 +127,9 @@ public final class SegmentViewToSeriesFunction implements Function<SegmentView<?
 				}
 			}
 		};
+
+		Group group = Observables.group( observables );
+
 		segmentView.getProperties().put( "ReferenceToWeakListener", colorUpdater );
 		segmentView.getProperties().put( "ListenerTarget", group );
 
@@ -138,17 +139,17 @@ public final class SegmentViewToSeriesFunction implements Function<SegmentView<?
 		return series;
 	}
 
-	private XYChart.Series<Number, Number> eventSegmentToSeries( final EventSegmentView segmentView )
+	private XYChart.Series<Long, Number> eventSegmentToSeries( final EventSegmentView segmentView )
 	{
 		final TestEventSegment segment = segmentView.getSegment();
 
-		final XYChart.Series<Number, Number> series = new XYChart.Series<>();
+		final XYChart.Series<Long, Number> series = new XYChart.Series<>();
 		series.setName( segment.getTypeLabel() );
 
-		series.setData( fromExpression( new Callable<Iterable<XYChart.Data<Number, Number>>>()
+		series.setData( fromExpression( new Callable<Iterable<XYChart.Data<Long, Number>>>()
 		{
 			@Override
-			public Iterable<XYChart.Data<Number, Number>> call() throws Exception
+			public Iterable<XYChart.Data<Long, Number>> call() throws Exception
 			{
 				if( segment.isRemoved() || execution.getValue() == null )
 				{
@@ -158,13 +159,12 @@ public final class SegmentViewToSeriesFunction implements Function<SegmentView<?
 				return Iterables.transform(
 						segment.getTestEventsInRange( execution.getValue(), ( long )chart.getPosition() - 2000,
 								( long )chart.getPosition() + chart.getSpan() + 2000, chart.getTickZoomLevel().getLevel() ),
-						new Function<TestEvent, XYChart.Data<Number, Number>>()
+						new Function<TestEvent, XYChart.Data<Long, Number>>()
 						{
 							@Override
-							public XYChart.Data<Number, Number> apply( TestEvent event )
+							public XYChart.Data<Long, Number> apply( TestEvent event )
 							{
-								XYChart.Data<Number, Number> data = new XYChart.Data<Number, Number>( event.getTimestamp(),
-										10.0 );
+								XYChart.Data<Long, Number> data = new XYChart.Data<Long, Number>( event.getTimestamp(), 10.0 );
 
 								Line eventLine = LineBuilder.create().endY( 600 ).managed( false )
 										.strokeType( StrokeType.OUTSIDE ).build();

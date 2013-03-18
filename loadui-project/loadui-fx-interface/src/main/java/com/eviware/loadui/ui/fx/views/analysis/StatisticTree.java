@@ -3,7 +3,9 @@ package com.eviware.loadui.ui.fx.views.analysis;
 import static com.eviware.loadui.ui.fx.util.TreeUtils.dummyItem;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javafx.beans.property.BooleanProperty;
@@ -21,6 +23,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.model.AgentItem;
+import com.eviware.loadui.api.model.CanvasItem;
+import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.statistics.Statistic;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticVariable;
@@ -102,24 +106,77 @@ public class StatisticTree extends TreeView<Labeled> implements Validatable
 
 	private void addVariablesToTree( StatisticHolder holder, TreeItem<Labeled> root )
 	{
+		log.debug( "Adding variables to tree, StatisticHolder: " + holder );
+		TreeCreator creator = ( root.getValue() instanceof CanvasItem || root.getValue() instanceof ComponentItem ) ? new StandardTreeCreator()
+				: new MonitorTreeCreator();
+
 		for( String variableName : holder.getStatisticVariableNames() )
 		{
 			StatisticVariable variable = holder.getStatisticVariable( variableName );
-			final TreeItem<Labeled> variableItem = treeItem( variable, root );
+			creator.add( root, variableName, variable );
+		}
+	}
+
+	private static abstract class TreeCreator
+	{
+		abstract void add( TreeItem<Labeled> root, String variableName, StatisticVariable variable );
+		
+		TreeItem<Labeled> treeItem( Labeled value, TreeItem<Labeled> parent )
+		{
+			TreeItem<Labeled> item = new TreeItem<>( value );
+			parent.getChildren().add( item );
+			return item;
+		}
+		
+	}
+
+	private class StandardTreeCreator extends TreeCreator
+	{
+		@Override
+		public void add( TreeItem<Labeled> root, String variableName, StatisticVariable variable )
+		{
+			TreeItem<Labeled> variableItem = treeItem( variable, root );
 
 			for( String statisticName : variable.getStatisticNames() )
 			{
 				Statistic<?> statistic = variable.getStatistic( statisticName, StatisticVariable.MAIN_SOURCE );
-				final TreeItem<Labeled> statisticItem = treeItem( statistic, variableItem );
+				TreeItem<Labeled> statisticItem = treeItem( statistic, variableItem );
 				if( !agents.isEmpty() )
-				{
 					statisticItem.getChildren().add( dummyItem( AGENT_TOTAL, StatisticVariable.MAIN_SOURCE ) );
-				}
+
 				for( AgentItem agent : agents )
+					treeItem( new LabeledStringValue( agent.getLabel() ), statisticItem );
+			}
+		}
+	}
+
+	private class MonitorTreeCreator extends TreeCreator
+	{
+		@Override
+		public void add( TreeItem<Labeled> root, String variableName, StatisticVariable variable )
+		{
+			final TreeItem<Labeled> variableItem = treeItem( variable, root );
+
+			for( String statisticName : variable.getStatisticNames() )
+			{
+				Map<String, TreeItem<Labeled>> itemsBySource = new HashMap<>();
+				Map<String, TreeItem<Labeled>> statsByLabel = new HashMap<>();
+
+				for( String source : variable.getSources() )
 				{
-					statisticItem.getChildren().add(
-							new TreeItem<Labeled>( new LabeledStringValue( agent.getLabel(), agent.getLabel() ) ) );
+					Statistic<?> statistic = variable.getStatistic( statisticName, source );
+					TreeItem<Labeled> statItem = statsByLabel.get( statistic.getLabel() );
+					if( statItem == null )
+					{
+						statItem = treeItem( statistic, variableItem );
+						statsByLabel.put( statistic.getLabel(), statItem );
+					}
+					itemsBySource.put( source, statItem );
 				}
+
+				for( String source : variable.getSources() )
+					if( !source.equals( StatisticVariable.MAIN_SOURCE ) )
+						treeItem( new LabeledStringValue( source ), itemsBySource.get( source ) );
 			}
 		}
 	}
@@ -163,13 +220,6 @@ public class StatisticTree extends TreeView<Labeled> implements Validatable
 				selections.add( new Selection( item, isSource( item ) ) );
 		}
 		return selections;
-	}
-
-	private TreeItem<Labeled> treeItem( Labeled value, TreeItem<Labeled> parent )
-	{
-		TreeItem<Labeled> item = new TreeItem<>( value );
-		parent.getChildren().add( item );
-		return item;
 	}
 
 }
