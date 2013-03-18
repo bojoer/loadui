@@ -15,6 +15,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.WeakEventHandler;
@@ -64,6 +67,8 @@ public class MainWindowView extends StackPane
 	private final WorkspaceListener workspaceListener = new WorkspaceListener();
 	private final FxExecutionsInfo executionsInfo;
 	private final TestEventManager tem;
+
+	private static final Logger log = LoggerFactory.getLogger( MainWindowView.class );
 
 	public MainWindowView( WorkspaceProvider workspaceProvider, FxExecutionsInfo executionsInfo, TestEventManager tem )
 	{
@@ -246,9 +251,12 @@ public class MainWindowView extends StackPane
 	{
 		if( container != null && container.getChildren().isEmpty() == false )
 		{
-			Node childView = container.getChildren().get( 0 );
-			if( expectedClass.isInstance( childView ) )
-				return ( T )childView;
+			log.debug( "contains: " + container.getChildren().size() + ": " + container.getChildren() );
+			for( Node childView : container.getChildren() )
+			{
+				if( expectedClass.isInstance( childView ) )
+					return ( T )childView;
+			}
 		}
 		throw new IllegalStateException( MainWindowView.class.getName() + " does not hold a view of class "
 				+ expectedClass );
