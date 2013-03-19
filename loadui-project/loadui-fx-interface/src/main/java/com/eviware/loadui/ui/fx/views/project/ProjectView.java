@@ -45,6 +45,7 @@ import com.eviware.loadui.api.reporting.ReportingManager;
 import com.eviware.loadui.api.statistics.model.StatisticPage;
 import com.eviware.loadui.api.statistics.model.chart.ChartView;
 import com.eviware.loadui.api.statistics.store.Execution;
+import com.eviware.loadui.ui.fx.api.intent.AbortableTask;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.control.DetachableTab;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
@@ -81,8 +82,8 @@ public class ProjectView extends AnchorPane
 	private Button summaryButton;
 
 	private ProjectPlaybackPanel playbackPanel;
-	
-	private ToggleButton linkButton; 
+
+	private ToggleButton linkButton;
 
 	private final FxExecutionsInfo executionsInfo;
 
@@ -100,21 +101,40 @@ public class ProjectView extends AnchorPane
 				@Override
 				public void run()
 				{
-					fireEvent( IntentEvent.create( IntentEvent.INTENT_RUN_BLOCKING, new Runnable()
-					{
-						@Override
-						public void run()
-						{
-							try
+					fireEvent( abortableTaskEvent( execution ) );
+				}
+
+				private IntentEvent<AbortableTask> abortableTaskEvent( final TestExecution execution )
+				{
+					return IntentEvent.create( IntentEvent.INTENT_RUN_BLOCKING_ABORTABLE,
+							AbortableTask.onRun( new Runnable()
 							{
-								execution.complete().get(); 
-							}
-							catch( InterruptedException | ExecutionException e )
+								@Override
+								public void run()
+								{
+									try
+									{
+										execution.complete().get();
+									}
+									catch( InterruptedException ie )
+									{
+										log.info( "Aborted running requests, not waiting for execution to complete" );
+									}
+									catch( ExecutionException ee )
+									{
+										log.warn( "There was a problem getting the result of an Execution", ee );
+									}
+								}
+							} ).onAbort( new Runnable()
 							{
-								e.printStackTrace();
-							}
-						}
-					} ) );
+								@Override
+								public void run()
+								{
+									execution.abort( "Aborting running requests..." );
+									project.cancelScenes( false );
+									project.cancelComponents();
+								}
+							} ) );
 				}
 			} );
 		}
@@ -142,7 +162,7 @@ public class ProjectView extends AnchorPane
 		AnchorPane.setTopAnchor( playbackPanel, 7d );
 		AnchorPane.setLeftAnchor( playbackPanel, 440.0 );
 		getChildren().add( playbackPanel );
-				
+
 		menuButton.textProperty().bind( Properties.forLabel( project ) );
 		designTab.setDetachableContent( this, new ProjectCanvasView( project ) );
 		statsTab.setDetachableContent( this, new StatisticsView( project, executionsInfo ) );
@@ -203,27 +223,28 @@ public class ProjectView extends AnchorPane
 					( ( ToolBar )lookup( ".tool-bar" ) )
 							.setStyle( "-fx-background-color: linear-gradient(-base-color-mid 0%, -base-color-mid 74%, #555555 75%, #DDDDDD 76%, -base-color-mid 77%, -base-color-mid 100%);" );
 					ScenarioToolbar toolbar = new ScenarioToolbar( scenario );
-					
-					linkButton = ToggleButtonBuilder.create().id( "link-scenario" ).styleClass("styleable-graphic").build();
+
+					linkButton = ToggleButtonBuilder.create().id( "link-scenario" ).styleClass( "styleable-graphic" )
+							.build();
 					Property<Boolean> linkedProperty = Properties.convert( scenario.followProjectProperty() );
 					linkButton.selectedProperty().bindBidirectional( linkedProperty );
 					AnchorPane.setLeftAnchor( linkButton, 473d );
 					AnchorPane.setTopAnchor( linkButton, 55d );
-					ProjectView.this.getChildren().add(linkButton); 
-					
+					ProjectView.this.getChildren().add( linkButton );
+
 					StackPane.setAlignment( toolbar, Pos.TOP_CENTER );
 					CanvasView canvas = new CanvasView( scenario );
 					StackPane.setMargin( canvas, new Insets( 60, 0, 0, 0 ) );
 					StackPane pane = StackPaneBuilder.create().children( canvas, toolbar ).build();
 					designTab.setDetachableContent( ProjectView.this, pane );
-					
+
 					event.consume();
 				}
 				else if( event.getEventType() == IntentEvent.INTENT_CLOSE && event.getArg() instanceof SceneItem )
 				{
 					( ( ToolBar )lookup( ".tool-bar" ) )
 							.setStyle( "-fx-background-color: linear-gradient(to bottom, -base-color-mid 0%, -fx-header-color 75%, #000000 76%, #272727 81%);" );
-					ProjectView.this.getChildren().remove(linkButton);
+					ProjectView.this.getChildren().remove( linkButton );
 
 					Group canvas = ( Group )lookup( ".canvas-layer" );
 					StackPane grid = ( StackPane )lookup( ".grid-pane" );

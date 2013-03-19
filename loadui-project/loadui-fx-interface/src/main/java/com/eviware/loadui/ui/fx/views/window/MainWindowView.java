@@ -224,6 +224,11 @@ public class MainWindowView extends StackPane
 					//Handled by BlockingTask.
 					return;
 				}
+				else if( event.getEventType() == IntentEvent.INTENT_RUN_BLOCKING_ABORTABLE )
+				{
+					//Handled by AbortableBlockingTask.
+					return;
+				}
 				else if( event.getEventType() == IntentEvent.INTENT_DELETE )
 				{
 					//Handled by DeleteTask.
