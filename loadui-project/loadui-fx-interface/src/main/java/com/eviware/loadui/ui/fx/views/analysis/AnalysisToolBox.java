@@ -12,6 +12,7 @@ import javafx.scene.Node;
 
 import com.eviware.loadui.api.assertion.AssertionItem;
 import com.eviware.loadui.api.model.ProjectItem;
+import com.eviware.loadui.ui.fx.control.ToolBox;
 import com.eviware.loadui.ui.fx.util.ObservableLists;
 import com.eviware.loadui.ui.fx.views.assertions.AssertionToolboxItem;
 import com.eviware.loadui.ui.fx.views.assertions.AssertionUtils;
@@ -20,13 +21,18 @@ import com.google.common.base.Function;
 
 public class AnalysisToolBox extends StatisticHolderToolBox
 {
+	private static final String ASSERTION_CATEGORY = "Assertions";
+
 	@SuppressWarnings( "rawtypes" )
 	private static final Function<AssertionItem, AssertionToolboxItem> ASSERTION_TO_VIEW = new Function<AssertionItem, AssertionToolboxItem>()
 	{
 		@Override
 		public AssertionToolboxItem apply( AssertionItem input )
 		{
-			return new AssertionToolboxItem( input );
+			AssertionToolboxItem assertionToolboxItem = new AssertionToolboxItem( input );
+			ToolBox.setCategory( assertionToolboxItem, ASSERTION_CATEGORY );
+
+			return assertionToolboxItem;
 		}
 	};
 
