@@ -10,7 +10,7 @@ final public class ProjectPlaybackPanel extends ToolbarPlaybackPanel<ProjectItem
 		super( canvas );
 
 		getStyleClass().add( "project-playback-panel" );
-		setMaxWidth( 610 );
+		setMaxWidth( 750 );
 		getChildren().setAll( separator(), playButton, separator(), time, requests, failures, resetButton(),
 				limitsButton() );
 	}
