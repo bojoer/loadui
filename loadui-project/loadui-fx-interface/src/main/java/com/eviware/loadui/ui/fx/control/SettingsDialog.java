@@ -9,6 +9,7 @@ import javafx.beans.value.ObservableBooleanValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.Region;
 import javafx.stage.WindowEvent;
@@ -20,6 +21,7 @@ public class SettingsDialog extends ConfirmationDialog
 	public static final double VERTICAL_SPACING = 12;
 	@Nonnull
 	public final TabPane tabPane = new TabPane();
+
 	@Nonnull
 	private final List<? extends SettingsTab> tabs;
  
@@ -29,11 +31,18 @@ public class SettingsDialog extends ConfirmationDialog
 	{
 		super( owner, title, "Save" );
 		this.tabs = tabs;
+		
+		for (SettingsTab tab : tabs){
+			tab.refreshFields();
+		}
+				
 		tabPane.getTabs().addAll( tabs );
 		getItems().add( tabPane );
 		setOnConfirm( new OnSaveHandler() );
 		addStyleClass( "settings-dialog" );
 
+
+		
 		hasExactlyOneTab = size( tabPane.getTabs() ).isEqualTo( 1 );
 		bindStyleClass( tabPane, "single-tab", hasExactlyOneTab );
 
