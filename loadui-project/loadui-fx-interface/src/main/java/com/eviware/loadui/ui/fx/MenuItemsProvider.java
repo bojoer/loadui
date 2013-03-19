@@ -91,7 +91,6 @@ public class MenuItemsProvider
 		{
 			return items;
 		}
-
 	}
 
 	private static MenuItem itemFor( String id, String label, EventHandler<ActionEvent> handler )
@@ -185,7 +184,6 @@ public class MenuItemsProvider
 				}
 			} );
 		}
-
 	}
 
 	/**
@@ -219,7 +217,7 @@ public class MenuItemsProvider
 		private String createLabel = "Create";
 		private String cloneLabel = "Clone";
 		private String saveLabel = "Save";
-		private final SettingsData settingsData = new SettingsData();
+		private SettingsData settingsData = new SettingsData();
 		private String renameLabel = "Rename";
 		private String deleteLabel = "Delete";
 		private Runnable[] openActions = new Runnable[0];
