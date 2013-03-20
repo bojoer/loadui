@@ -10,8 +10,6 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.TreeItem;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.HBoxBuilder;
 
@@ -144,7 +142,7 @@ public class StatisticsDialog extends ConfirmationDialog
 		}
 	}
 
-	private boolean thereAreSegmentsIn( ChartGroup group )
+	public static boolean thereAreSegmentsIn( ChartGroup group )
 	{
 		for( ChartView view : group.getChartViewsForCharts() )
 			if( view instanceof ConfigurableLineChartView )

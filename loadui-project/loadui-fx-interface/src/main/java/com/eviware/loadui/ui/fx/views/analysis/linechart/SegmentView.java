@@ -27,6 +27,7 @@ import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.ui.fx.MenuItemsProvider;
 import com.eviware.loadui.ui.fx.MenuItemsProvider.Options;
 import com.eviware.loadui.ui.fx.util.NodeUtils;
+import com.eviware.loadui.ui.fx.views.analysis.StatisticsDialog;
 import com.eviware.loadui.util.statistics.ChartUtils;
 
 public abstract class SegmentView<T extends Segment> extends StackPane implements Releasable, Deletable
@@ -96,7 +97,16 @@ public abstract class SegmentView<T extends Segment> extends StackPane implement
 	 */
 	protected void setMenuItemsFor( final MenuButton menuButton )
 	{
-		MenuItem[] menuItems = MenuItemsProvider.createWith( this, this, Options.are() ).items();
+		MenuItem[] menuItems = MenuItemsProvider.createWith( this, this, Options.are().delete( false, new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				log.debug( "Removed SegmentView successfully" );
+				if( !StatisticsDialog.thereAreSegmentsIn( lineChartView.getChartGroup() ) )
+					lineChartView.getChartGroup().delete();
+			}
+		} ) ).items();
 		menuButton.getItems().setAll( menuItems );
 		final ContextMenu ctxMenu = ContextMenuBuilder.create().items( menuItems ).build();
 
