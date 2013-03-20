@@ -25,6 +25,8 @@ import org.slf4j.LoggerFactory;
 import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.ComponentItem;
+import com.eviware.loadui.api.model.ProjectItem;
+import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.statistics.Statistic;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticVariable;
@@ -109,43 +111,52 @@ public class StatisticTree extends TreeView<Labeled> implements Validatable
 		log.debug( "Adding variables to tree, StatisticHolder: " + holder );
 		TreeCreator creator = ( root.getValue() instanceof CanvasItem || root.getValue() instanceof ComponentItem ) ? new StandardTreeCreator()
 				: new MonitorTreeCreator();
-
-		for( String variableName : holder.getStatisticVariableNames() )
-		{
-			StatisticVariable variable = holder.getStatisticVariable( variableName );
-			creator.add( root, variableName, variable );
-		}
+		creator.createTree( holder, root );
 	}
 
 	private static abstract class TreeCreator
 	{
-		abstract void add( TreeItem<Labeled> root, String variableName, StatisticVariable variable );
-		
+		abstract void createTree( StatisticHolder holder, TreeItem<Labeled> root );
+
 		TreeItem<Labeled> treeItem( Labeled value, TreeItem<Labeled> parent )
 		{
 			TreeItem<Labeled> item = new TreeItem<>( value );
 			parent.getChildren().add( item );
 			return item;
 		}
-		
+
 	}
 
 	private class StandardTreeCreator extends TreeCreator
 	{
 		@Override
-		public void add( TreeItem<Labeled> root, String variableName, StatisticVariable variable )
+		public void createTree( StatisticHolder holder, TreeItem<Labeled> root )
 		{
-			TreeItem<Labeled> variableItem = treeItem( variable, root );
+			for( String variableName : holder.getStatisticVariableNames() )
+			{
+				StatisticVariable variable = holder.getStatisticVariable( variableName );
+				boolean forceAgentStatistics = holder instanceof SceneItem;
+				TreeItem<Labeled> variableItem = treeItem( variable, root );
+				boolean mayBeInAgents = forceAgentStatistics
+						|| !( variable.getStatisticHolder().getCanvas() instanceof ProjectItem );
+				createSubItems( variable, variableItem, mayBeInAgents );
+			}
 
+		}
+
+		private void createSubItems( StatisticVariable variable, TreeItem<Labeled> variableItem, boolean mayBeInAgents )
+		{
 			for( String statisticName : variable.getStatisticNames() )
 			{
 				Statistic<?> statistic = variable.getStatistic( statisticName, StatisticVariable.MAIN_SOURCE );
 				TreeItem<Labeled> statisticItem = treeItem( statistic, variableItem );
-				if( !agents.isEmpty() )
+				if( !agents.isEmpty() && mayBeInAgents )
+				{
 					statisticItem.getChildren().add( dummyItem( AGENT_TOTAL, StatisticVariable.MAIN_SOURCE ) );
+					for( AgentItem agent : agents )
+						treeItem( new LabeledStringValue( agent.getLabel() ), statisticItem );
+				}
 
-				for( AgentItem agent : agents )
-					treeItem( new LabeledStringValue( agent.getLabel() ), statisticItem );
 			}
 		}
 	}
@@ -153,10 +164,20 @@ public class StatisticTree extends TreeView<Labeled> implements Validatable
 	private class MonitorTreeCreator extends TreeCreator
 	{
 		@Override
-		public void add( TreeItem<Labeled> root, String variableName, StatisticVariable variable )
+		public void createTree( StatisticHolder holder, TreeItem<Labeled> root )
 		{
-			final TreeItem<Labeled> variableItem = treeItem( variable, root );
 
+			for( String variableName : holder.getStatisticVariableNames() )
+			{
+				StatisticVariable variable = holder.getStatisticVariable( variableName );
+				final TreeItem<Labeled> variableItem = treeItem( variable, root );
+				createSubItems( variable, variableItem );
+			}
+
+		}
+
+		private void createSubItems( StatisticVariable variable, final TreeItem<Labeled> variableItem )
+		{
 			for( String statisticName : variable.getStatisticNames() )
 			{
 				Map<String, TreeItem<Labeled>> itemsBySource = new HashMap<>();
