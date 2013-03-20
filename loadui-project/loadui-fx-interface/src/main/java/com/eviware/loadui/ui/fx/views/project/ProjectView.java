@@ -11,6 +11,8 @@ import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.property.Property;
 import javafx.beans.property.ReadOnlyProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
@@ -68,6 +70,9 @@ public class ProjectView extends AnchorPane
 	private static final String HELP_PAGE = "http://www.loadui.org/interface/project-view.html";
 
 	private static final Logger log = LoggerFactory.getLogger( ProjectView.class );
+
+	private static final String TOOLBAR_STYLE_WITHOUT_SCENARIO = "-fx-background-color: linear-gradient(to bottom, -base-color-mid 0%, -fx-header-color 75%, #000000 76%, #272727 81%);";
+	private static final String TOOLBAR_STYLE_WITH_SCENARIO = "-fx-background-color: linear-gradient(-base-color-mid 0%, -base-color-mid 74%, #555555 75%, #DDDDDD 76%, -base-color-mid 77%, -base-color-mid 100%);";
 
 	@FXML
 	private DetachableTab designTab;
@@ -220,14 +225,17 @@ public class ProjectView extends AnchorPane
 					final Object arg = event.getArg();
 					Preconditions.checkArgument( arg instanceof SceneItem );
 					SceneItem scenario = ( SceneItem )arg;
-					( ( ToolBar )lookup( ".tool-bar" ) )
-							.setStyle( "-fx-background-color: linear-gradient(-base-color-mid 0%, -base-color-mid 74%, #555555 75%, #DDDDDD 76%, -base-color-mid 77%, -base-color-mid 100%);" );
+
+					ToolBar projectToolbar = ( ( ToolBar )lookup( ".tool-bar" ) );
+					projectToolbar.setStyle( TOOLBAR_STYLE_WITH_SCENARIO );
+
 					ScenarioToolbar toolbar = new ScenarioToolbar( scenario );
 
 					linkButton = ToggleButtonBuilder.create().id( "link-scenario" ).styleClass( "styleable-graphic" )
 							.build();
 					Property<Boolean> linkedProperty = Properties.convert( scenario.followProjectProperty() );
 					linkButton.selectedProperty().bindBidirectional( linkedProperty );
+					linkButton.visibleProperty().bind( statsTab.selectedProperty().not() );
 					AnchorPane.setLeftAnchor( linkButton, 473d );
 					AnchorPane.setTopAnchor( linkButton, 55d );
 					ProjectView.this.getChildren().add( linkButton );
@@ -242,8 +250,7 @@ public class ProjectView extends AnchorPane
 				}
 				else if( event.getEventType() == IntentEvent.INTENT_CLOSE && event.getArg() instanceof SceneItem )
 				{
-					( ( ToolBar )lookup( ".tool-bar" ) )
-							.setStyle( "-fx-background-color: linear-gradient(to bottom, -base-color-mid 0%, -fx-header-color 75%, #000000 76%, #272727 81%);" );
+					( ( ToolBar )lookup( ".tool-bar" ) ).setStyle( TOOLBAR_STYLE_WITHOUT_SCENARIO );
 					ProjectView.this.getChildren().remove( linkButton );
 
 					Group canvas = ( Group )lookup( ".canvas-layer" );
@@ -272,6 +279,37 @@ public class ProjectView extends AnchorPane
 					new CloneProjectDialog( project.getWorkspace(), projectRef, ProjectView.this ).show();
 					event.consume();
 					return;
+				}
+			}
+		} );
+
+		statsTab.selectedProperty().addListener( new ChangeListener<Boolean>()
+		{
+			@Override
+			public void changed( ObservableValue<? extends Boolean> _, Boolean __, Boolean ___ )
+			{
+				if( statsTab.selectedProperty().get() )
+				{
+					( ( ToolBar )lookup( ".tool-bar" ) ).setStyle( TOOLBAR_STYLE_WITH_SCENARIO );
+				}
+			}
+		} );
+
+		designTab.selectedProperty().addListener( new ChangeListener<Boolean>()
+		{
+			@Override
+			public void changed( ObservableValue<? extends Boolean> _, Boolean __, Boolean ___ )
+			{
+				if( designTab.selectedProperty().get() )
+				{
+					if( designTab.getContent().lookup( ".scenario-toolbar" ) != null )
+					{
+						( ( ToolBar )lookup( ".tool-bar" ) ).setStyle( TOOLBAR_STYLE_WITH_SCENARIO );
+					}
+					else
+					{
+						( ( ToolBar )lookup( ".tool-bar" ) ).setStyle( TOOLBAR_STYLE_WITHOUT_SCENARIO );
+					}
 				}
 			}
 		} );

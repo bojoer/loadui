@@ -2,8 +2,23 @@
 	-fx-background-color: #333333;
 }
 
-.title {
-	-fx-font-size: 20px;
+.workspace-view .tool-bar{
+	-fx-background-color: linear-gradient(to bottom, -base-color-mid 0%, -fx-header-color 100%);
+	-fx-effect: dropshadow(three-pass-box, #000000, 10, 0.3, 0, 0);
+}
+
+.title{
+	-fx-background-insets: 0 15 0 0; 
+}
+
+.title .text{
+	-fx-font-size: 14px;
+
+}
+
+.title .arrow{
+	-fx-translate-x: -15;
+	-fx-scale-x: 0.5; 
 }
 
 .web-container {

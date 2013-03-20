@@ -1,3 +1,15 @@
 .title {
 	-fx-font-size: 20px;
 }
+
+.separator-menu-item:horizontal{
+	-fx-background-color: #6B6B6B;
+	-fx-padding: 1 0 0 0;
+}
+
+.separator-menu-item:horizontal .line{
+	-fx-border-width: 0 0 1 0; 
+	-fx-border-style: solid;
+	-fx-border-color: #B4B4B4;
+	-fx-background-insets: 0;
+}
