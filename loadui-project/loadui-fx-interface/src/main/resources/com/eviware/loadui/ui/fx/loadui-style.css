@@ -34,6 +34,11 @@
 	-dropshadow-light: dropshadow( gaussian, #DDDDDD, 6, 0.8, 0, 0 );
 	-innershadow-dark: innershadow( three-pass-box, #EEEEEE, 5, 0.1, 0, 5);
 	-innershadow-light: innershadow( three-pass-box, #111111, 5, 0.1, 0, 5);
+	
+	-menubutton-color-hover: linear-gradient(to bottom, #E7E7E7, #B5B5B5);
+	-menubutton-color-showing: linear-gradient(to bottom, #389DFC, #50C0F1);
+	-menubutton-color-border: #8C8C8C;
+	
 }
 
 
@@ -420,7 +425,6 @@
 	-fx-background-insets: 0;
 }
 
-
 .combo-box{
 	-fx-border-color: #666666; 
 	-fx-border-width: 1; 
@@ -446,6 +450,8 @@
 .combo-box:focused{
 	-fx-border-color: #00AAFF; 
 }
+
+
 
 /**
  * tool-bar (header) styles
