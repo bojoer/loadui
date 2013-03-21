@@ -48,6 +48,17 @@
 .text{
 	-fx-font-family: "lucida sans";
 }
+
+.tooltip {
+   -fx-background-color: snow;
+   -fx-background-radius: 7 7 7 7;
+   -fx-font-family: "lucida sans";
+   -fx-font-size: 10;   
+}
+
+.tooltip .page-corner {
+    -fx-shape: " ";
+}
  
 .placeholder {
 	-fx-background-color: #292929;
