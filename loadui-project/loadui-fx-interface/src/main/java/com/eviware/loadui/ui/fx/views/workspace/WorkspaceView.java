@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import javafx.application.Platform;
+import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
@@ -24,12 +25,15 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.web.PopupFeatures;
+import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.FileChooserBuilder;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
+import javafx.util.Callback;
 
 import javax.annotation.Nullable;
 
@@ -149,6 +153,23 @@ public class WorkspaceView extends StackPane
 			log.warn( "Unable to load resource file 'application.properties!'", e );
 		}
 
+		webView.getEngine().setCreatePopupHandler( new Callback<PopupFeatures, WebEngine>()
+		{
+			@Override
+			public WebEngine call( PopupFeatures pf )
+			{
+				final WebEngine popupWebEngine = new WebEngine();
+				popupWebEngine.locationProperty().addListener( new InvalidationListener()
+				{
+					@Override
+					public void invalidated( Observable _ )
+					{
+						UIUtils.openInExternalBrowser( popupWebEngine.getLocation() );
+					}
+				} );
+				return popupWebEngine;
+			}
+		} );
 		webView.getEngine().load( props.getProperty( "starter.page.url" ) + "?version=" + LoadUI.VERSION );
 
 		initGettingStartedWizard();
