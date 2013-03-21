@@ -56,14 +56,14 @@ public class ResultView extends StackPane
 		this.recentExList = recentExecutions;
 		this.archivedExList = archivedExecutions;
 		this.toClose = toClose;
-
+		
 		FXMLUtils.load( this );
 	}
 
 	@FXML
 	private void initialize()
 	{
-
+		
 		recentExViews = createExecutionViewsFor( recentExList, ExecutionState.RECENT );
 		bindContent( resultNodeList.getItems(), recentExViews );
 

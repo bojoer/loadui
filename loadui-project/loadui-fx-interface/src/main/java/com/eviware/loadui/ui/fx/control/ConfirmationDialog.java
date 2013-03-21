@@ -13,6 +13,7 @@ import javafx.scene.control.Separator;
 import javafx.scene.control.SeparatorBuilder;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 
 import javax.annotation.Nonnull;
@@ -35,25 +36,22 @@ public class ConfirmationDialog extends ButtonDialog
 	{
 		super( owner, header );
 
+		EventHandler<MouseEvent> closeHandler = new EventHandler<MouseEvent>()
+		{
+			@Override
+			public void handle( MouseEvent event )
+			{
+				close();
+			}
+		};
+		
 		confirmButton = ButtonBuilder.create().text( actionButtonLabel ).id( "default" ).defaultButton( true )
-				.alignment( Pos.BOTTOM_RIGHT ).onAction( new EventHandler<ActionEvent>()
-				{
-					@Override
-					public void handle( ActionEvent event )
-					{
-						close();
-					}
-				} ).build();
+				.alignment( Pos.BOTTOM_RIGHT ).build();
+		confirmButton.addEventHandler( MouseEvent.MOUSE_CLICKED, closeHandler );
 
 		cancelButton = ButtonBuilder.create().text( "Cancel" ).id( "cancel" ).cancelButton( true )
-				.alignment( Pos.BOTTOM_RIGHT ).onAction( new EventHandler<ActionEvent>()
-				{
-					@Override
-					public void handle( ActionEvent event )
-					{
-						close();
-					}
-				} ).build();
+				.alignment( Pos.BOTTOM_RIGHT ).build();
+		cancelButton.addEventHandler( MouseEvent.MOUSE_CLICKED, closeHandler );
 
 		if( separateButtons )
 		{

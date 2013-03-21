@@ -121,7 +121,7 @@ public class ResultViewTest
 		assertEquals( "Renamed Execution", menuButton.textProperty().get() );
 
 		// delete execution
-		controller.click( "#archive-0 #menuButton" ).click( "#delete-item" );
+		controller.click( "#archive-0 #menuButton" ).click( "#delete-item" ).click( ".confirmation-dialog #default" );
 		failIfExists( "#archive-0" );
 
 	}

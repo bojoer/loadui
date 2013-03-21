@@ -27,6 +27,9 @@ public class IntentEvent<T> extends Event
 
 	public static final EventType<IntentEvent<? extends Runnable>> INTENT_RUN_BLOCKING = new EventType<>( ANY,
 			"INTENT_RUN_BLOCKING" );
+	
+	public static final EventType<IntentEvent<? extends AbortableTask>> INTENT_RUN_BLOCKING_ABORTABLE = new EventType<>( ANY,
+			"INTENT_RUN_BLOCKING_ABORTABLE" );
 
 	public static final EventType<IntentEvent<? extends Object>> INTENT_SAVE = new EventType<>( ANY, "INTENT_SAVE" );
 

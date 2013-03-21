@@ -11,6 +11,7 @@ import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.beans.value.ObservableValue;
+import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
@@ -156,15 +157,16 @@ public final class NodeUtils
 	public static boolean isMouseOn( Node node )
 	{
 		Point mouseLocation = MouseInfo.getPointerInfo().getLocation();
-		double windowX = node.getScene().getWindow().getX();
-		double windowY = node.getScene().getWindow().getY();
-		double sceneX = node.getScene().getX();
-		double sceneY = node.getScene().getY();
+		return absoluteBoundsOf( node ).contains( mouseLocation.getX(), mouseLocation.getY() );
+	}
+
+	public static Bounds absoluteBoundsOf( Node node )
+	{
+		double tX = node.getScene().getWindow().getX() + node.getScene().getX();
+		double tY = node.getScene().getWindow().getY() + node.getScene().getY();
 		Bounds boundsInScene = node.localToScene( node.getBoundsInLocal() );
-		Point2D mouseLocationInScene = new Point2D( mouseLocation.getX() - windowX - sceneX, mouseLocation.getY()
-				- windowY - sceneY );
-		boolean result = boundsInScene.contains( mouseLocationInScene );
-		return result;
+		return new BoundingBox( boundsInScene.getMinX() + tX, boundsInScene.getMinY() + tY, boundsInScene.getWidth(),
+				boundsInScene.getHeight() );
 	}
 
 }

@@ -9,6 +9,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.geometry.Insets?>
+<?import javafx.geometry.*?>
 <?import java.net.URL?>
 
 <?import com.eviware.loadui.ui.fx.views.analysis.AnalysisToolBox?>
@@ -18,8 +19,11 @@
 		<stylesheets>
 			<URL value="@AnalysisView.css" />
 		</stylesheets>
-		<HBox fx:id="buttonContainer" spacing="10" alignment="baseline_left">
-			<Label id="current-execution-label" fx:id="executionLabel" styleClass="title" />
+		<HBox fx:id="analysisToolbar" styleClass="analysis-toolbar" spacing="10" minHeight="45" maxHeight="45" alignment="baseline_left">
+			<padding>
+				<Insets top="9" right="10" left="85" bottom="0"/>
+			</padding>
+			<Label id="current-execution-label" fx:id="executionLabel" styleClass="title" minWidth="165" maxWidth="165" />
 			<Button id="open-execution" text="Open previous runs"
 					onAction="#openPreviousRuns" />
 		</HBox>
@@ -31,5 +35,5 @@
 				AnchorPane.leftAnchor="0" AnchorPane.topAnchor="40" heightPerItem="110"
 				maxWidth="100" />
 		</AnchorPane>
-	</VBox>
+		</VBox>
 </fx:root>

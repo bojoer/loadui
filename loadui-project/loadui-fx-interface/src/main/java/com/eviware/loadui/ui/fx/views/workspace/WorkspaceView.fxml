@@ -29,9 +29,9 @@
 		<URL value="@WorkspaceView.css" />
 	</stylesheets>
 	<VBox alignment="top_left" spacing="10" snapToPixel="true">
-		<ToolBar minHeight="60" id="topToolBar" styleClass="header">
+		<ToolBar minHeight="40" id="topToolBar" styleClass="header">
 			<Label minWidth="60" />
-			<MenuButton text="Workspace">
+			<MenuButton text="Workspace" styleClass="title">
 				<items>
 					<MenuItem onAction="#importProject" text="Import project" />
 					<SeparatorMenuItem />

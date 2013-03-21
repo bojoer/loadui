@@ -8,25 +8,24 @@ import java.util.concurrent.Callable;
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 
-
 import com.eviware.loadui.test.TestState;
 import com.eviware.loadui.test.ui.fx.GUI;
 
-
 public class ProjectCreatedWithoutAgentsState extends TestState
 {
-	
+
 	public static final ProjectCreatedWithoutAgentsState STATE = new ProjectCreatedWithoutAgentsState();
 
 	private ProjectCreatedWithoutAgentsState()
 	{
 		this( "Project without agents created", FXAppLoadedState.STATE );
 	}
-	
-	protected ProjectCreatedWithoutAgentsState(String name, TestState parent) {
+
+	protected ProjectCreatedWithoutAgentsState( String name, TestState parent )
+	{
 		super( name, parent );
 	}
-	
+
 	// This method randomly throws an IndexOutOfBoundsException which breaks the test.
 	// TODO: We should look into it once the source code for ObservableList is released.
 	@Override
@@ -52,7 +51,8 @@ public class ProjectCreatedWithoutAgentsState extends TestState
 	protected void exitToParent() throws Exception
 	{
 		log.debug( "Deleting project." );
-		GUI.getController().click( "#projectRefCarousel .project-ref-view .menu-button" ).click( "#delete-item" );
+		GUI.getController().click( "#projectRefCarousel .project-ref-view .menu-button" ).click( "#delete-item" )
+				.click( ".confirmation-dialog #default" );
 		final Node projectCarousel = find( "#projectRefCarousel" );
 
 		awaitCondition( new Callable<Boolean>()

@@ -1,10 +1,23 @@
-.title {
-	-fx-font-size: 20px;
+.title{
+	-fx-background-insets: 0 15 0 0; 
 }
 
+.title .text{
+	-fx-font-size: 14px;
+
+}
+
+.title .arrow{
+	-fx-translate-x: -15;
+	-fx-scale-x: 0.5; 
+}
 .scenario-toolbar .tool-bar{
 	-fx-background-color: linear-gradient(to bottom, -base-color-mid 0%, -fx-header-color 100%);
 	-fx-effect: -dropshadow-dark; 
+}
+
+.scenario-background{
+	-fx-background-color: #272727;
 }
 
 #openHelpPageButton .graphic {

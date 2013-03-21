@@ -103,7 +103,7 @@ public class AnalysisView extends StackPane
 	private AnalysisToolBox toolBox;
 
 	@FXML
-	private HBox buttonContainer;
+	private HBox analysisToolbar;
 
 	private final ProjectItem project;
 	private final Observable poll;
@@ -210,7 +210,7 @@ public class AnalysisView extends StackPane
 
 	public HBox getButtonContainer()
 	{
-		return buttonContainer;
+		return analysisToolbar;
 	}
 
 	@SuppressWarnings( "resource" )

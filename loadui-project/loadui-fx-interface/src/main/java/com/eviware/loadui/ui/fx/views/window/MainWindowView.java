@@ -11,6 +11,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.MenuButton;
+import javafx.scene.effect.Glow;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
@@ -109,6 +110,7 @@ public class MainWindowView extends StackPane
 		{
 			mainButton.setGraphic( new ImageView( LoadUI.relativeFile( "res/logo-button.png" ).toURI().toURL()
 					.toExternalForm() ) );
+			mainButton.effectProperty().bind(Bindings.when( Bindings.or( mainButton.hoverProperty(), mainButton.showingProperty() ) ).then( new Glow(0.4d) ).otherwise( new Glow( 0d ) ) );
 			SelectableImpl.installDeleteKeyHandler( this );
 
 			initIntentEventHanding();
@@ -222,6 +224,11 @@ public class MainWindowView extends StackPane
 				else if( event.getEventType() == IntentEvent.INTENT_RUN_BLOCKING )
 				{
 					//Handled by BlockingTask.
+					return;
+				}
+				else if( event.getEventType() == IntentEvent.INTENT_RUN_BLOCKING_ABORTABLE )
+				{
+					//Handled by AbortableBlockingTask.
 					return;
 				}
 				else if( event.getEventType() == IntentEvent.INTENT_DELETE )

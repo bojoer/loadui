@@ -5,7 +5,6 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.geometry.Insets;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.ProgressIndicatorBuilder;
 import javafx.scene.control.ToggleButton;

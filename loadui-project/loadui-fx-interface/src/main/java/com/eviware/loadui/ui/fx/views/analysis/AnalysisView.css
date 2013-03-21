@@ -2,14 +2,19 @@
 	-fx-background-color: #555555;
 }
 
-.tab-content-area
-{	
-	-fx-padding: 10 10 0 110;
+.tab-content-area{	
+	-fx-padding: 5 5 5 110;
 	-fx-background-color: #373737;
+}
+
+.tab-header-area{
+	-fx-background-insets: 5 0 0 0;
+	-fx-translate-z: 2; 
 }
 
 .tab {
 	/* height 21 m border, padding 16 */
+	
 	-fx-padding: 0 14 0 14;
 }
 
@@ -35,4 +40,26 @@
 	-color-gradient: linear-gradient(to bottom, #252525, #505050);	
 	-color-border: #404040;
 	-fx-padding: 0 -2 0 14;
+}
+
+.title{
+	-fx-font-size: 14px;
+}
+
+.analysis-toolbar{
+	-fx-background-color: linear-gradient(to bottom, -base-color-mid 0%, -fx-header-color 89%, #000000 90%, #555555 100% );
+}
+
+.analysis-toolbar .menu-button:hover{
+	-fx-background-color: linear-gradient(to bottom, #9E9E9E 0%, #BDBDBD 50%, #9E9E9E 100%);
+}
+
+.analysis-toolbar .button{
+	 -fx-background-color: transparent;
+	 -fx-border-width: 0;  
+	 -fx-translate-y: -2; 
+}
+
+.analysis-toolbar .button:hover{
+	-fx-background-color: linear-gradient(to bottom, #9E9E9E 0%, #BDBDBD 50%, #9E9E9E 100%);
 }

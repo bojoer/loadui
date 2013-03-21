@@ -100,7 +100,7 @@ public class MessageEndpointSupport implements Releasable
 		for( ConnectionListenerProxy listener : connectionProxies.values() )
 			source.removeConnectionListener( listener );
 		connectionProxies.clear();
-		for( MessageListenerProxy listener : messageProxies.values() )
+		for( MessageListenerProxy listener : new ArrayList<>( messageProxies.values() ) )
 			source.removeMessageListener( listener );
 		messageProxies.clear();
 		errorListeners.clear();

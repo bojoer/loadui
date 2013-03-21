@@ -16,15 +16,18 @@ import javafx.scene.layout.Region;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import com.eviware.loadui.api.testevents.MessageLevel;
 import com.eviware.loadui.api.testevents.TestEventManager;
+import com.eviware.loadui.test.categories.IntegrationTest;
 import com.eviware.loadui.test.ui.fx.states.FXAppLoadedState;
 import com.eviware.loadui.test.ui.fx.states.ProjectLoadedWithoutAgentsState;
 import com.eviware.loadui.ui.fx.util.test.TestFX;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.test.TestUtils;
 
+@Category( IntegrationTest.class )
 public class NotificationPanelTest
 {
 
