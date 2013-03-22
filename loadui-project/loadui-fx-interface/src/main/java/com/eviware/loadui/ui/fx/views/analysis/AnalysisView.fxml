@@ -32,8 +32,8 @@
 				AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="30"
 				AnchorPane.leftAnchor="0" />
 			<AnalysisToolBox fx:id="toolBox"
-				AnchorPane.leftAnchor="0" AnchorPane.topAnchor="40" heightPerItem="110"
-				maxWidth="100" />
+				AnchorPane.leftAnchor="0" AnchorPane.topAnchor="62" heightPerItem="110"
+				minWidth="100" maxWidth="120" />
 		</AnchorPane>
 		</VBox>
 </fx:root>

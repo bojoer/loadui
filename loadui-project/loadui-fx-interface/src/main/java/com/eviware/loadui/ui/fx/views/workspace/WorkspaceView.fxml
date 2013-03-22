@@ -28,7 +28,7 @@
 	<stylesheets>
 		<URL value="@WorkspaceView.css" />
 	</stylesheets>
-	<VBox alignment="top_left" spacing="10" snapToPixel="true">
+	<VBox alignment="top_left" spacing="27" snapToPixel="true">
 		<ToolBar minHeight="40" id="topToolBar" styleClass="header">
 			<Label minWidth="60" />
 			<MenuButton text="Workspace" styleClass="title">
@@ -44,8 +44,8 @@
 				</right>
 			</BorderPane>
 		</ToolBar>
-		<HBox spacing="15" snapToPixel="true" fillHeight="false">
-			<ToolBox fx:id="toolbox" heightPerItem="110" HBox.hgrow="ALWAYS" maxWidth="125">
+		<HBox spacing="27" snapToPixel="true" fillHeight="false">
+			<ToolBox fx:id="toolbox" heightPerItem="110" HBox.hgrow="ALWAYS" minWidth="110" maxWidth="120">
 				<categoryComparator>
 					<ExplicitOrdering>
 						<String fx:value="Projects"/>
@@ -54,7 +54,7 @@
 				</categoryComparator>
 				<NewProjectIcon id="newProjectIcon" ToolBox.category="Projects" />
 			</ToolBox>
-			<VBox fx:id="carouselArea" spacing="15">
+			<VBox fx:id="carouselArea" spacing="27">
 				<Carousel fx:id="projectRefCarousel" text="Projects" prefWidth="320" prefHeight="220" />
 			</VBox>
 			<StackPane styleClass="web-container">
