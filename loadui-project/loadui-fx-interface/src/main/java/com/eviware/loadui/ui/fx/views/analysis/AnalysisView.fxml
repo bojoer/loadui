@@ -24,7 +24,7 @@
 				<Insets top="9" right="10" left="85" bottom="0"/>
 			</padding>
 			<Label id="current-execution-label" fx:id="executionLabel" styleClass="title" minWidth="165" maxWidth="165" />
-			<Button id="open-execution" text="Open previous runs"
+			<Button id="open-execution" text="Previous test runs"
 					onAction="#openPreviousRuns" />
 		</HBox>
 		<AnchorPane VBox.vgrow="ALWAYS">

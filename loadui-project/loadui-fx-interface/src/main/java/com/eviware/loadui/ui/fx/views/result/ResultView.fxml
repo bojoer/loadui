@@ -23,7 +23,7 @@
 			<padding>
 				<Insets top="10" left="10" bottom="10" right="10"/> 
 			</padding>
-			<Label styleClass="title" text="PREVIOUS TEST RUNS" />
+			<Label styleClass="title" text="TEST RUNS" />
 		</HBox>
 		<HBox>
 			<padding>
