@@ -43,7 +43,7 @@ public class SegmentViewToSeriesFunctionTest
 		when( chart.getSpan() ).thenReturn( 0L );
 		when( chart.getTickZoomLevel() ).thenReturn( ZoomLevel.ALL );
 
-		SegmentViewToSeriesFunction f = new SegmentViewToSeriesFunction( executionObs, observables, chart );
+		SegmentViewToSeriesFunction f = new SegmentViewToSeriesFunction( executionObs, observables, obs1, chart );
 
 		Statistic<Number> stat = mock( Statistic.class );
 		Iterable<DataPoint<Number>> period = createDataPoints();

@@ -307,13 +307,7 @@ public class ObservableLists
 	public static <E, T extends Iterable<E>> ObservableList<E> fromExpression( Callable<T> expression,
 			ObservableList<? extends Observable> observables )
 	{
-		return new ExpressionList<E>( expression, observables, "NO NAME" ).readOnlyList;
-	}
-
-	public static <E, T extends Iterable<E>> ObservableList<E> fromExpression( Callable<T> expression,
-			ObservableList<? extends Observable> observables, String name )
-	{
-		return new ExpressionList<E>( expression, observables, name ).readOnlyList;
+		return new ExpressionList<E>( expression, observables ).readOnlyList;
 	}
 
 	private static final LoadingCache<List<?>, ListChangeListener<?>> contentListeners = CacheBuilder.newBuilder()
@@ -587,14 +581,33 @@ public class ObservableLists
 			@Override
 			public void invalidated( Observable arg0 )
 			{
-				try
+				if( Platform.isFxApplicationThread() )
 				{
-					list.setAll( Lists.newArrayList( expression.call() ) );
+					try
+					{
+						list.setAll( Lists.newArrayList( expression.call() ) );
+					}
+					catch( Exception e )
+					{
+						throw new RuntimeException( e );
+					}
 				}
-				catch( Exception e )
-				{
-					throw new RuntimeException( e );
-				}
+				else
+					Platform.runLater( new Runnable()
+					{
+						@Override
+						public void run()
+						{
+							try
+							{
+								list.setAll( Lists.newArrayList( expression.call() ) );
+							}
+							catch( Exception e )
+							{
+								throw new RuntimeException( e );
+							}
+						}
+					} );
 			}
 		};
 
@@ -604,13 +617,11 @@ public class ObservableLists
 		private final ObservableList<E> readOnlyList;
 		private final Callable<? extends Iterable<E>> expression;
 		@SuppressWarnings( "unused" )
-		private final ObservableList<? extends Observable> observables;
-		public String name = "NO NAME";
+		private ObservableList<? extends Observable> observables; // Needs to be a field to avoid GC.
 
 		private ExpressionList( Callable<? extends Iterable<E>> expression,
-				ObservableList<? extends Observable> observables, String name )
+				ObservableList<? extends Observable> observables )
 		{
-			this.name = name;
 			this.expression = expression;
 			this.observables = observables;
 

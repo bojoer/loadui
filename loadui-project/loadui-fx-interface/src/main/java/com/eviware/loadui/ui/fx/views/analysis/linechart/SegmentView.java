@@ -1,6 +1,7 @@
 package com.eviware.loadui.ui.fx.views.analysis.linechart;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
@@ -126,11 +127,20 @@ public abstract class SegmentView<T extends Segment> extends StackPane implement
 	@Override
 	public void release()
 	{
-		Object listener = getProperties().get( "ReferenceToWeakListener" );
-		Object target = getProperties().get( "ListenerTarget" );
-		if( listener instanceof InvalidationListener && target instanceof Observable )
+		Object listeners = getProperties().get( "Listeners" );
+		Object targets = getProperties().get( "ListenerTargets" );
+		if( listeners != null )
 		{
-			( ( Observable )target ).removeListener( ( InvalidationListener )listener );
+			List<InvalidationListener> invalidationListeners = ( List<InvalidationListener> )listeners;
+			List<Observable> observables = ( List<Observable> )targets;
+			for( Observable o : observables )
+			{
+				for( InvalidationListener l : invalidationListeners )
+				{
+					log.debug( "REMOVING LISTENER " + l + " from " + o );
+					o.removeListener( l );
+				}
+			}
 		}
 		getProperties().clear();
 

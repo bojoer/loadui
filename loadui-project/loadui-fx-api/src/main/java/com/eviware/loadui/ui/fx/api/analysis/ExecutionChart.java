@@ -36,4 +36,5 @@ public interface ExecutionChart
 
 	public Color getColor( Segment segment, Execution execution );
 
+	public Execution getCurrentExecution();
 }

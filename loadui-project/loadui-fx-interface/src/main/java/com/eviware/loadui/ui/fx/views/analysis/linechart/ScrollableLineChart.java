@@ -53,6 +53,7 @@ import com.eviware.loadui.ui.fx.api.analysis.ExecutionChart;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.ManualObservable;
 import com.eviware.loadui.ui.fx.util.ObservableLists;
+import com.eviware.loadui.ui.fx.util.Observables;
 import com.eviware.loadui.util.execution.TestExecutionUtils;
 import com.google.common.base.Function;
 import com.google.common.base.Splitter;
@@ -159,7 +160,6 @@ public class ScrollableLineChart extends HBox implements ExecutionChart, Releasa
 			@Override
 			public void invalidated( Observable _ )
 			{
-				log.debug( "INVALIDATED" );
 				long millis = ( long )getPosition();
 				ellapsedTime.setText( millisToTickMark.generatePositionString( millis ) );
 			}
@@ -272,8 +272,8 @@ public class ScrollableLineChart extends HBox implements ExecutionChart, Releasa
 		scrollBar.maxProperty().bind( currentExecutionLenght );
 
 		final SegmentViewToSeriesFunction segmentViewToSeries = new SegmentViewToSeriesFunction( currentExecution,
-				javafx.collections.FXCollections.observableArrayList( currentExecution, position, poll,
-						segmentBox.chartUpdate(), manualDataUpdate, currentExecutionLenght ), this );
+				javafx.collections.FXCollections.observableArrayList( currentExecution, position, segmentBox.chartUpdate(),
+						manualDataUpdate ), poll, this );
 
 		final ObservableList<Segment> segmentsList = fx( ofCollection( chartView, LineChartView.SEGMENTS, Segment.class,
 				chartView.getSegments() ) );
@@ -294,7 +294,6 @@ public class ScrollableLineChart extends HBox implements ExecutionChart, Releasa
 					}
 				}
 			} );
-
 		}
 
 		segmentViews = transform( segmentsList, segmentToView );
@@ -414,6 +413,12 @@ public class ScrollableLineChart extends HBox implements ExecutionChart, Releasa
 	public Color getColor( Segment segment, Execution execution )
 	{
 		return Color.web( segment.getAttribute( SegmentView.COLOR_ATTRIBUTE, "#FFFFFF" ) );
+	}
+
+	@Override
+	public Execution getCurrentExecution()
+	{
+		return currentExecution.getValue();
 	}
 
 }

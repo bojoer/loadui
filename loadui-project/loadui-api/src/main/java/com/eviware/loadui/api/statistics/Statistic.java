@@ -15,6 +15,7 @@
  */
 package com.eviware.loadui.api.statistics;
 
+import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 
 import com.eviware.loadui.api.serialization.ListenableValue;
@@ -97,6 +98,7 @@ public interface Statistic<T extends Number> extends ListenableValue<T>, Labeled
 	 * @param interpolationLevel
 	 * @return
 	 */
+	@CheckForNull
 	public DataPoint<T> getLatestPoint( int interpolationLevel );
 
 	/**

@@ -8,8 +8,13 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class Observables
 {
+	protected static final Logger log = LoggerFactory.getLogger( Observables.class );
+
 	/**
 	 * Creates a Group out of the provided observables.
 	 * 
@@ -19,12 +24,22 @@ public class Observables
 
 	public static Group group( Observable... observables )
 	{
-		return new Group( Arrays.asList( observables ) );
+		return new Group( Arrays.asList( observables ), 0 );
+	}
+
+	public static Group group( long propagationEliminationPeriod, Observable... observables )
+	{
+		return new Group( Arrays.asList( observables ), propagationEliminationPeriod );
 	}
 
 	public static Group group( Iterable<Observable> observables )
 	{
-		return new Group( observables );
+		return new Group( observables, 0 );
+	}
+
+	public static Group group( long propagationEliminationPeriod, Iterable<Observable> observables )
+	{
+		return new Group( observables, propagationEliminationPeriod );
 	}
 
 	/**
@@ -43,14 +58,25 @@ public class Observables
 		private final InvalidationListener invalidationListener = new InvalidationListener()
 		{
 			@Override
-			public void invalidated( Observable arg0 )
+			public void invalidated( Observable o )
 			{
-				fireInvalidation();
+				if( lastInvalidated == o
+						|| timeOfLatestInvalidation + propagationEliminationPeriod <= System.currentTimeMillis() )
+				{
+					lastInvalidated = o;
+					timeOfLatestInvalidation = System.currentTimeMillis();
+					fireInvalidation();
+				}
 			}
 		};
 
-		private Group( Iterable<Observable> observables )
+		private Observable lastInvalidated;
+		private volatile long timeOfLatestInvalidation = System.currentTimeMillis();
+		private final long propagationEliminationPeriod;
+
+		private Group( Iterable<Observable> observables, long propagationEliminationPeriod )
 		{
+			this.propagationEliminationPeriod = propagationEliminationPeriod;
 			this.observables.addListener( new ListChangeListener<Observable>()
 			{
 				@Override

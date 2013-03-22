@@ -31,21 +31,25 @@ import com.eviware.loadui.ui.fx.api.analysis.ExecutionChart;
 import com.eviware.loadui.ui.fx.util.Observables;
 import com.eviware.loadui.ui.fx.util.Observables.Group;
 import com.google.common.base.Function;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
 public final class SegmentViewToSeriesFunction implements Function<SegmentView<?>, XYChart.Series<Long, Number>>
 {
 	private final ObservableValue<Execution> execution;
 	private final ObservableList<Observable> observables;
+	private final Observable timePulse;
 	private final ExecutionChart chart;
 
 	protected static final Logger log = LoggerFactory.getLogger( SegmentViewToSeriesFunction.class );
 
 	public SegmentViewToSeriesFunction( ObservableValue<Execution> execution, ObservableList<Observable> observables,
-			ExecutionChart chart )
+			Observable timePulse, ExecutionChart chart )
 	{
 		this.execution = execution;
 		this.observables = observables;
+		this.timePulse = timePulse;
 		this.chart = chart;
 	}
 
@@ -77,46 +81,67 @@ public final class SegmentViewToSeriesFunction implements Function<SegmentView<?
 		final XYChart.Series<Long, Number> series = new XYChart.Series<>();
 		series.setName( segment.getStatisticName() );
 
-		series.setData( fromExpression( new Callable<Iterable<XYChart.Data<Long, Number>>>()
+		// applies the scale to each point
+		final Function<XYChart.Data<Long, Number>, XYChart.Data<Long, Number>> chartdataToScaledChartdata = new Function<XYChart.Data<Long, Number>, XYChart.Data<Long, Number>>()
 		{
 			@Override
-			public Iterable<XYChart.Data<Long, Number>> call() throws Exception
+			public XYChart.Data<Long, Number> apply( XYChart.Data<Long, Number> point )
 			{
-				if( segment.isRemoved() )
-				{
-					return new LinkedList<>();
-				}
+				double scaleValue = Math.pow( 10,
+						Integer.parseInt( segment.getAttribute( LineSegmentView.SCALE_ATTRIBUTE, "0" ) ) );
 
-				Iterable<XYChart.Data<Long, Number>> chartdata = Iterables.transform(
-						segment.getStatistic().getPeriod( ( long )chart.getPosition() - 2000,
-								( long )chart.getPosition() + chart.getSpan() + 2000, chart.getTickZoomLevel().getLevel(),
-								execution.getValue() ), datapointToChartdata );
+				XYChart.Data<Long, Number> dataPoint = new XYChart.Data<Long, Number>( point.getXValue(), point.getYValue()
+						.doubleValue() * scaleValue );
 
-				// applies the scale to each point
-				final Function<XYChart.Data<Long, Number>, XYChart.Data<Long, Number>> chartdataToScaledChartdata = new Function<XYChart.Data<Long, Number>, XYChart.Data<Long, Number>>()
-				{
-					@Override
-					public XYChart.Data<Long, Number> apply( XYChart.Data<Long, Number> point )
-					{
-						double scaleValue = Math.pow( 10,
-								Integer.parseInt( segment.getAttribute( LineSegmentView.SCALE_ATTRIBUTE, "0" ) ) );
+				dataPoint.setNode( CircleBuilder.create().fill( chart.getColor( segment, execution.getValue() ) )
+						.radius( 3 ).build() );
 
-						XYChart.Data<Long, Number> dataPoint = new XYChart.Data<Long, Number>( point.getXValue(), point
-								.getYValue().doubleValue() * scaleValue );
-
-						dataPoint.setNode( CircleBuilder.create().fill( chart.getColor( segment, execution.getValue() ) )
-								.radius( 3 ).build() );
-
-						return dataPoint;
-					}
-				};
-				return Iterables.transform( chartdata, chartdataToScaledChartdata );
+				return dataPoint;
 			}
-		}, observables, segment.getStatisticName() ) );
+		};
 
-		Group group = Observables.group( observables );
+		InvalidationListener seriesUpdater = new InvalidationListener()
+		{
+			@Override
+			public void invalidated( Observable o )
+			{
+				if( segment.isRemoved() || execution.getValue() == null )
+				{
+					series.getData().clear();
+				}
+				else if( chart.scrollbarFollowStateProperty().get() && execution.getValue() == chart.getCurrentExecution() )
+				{
+					DataPoint<Number> latestDataPoint = segment.getStatistic().getLatestPoint(
+							chart.getTickZoomLevel().getLevel() );
+					if( latestDataPoint != null )
+					{
+						series.getData().add(
+								chartdataToScaledChartdata.apply( datapointToChartdata.apply( latestDataPoint ) ) );
+						if( series.getData().get( 0 ).getXValue() < chart.getPosition() )
+							series.getData().remove( 0 );
+					}
+				}
+				else
+				{
+					if( o == timePulse )
+					{
+						DataPoint<Number> latestDataPoint = segment.getStatistic().getLatestPoint(
+								chart.getTickZoomLevel().getLevel() );
+						if( !series.getData().isEmpty() && latestDataPoint != null )
+						{
+							if( series.getData().get( series.getData().size() - 1 ).getXValue() + chart.getSpan() < latestDataPoint
+									.getTimestamp() )
+							{
+								return; // No need to update chart.
+							}
+						}
+					}
+					updateLineFromDB( segment, series, chartdataToScaledChartdata );
+				}
+			}
+		};
 
-		final InvalidationListener colorUpdater = new InvalidationListener()
+		InvalidationListener colorUpdater = new InvalidationListener()
 		{
 			@Override
 			public void invalidated( Observable _ )
@@ -129,12 +154,22 @@ public final class SegmentViewToSeriesFunction implements Function<SegmentView<?
 		};
 
 		Group group = Observables.group( observables );
-
-		segmentView.getProperties().put( "ReferenceToWeakListener", colorUpdater );
-		segmentView.getProperties().put( "ListenerTarget", group );
+		segmentView.getProperties().put( "Listeners", ImmutableList.of( colorUpdater, seriesUpdater ) );
+		segmentView.getProperties().put( "ListenerTargets", ImmutableList.of( group, timePulse ) );
 
 		// TODO: Make path color just update when new chart is added
 		group.addListener( colorUpdater );
+
+		group.addListener( seriesUpdater );
+		timePulse.addListener( seriesUpdater );
+		chart.scrollbarFollowStateProperty().addListener( new InvalidationListener()
+		{
+			@Override
+			public void invalidated( Observable _ )
+			{
+				updateLineFromDB( segment, series, chartdataToScaledChartdata );
+			}
+		} );
 
 		return series;
 	}
@@ -188,5 +223,17 @@ public final class SegmentViewToSeriesFunction implements Function<SegmentView<?
 			}
 		} );
 		return series;
+	}
+
+	private void updateLineFromDB( final LineSegment segment, final XYChart.Series<Long, Number> series,
+			final Function<XYChart.Data<Long, Number>, XYChart.Data<Long, Number>> chartdataToScaledChartdata )
+	{
+		log.debug( "Reading from database" );
+		Iterable<XYChart.Data<Long, Number>> chartdata = Iterables.transform(
+				segment.getStatistic().getPeriod( ( long )chart.getPosition() - 2000,
+						( long )chart.getPosition() + chart.getSpan() + 2000, chart.getTickZoomLevel().getLevel(),
+						execution.getValue() ), datapointToChartdata );
+
+		series.getData().setAll( Lists.newArrayList( Iterables.transform( chartdata, chartdataToScaledChartdata ) ) );
 	}
 }
