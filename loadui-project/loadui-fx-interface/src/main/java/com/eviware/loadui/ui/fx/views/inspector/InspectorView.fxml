@@ -18,7 +18,5 @@
 		<padding>
 			<Insets right="4" />
 		</padding>
-		<Button fx:id="helpButton" text="?" />
-		<Button text="!" />
 	</HBox>
 </fx:root>
