@@ -82,6 +82,7 @@ public class SettingsTab extends Tab
 			{
 				e.printStackTrace();
 			}
+			
 			ValidatableComboBoxField combo = new ValidatableComboBoxField();
 			combo.setItems( FXCollections.observableArrayList( enumValues ) );
 			combo.getSelectionModel().select( property.getValue() );
@@ -156,7 +157,6 @@ public class SettingsTab extends Tab
 	@SuppressWarnings( "unchecked" )
 	void addActionButton( final ActionLayoutComponent action )
 	{
-
 		if( action.getLabel().compareTo( "Test Connection" ) == 0 )
 		{
 			try
@@ -243,7 +243,42 @@ public class SettingsTab extends Tab
 			throw new UnsupportedOperationException( "This operation is not yet available for label " + action.getLabel() );
 		}
 	}
-
+	
+	@SuppressWarnings( "unchecked" )
+	public void refreshFields(){
+		for(Property<?> prop : fieldToLoaduiProperty.values()){
+			if(prop.getType().equals( Boolean.class )){
+				ValidatableCheckBox checkBox = (ValidatableCheckBox) getFieldFor( prop );			
+				checkBox.setSelected( Boolean.parseBoolean( prop.getStringValue() ) );
+			}else if(prop.getType().isEnum() ){
+				ValidatableComboBoxField comboBox = (ValidatableComboBoxField) getFieldFor( prop );
+				
+				Object[] enumValues = new Object[0];
+				
+				try
+				{
+					enumValues = ( Object[] )prop.getType().getMethod( "values" ).invoke( null );
+				}
+				catch( IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
+						| SecurityException e )
+				{
+					e.printStackTrace();
+				}
+				
+				comboBox.setItems( FXCollections.observableArrayList( enumValues ));
+				comboBox.getSelectionModel().select( prop.getValue() );
+					
+			}else if(prop.getType().equals( String.class )){
+				ValidatableStringField field = (ValidatableStringField) getFieldFor( prop );
+				field.setText( Objects.firstNonNull( prop.getValue(), "" ).toString());
+				
+			}else{//Long
+				ValidatableLongField field = (ValidatableLongField) getFieldFor( prop );
+				field.setText( Objects.firstNonNull( prop.getValue(), "" ).toString());
+			}
+		}
+	}
+	
 	private void backupCurrentSettings()
 	{
 		ObservableList<Tab> tabList = getTabPane().getTabs();

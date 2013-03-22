@@ -34,6 +34,11 @@
 	-dropshadow-light: dropshadow( gaussian, #DDDDDD, 6, 0.8, 0, 0 );
 	-innershadow-dark: innershadow( three-pass-box, #EEEEEE, 5, 0.1, 0, 5);
 	-innershadow-light: innershadow( three-pass-box, #111111, 5, 0.1, 0, 5);
+	
+	-menubutton-color-hover: linear-gradient(to bottom, #E7E7E7, #B5B5B5);
+	-menubutton-color-showing: linear-gradient(to bottom, #389DFC, #50C0F1);
+	-menubutton-color-border: #8C8C8C;
+	
 }
 
 
@@ -42,6 +47,17 @@
  */
 .text{
 	-fx-font-family: "lucida sans";
+}
+
+.tooltip {
+   -fx-background-color: snow;
+   -fx-background-radius: 7 7 7 7;
+   -fx-font-family: "lucida sans";
+   -fx-font-size: 10;   
+}
+
+.tooltip .page-corner {
+    -fx-shape: " ";
 }
  
 .placeholder {
@@ -270,12 +286,9 @@
 	-fx-font-size: 12;
 }
 
-
 /**
  * Regular playback button
  */
-
-
 .play-button .toggle-button{
 	-fx-background-color: linear-gradient(to bottom, #DBDBDB 0%, #757575 100%); 
 	-fx-padding: 0;
@@ -420,7 +433,6 @@
 	-fx-background-insets: 0;
 }
 
-
 .combo-box{
 	-fx-border-color: #666666; 
 	-fx-border-width: 1; 
@@ -446,6 +458,8 @@
 .combo-box:focused{
 	-fx-border-color: #00AAFF; 
 }
+
+
 
 /**
  * tool-bar (header) styles
@@ -503,10 +517,26 @@
  * MainButton styles
  */
 .main-button {
+	-fx-background-color: transparent; 	
 	-fx-background-radius: 32;
 	-fx-padding: 2 -26 -8 -6;
 }
 
+.main-button:hover{
+	-fx-background-color: transparent;
+}
+
+.main-button:selected{
+	-fx-background-color: transparent; 
+}
+
+.main-button:focused{
+	-fx-background-color: transparent; 
+	-fx-background-insets: 0; 		
+}
+
+
+	
 .main-button *.arrow {
 	-fx-background-color: transparent;
 }
@@ -748,11 +778,11 @@
 	-fx-background-color: #525252;
 	-fx-border-color: null;
 	-fx-border-style: null;
-	-fx-padding: 1;
+	-fx-padding: 0 0 1 0;
 }
 
 .page-list .separator {
-	-fx-padding: 5 0 -2;
+	-fx-padding: 1 0 0 0;
 }
 
 .page-list .item-box {
@@ -941,6 +971,17 @@
 
 .separator:vertical{
 	-fx-background-color: #6D6D6D; 	
+}
+
+.separator:horizontal .line{
+	-fx-border-width: 0 0 1 0; 
+	-fx-border-style: solid;
+	-fx-border-color: #B4B4B4;
+}
+
+.separator:horizontal{
+	-fx-background-color: #6D6D6D;
+	-fx-padding: 0; 
 }
 
 /**

@@ -11,6 +11,8 @@ import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.property.Property;
 import javafx.beans.property.ReadOnlyProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
@@ -45,6 +47,7 @@ import com.eviware.loadui.api.reporting.ReportingManager;
 import com.eviware.loadui.api.statistics.model.StatisticPage;
 import com.eviware.loadui.api.statistics.model.chart.ChartView;
 import com.eviware.loadui.api.statistics.store.Execution;
+import com.eviware.loadui.ui.fx.api.intent.AbortableTask;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.control.DetachableTab;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
@@ -68,6 +71,9 @@ public class ProjectView extends AnchorPane
 
 	private static final Logger log = LoggerFactory.getLogger( ProjectView.class );
 
+	private static final String TOOLBAR_STYLE_WITHOUT_SCENARIO = "-fx-background-color: linear-gradient(to bottom, -base-color-mid 0%, -fx-header-color 75%, #000000 76%, #272727 81%);";
+	private static final String TOOLBAR_STYLE_WITH_SCENARIO = "-fx-background-color: linear-gradient(-base-color-mid 0%, -base-color-mid 74%, #555555 75%, #DDDDDD 76%, -base-color-mid 77%, -base-color-mid 100%);";
+
 	@FXML
 	private DetachableTab designTab;
 
@@ -81,8 +87,8 @@ public class ProjectView extends AnchorPane
 	private Button summaryButton;
 
 	private ProjectPlaybackPanel playbackPanel;
-	
-	private ToggleButton linkButton; 
+
+	private ToggleButton linkButton;
 
 	private final FxExecutionsInfo executionsInfo;
 
@@ -100,21 +106,40 @@ public class ProjectView extends AnchorPane
 				@Override
 				public void run()
 				{
-					fireEvent( IntentEvent.create( IntentEvent.INTENT_RUN_BLOCKING, new Runnable()
-					{
-						@Override
-						public void run()
-						{
-							try
+					fireEvent( abortableTaskEvent( execution ) );
+				}
+
+				private IntentEvent<AbortableTask> abortableTaskEvent( final TestExecution execution )
+				{
+					return IntentEvent.create( IntentEvent.INTENT_RUN_BLOCKING_ABORTABLE,
+							AbortableTask.onRun( new Runnable()
 							{
-								execution.complete().get(); 
-							}
-							catch( InterruptedException | ExecutionException e )
+								@Override
+								public void run()
+								{
+									try
+									{
+										execution.complete().get();
+									}
+									catch( InterruptedException ie )
+									{
+										log.info( "Aborted running requests, not waiting for execution to complete" );
+									}
+									catch( ExecutionException ee )
+									{
+										log.warn( "There was a problem getting the result of an Execution", ee );
+									}
+								}
+							} ).onAbort( new Runnable()
 							{
-								e.printStackTrace();
-							}
-						}
-					} ) );
+								@Override
+								public void run()
+								{
+									execution.abort( "Aborting running requests..." );
+									project.cancelScenes( false );
+									project.cancelComponents();
+								}
+							} ) );
 				}
 			} );
 		}
@@ -142,7 +167,7 @@ public class ProjectView extends AnchorPane
 		AnchorPane.setTopAnchor( playbackPanel, 7d );
 		AnchorPane.setLeftAnchor( playbackPanel, 440.0 );
 		getChildren().add( playbackPanel );
-				
+
 		menuButton.textProperty().bind( Properties.forLabel( project ) );
 		designTab.setDetachableContent( this, new ProjectCanvasView( project ) );
 		statsTab.setDetachableContent( this, new StatisticsView( project, executionsInfo ) );
@@ -200,30 +225,33 @@ public class ProjectView extends AnchorPane
 					final Object arg = event.getArg();
 					Preconditions.checkArgument( arg instanceof SceneItem );
 					SceneItem scenario = ( SceneItem )arg;
-					( ( ToolBar )lookup( ".tool-bar" ) )
-							.setStyle( "-fx-background-color: linear-gradient(-base-color-mid 0%, -base-color-mid 74%, #555555 75%, #DDDDDD 76%, -base-color-mid 77%, -base-color-mid 100%);" );
+
+					ToolBar projectToolbar = ( ( ToolBar )lookup( ".tool-bar" ) );
+					projectToolbar.setStyle( TOOLBAR_STYLE_WITH_SCENARIO );
+
 					ScenarioToolbar toolbar = new ScenarioToolbar( scenario );
-					
-					linkButton = ToggleButtonBuilder.create().id( "link-scenario" ).styleClass("styleable-graphic").build();
+
+					linkButton = ToggleButtonBuilder.create().id( "link-scenario" ).styleClass( "styleable-graphic" )
+							.build();
 					Property<Boolean> linkedProperty = Properties.convert( scenario.followProjectProperty() );
 					linkButton.selectedProperty().bindBidirectional( linkedProperty );
+					linkButton.visibleProperty().bind( statsTab.selectedProperty().not() );
 					AnchorPane.setLeftAnchor( linkButton, 473d );
 					AnchorPane.setTopAnchor( linkButton, 55d );
-					ProjectView.this.getChildren().add(linkButton); 
-					
+					ProjectView.this.getChildren().add( linkButton );
+
 					StackPane.setAlignment( toolbar, Pos.TOP_CENTER );
 					CanvasView canvas = new CanvasView( scenario );
 					StackPane.setMargin( canvas, new Insets( 60, 0, 0, 0 ) );
 					StackPane pane = StackPaneBuilder.create().children( canvas, toolbar ).build();
 					designTab.setDetachableContent( ProjectView.this, pane );
-					
+
 					event.consume();
 				}
 				else if( event.getEventType() == IntentEvent.INTENT_CLOSE && event.getArg() instanceof SceneItem )
 				{
-					( ( ToolBar )lookup( ".tool-bar" ) )
-							.setStyle( "-fx-background-color: linear-gradient(to bottom, -base-color-mid 0%, -fx-header-color 75%, #000000 76%, #272727 81%);" );
-					ProjectView.this.getChildren().remove(linkButton);
+					( ( ToolBar )lookup( ".tool-bar" ) ).setStyle( TOOLBAR_STYLE_WITHOUT_SCENARIO );
+					ProjectView.this.getChildren().remove( linkButton );
 
 					Group canvas = ( Group )lookup( ".canvas-layer" );
 					StackPane grid = ( StackPane )lookup( ".grid-pane" );
@@ -251,6 +279,37 @@ public class ProjectView extends AnchorPane
 					new CloneProjectDialog( project.getWorkspace(), projectRef, ProjectView.this ).show();
 					event.consume();
 					return;
+				}
+			}
+		} );
+
+		statsTab.selectedProperty().addListener( new ChangeListener<Boolean>()
+		{
+			@Override
+			public void changed( ObservableValue<? extends Boolean> _, Boolean __, Boolean ___ )
+			{
+				if( statsTab.selectedProperty().get() )
+				{
+					( ( ToolBar )lookup( ".tool-bar" ) ).setStyle( TOOLBAR_STYLE_WITH_SCENARIO );
+				}
+			}
+		} );
+
+		designTab.selectedProperty().addListener( new ChangeListener<Boolean>()
+		{
+			@Override
+			public void changed( ObservableValue<? extends Boolean> _, Boolean __, Boolean ___ )
+			{
+				if( designTab.selectedProperty().get() )
+				{
+					if( designTab.getContent().lookup( ".scenario-toolbar" ) != null )
+					{
+						( ( ToolBar )lookup( ".tool-bar" ) ).setStyle( TOOLBAR_STYLE_WITH_SCENARIO );
+					}
+					else
+					{
+						( ( ToolBar )lookup( ".tool-bar" ) ).setStyle( TOOLBAR_STYLE_WITHOUT_SCENARIO );
+					}
 				}
 			}
 		} );

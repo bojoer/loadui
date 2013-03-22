@@ -10,6 +10,8 @@ import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.model.WorkspaceProvider;
 import com.eviware.loadui.api.testevents.TestEventManager;
+import com.eviware.loadui.ui.fx.api.LoaduiFXConstants;
+import com.eviware.loadui.ui.fx.api.intent.AbortableBlockingTask;
 import com.eviware.loadui.ui.fx.api.intent.BlockingTask;
 import com.eviware.loadui.ui.fx.api.intent.DeleteTask;
 import com.eviware.loadui.ui.fx.views.analysis.FxExecutionsInfo;
@@ -17,7 +19,8 @@ import com.eviware.loadui.ui.fx.views.window.MainWindowView;
 
 public class MainWindow
 {
-	//Fullscreen doesn't seem to work, the property never changes.
+
+	// Fullscreen doesn't seem to work, the property never changes.
 	private static final String FULLSCREEN = MainWindow.class.getName() + "@fullscreen";
 	private static final String WINDOW_WIDTH = MainWindow.class.getName() + "@width";
 	private static final String WINDOW_HEIGHT = MainWindow.class.getName() + "@height";
@@ -78,9 +81,10 @@ public class MainWindow
 			{
 				final MainWindowView mainView = new MainWindowView( workspaceProvider, executionsInfo, tem );
 
-				stage.setScene( SceneBuilder.create().stylesheets( "/com/eviware/loadui/ui/fx/loadui-style.css" )
+				stage.setScene( SceneBuilder.create().stylesheets( LoaduiFXConstants.getLoaduiStylesheets() )
 						.root( mainView ).build() );
 				BlockingTask.install( stage.getScene() );
+				AbortableBlockingTask.install( stage.getScene() );
 				DeleteTask.install( stage.getScene() );
 
 				stage.show();

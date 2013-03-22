@@ -42,6 +42,7 @@ public class PageList<E extends Node> extends Control
 
 	private void initialize()
 	{
+		label.getStyleClass().add( "title" );
 		getStyleClass().setAll( DEFAULT_STYLE_CLASS );
 	}
 

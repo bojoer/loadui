@@ -139,7 +139,7 @@ public final class SegmentViewToSeriesFunction implements Function<SegmentView<?
 			}
 		};
 
-		InvalidationListener colorUpdater = new InvalidationListener()
+		final InvalidationListener colorUpdater = new InvalidationListener()
 		{
 			@Override
 			public void invalidated( Observable _ )

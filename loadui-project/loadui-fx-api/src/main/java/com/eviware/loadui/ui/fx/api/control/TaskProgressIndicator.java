@@ -13,20 +13,23 @@ public class TaskProgressIndicator extends StackPane
 	private final Label label;
 	private final ProgressIndicator progress;
 
-	public TaskProgressIndicator( Runnable runnable )
+	public TaskProgressIndicator()
 	{
 		getChildren().setAll(
 				VBoxBuilder
 						.create()
 						.children( label = LabelBuilder.create().text( "Please wait..." ).build(),
 								progress = ProgressBarBuilder.create().build() ).build() );
-
-		if( runnable instanceof Task )
-		{
-			Task<?> task = ( Task<?> )runnable;
-			label.textProperty().bind( task.messageProperty() );
-			progress.progressProperty().bind( task.progressProperty() );
-		}
+	}
+	
+	public TaskProgressIndicator( Task<?> task ) {
+		this();
+		label.textProperty().bind( task.messageProperty() );
+		progress.progressProperty().bind( task.progressProperty() );
+	}
+	
+	public ProgressIndicator getProgressIndicator() {
+		return progress;
 	}
 
 	public void dispose()

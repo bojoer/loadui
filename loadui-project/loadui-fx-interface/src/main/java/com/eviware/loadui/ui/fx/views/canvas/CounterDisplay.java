@@ -3,7 +3,6 @@ package com.eviware.loadui.ui.fx.views.canvas;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.LabelBuilder;
-import javafx.scene.effect.ColorAdjustBuilder;
 import javafx.scene.layout.VBox;
 
 public abstract class CounterDisplay extends VBox

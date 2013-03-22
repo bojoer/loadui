@@ -25,11 +25,11 @@
 	</stylesheets>
 	<VBox fillWidth="true" AnchorPane.topAnchor="0"
 		AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="0"
-		AnchorPane.leftAnchor="0">
-		<ToolBar minHeight="40" />
+		AnchorPane.leftAnchor="0" styleClass="scenario-background">
+		<ToolBar minHeight="40" /> 
 	</VBox>
-	<MenuButton fx:id="menuButton" maxWidth="240"
-		AnchorPane.topAnchor="6" AnchorPane.leftAnchor="81">
+	<MenuButton fx:id="menuButton" maxWidth="240" styleClass="title"
+		AnchorPane.topAnchor="3" AnchorPane.leftAnchor="75">
 		<items>
 			<MenuItem fx:id="clone" id="clone" text="Rename" onAction="#renameScenario" />
 			<MenuItem fx:id="close" id="close" text="Close" onAction="#closeScenario" />

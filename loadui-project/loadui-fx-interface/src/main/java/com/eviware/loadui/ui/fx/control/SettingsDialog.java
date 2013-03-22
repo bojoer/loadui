@@ -20,15 +20,22 @@ public class SettingsDialog extends ConfirmationDialog
 	public static final double VERTICAL_SPACING = 12;
 	@Nonnull
 	public final TabPane tabPane = new TabPane();
+
 	@Nonnull
 	private final List<? extends SettingsTab> tabs;
- 
+
 	public final ObservableBooleanValue hasExactlyOneTab;
 
 	public SettingsDialog( @Nonnull Node owner, @Nonnull String title, @Nonnull List<? extends SettingsTab> tabs )
 	{
 		super( owner, title, "Save" );
 		this.tabs = tabs;
+
+		for( SettingsTab tab : tabs )
+		{
+			tab.refreshFields();
+		}
+
 		tabPane.getTabs().addAll( tabs );
 		getItems().add( tabPane );
 		setOnConfirm( new OnSaveHandler() );
@@ -44,7 +51,7 @@ public class SettingsDialog extends ConfirmationDialog
 			{
 				final Region tabHeader = ( Region )tabPane.lookup( ".tab-header-area" );
 				final double headerHeight = tabHeader.getHeight();
-				
+
 				if( hasExactlyOneTab.get() )
 				{
 					SettingsDialog.this.setHeight( SettingsDialog.this.getHeight() - headerHeight );

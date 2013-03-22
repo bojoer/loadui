@@ -20,8 +20,10 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.WindowEvent;
 
 import com.eviware.loadui.api.traits.Deletable;
+import com.eviware.loadui.api.traits.Labeled;
 import com.eviware.loadui.api.traits.Labeled.Mutable;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
+import com.eviware.loadui.ui.fx.control.ConfirmationDialog;
 import com.eviware.loadui.ui.fx.control.SettingsDialog;
 import com.eviware.loadui.ui.fx.control.SettingsTab;
 import com.eviware.loadui.ui.fx.views.window.MainWindowView;
@@ -61,8 +63,8 @@ public class MenuItemsProvider
 		if( options.clone )
 			items.add( itemFor( "clone-item", options.cloneLabel, eventHandler( IntentEvent.INTENT_CLONE, firer, eventArg ) ) );
 		if( options.delete && eventArg instanceof Deletable )
-			items.add( itemFor( "delete-item", options.deleteLabel,
-					eventHandler( IntentEvent.INTENT_DELETE, firer, ( Deletable )eventArg, options.deleteActions ) ) );
+			items.add( itemFor( "delete-item", options.deleteData.deleteLabel,
+					deleteHandler( firer, ( Deletable )eventArg, options.deleteData ) ) );
 		if( options.close )
 			items.add( itemFor( "close-item", options.closeLabel, eventHandler( IntentEvent.INTENT_CLOSE, firer, eventArg ) ) );
 		if( options.settings )
@@ -91,7 +93,6 @@ public class MenuItemsProvider
 		{
 			return items;
 		}
-
 	}
 
 	private static MenuItem itemFor( String id, String label, EventHandler<ActionEvent> handler )
@@ -130,6 +131,25 @@ public class MenuItemsProvider
 					Platform.runLater( action );
 			}
 		};
+	}
+
+	private static <T> EventHandler<ActionEvent> deleteHandler( final Node firer, final Deletable target,
+			final Options.DeleteData data )
+	{
+		final EventHandler<ActionEvent> handler = eventHandler( IntentEvent.INTENT_DELETE, firer, target,
+				data.deleteActions );
+		return data.confirmDelete ? new EventHandler<ActionEvent>()
+		{
+			@Override
+			public void handle( ActionEvent _ )
+			{
+				String name = (target instanceof Labeled) ? "'" + ((Labeled) target).getLabel() + "'" : "this item";
+				ConfirmationDialog dialog = new ConfirmationDialog( firer, "Are you sure you want to delete " + name +  "?",
+						"Delete" );
+				dialog.setOnConfirm( handler );
+				dialog.show();
+			}
+		} : handler;
 	}
 
 	/**
@@ -185,7 +205,6 @@ public class MenuItemsProvider
 				}
 			} );
 		}
-
 	}
 
 	/**
@@ -219,11 +238,17 @@ public class MenuItemsProvider
 		private String createLabel = "Create";
 		private String cloneLabel = "Clone";
 		private String saveLabel = "Save";
+		private final DeleteData deleteData = new DeleteData();
 		private final SettingsData settingsData = new SettingsData();
 		private String renameLabel = "Rename";
-		private String deleteLabel = "Delete";
 		private Runnable[] openActions = new Runnable[0];
-		private Runnable[] deleteActions = new Runnable[0];
+
+		private class DeleteData
+		{
+			String deleteLabel = "Delete";
+			Runnable[] deleteActions = new Runnable[0];
+			boolean confirmDelete = true;
+		}
 
 		private class SettingsData
 		{
@@ -333,14 +358,20 @@ public class MenuItemsProvider
 
 		public Options delete( Runnable... actions )
 		{
-			deleteActions = actions;
+			deleteData.deleteActions = actions;
 			return this;
 		}
 
-		public Options delete( String label, Runnable... actions )
+		public Options delete( boolean confirmDelete, Runnable... actions )
 		{
-			deleteLabel = label;
+			deleteData.confirmDelete = confirmDelete;
 			return delete( actions );
+		}
+
+		public Options delete( String label, boolean confirmDelete, Runnable... actions )
+		{
+			deleteData.deleteLabel = label;
+			return delete( confirmDelete, actions );
 		}
 
 	}

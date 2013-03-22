@@ -38,7 +38,6 @@ import com.eviware.loadui.api.traits.Deletable;
 import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.util.StringUtils;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 
 /**
  * ConfigurableLineChartView for a Chart.

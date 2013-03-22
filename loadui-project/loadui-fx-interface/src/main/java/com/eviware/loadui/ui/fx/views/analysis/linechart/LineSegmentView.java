@@ -124,9 +124,9 @@ public class LineSegmentView extends SegmentView<LineSegment>
 		slider.valueProperty().addListener( new InvalidationListener()
 		{
 			@Override
-			public void invalidated( Observable arg0 )
+			public void invalidated( Observable _ )
 			{
-				int snappedZoom = ( int )Math.round( slider.valueProperty().doubleValue() );
+				int snappedZoom = ( int )Math.round( slider.getValue() );
 
 				if( scale != snappedZoom )
 				{
@@ -154,13 +154,13 @@ public class LineSegmentView extends SegmentView<LineSegment>
 				}
 			}
 		} );
-		
+
 		setMenuItemsFor( menuButton );
 		menuButton.getItems().add(
 				MenuItemBuilder.create().id( "scale-item" ).text( "Scale" ).onAction( scaleHandler() ).build() );
-		
+
 	}
-	
+
 	private EventHandler<ActionEvent> scaleHandler()
 	{
 		return new EventHandler<ActionEvent>()
@@ -181,7 +181,7 @@ public class LineSegmentView extends SegmentView<LineSegment>
 			public void run()
 			{
 				Node nob = node.lookup( ".graphic" );
-				if( nob instanceof Region && nob != null )
+				if( nob != null && nob instanceof Region )
 				{
 					sliderNob = ( Region )nob;
 					sliderNob.setStyle( "-fx-background-color: " + color + ";" );

@@ -24,6 +24,8 @@ import javafx.stage.Stage;
 import javafx.stage.StageBuilder;
 import javafx.stage.WindowEvent;
 
+import com.eviware.loadui.ui.fx.api.LoaduiFXConstants;
+import com.eviware.loadui.ui.fx.api.intent.AbortableBlockingTask;
 import com.eviware.loadui.ui.fx.api.intent.BlockingTask;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 
@@ -66,6 +68,7 @@ public class DetachableTab extends Tab
 	}
 
 	private Stage detachedStage;
+	private Scene scene;
 	private Node eventFirer;
 	private final DetachedTabsHolder tabRefs;
 
@@ -118,7 +121,6 @@ public class DetachableTab extends Tab
 	{
 		final StackPane detachedTabContainer;
 		final Node detachableContent = getDetachableContent();
-		Scene scene;
 		detachedStage = StageBuilder
 				.create()
 				.icons( ( ( Stage )getTabPane().getScene().getWindow() ).getIcons() )
@@ -131,7 +133,7 @@ public class DetachableTab extends Tab
 								.root(
 										detachedTabContainer = StackPaneBuilder.create().children( detachableContent )
 												.styleClass( "detached-content" ).build() )
-								.stylesheets( "/com/eviware/loadui/ui/fx/loadui-style.css" ).build() ).build();
+								.stylesheets( LoaduiFXConstants.getLoaduiStylesheets() ).build() ).build();
 		detachableContent.setVisible( true );
 		detachedStage.setOnHidden( new EventHandler<WindowEvent>()
 		{
@@ -143,6 +145,7 @@ public class DetachableTab extends Tab
 		} );
 
 		BlockingTask.install( scene );
+		AbortableBlockingTask.install( scene );
 		detachedId = tabRefs.add( detachedTabContainer );
 
 		final EventHandler<Event> intentHandler = new EventHandler<Event>()
@@ -168,6 +171,12 @@ public class DetachableTab extends Tab
 			detachedStage.setOnHidden( null );
 			detachedStage.close();
 			detachedStage = null;
+		}
+		if( scene != null )
+		{
+			BlockingTask.uninstall( scene );
+			AbortableBlockingTask.uninstall( scene );
+			scene = null;
 		}
 	}
 

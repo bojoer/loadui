@@ -142,7 +142,7 @@ public class StatisticsDialog extends ConfirmationDialog
 		}
 	}
 
-	private boolean thereAreSegmentsIn( ChartGroup group )
+	public static boolean thereAreSegmentsIn( ChartGroup group )
 	{
 		for( ChartView view : group.getChartViewsForCharts() )
 			if( view instanceof ConfigurableLineChartView )

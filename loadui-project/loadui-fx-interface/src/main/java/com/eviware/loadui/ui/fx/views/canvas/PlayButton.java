@@ -5,7 +5,6 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.geometry.Insets;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.ProgressIndicatorBuilder;
 import javafx.scene.control.ToggleButton;
@@ -96,19 +95,18 @@ public class PlayButton extends StackPane
 
 		playingProperty.addListener( playCanvas );
 		playingProperty.bindBidirectional( toggleButton.selectedProperty() );
-		
-		Circle border = CircleBuilder.create().styleClass("play-button-border").radius( 14 ).build();
-		Region inner = RegionBuilder.create().styleClass("inner-spinner-overlay").build();
-		Region outer = RegionBuilder.create().styleClass("outer-spinner-overlay").build();
-		ProgressIndicator indicator = ProgressIndicatorBuilder.create().build(); 
+
+		Circle border = CircleBuilder.create().styleClass( "play-button-border" ).radius( 14 ).build();
+		Region inner = RegionBuilder.create().styleClass( "inner-spinner-overlay" ).build();
+		Region outer = RegionBuilder.create().styleClass( "outer-spinner-overlay" ).build();
+		ProgressIndicator indicator = ProgressIndicatorBuilder.create().build();
 
 		inner.visibleProperty().bind( toggleButton.selectedProperty() );
 		outer.visibleProperty().bind( toggleButton.selectedProperty() );
 		indicator.visibleProperty().bind( toggleButton.selectedProperty() );
 		border.visibleProperty().bind( toggleButton.selectedProperty().not() );
-				
+
 		TestExecutionUtils.testRunner.registerTask( executionTask, Phase.PRE_START, Phase.POST_STOP );
-		getChildren().setAll( outer, indicator,
-				inner, border, toggleButton );
+		getChildren().setAll( outer, indicator, inner, border, toggleButton );
 	}
 }

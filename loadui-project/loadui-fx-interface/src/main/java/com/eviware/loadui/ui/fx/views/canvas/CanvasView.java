@@ -89,7 +89,7 @@ public class CanvasView extends StackPane
 	private static final Effect selectedEffect = new DropShadow( BlurType.GAUSSIAN, new Color( 0.4, 0.4, 0.4, 0.5 ),
 			10.0, 3.0, 0, 0 );
 	private static final int GRID_SIZE = 36;
-	private static final double PADDING = -45;
+	private static final double PADDING = 0;
 	private final UninstallCanvasObjectView uninstallCanvasObject = new UninstallCanvasObjectView();
 
 	private static final Function<String, String> TO_LOWER = new Function<String, String>()
@@ -157,7 +157,7 @@ public class CanvasView extends StackPane
 				{
 					if( selected )
 					{
-						toFront();
+						connectionView.toFront();
 					}
 				}
 			} );
@@ -290,10 +290,11 @@ public class CanvasView extends StackPane
 		ToolBox<Labeled> descriptors = new ToolBox<>( "Components" );
 		defineComparators( descriptors );
 
-		descriptors.setMaxWidth( 100 );
+		descriptors.setMaxWidth( 120 );
+		descriptors.setMinWidth( 110 );
 		descriptors.setHeightPerItem( 120 );
 		StackPane.setAlignment( descriptors, Pos.CENTER_LEFT );
-		StackPane.setMargin( descriptors, new Insets( 10, 0, 34, 0 ) );
+		StackPane.setMargin( descriptors, new Insets( 17, 0, 57, 0 ) );
 		descriptors.maxHeightProperty().bind( descriptors.prefHeightProperty() );
 
 		Bindings.bindContent( descriptors.getItems(), createToolBoxContent() );
@@ -407,6 +408,8 @@ public class CanvasView extends StackPane
 				enforceCanvasBounds();
 			}
 		} );
+		
+		
 	}
 
 	private void enforceCanvasBounds()
@@ -417,10 +420,11 @@ public class CanvasView extends StackPane
 			return;
 		}
 
-		double minX = -bounds.getMinX() + PADDING;
+		// hard coded values for toolbar and buttom panel
+		double minX = -bounds.getMinX() + PADDING + 100;
 		double maxX = getWidth() - bounds.getMaxX() - PADDING;
 		double minY = -bounds.getMinY() + PADDING;
-		double maxY = getHeight() - bounds.getMaxY() - PADDING;
+		double maxY = getHeight() - bounds.getMaxY() - PADDING - 30;
 
 		double layoutX = canvasLayer.getLayoutX();
 		double layoutY = canvasLayer.getLayoutY();
@@ -470,6 +474,7 @@ public class CanvasView extends StackPane
 				canvasLayer.setLayoutY( maxY );
 			}
 		}
+		
 	}
 
 	public CanvasItem getCanvas()
@@ -582,7 +587,6 @@ public class CanvasView extends StackPane
 		{
 			wire.setFill( Color.GRAY );
 			wire.setVisible( false );
-
 			canvasLayer.getChildren().add( 0, wire );
 		}
 

@@ -98,30 +98,30 @@ public class ResultViewTest
 
 		// check recent execution menu's options
 		controller.click( "#result-0 #menuButton" );
-		getOrFail( "#menu-Open" );
-		getOrFail( "#menu-Delete" );
-		failIfExists( "#menu-Rename" );
+		getOrFail( "#open-item" );
+		getOrFail( "#delete-item" );
+		failIfExists( "#rename-item" );
 
 		// check if Open option works
-		controller.click( "#menu-Open" );
+		controller.click( "#open-item" );
 		getOrFail( ".analysis-view" );
-		getOrFail( "#open-execution" );
+		getOrFail( "#statsTab" );
 
-		controller.click( "#open-execution" );
+		controller.click( "#open-execution" ).sleep( 500 );
 
 		// check archive execution menu's options
 		controller.drag( "#result-0" ).to( "#archive-node-list" ).click( "#archive-0 #menuButton" );
-		getOrFail( "#menu-Open" );
-		getOrFail( "#menu-Delete" );
-		getOrFail( "#menu-Rename" );
+		getOrFail( "#open-item" );
+		getOrFail( "#delete-item" );
+		getOrFail( "#rename-item" );
 
 		// test rename function
-		controller.click( "#menu-Rename" ).type( "Renamed Execution" ).type( KeyCode.ENTER );
+		controller.click( "#rename-item" ).type( "Renamed Execution" ).type( KeyCode.ENTER );
 		MenuButton menuButton = ( MenuButton )getOrFail( "#archive-0 #menuButton" );
 		assertEquals( "Renamed Execution", menuButton.textProperty().get() );
 
 		// delete execution
-		controller.click( "#archive-0 #menuButton" ).click( "#menu-Delete" );
+		controller.click( "#archive-0 #menuButton" ).click( "#delete-item" ).click( ".confirmation-dialog #default" );
 		failIfExists( "#archive-0" );
 
 	}

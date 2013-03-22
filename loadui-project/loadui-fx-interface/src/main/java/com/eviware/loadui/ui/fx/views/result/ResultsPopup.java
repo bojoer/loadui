@@ -15,12 +15,14 @@ public class ResultsPopup extends Dialog implements Callback<Data, Void>, Closea
 	public ResultsPopup( Node owner, ExecutionsInfo executionsInfo )
 	{
 		super( owner, "Previous results" );
+		getScene().getRoot().setStyle( "-fx-padding: 0;" );
 		executionsInfo.runWhenReady( this );
 	}
 	
 	@Override
 	public Void call( Data data )
 	{
+		
 		ResultView resultView = new ResultView( data.getRecentExecutions(), data.getArchivedExecutions(), this );
 		getItems().setAll( resultView );
 		return null;

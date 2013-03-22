@@ -12,8 +12,8 @@ public abstract class ToolbarPlaybackPanel<C extends CanvasItem> extends Playbac
 {
 	protected Button limitsButton()
 	{
-		return ButtonBuilder.create().id( "set-limits" ).text( "Set limits" ).style( "-fx-font-size: 10px; -fx-translate-x: -3;" )
-				.onAction( openLimitsDialog ).build();
+		return ButtonBuilder.create().id( "set-limits" ).text( "Set limits" )
+				.style( "-fx-font-size: 10px; -fx-translate-x: -3;" ).onAction( openLimitsDialog ).build();
 	}
 
 	public ToolbarPlaybackPanel( final C canvas )
@@ -24,19 +24,21 @@ public abstract class ToolbarPlaybackPanel<C extends CanvasItem> extends Playbac
 		failures.setLimit( canvas.getLimit( CanvasItem.FAILURE_COUNTER ) );
 
 		setSpacing( 9 );
-		
+
 		canvas.addEventListener( BaseEvent.class, new com.eviware.loadui.api.events.EventHandler<BaseEvent>()
 		{
 			@Override
 			public void handleEvent( BaseEvent event )
 			{
-				Platform.runLater(new Runnable(){
-					public void run(){
+				Platform.runLater( new Runnable()
+				{
+					public void run()
+					{
 						time.setLimit( canvas.getLimit( TIME_LABEL ) );
 						requests.setLimit( canvas.getLimit( CanvasItem.REQUEST_COUNTER ) );
 						failures.setLimit( canvas.getLimit( FAILURES_LABEL ) );
 					}
-				});
+				} );
 			}
 		} );
 	}
@@ -50,7 +52,7 @@ public abstract class ToolbarPlaybackPanel<C extends CanvasItem> extends Playbac
 	@Override
 	protected ToolbarCounterDisplay timeRequests()
 	{
-		
+
 		return new ToolbarCounterDisplay( REQUESTS_LABEL );
 	}
 

@@ -3,7 +3,6 @@ package com.eviware.loadui.test.states;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.model.WorkspaceProvider;
 import com.eviware.loadui.test.TestState;
-import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.ReleasableUtils;
 
 public class WorkspaceLoadedState extends TestState

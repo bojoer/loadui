@@ -168,6 +168,11 @@ public class ExecutionView extends Pane
 		}
 	}
 
+	@Override
+	public String toString(){
+		return execution.getLabel(); 
+	}
+	
 	public Execution getExecution()
 	{
 		return execution;
