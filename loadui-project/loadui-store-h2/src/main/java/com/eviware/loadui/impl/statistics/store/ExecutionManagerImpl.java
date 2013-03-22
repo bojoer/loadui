@@ -167,6 +167,8 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 
 	private final Map<String, TestEventTypeDescriptorImpl> eventTypes = Maps.newHashMap();
 
+	private boolean loadedExecutionsFromDisk = false;
+
 	public ExecutionManagerImpl( TestEventRegistry testEventRegistry )
 	{
 		this.testEventRegistry = testEventRegistry;
@@ -431,6 +433,14 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 	@Override
 	public final Collection<Execution> getExecutions()
 	{
+		if( loadedExecutionsFromDisk )
+			return ImmutableSet.<Execution> copyOf( executionMap.values() );
+		else
+			return readExecutionsFromDisk();
+	}
+
+	private Collection<Execution> readExecutionsFromDisk()
+	{
 		File baseDir = new File( getDBBaseDir() );
 		if( !baseDir.exists() )
 		{
@@ -464,6 +474,8 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 			return Sets.difference( ImmutableSet.<Execution> copyOf( executionMap.values() ),
 					ImmutableSet.of( currentExecution ) );
 		}
+
+		loadedExecutionsFromDisk = true;
 		return ImmutableSet.<Execution> copyOf( executionMap.values() );
 	}
 
@@ -1154,6 +1166,7 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 
 	public void delete( String executionId )
 	{
+		log.debug( "Trying to delete Execution wiht ID=" + executionId );
 		ExecutionImpl execution = getExecution( executionId );
 		if( execution == null )
 			return;
@@ -1191,6 +1204,7 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 	{
 		ReleasableUtils.releaseAll( tableRegistry, connectionRegistry, eventSupport );
 		executionMap.clear();
+		loadedExecutionsFromDisk = false;
 		ecs.removeAllExecutionListeners();
 	}
 
