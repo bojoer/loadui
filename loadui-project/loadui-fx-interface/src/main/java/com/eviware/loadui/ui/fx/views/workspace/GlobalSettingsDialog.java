@@ -22,7 +22,7 @@ public class GlobalSettingsDialog
 		SettingsTab statsTab = Builder
 				.create( "Statistics" )
 				.field( "Results path (affects all projects)", workspace.getProperty( WorkspaceItem.STATISTIC_RESULTS_PATH ) )
-				.field( "Number of results to autosave",
+				.field( "Number of test runs to autosave",
 						workspace.getProperty( WorkspaceItem.STATISTIC_NUMBER_OF_AUTOSAVES ) ).build();
 
 		return new SettingsDialog( parent, "Global settings", Lists.newArrayList( generalTab, statsTab ) );
