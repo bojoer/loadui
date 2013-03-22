@@ -75,9 +75,6 @@ public class InspectorView extends AnchorPane
 	@FXML
 	private HBox buttonBar;
 
-	@FXML
-	private Button helpButton;
-
 	private ObservableList<Tab> inspectorTabs;
 
 	private final DragBehavior dragBehavior = new DragBehavior();
@@ -148,20 +145,7 @@ public class InspectorView extends AnchorPane
 
 		buttonBar.setPrefHeight( tabHeaderArea.prefHeight( -1 ) );
 
-		helpButton.setOnAction( new EventHandler<ActionEvent>()
-		{
-			@Override
-			public void handle( ActionEvent event )
-			{
-				String helpUrl = ( ( Inspector )tabPane.getSelectionModel().getSelectedItem().getUserData() ).getHelpUrl();
-				if( helpUrl != null )
-				{
-					UIUtils.openInExternalBrowser( helpUrl );
-				}
-			}
-		} );
-
-		inspectorTabs = ObservableLists.transform( inspectors, new Function<Inspector, Tab>()
+				inspectorTabs = ObservableLists.transform( inspectors, new Function<Inspector, Tab>()
 		{
 			@Override
 			public Tab apply( Inspector inspector )
