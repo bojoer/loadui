@@ -36,7 +36,7 @@ public class Wizard extends ConfirmationDialog
 
 	public Wizard( Node owner, String title, @Nonnull final List<SettingsTab> tabs )
 	{
-		super( owner, title, "", true );
+		super( owner, title, "", true, false );
 		tabPane.getTabs().addAll( tabs );
 		addStyleClass( "wizard" );
 		isFirstStep.bind( equal( 0, tabPane.getSelectionModel().selectedIndexProperty() ) );

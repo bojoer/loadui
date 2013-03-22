@@ -19,6 +19,7 @@ import javax.annotation.Nonnull;
 
 import com.sun.javafx.PlatformUtil;
 
+// TODO: This class needs a JavaDoc'd builder.
 public class ConfirmationDialog extends ButtonDialog
 {
 	private final Button confirmButton;
@@ -26,14 +27,14 @@ public class ConfirmationDialog extends ButtonDialog
 
 	public ConfirmationDialog( @Nonnull final Node owner, @Nonnull String header, @Nonnull String actionButtonLabel )
 	{
-		this( owner, header, actionButtonLabel, false );
-		addStyleClass( "confirmation-dialog" );
+		this( owner, header, actionButtonLabel, false, false );
 	}
 
 	public ConfirmationDialog( @Nonnull final Node owner, @Nonnull String header, @Nonnull String actionButtonLabel,
-			boolean separateButtons )
+			boolean separateButtons, boolean forceConfirmOnEnter )
 	{
 		super( owner, header );
+		addStyleClass( "confirmation-dialog" );
 
 		confirmButton = ButtonBuilder.create().text( actionButtonLabel ).id( "default" ).defaultButton( true )
 				.alignment( Pos.BOTTOM_RIGHT ).onAction( new EventHandler<ActionEvent>()
@@ -67,7 +68,12 @@ public class ConfirmationDialog extends ButtonDialog
 		else
 			getButtons().setAll( confirmButton, cancelButton );
 
-		// If a control is taking focus (preventing the default button to receive KeyCode.ENTER), we do this as a workaround/backup 
+		if( forceConfirmOnEnter )
+			forceConfirmOnEnter();
+	}
+
+	private void forceConfirmOnEnter()
+	{
 		addEventFilter( KeyEvent.ANY, new EventHandler<KeyEvent>()
 		{
 			@Override

@@ -10,8 +10,6 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.TreeItem;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.HBoxBuilder;
 
@@ -36,7 +34,7 @@ public class StatisticsDialog extends ConfirmationDialog
 
 	public StatisticsDialog( Node parent, StatisticHolder holder, final ConfigurableLineChartView chartView )
 	{
-		super( parent, "Add Statistic", "Add" );
+		super( parent, "Add Statistic", "Add", false, true );
 		tree = StatisticTree.forHolder( holder );
 
 		final Collection<Chart> charts = chartView.getChartGroup().getChildren();

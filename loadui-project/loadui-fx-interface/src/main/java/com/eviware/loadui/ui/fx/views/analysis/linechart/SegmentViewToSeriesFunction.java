@@ -56,8 +56,6 @@ public final class SegmentViewToSeriesFunction implements Function<SegmentView<?
 	@Override
 	public XYChart.Series<Long, Number> apply( final SegmentView<?> segment )
 	{
-		log.debug( "Segment: " + segment );
-
 		if( segment instanceof LineSegmentView )
 			return lineSegmentToSeries( ( LineSegmentView )segment );
 		else if( segment instanceof EventSegmentView )
