@@ -3,7 +3,7 @@
 }
 
 .tab-content-area{	
-	-fx-padding: 5 5 5 110;
+	-fx-padding: 27 27 27 137;
 	-fx-background-color: #373737;
 }
 
@@ -14,7 +14,6 @@
 
 .tab {
 	/* height 21 m border, padding 16 */
-	
 	-fx-padding: 0 14 0 14;
 }
 

@@ -14,7 +14,7 @@ public class ResultsPopup extends Dialog implements Callback<Data, Void>, Closea
 
 	public ResultsPopup( Node owner, ExecutionsInfo executionsInfo )
 	{
-		super( owner, "Previous results" );
+		super( owner, "TEST RUNS" );
 		getScene().getRoot().setStyle( "-fx-padding: 0;" );
 		executionsInfo.runWhenReady( this );
 	}

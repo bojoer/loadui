@@ -19,6 +19,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
+import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
@@ -89,6 +90,7 @@ public class ScrollableList<E extends Node> extends StackPane
 		Pane box = null;
 		prevButton.getStyleClass().removeAll( "up", "left" );
 		nextButton.getStyleClass().removeAll( "down", "right" );
+		paddingProperty().set( new Insets(5, 5, 5, 5) );
 
 		if( isVertical() )
 		{

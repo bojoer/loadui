@@ -8,7 +8,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import com.eviware.loadui.api.statistics.model.ChartGroup;
-import com.eviware.loadui.api.traits.Releasable;
 
 public interface ChartGroupView
 {
