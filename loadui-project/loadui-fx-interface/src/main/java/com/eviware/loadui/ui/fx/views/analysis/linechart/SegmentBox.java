@@ -27,17 +27,7 @@ import com.sun.javafx.PlatformUtil;
 public class SegmentBox extends VBox
 {
 	private final VBox segmentViewContainer = new VBox();
-	private final Button scalingCloseButton = ButtonBuilder.create().id( "scaling-ok-button" ).text( "Ok" )
-			.onAction( new EventHandler<ActionEvent>()
-			{
-				@Override
-				public void handle( ActionEvent _ )
-				{
-					scaling.set( false );
-				}
-			} ).build();
-
-	private final Button scalingCancelButton = ButtonBuilder.create().id( "scaling-cancel-button" ).text( "Cancel" )
+	private final Button scalingCloseButton = ButtonBuilder.create().id( "scaling-ok-button" ).text( "Done" )
 			.onAction( new EventHandler<ActionEvent>()
 			{
 				@Override
@@ -73,20 +63,9 @@ public class SegmentBox extends VBox
 		AnchorPane.setLeftAnchor( statisticsLabel, 0d );
 		AnchorPane.setRightAnchor( expandCollapseSegments, 0d );
 
-		if( !PlatformUtil.isMac() )
-		{
-			scalingButtonBox = HBoxBuilder.create().visible( false )
-					.children( scalingCloseButton, HBoxBuilder.create().minWidth( 3 ).build(), scalingCancelButton )
-					.styleClass( "scaling-button-box" ).alignment( Pos.BOTTOM_RIGHT ).build();
-
-		}
-		else
-		{
-			scalingButtonBox = HBoxBuilder.create().visible( false )
-					.children( scalingCancelButton, HBoxBuilder.create().minWidth( 3 ).build(), scalingCloseButton )
-					.styleClass( "scaling-button-box" ).alignment( Pos.BOTTOM_RIGHT ).build();
-
-		}
+		scalingButtonBox = HBoxBuilder.create().visible( false )
+				.children( scalingCloseButton, HBoxBuilder.create().minWidth( 3 ).build() )
+				.styleClass( "scaling-button-box" ).alignment( Pos.BOTTOM_RIGHT ).build();
 
 		//Give me some space..
 		betweenStatisticsAndLineSegmentViews = HBoxBuilder.create().minHeight( 6 ).build();
@@ -117,10 +96,8 @@ public class SegmentBox extends VBox
 						LineSegmentView view = ( LineSegmentView )node;
 						view.scalingProperty().bind( scaling );
 						view.setContainer( SegmentBox.this );
-
 					}
 				}
-
 				chartUpdate.fireInvalidation();
 			}
 		} );
