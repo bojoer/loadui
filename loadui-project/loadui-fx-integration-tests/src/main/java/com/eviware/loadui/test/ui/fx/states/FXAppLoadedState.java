@@ -20,7 +20,7 @@ public class FXAppLoadedState extends TestState
 	protected void enterFromParent() throws Exception
 	{
 		GUI.getBundleContext();
-		final Stage dialog = TestFX.findStageByTitle( "Welcome to loadUI" );
+		final Stage dialog = TestFX.findStageByTitle( "Welcome to LoadUI" );
 		FXTestUtils.invokeAndWait( new Runnable()
 		{
 			@Override

@@ -88,7 +88,7 @@ public class GettingStartedDialog extends ButtonDialog
 											}
 										} ).build(),
 								new Label( "New Project" ),
-								ButtonBuilder.create().text( "Create a new loadUI project" )
+								ButtonBuilder.create().text( "Create a new LoadUI project" )
 										.onAction( new EventHandler<ActionEvent>()
 										{
 											@Override
