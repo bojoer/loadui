@@ -1,9 +1,9 @@
 .inspector {
-	-fx-background-color: #6f6f6f;
+	-fx-background-color: #3b3b3b;
 }
 
 .tab-header-background {
-	-fx-background-color: #555555;
+	-fx-background-color: #666666;
 	-fx-cursor: V_RESIZE;
 }
 

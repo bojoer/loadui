@@ -31,7 +31,7 @@ public class GettingStartedDialog extends ButtonDialog
 
 	public GettingStartedDialog( final WorkspaceItem workspace, Node owner )
 	{
-		super( owner, "Welcome to loadUI" );
+		super( owner, "Welcome to LoadUI" );
 
 		boolean showWizard = workspace.getAttribute( SHOW_GETTING_STARTED, "true" ).equals( "true" );
 
