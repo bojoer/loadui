@@ -76,7 +76,7 @@ public class StatisticHolderToolBox extends ToolBox<Node>
 
 	private final ObservableList<StatisticHolder> statisticHolders;
 	private final ObservableList<StatisticHolderToolboxItem> statisticHolderItems;
-	private final Group variableGroup;
+	private final Group<ObservableList<StatisticVariable>> variableGroup;
 
 	public StatisticHolderToolBox()
 	{

@@ -10,6 +10,7 @@ import java.io.InputStream;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
+import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -87,7 +88,7 @@ public class WorkspaceView extends StackPane
 
 	@FXML
 	private WebView webView;
-	private ObservableList<Observable> labelProperties;
+	private ObservableList<ReadOnlyStringProperty> labelProperties;
 
 	public WorkspaceView( final WorkspaceItem workspace )
 	{
@@ -222,7 +223,7 @@ public class WorkspaceView extends StackPane
 
 	private void initProjectRefCarousel()
 	{
-		final Observables.Group group = Observables.group();
+		final Observables.Group<ReadOnlyStringProperty> group = Observables.group( new ReadOnlyStringProperty[0] );
 		final MenuItem[] carouselMenuItems = MenuItemsProvider.createWith( projectRefCarousel, null,
 				Options.are().noDelete().noRename().create( ProjectItem.class, CREATE_PROJECT ) ).items();
 
@@ -248,10 +249,10 @@ public class WorkspaceView extends StackPane
 		bindSorted( projectRefCarousel.getItems(), projectRefViews, Ordering.usingToString(), group );
 
 		labelProperties = ObservableLists.transform( projectRefCarousel.getItems(),
-				new Function<ProjectRefView, Observable>()
+				new Function<ProjectRefView, ReadOnlyStringProperty>()
 				{
 					@Override
-					public Observable apply( ProjectRefView projectRefView )
+					public ReadOnlyStringProperty apply( ProjectRefView projectRefView )
 					{
 						return projectRefView.labelProperty();
 					}
