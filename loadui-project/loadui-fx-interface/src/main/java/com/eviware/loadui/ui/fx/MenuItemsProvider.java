@@ -143,8 +143,8 @@ public class MenuItemsProvider
 			@Override
 			public void handle( ActionEvent _ )
 			{
-				String name = (target instanceof Labeled) ? "'" + ((Labeled) target).getLabel() + "'" : "this item";
-				ConfirmationDialog dialog = new ConfirmationDialog( firer, "Are you sure you want to delete " + name +  "?",
+				String name = ( target instanceof Labeled ) ? "'" + ( ( Labeled )target ).getLabel() + "'" : "this item";
+				ConfirmationDialog dialog = new ConfirmationDialog( firer, "Are you sure you want to delete " + name + "?",
 						"Delete" );
 				dialog.setOnConfirm( handler );
 				dialog.show();

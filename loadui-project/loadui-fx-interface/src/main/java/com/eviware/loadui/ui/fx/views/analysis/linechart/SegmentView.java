@@ -98,16 +98,17 @@ public abstract class SegmentView<T extends Segment> extends StackPane implement
 	 */
 	protected void setMenuItemsFor( final MenuButton menuButton )
 	{
-		MenuItem[] menuItems = MenuItemsProvider.createWith( this, this, Options.are().delete( false, new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				log.debug( "Removed SegmentView successfully" );
-				if( !StatisticsDialog.thereAreSegmentsIn( lineChartView.getChartGroup() ) )
-					lineChartView.getChartGroup().delete();
-			}
-		} ) ).items();
+		MenuItem[] menuItems = MenuItemsProvider.createWith( this, this,
+				Options.are().delete( "Remove", false, new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						log.debug( "Removed SegmentView successfully" );
+						if( !StatisticsDialog.thereAreSegmentsIn( lineChartView.getChartGroup() ) )
+							lineChartView.getChartGroup().delete();
+					}
+				} ) ).items();
 		menuButton.getItems().setAll( menuItems );
 		final ContextMenu ctxMenu = ContextMenuBuilder.create().items( menuItems ).build();
 
