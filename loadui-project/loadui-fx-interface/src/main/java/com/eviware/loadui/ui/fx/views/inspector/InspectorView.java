@@ -232,7 +232,7 @@ public class InspectorView extends AnchorPane
 			}
 		} );
 
-		setMaxHeight( boundHeight( 26 ) );
+		setMaxHeight( boundHeight( 30 ) );
 	}
 
 	private void refreshTabs()
