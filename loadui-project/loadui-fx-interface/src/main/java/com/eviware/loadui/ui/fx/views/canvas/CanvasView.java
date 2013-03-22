@@ -157,7 +157,7 @@ public class CanvasView extends StackPane
 				{
 					if( selected )
 					{
-						toFront();
+						connectionView.toFront();
 					}
 				}
 			} );
@@ -290,10 +290,11 @@ public class CanvasView extends StackPane
 		ToolBox<Labeled> descriptors = new ToolBox<>( "Components" );
 		defineComparators( descriptors );
 
-		descriptors.setMaxWidth( 100 );
+		descriptors.setMaxWidth( 120 );
+		descriptors.setMinWidth( 110 );
 		descriptors.setHeightPerItem( 120 );
 		StackPane.setAlignment( descriptors, Pos.CENTER_LEFT );
-		StackPane.setMargin( descriptors, new Insets( 10, 0, 34, 0 ) );
+		StackPane.setMargin( descriptors, new Insets( 17, 0, 57, 0 ) );
 		descriptors.maxHeightProperty().bind( descriptors.prefHeightProperty() );
 
 		Bindings.bindContent( descriptors.getItems(), createToolBoxContent() );
@@ -407,6 +408,8 @@ public class CanvasView extends StackPane
 				enforceCanvasBounds();
 			}
 		} );
+		
+		
 	}
 
 	private void enforceCanvasBounds()
@@ -471,6 +474,7 @@ public class CanvasView extends StackPane
 				canvasLayer.setLayoutY( maxY );
 			}
 		}
+		
 	}
 
 	public CanvasItem getCanvas()
@@ -583,7 +587,6 @@ public class CanvasView extends StackPane
 		{
 			wire.setFill( Color.GRAY );
 			wire.setVisible( false );
-
 			canvasLayer.getChildren().add( 0, wire );
 		}
 
