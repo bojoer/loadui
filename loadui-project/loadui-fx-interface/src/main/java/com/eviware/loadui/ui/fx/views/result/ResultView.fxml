@@ -15,7 +15,7 @@
 
 <fx:root type="javafx.scene.layout.StackPane" xmlns:fx="http://javafx.com/fxml">
 	<VBox xmlns:fx="http://javafx.com/fxml" styleClass="result-view"
-		spacing="10" maxWidth="870">
+		spacing="10" maxWidth="830">
 		<stylesheets>
 			<URL value="@ResultView.css" />
 		</stylesheets>
@@ -23,21 +23,21 @@
 			<padding>
 				<Insets top="10" left="10" bottom="10" right="10"/> 
 			</padding>
-			<Label styleClass="title" text="Previous results" />
+			<Label styleClass="title" text="PREVIOUS TEST RUNS" />
 		</HBox>
 		<HBox>
 			<padding>
 				<Insets left="10" right="10"/>
 			</padding>
-			<PageList fx:id="resultNodeList" id="result-node-list" minHeight="230" maxHeight="250"
-				text="Recent Results" widthPerItem="140" spacing="10"/>
+			<PageList fx:id="resultNodeList" id="result-node-list" minWidth="860" minHeight="250" maxHeight="250"
+				text="RECENT TEST RUNS" widthPerItem="140" spacing="9"/>
 		</HBox>
 		<HBox>
 			<padding>
-				<Insets left="10" right="10" bottom="10"/>
+				<Insets left="10" right="10"/>
 			</padding>
-			<PageList fx:id="archiveNodeList" id="archive-node-list" minHeight="230" maxHeight="250"
-				text="Archived Results" widthPerItem="140" spacing="10"/>
+			<PageList fx:id="archiveNodeList" id="archive-node-list" minWidth="860" minHeight="250" maxHeight="250"
+				text="ARCHIVED TEST RUNS" widthPerItem="140" spacing="9"/>
 		</HBox>
 	</VBox>
 </fx:root>
