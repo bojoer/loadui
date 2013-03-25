@@ -24,6 +24,7 @@ import com.eviware.loadui.api.traits.Labeled;
 import com.eviware.loadui.api.traits.Labeled.Mutable;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.control.ConfirmationDialog;
+import com.eviware.loadui.ui.fx.control.Dialog;
 import com.eviware.loadui.ui.fx.control.SettingsDialog;
 import com.eviware.loadui.ui.fx.control.SettingsTab;
 import com.eviware.loadui.ui.fx.views.window.MainWindowView;
@@ -41,7 +42,6 @@ import com.google.common.base.Preconditions;
  */
 public class MenuItemsProvider
 {
-
 	private static final ContextMenuEventHandler ctxMenuHandler = new ContextMenuEventHandler();
 
 	public static HasMenuItems createWith( Node eventFirer, Object eventArg, Options options )
@@ -132,24 +132,41 @@ public class MenuItemsProvider
 			}
 		};
 	}
-
-	private static <T> EventHandler<ActionEvent> deleteHandler( final Node firer, final Deletable target,
-			final Options.DeleteData data )
+	
+	private static <T> EventHandler<ActionEvent> eventHandler( final EventType<IntentEvent<? extends T>> eventType,
+			final Node firer, final T target, final Dialog dialog, final Runnable... actions  )
 	{
-		final EventHandler<ActionEvent> handler = eventHandler( IntentEvent.INTENT_DELETE, firer, target,
-				data.deleteActions );
-		return data.confirmDelete ? new EventHandler<ActionEvent>()
+		return new EventHandler<ActionEvent>()
 		{
 			@Override
 			public void handle( ActionEvent _ )
 			{
-				String name = (target instanceof Labeled) ? "'" + ((Labeled) target).getLabel() + "'" : "this item";
-				ConfirmationDialog dialog = new ConfirmationDialog( firer, "Are you sure you want to delete " + name +  "?",
-						"Delete" );
-				dialog.setOnConfirm( handler );
-				dialog.show();
+				firer.fireEvent( IntentEvent.create( eventType, target ) );
+				for( Runnable action : actions )
+					Platform.runLater( action );
+				dialog.close();
 			}
-		} : handler;
+		};
+	}
+
+	private static <T> EventHandler<ActionEvent> deleteHandler( final Node firer, final Deletable target,
+			final Options.DeleteData data )
+	{
+		if(data.confirmDelete){
+			return new EventHandler<ActionEvent>(){
+				@Override
+				public void handle( ActionEvent _ ){
+					String name = (target instanceof Labeled) ? "'" + ((Labeled) target).getLabel() + "'" : "this item";
+					ConfirmationDialog dialog = new ConfirmationDialog( firer, "Are you sure you want to delete " + name +  "?",
+							"Delete" );
+					dialog.onConfirmProperty().set( eventHandler( IntentEvent.INTENT_DELETE, firer, target, dialog,
+							data.deleteActions ) );
+					dialog.show(); 
+				}
+			};
+		}else{
+			return eventHandler( IntentEvent.INTENT_DELETE, firer, target, data.deleteActions );
+		}
 	}
 
 	/**

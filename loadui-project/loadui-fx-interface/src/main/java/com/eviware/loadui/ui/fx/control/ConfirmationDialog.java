@@ -37,23 +37,26 @@ public class ConfirmationDialog extends ButtonDialog
 		super( owner, header );
 		addStyleClass( "confirmation-dialog" );
 
-		EventHandler<MouseEvent> closeHandler = new EventHandler<MouseEvent>()
-		{
-			@Override
-			public void handle( MouseEvent event )
-			{
-				close();
-			}
-		};
-		
 		confirmButton = ButtonBuilder.create().text( actionButtonLabel ).id( "default" ).defaultButton( true )
-				.alignment( Pos.BOTTOM_RIGHT ).build();
-		confirmButton.addEventHandler( MouseEvent.MOUSE_CLICKED, closeHandler );
+				.alignment( Pos.BOTTOM_RIGHT ).onAction( new EventHandler<ActionEvent>()
+				{
+					@Override
+					public void handle( ActionEvent event )
+					{
+						close();
+					}
+				} ).build();
 
 		cancelButton = ButtonBuilder.create().text( "Cancel" ).id( "cancel" ).cancelButton( true )
-				.alignment( Pos.BOTTOM_RIGHT ).build();
-		cancelButton.addEventHandler( MouseEvent.MOUSE_CLICKED, closeHandler );
-
+				.alignment( Pos.BOTTOM_RIGHT ).onAction( new EventHandler<ActionEvent>()
+				{
+					@Override
+					public void handle( ActionEvent event )
+					{
+						close();
+					}
+				} ).build();
+				
 		if( separateButtons )
 		{
 			Separator buttonSeparator = SeparatorBuilder.create().style( "visibility: hidden;" ).maxWidth( 4 )
