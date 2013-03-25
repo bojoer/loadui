@@ -306,7 +306,7 @@
 }
 
 .play-button .toggle-button:pressed{
-	-fx-background-color: linear-gradient(to bottom, #959595 0%, #cdcdcd 100%)
+	-fx-background-color: linear-gradient(to bottom, #959595 0%, #cdcdcd 100%);
 }
 
 .play-button .toggle-button:selected{
@@ -323,7 +323,7 @@
 }
 
 .play-button .toggle-button:selected:hover:pressed{
-	-fx-background-color: linear-gradient(to bottom, #7A7A7A 0%, #898989 100%)
+	-fx-background-color: linear-gradient(to bottom, #7A7A7A 0%, #898989 100%);
 }
 
 .play-button .toggle-button .graphic{
@@ -616,7 +616,7 @@
 .tool-box .title {
 	-fx-padding: 2;
 	-fx-font-size: 12;
-	-fx-text-fill: #303030;
+	-fx-text-fill: #f2f2f2;
 }
 
 .tool-box .scrollable-list {
@@ -654,7 +654,7 @@
 	-fx-scale-y: 0.5; 
 	-fx-scale-x: 0.5; 
 	-fx-background-color: #8B8B8B; 
-	-fx-padding: 12 5 
+	-fx-padding: 12 5;
 }
 
 .tool-box .toolbar-button:hover .expander-button .graphic{
@@ -671,12 +671,12 @@
 }
 
 .item-holder .category-label {
-	-fx-text-fill: #9c9c9c;
+	-fx-text-fill: #f2f2f2;
 }
 
 .item-holder .icon 
 {
-	-fx-text-fill: #9c9c9c;
+	-fx-text-fill: #f2f2f2;
 }
 
 .item-holder > .items {
