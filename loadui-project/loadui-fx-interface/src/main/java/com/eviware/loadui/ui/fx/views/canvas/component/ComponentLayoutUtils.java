@@ -1,5 +1,6 @@
 package com.eviware.loadui.ui.fx.views.canvas.component;
 
+import java.io.File;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -29,6 +30,7 @@ import javafx.scene.control.TooltipBuilder;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBoxBuilder;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.util.Callback;
 
 import org.slf4j.Logger;
@@ -46,6 +48,7 @@ import com.eviware.loadui.api.layout.TableLayoutComponent;
 import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.impl.layout.OptionsProviderImpl;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
+import com.eviware.loadui.ui.fx.control.FilePicker;
 import com.eviware.loadui.ui.fx.control.Knob;
 import com.eviware.loadui.ui.fx.control.OptionsSlider;
 import com.eviware.loadui.ui.fx.input.SelectableImpl;
@@ -202,9 +205,7 @@ public class ComponentLayoutUtils
 			return new TableView<>();
 		}
 
-		return LabelBuilder.create().text( "Unhandled: " + component )
-				.tooltip( TooltipBuilder.create().text( component.toString() ).build() )
-				.style( "-fx-background-color: red;" ).maxWidth( 80 ).build();
+		return LabelBuilder.create().build();
 	}
 
 	public static Node createPropertyNode( PropertyLayoutComponent<?> propLayoutComp )
@@ -231,11 +232,14 @@ public class ComponentLayoutUtils
 		else if( type == Boolean.class )
 		{
 			return createCheckBox( propLayoutComp );
+
+		}
+		else if( type == File.class )
+		{
+			return createFilePicker( propLayoutComp, propertyLabel );
 		}
 
-		return LabelBuilder.create().text( "Unhandled: " + propLayoutComp )
-				.tooltip( TooltipBuilder.create().text( propLayoutComp.toString() ).build() )
-				.style( "-fx-background-color: red;" ).maxWidth( 80 ).build();
+		return LabelBuilder.create().build();
 	}
 
 	@SuppressWarnings( "unchecked" )
@@ -293,6 +297,31 @@ public class ComponentLayoutUtils
 				.getProperty() );
 		textField.textProperty().bindBidirectional( jfxProp );
 		return nodeWithProperty( VBoxBuilder.create().children( propertyLabel, textField ).build(), jfxProp );
+	}
+
+	@SuppressWarnings( "unchecked" )
+	private static Node createFilePicker( PropertyLayoutComponent<?> propLayoutComp, Label propertyLabel )
+	{
+
+		ExtensionFilter filter = new ExtensionFilter( "Extension", "*" );
+
+		if( propertyLabel.getText().contains( "Geb " ) )
+		{
+			filter = new ExtensionFilter( "Geb script file (*.groovy)", "*.groovy" );
+		}
+		else if( propertyLabel.getText().contains( "Groovy" ) )
+		{
+			filter = new ExtensionFilter( "Groovy Script (*.groovy)", "*.groovy" );
+		
+		}else if( propertyLabel.getText().contains("soapUI")){
+			filter = new ExtensionFilter( "SoapUI Project (*.xml)", "*.xml","*.XML");
+		}
+		//Just add more special cases here as we have more needs. 
+		FilePicker filePicker = new FilePicker( propertyLabel.getText(), filter );
+		javafx.beans.property.Property<File> jfxProp = Properties
+				.convert( ( Property<File> )propLayoutComp.getProperty() );
+		filePicker.selectedProperty().bindBidirectional( jfxProp );
+		return nodeWithProperty( VBoxBuilder.create().children( propertyLabel, filePicker ).build(), jfxProp );
 	}
 
 	@SuppressWarnings( "unchecked" )
