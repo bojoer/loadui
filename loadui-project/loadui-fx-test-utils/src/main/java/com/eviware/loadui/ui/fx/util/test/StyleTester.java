@@ -3,6 +3,8 @@ package com.eviware.loadui.ui.fx.util.test;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.Arrays;
+import java.util.List;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -15,6 +17,11 @@ import javafx.scene.SceneBuilder;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBuilder;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuButton;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.Separator;
+import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.SeparatorMenuItemBuilder;
 import javafx.scene.control.SplitPaneBuilder;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextAreaBuilder;
@@ -38,8 +45,18 @@ public class StyleTester extends Application
 	{
 		final Pane container = new FlowPane();
 		container.getStyleClass().add( "container" );
+		
+		SeparatorMenuItem separator = SeparatorMenuItemBuilder.create().build();
+		System.out.println(separator.getStyleClass());
+		
+		List<MenuItem> items = Arrays.asList( 
+				
+				new MenuItem( "Item 1" ), separator, new MenuItem("Item 2") );
+		MenuButton button = new MenuButton("Press this");
+		//button.getContextMenu()
+		button.getItems().setAll( items );
 
-		container.getChildren().add( new Label( "hej världen" ) );
+		container.getChildren().addAll( new Label( "hej världen" ), button );
 
 		return container;
 

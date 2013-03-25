@@ -8,7 +8,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.LabelBuilder;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuButtonBuilder;
-import javafx.scene.control.MenuItem;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.HBoxBuilder;
@@ -24,6 +23,7 @@ import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.traits.Deletable;
 import com.eviware.loadui.api.traits.Labeled;
 import com.eviware.loadui.ui.fx.MenuItemsProvider;
+import com.eviware.loadui.ui.fx.MenuItemsProvider.HasMenuItems;
 import com.eviware.loadui.ui.fx.MenuItemsProvider.Options;
 import com.eviware.loadui.ui.fx.util.NodeUtils;
 import com.eviware.loadui.ui.fx.util.Properties;
@@ -45,13 +45,11 @@ public class AssertionView extends VBox implements Deletable
 	{
 		getStyleClass().add( "assertion-view" );
 
-		MenuItem[] menuItems = MenuItemsProvider.createWith( this, assertion, Options.are().delete( deleteAction ) )
-				.items();
+		HasMenuItems hasMenuItems = MenuItemsProvider.createWith( this, assertion, Options.are().delete( deleteAction ) );
 
-		final MenuButton menuButton = MenuButtonBuilder.create().items( menuItems ).build();
+		final MenuButton menuButton = MenuButtonBuilder.create().items( hasMenuItems.items() ).build();
 		menuButton.textProperty().bind( Properties.forLabel( assertion ) );
-		menuButton.getItems().setAll( menuItems );
-		final ContextMenu ctxMenu = ContextMenuBuilder.create().items( menuItems ).build();
+		final ContextMenu ctxMenu = ContextMenuBuilder.create().items( hasMenuItems.items() ).build();
 
 		setOnContextMenuRequested( new EventHandler<ContextMenuEvent>()
 		{

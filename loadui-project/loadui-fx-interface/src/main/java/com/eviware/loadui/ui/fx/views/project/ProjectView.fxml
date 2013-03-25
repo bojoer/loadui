@@ -17,6 +17,7 @@
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.SeparatorMenuItem?>
 
 
 <fx:root type="javafx.scene.layout.AnchorPane" styleClass="project-view"
@@ -49,13 +50,15 @@
 	<MenuButton maxWidth="170" fx:id="menuButton" styleClass="title"
 		AnchorPane.topAnchor="8" AnchorPane.leftAnchor="75">
 		<items>
+			<MenuItem fx:id="save" id="save" text="Save" onAction="#saveProject" />
+			<MenuItem fx:id="saveCopy" id="saveCopy" text="Save a copy..."
+				onAction="#cloneProject" />
+			<MenuItem fx:id="saveAndClose" id="saveAndClose" text="Save and close"
+				onAction="#saveProjectAndClose" />
+			<SeparatorMenuItem />
 			<MenuItem fx:id="clone" id="clone" text="Rename..."
 				onAction="#renameProject" />
-			<MenuItem fx:id="save" id="save" text="Save" onAction="#saveProject" />
-			<MenuItem fx:id="saveCopy" id="saveCopy" text="Save as Copy..."
-				onAction="#cloneProject" />
-			<MenuItem fx:id="saveAndClose" id="saveAndClose" text="Save and Close"
-				onAction="#saveProjectAndClose" />
+			<SeparatorMenuItem />
 			<MenuItem fx:id="close" id="close" text="Close" onAction="#closeProject" />
 		</items>
 	</MenuButton>
