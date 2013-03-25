@@ -33,3 +33,7 @@
 		2,
 		30 4 14 4;
 }
+
+.canvasObjectLabel {
+	-fx-label-padding: 0 0 0 9;
+}
