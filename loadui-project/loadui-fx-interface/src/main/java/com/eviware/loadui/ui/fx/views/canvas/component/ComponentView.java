@@ -57,7 +57,7 @@ public class ComponentView extends CanvasObjectView
 			}
 		} );
 
-		compactModeButton = ToggleButtonBuilder.create().id( "compact" ).text( "C" )
+		compactModeButton = ToggleButtonBuilder.create().id( "compact" ).styleClass( "styleable-graphic" )
 				.selected( Boolean.parseBoolean( component.getAttribute( COMPACT_MODE_ATTRIBUTE, "false" ) ) )
 				.onAction( new EventHandler<ActionEvent>()
 				{
