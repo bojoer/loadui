@@ -36,7 +36,6 @@ import javafx.scene.text.Text;
 
 import javax.annotation.OverridingMethodsMustInvokeSuper;
 
-import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
 import org.slf4j.Logger;
@@ -56,7 +55,6 @@ import com.eviware.loadui.ui.fx.util.ObservableLists;
 import com.eviware.loadui.ui.fx.util.Observables;
 import com.eviware.loadui.util.execution.TestExecutionUtils;
 import com.google.common.base.Function;
-import com.google.common.base.Splitter;
 
 public class ScrollableLineChart extends HBox implements ExecutionChart, Releasable
 {
@@ -272,8 +270,8 @@ public class ScrollableLineChart extends HBox implements ExecutionChart, Releasa
 		scrollBar.maxProperty().bind( currentExecutionLenght );
 
 		final SegmentViewToSeriesFunction segmentViewToSeries = new SegmentViewToSeriesFunction( currentExecution,
-				javafx.collections.FXCollections.observableArrayList( currentExecution, position, segmentBox.chartUpdate(),
-						manualDataUpdate ), poll, this );
+				Observables.group( javafx.collections.FXCollections.observableArrayList( currentExecution,
+						segmentBox.chartUpdate(), manualDataUpdate, widthProperty() ) ), poll, position, this );
 
 		final ObservableList<Segment> segmentsList = fx( ofCollection( chartView, LineChartView.SEGMENTS, Segment.class,
 				chartView.getSegments() ) );

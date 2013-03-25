@@ -9,7 +9,7 @@ import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.ObservableList;
+import javafx.collections.FXCollections;
 import javafx.scene.Node;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Series;
@@ -28,7 +28,6 @@ import com.eviware.loadui.api.statistics.model.chart.line.TestEventSegment;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.testevents.TestEvent;
 import com.eviware.loadui.ui.fx.api.analysis.ExecutionChart;
-import com.eviware.loadui.ui.fx.util.Observables;
 import com.eviware.loadui.ui.fx.util.Observables.Group;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
@@ -38,18 +37,23 @@ import com.google.common.collect.Lists;
 public final class SegmentViewToSeriesFunction implements Function<SegmentView<?>, XYChart.Series<Long, Number>>
 {
 	private final ObservableValue<Execution> execution;
-	private final ObservableList<Observable> observables;
+	//private final ObservableList<Observable> observables;
+
+	private final Group observablesUpdatedByUser;
+
+	private final Observable position;
 	private final Observable timePulse;
 	private final ExecutionChart chart;
 
 	protected static final Logger log = LoggerFactory.getLogger( SegmentViewToSeriesFunction.class );
 
-	public SegmentViewToSeriesFunction( ObservableValue<Execution> execution, ObservableList<Observable> observables,
-			Observable timePulse, ExecutionChart chart )
+	public SegmentViewToSeriesFunction( ObservableValue<Execution> execution, Group observablesUpdatedByUser,
+			Observable timePulse, Observable position, ExecutionChart chart )
 	{
 		this.execution = execution;
-		this.observables = observables;
+		this.observablesUpdatedByUser = observablesUpdatedByUser;
 		this.timePulse = timePulse;
+		this.position = position;
 		this.chart = chart;
 	}
 
@@ -107,7 +111,8 @@ public final class SegmentViewToSeriesFunction implements Function<SegmentView<?
 				{
 					series.getData().clear();
 				}
-				else if( chart.scrollbarFollowStateProperty().get() && execution.getValue() == chart.getCurrentExecution() )
+				else if( chart.scrollbarFollowStateProperty().get() && execution.getValue() == chart.getCurrentExecution()
+						&& observablesUpdatedByUser != o )
 				{
 					DataPoint<Number> latestDataPoint = segment.getStatistic().getLatestPoint(
 							chart.getTickZoomLevel().getLevel() );
@@ -151,14 +156,15 @@ public final class SegmentViewToSeriesFunction implements Function<SegmentView<?
 			}
 		};
 
-		Group group = Observables.group( observables );
 		segmentView.getProperties().put( "Listeners", ImmutableList.of( colorUpdater, seriesUpdater ) );
-		segmentView.getProperties().put( "ListenerTargets", ImmutableList.of( group, timePulse ) );
+		segmentView.getProperties().put( "ListenerTargets",
+				ImmutableList.of( observablesUpdatedByUser, timePulse, position ) );
 
-		// TODO: Make path color just update when new chart is added
-		group.addListener( colorUpdater );
+		// TODO: Make path color just update when new segment is added
+		observablesUpdatedByUser.addListener( colorUpdater );
 
-		group.addListener( seriesUpdater );
+		observablesUpdatedByUser.addListener( seriesUpdater );
+		position.addListener( seriesUpdater );
 		timePulse.addListener( seriesUpdater );
 		chart.scrollbarFollowStateProperty().addListener( new InvalidationListener()
 		{
@@ -210,7 +216,7 @@ public final class SegmentViewToSeriesFunction implements Function<SegmentView<?
 							}
 						} );
 			}
-		}, observables ) );
+		}, FXCollections.observableArrayList( observablesUpdatedByUser, position, timePulse ) ) );
 
 		series.nodeProperty().addListener( new ChangeListener<Node>()
 		{
