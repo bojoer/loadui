@@ -29,6 +29,7 @@ import com.eviware.loadui.api.statistics.model.chart.line.LineSegment;
 import com.eviware.loadui.ui.fx.control.skin.StyleableGraphicSlider;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.views.analysis.ShortName;
+import com.eviware.loadui.util.statistics.StatisticNameFormatter;
 
 public class LineSegmentView extends SegmentView<LineSegment>
 {
@@ -75,12 +76,12 @@ public class LineSegmentView extends SegmentView<LineSegment>
 		{
 			fullName = ( StatisticVariable.MAIN_SOURCE.equals( segment.getSource() ) ? "Total" : segment.getSource() )
 					+ " " + segment.getStatisticHolder().getLabel() + " " + segment.getVariableName() + " "
-					+ segment.getStatisticName();
+					+ StatisticNameFormatter.format( segment.getStatisticName() );
 		}
 		else
 		{
 			fullName = segment.getStatisticHolder().getLabel() + " " + segment.getVariableName() + " "
-					+ segment.getStatisticName();
+					+ StatisticNameFormatter.format( segment.getStatisticName() );
 		}
 
 		log.debug( "fullName: {}", fullName );
