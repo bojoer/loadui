@@ -22,7 +22,6 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ContextMenuBuilder;
 import javafx.scene.control.LabelBuilder;
 import javafx.scene.control.MenuButton;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.ContextMenuEvent;
@@ -41,6 +40,7 @@ import com.eviware.loadui.api.statistics.model.chart.ChartView;
 import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.ui.fx.MenuItemsProvider;
+import com.eviware.loadui.ui.fx.MenuItemsProvider.HasMenuItems;
 import com.eviware.loadui.ui.fx.MenuItemsProvider.Options;
 import com.eviware.loadui.ui.fx.api.PostActionEvent;
 import com.eviware.loadui.ui.fx.api.analysis.ChartGroupView;
@@ -162,9 +162,9 @@ public class ChartGroupViewImpl extends VBox implements ChartGroupView
 
 		chartView.getChildren().setAll( createChart( chartGroup.getType() ) );
 
-		MenuItem[] menuItems = MenuItemsProvider.createWith( this, chartGroup, Options.are() ).items();
-		menuButton.getItems().setAll( menuItems );
-		final ContextMenu ctxMenu = ContextMenuBuilder.create().items( menuItems ).build();
+		HasMenuItems hasMenuItems = MenuItemsProvider.createWith( this, chartGroup, Options.are() );
+		menuButton.getItems().setAll( hasMenuItems.items() );
+		final ContextMenu ctxMenu = ContextMenuBuilder.create().items( hasMenuItems.items() ).build();
 
 		Bindings.bindContentBidirectional( ctxMenu.getItems(), menuButton.getItems() );
 

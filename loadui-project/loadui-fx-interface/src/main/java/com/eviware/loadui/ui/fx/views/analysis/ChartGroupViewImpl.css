@@ -12,12 +12,7 @@
 }
 
 #chartMenuButton.menu-button{
-	-fx-background-color: transparent;
 	-fx-font-weight: bold;  
-}
-
-#chartMenuButton.menu-button:hover{
-	-fx-background-color: linear-gradient(to bottom, #AAAAAA 0%, #CCCCCC 50%, #999999 100%);
 }
 
 /**
@@ -107,7 +102,6 @@
 } 
 
 .scaling .menu-button:disabled{
-	-fx-background-color: transparent; 
 	visibility: hidden; 
 }
 
@@ -162,13 +156,10 @@
 }
 
 .main-chart-group #zoomMenuButton.menu-button{
-	-fx-background-color: transparent;
-	-fx-border-color: transparent;  
 	-fx-text-fill: black;
 }
 
 .main-chart-group #zoomMenuButton.menu-button:hover{
-	-fx-background-color: #7E7E7E; 
 	-fx-text-fill: black;
 }
 
@@ -183,13 +174,6 @@
 	-fx-text-fill: black;
 }
 
-.main-chart-group .menu-button{
-	-fx-background-color: transparent; 
-}
-
-.main-chart-group .menu-button:hover{
-	-fx-background-color: #7E7E7E;
-}
 
 .main-chart-group .toggle-button{
 	-fx-background-color: transparent;
@@ -231,14 +215,6 @@
 	-fx-padding: 3; 
 }
 
-.sub-chart-group #zoomMenuButton.menu-button{
-	-fx-background-color: transparent; 
-	-fx-text-fill: derive(#7E7E7E, 30%);
-}
-
-.sub-chart-group #zoomMenuButton.menu-button:hover{
-	-fx-background-color: #7E7E7E; 
-}
 
 /*This is because this button is a special breed and label does not seem to adhere to regular zoomMenubutton */
 .sub-chart-group #zoomMenuButton.menu-button .label{
@@ -256,16 +232,6 @@
 }
 
 .sub-chart-group #addStatisticButton.button:hover{
-	-fx-background-color: #7E7E7E;
-	-fx-text-fill: black;
-}
-
-.sub-chart-group .menu-button{
-	-fx-background-color: transparent; 
-	-fx-text-fill: derive(#7E7E7E, 30%);
-}
-
-.sub-chart-group .menu-button:hover{
 	-fx-background-color: #7E7E7E;
 	-fx-text-fill: black;
 }

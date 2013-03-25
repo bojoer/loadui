@@ -28,7 +28,7 @@ import com.google.common.base.Preconditions;
 
 public class ProjectRefView extends StackPane implements Labeled
 {
-	public static final Options MENU_ITEM_OPTIONS = Options.are().open().clone()
+	public static final Options MENU_ITEM_OPTIONS = Options.are().open().clone().delete( "Delete", true )
 			.create( ProjectItem.class, WorkspaceView.CREATE_PROJECT );
 
 	@FXML

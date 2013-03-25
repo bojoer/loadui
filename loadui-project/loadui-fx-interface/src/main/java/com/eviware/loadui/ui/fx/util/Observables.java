@@ -8,13 +8,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class Observables
 {
-	protected static final Logger log = LoggerFactory.getLogger( Observables.class );
-
 	/**
 	 * Creates a Group out of the provided observables.
 	 * 
@@ -22,24 +17,19 @@ public class Observables
 	 * @return
 	 */
 
-	public static Group group( Observable... observables )
+	public static <T extends Observable> Group<T> group( T[] observables )
 	{
-		return new Group( Arrays.asList( observables ), 0 );
+		return new Group<T>( Arrays.asList( observables ) );
 	}
 
-	public static Group group( long propagationEliminationPeriod, Observable... observables )
+	public static <T extends Observable> Group<T> group( Iterable<T> observables )
 	{
-		return new Group( Arrays.asList( observables ), propagationEliminationPeriod );
+		return new Group<T>( observables );
 	}
 
-	public static Group group( Iterable<Observable> observables )
+	public static <T extends Observable> Group<T> group()
 	{
-		return new Group( observables, 0 );
-	}
-
-	public static Group group( long propagationEliminationPeriod, Iterable<Observable> observables )
-	{
-		return new Group( observables, propagationEliminationPeriod );
+		return new Group<T>( Arrays.<T> asList() );
 	}
 
 	/**
@@ -52,57 +42,47 @@ public class Observables
 	 * 
 	 */
 
-	public static class Group extends ObservableBase
+	public static class Group<T extends Observable> extends ObservableBase
 	{
-		private final ObservableList<Observable> observables = FXCollections.observableArrayList();
+		private final ObservableList<T> observables = FXCollections.observableArrayList();
 		private final InvalidationListener invalidationListener = new InvalidationListener()
 		{
 			@Override
-			public void invalidated( Observable o )
+			public void invalidated( Observable arg0 )
 			{
-				if( lastInvalidated == o
-						|| timeOfLatestInvalidation + propagationEliminationPeriod <= System.currentTimeMillis() )
-				{
-					lastInvalidated = o;
-					timeOfLatestInvalidation = System.currentTimeMillis();
-					fireInvalidation();
-				}
+				fireInvalidation();
 			}
 		};
 
-		private Observable lastInvalidated;
-		private volatile long timeOfLatestInvalidation = System.currentTimeMillis();
-		private final long propagationEliminationPeriod;
-
-		private Group( Iterable<Observable> observables, long propagationEliminationPeriod )
+		private Group( Iterable<T> list )
 		{
-			this.propagationEliminationPeriod = propagationEliminationPeriod;
-			this.observables.addListener( new ListChangeListener<Observable>()
+			this.observables.addListener( new ListChangeListener<T>()
 			{
 				@Override
-				public void onChanged( ListChangeListener.Change<? extends Observable> change )
+				public void onChanged( ListChangeListener.Change<? extends T> change )
 				{
 					while( change.next() )
 					{
-						for( Observable observable : change.getAddedSubList() )
+						for( T observable : change.getAddedSubList() )
 						{
 							observable.addListener( invalidationListener );
 						}
-						for( Observable observable : change.getRemoved() )
+						for( T observable : change.getRemoved() )
 						{
 							observable.removeListener( invalidationListener );
 						}
 					}
 				}
+
 			} );
 
-			for( Observable observable : observables )
+			for( T observable : list )
 			{
 				this.observables.add( observable );
 			}
 		}
 
-		public ObservableList<Observable> getObservables()
+		public ObservableList<T> getObservables()
 		{
 			return observables;
 		}

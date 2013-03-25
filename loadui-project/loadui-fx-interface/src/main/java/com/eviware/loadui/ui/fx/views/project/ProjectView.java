@@ -220,11 +220,9 @@ public class ProjectView extends AnchorPane
 						return;
 					}
 				}
-				else if( event.getEventType() == IntentEvent.INTENT_OPEN )
+				else if( event.getEventType() == IntentEvent.INTENT_OPEN && event.getArg() instanceof SceneItem )
 				{
-					final Object arg = event.getArg();
-					Preconditions.checkArgument( arg instanceof SceneItem );
-					SceneItem scenario = ( SceneItem )arg;
+					SceneItem scenario = ( SceneItem )event.getArg();
 
 					ToolBar projectToolbar = ( ( ToolBar )lookup( ".tool-bar" ) );
 					projectToolbar.setStyle( TOOLBAR_STYLE_WITH_SCENARIO );

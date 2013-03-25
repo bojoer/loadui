@@ -4,7 +4,6 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ContextMenuBuilder;
-import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.ContextMenuEvent;
@@ -14,6 +13,7 @@ import javafx.scene.layout.VBox;
 
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.ui.fx.MenuItemsProvider;
+import com.eviware.loadui.ui.fx.MenuItemsProvider.HasMenuItems;
 import com.eviware.loadui.ui.fx.MenuItemsProvider.Options;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
@@ -34,9 +34,9 @@ public class ScenarioView extends CanvasObjectView
 		FXMLUtils.load( content, new Controller(),
 				ScenarioView.class.getResource( ScenarioView.class.getSimpleName() + ".fxml" ) );
 
-		MenuItem[] menuItems = MenuItemsProvider.createWith( this, getCanvasObject(), MENU_ITEM_OPTIONS ).items();
-		menuButton.getItems().setAll( menuItems );
-		final ContextMenu ctxMenu = ContextMenuBuilder.create().items( menuItems ).build();
+		HasMenuItems hasMenuItems = MenuItemsProvider.createWith( this, getCanvasObject(), MENU_ITEM_OPTIONS );
+		menuButton.getItems().setAll( hasMenuItems.items() );
+		final ContextMenu ctxMenu = ContextMenuBuilder.create().items( hasMenuItems.items() ).build();
 
 		setOnContextMenuRequested( new EventHandler<ContextMenuEvent>()
 		{
@@ -51,7 +51,6 @@ public class ScenarioView extends CanvasObjectView
 				}
 			}
 		} );
-
 	}
 
 	public SceneItem getScenario()
@@ -62,7 +61,7 @@ public class ScenarioView extends CanvasObjectView
 	@Override
 	public void delete()
 	{
-		//TODO onClose
+		super.delete();
 	}
 
 	private final class Controller

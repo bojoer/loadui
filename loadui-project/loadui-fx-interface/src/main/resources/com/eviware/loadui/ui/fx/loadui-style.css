@@ -59,7 +59,20 @@
 .tooltip .page-corner {
     -fx-shape: " ";
 }
- 
+
+.context-menu {
+	-fx-padding: 4 5 8 5;
+}
+
+.context-menu .menu-item .label {
+    -fx-text-fill: black;
+}
+
+.context-menu .separator .line {
+	-fx-padding: 0.0005em 0.0em 0.0em 0.0em; /* 0 4 0 4 */
+	-fx-border-style: segments(0.066667em, 0.066667em);
+}
+
 .placeholder {
 	-fx-background-color: #292929;
 	-fx-background-radius: 8;
