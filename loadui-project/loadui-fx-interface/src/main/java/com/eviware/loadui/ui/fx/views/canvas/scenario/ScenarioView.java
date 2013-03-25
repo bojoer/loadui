@@ -1,5 +1,7 @@
 package com.eviware.loadui.ui.fx.views.canvas.scenario;
 
+import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.ContextMenu;
@@ -13,9 +15,11 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 
 import com.eviware.loadui.api.model.SceneItem;
+import com.eviware.loadui.api.traits.Labeled;
 import com.eviware.loadui.ui.fx.MenuItemsProvider;
 import com.eviware.loadui.ui.fx.MenuItemsProvider.Options;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
+import com.eviware.loadui.ui.fx.control.ConfirmationDialog;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.NodeUtils;
 import com.eviware.loadui.ui.fx.views.canvas.CanvasObjectView;
@@ -36,6 +40,7 @@ public class ScenarioView extends CanvasObjectView
 
 		MenuItem[] menuItems = MenuItemsProvider.createWith( this, getCanvasObject(), MENU_ITEM_OPTIONS ).items();
 		menuButton.getItems().setAll( menuItems );
+		
 		final ContextMenu ctxMenu = ContextMenuBuilder.create().items( menuItems ).build();
 
 		setOnContextMenuRequested( new EventHandler<ContextMenuEvent>()
@@ -51,7 +56,6 @@ public class ScenarioView extends CanvasObjectView
 				}
 			}
 		} );
-
 	}
 
 	public SceneItem getScenario()
@@ -62,7 +66,7 @@ public class ScenarioView extends CanvasObjectView
 	@Override
 	public void delete()
 	{
-		//TODO onClose
+		super.delete();
 	}
 
 	private final class Controller
