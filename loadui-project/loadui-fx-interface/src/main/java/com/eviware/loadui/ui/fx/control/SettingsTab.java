@@ -89,22 +89,21 @@ public class SettingsTab extends Tab
 			combo.setId( UIUtils.toCssId( label ) );
 			vBox.getChildren().add( combo );
 
-			// TODO: We need a ValidatableComboBoxField for this.
 			fieldToLoaduiProperty.put( combo, property );
 		}
 		else
 		{
 			ValidatableTextField<?> textField;
 
-			if( property.getType().equals( String.class ) )
-			{
-				textField = new ValidatableStringField();
-				textField.setText( Objects.firstNonNull( property.getValue(), "" ).toString() );
-			}
-			else
+			if( property.getType().equals( Long.class ) )
 			{
 				textField = ValidatableLongField.Builder.create()
 						.text( Objects.firstNonNull( property.getValue(), "" ).toString() ).build();
+			}
+			else
+			{
+				textField = new ValidatableStringField();
+				textField.setText( Objects.firstNonNull( property.getValue(), "" ).toString() );
 			}
 			textField.setId( UIUtils.toCssId( label ) );
 			vBox.getChildren().addAll( new Label( label + ":" ), textField );
@@ -268,13 +267,14 @@ public class SettingsTab extends Tab
 				comboBox.setItems( FXCollections.observableArrayList( enumValues ));
 				comboBox.getSelectionModel().select( prop.getValue() );
 					
+			}else if(prop.getType().equals( Long.class )){
+				ValidatableLongField field = (ValidatableLongField) getFieldFor( prop );
+				field.setText( Objects.firstNonNull( prop.getValue(), "" ).toString());
 			}else if(prop.getType().equals( String.class )){
 				ValidatableStringField field = (ValidatableStringField) getFieldFor( prop );
 				field.setText( Objects.firstNonNull( prop.getValue(), "" ).toString());
-				
-			}else{//Long
-				ValidatableLongField field = (ValidatableLongField) getFieldFor( prop );
-				field.setText( Objects.firstNonNull( prop.getValue(), "" ).toString());
+			}else{
+				//do nothing.
 			}
 		}
 	}
