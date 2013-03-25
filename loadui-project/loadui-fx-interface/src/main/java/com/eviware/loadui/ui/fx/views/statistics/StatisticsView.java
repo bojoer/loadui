@@ -17,8 +17,12 @@ import javafx.beans.property.ReadOnlyProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.control.ButtonBuilder;
+import javafx.scene.control.LabelBuilder;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 
@@ -34,6 +38,7 @@ import com.eviware.loadui.api.statistics.ProjectExecutionManager;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
+import com.eviware.loadui.ui.fx.control.ButtonDialog;
 import com.eviware.loadui.ui.fx.util.ManualObservable;
 import com.eviware.loadui.ui.fx.views.analysis.AnalysisView;
 import com.eviware.loadui.ui.fx.views.analysis.FxExecutionsInfo;
@@ -135,17 +140,54 @@ public class StatisticsView extends StackPane
 		executionsInfo.setArchivedExecutions( archivedExecutions );
 		executionsInfo.setMenuParent( analysisView.getButtonContainer() );
 
-		addEventHandler( IntentEvent.INTENT_OPEN, new EventHandler<IntentEvent<?>>()
+		addEventFilter( IntentEvent.INTENT_OPEN, new EventHandler<IntentEvent<?>>()
 		{
+
 			@Override
 			public void handle( IntentEvent<?> event )
 			{
 				if( event.getArg() instanceof Execution )
 				{
-					Execution execution = ( Execution )event.getArg();
-					log.debug( "Setting current execution to: " + ( execution == null ? "null" : execution.getLabel() ) );
-					currentExecution.setValue( execution );
-					event.consume();
+
+					final Execution execution = ( Execution )event.getArg();
+
+					if( !TestExecutionUtils.isExecutionRunning() )
+					{
+						log.debug( "loading exec" );
+						fireEvent( IntentEvent.create( IntentEvent.INTENT_RUN_BLOCKING, new LoadAndSetExecutionTask(
+								execution ) ) );
+						log.debug( "loading exec" );
+					}
+					else
+					{
+						log.debug( "Task is running, displaying dialog explaining why you cant open another execution" );
+
+						// displaying explanatory dialog
+
+						// TODO: make dialog have blur effect (caused by another window closing after this has been created
+
+						final ButtonDialog dialog = new ButtonDialog( StatisticsView.this, "Notice" );
+
+						dialog.getButtons().add(
+								ButtonBuilder.create().text( "Ok" ).onAction( new EventHandler<ActionEvent>()
+								{
+
+									@Override
+									public void handle( ActionEvent arg0 )
+									{
+										dialog.close();
+
+									}
+
+								} ).build() );
+						dialog.getItems().add(
+								LabelBuilder.create().text( "Stop the running test before opening another." ).build() );
+
+						dialog.show();
+
+						event.consume();
+					}
+
 				}
 			}
 		} );
@@ -211,6 +253,37 @@ public class StatisticsView extends StackPane
 					pollTimeline.stop();
 				}
 			} );
+		}
+	}
+
+	private class LoadAndSetExecutionTask extends Task<Void>
+	{
+		private Execution execution;
+
+		LoadAndSetExecutionTask( final Execution execution )
+		{
+			this.execution = execution;
+			updateMessage( "Loading execution: " + execution.getLabel() );
+
+			setOnSucceeded( new EventHandler<WorkerStateEvent>()
+			{
+				@Override
+				public void handle( WorkerStateEvent workserStateEvent )
+				{
+					log.debug( "Setting current execution to: " + ( execution == null ? "null" : execution.getLabel() ) );
+					currentExecution.setValue( execution );
+				}
+			} );
+		}
+
+		@Override
+		protected Void call() throws Exception
+		{
+			log.debug( "loading execution" );
+
+			// loading the execution
+			execution.getTestEventCount();
+			return null;
 		}
 	}
 

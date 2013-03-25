@@ -7,12 +7,16 @@ import javafx.beans.property.ReadOnlyProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.StackPaneBuilder;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
@@ -28,6 +32,8 @@ import com.google.common.collect.Lists;
 public class EventLogInspector implements Inspector
 {
 	private static final String FILTER = PerspectiveEvent.getPath( PerspectiveEvent.PERSPECTIVE_PROJECT ) + ".*";
+
+	protected static final Logger log = LoggerFactory.getLogger( EventLogInspector.class );
 
 	private final EventLogView eventLog = new EventLogView();
 	private final StackPane panel;
@@ -48,7 +54,8 @@ public class EventLogInspector implements Inspector
 		execution.addListener( new ChangeListener<Execution>()
 		{
 			@Override
-			public void changed( ObservableValue<? extends Execution> arg0, Execution oldExecution, Execution newExecution )
+			public void changed( ObservableValue<? extends Execution> arg0, Execution oldExecution,
+					final Execution newExecution )
 			{
 				if( newExecution == null )
 				{
@@ -56,7 +63,30 @@ public class EventLogInspector implements Inspector
 				}
 				else
 				{
-					eventLog.getItems().setAll( Lists.newArrayList( newExecution.getTestEventRange( 0, Long.MAX_VALUE ) ) );
+					Platform.runLater( new Runnable()
+					{
+
+						@Override
+						public void run()
+						{
+							eventLog.fireEvent( IntentEvent.create( IntentEvent.INTENT_RUN_BLOCKING, new Task<Void>()
+							{
+
+								@Override
+								protected Void call() throws Exception
+								{
+									log.debug( "loading execution to Event Log" );
+
+									updateMessage( "Fetching TestEvents" );
+									eventLog.getItems().setAll(
+											Lists.newArrayList( newExecution.getTestEventRange( 0, Long.MAX_VALUE ) ) );
+									return null;
+								}
+							} ) );
+
+						}
+					} );
+
 				}
 			}
 		} );
@@ -80,7 +110,7 @@ public class EventLogInspector implements Inspector
 	{
 		if( scene != null )
 		{
-			scene.addEventFilter( IntentEvent.INTENT_OPEN, new EventHandler<IntentEvent<?>>()
+			scene.addEventHandler( IntentEvent.INTENT_OPEN, new EventHandler<IntentEvent<?>>()
 			{
 				@Override
 				public void handle( IntentEvent<?> event )
