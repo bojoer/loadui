@@ -22,19 +22,18 @@ import com.eviware.loadui.ui.fx.api.Inspector;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.api.perspective.PerspectiveEvent;
 import com.eviware.loadui.util.statistics.ExecutionListenerAdapter;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 public class EventLogInspector implements Inspector
 {
 	private static final String FILTER = PerspectiveEvent.getPath( PerspectiveEvent.PERSPECTIVE_PROJECT ) + ".*";
 
-	private final EventLogView eventLog = new EventLogView();
 	private final StackPane panel;
 	private final ExecutionManager executionManager;
 	private final TestEventManager testEventManager;
 
-	private Property<Execution> execution = new SimpleObjectProperty<>( this, "execution" );
+	private final Property<Execution> execution = new SimpleObjectProperty<>( this, "execution" );
+	private final EventLogView eventLog = new EventLogView( execution );
 
 	public EventLogInspector( ExecutionManager executionManager, TestEventManager testEventManager )
 	{
@@ -158,10 +157,13 @@ public class EventLogInspector implements Inspector
 					@Override
 					public void run()
 					{
+						// TODO: Adjust this EPOCH timestamp to be relative to when the execution started.
+						eventLog.getItems().add( eventEntry );
+
 						//We need to get it from the Execution for it to have the adjusted timestamp.
-						eventLog.getItems().add(
-								Iterables.getFirst( execution.getValue().getTestEvents( eventLog.getItems().size(), false ),
-										null ) );
+						//						eventLog.getItems().add(
+						//								Iterables.getFirst( execution.getValue().getTestEvents( eventLog.getItems().size(), false ),
+						//										null ) );
 					}
 				} );
 			}

@@ -2,6 +2,7 @@ package com.eviware.loadui.ui.fx.views.eventlog;
 
 import javafx.beans.InvalidationListener;
 import javafx.beans.binding.StringExpression;
+import javafx.beans.property.Property;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.TableColumn;
@@ -10,6 +11,7 @@ import javafx.scene.control.TableColumnBuilder;
 import javafx.scene.control.TableView;
 import javafx.util.Callback;
 
+import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.testevents.TestEvent;
 import com.eviware.loadui.api.testevents.TestEvent.Entry;
 import com.eviware.loadui.util.FormattingUtils;
@@ -17,17 +19,18 @@ import com.eviware.loadui.util.FormattingUtils;
 public class EventLogView extends TableView<TestEvent.Entry>
 {
 	@SuppressWarnings( "unchecked" )
-	public EventLogView()
+	public EventLogView( final Property<Execution> execution )
 	{
 		TableColumn<Entry, String> timeColumn = TableColumnBuilder.<Entry, String> create().text( "Time" )
-				.sortable( false ).minWidth( 80 )
+				.sortable( false ).minWidth( 100 )
 				.cellValueFactory( new Callback<TableColumn.CellDataFeatures<Entry, String>, ObservableValue<String>>()
 				{
 					@Override
 					public ObservableValue<String> call( CellDataFeatures<Entry, String> features )
 					{
 						return readOnlyString( FormattingUtils.formatTimeMillis( features.getValue().getTestEvent()
-								.getTimestamp() ) );
+								.getTimestamp()
+								- execution.getValue().getStartTime() ) );
 					}
 				} ).build();
 
