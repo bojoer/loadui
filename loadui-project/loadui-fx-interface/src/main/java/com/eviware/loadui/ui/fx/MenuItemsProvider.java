@@ -1,11 +1,20 @@
 package com.eviware.loadui.ui.fx;
 
+import static com.eviware.loadui.ui.fx.MenuItemsProvider.Group.CLOSE;
+import static com.eviware.loadui.ui.fx.MenuItemsProvider.Group.NEW;
+import static com.eviware.loadui.ui.fx.MenuItemsProvider.Group.NONE;
+import static com.eviware.loadui.ui.fx.MenuItemsProvider.Group.OPEN_REMOVE;
+import static com.eviware.loadui.ui.fx.MenuItemsProvider.Group.PRESENTATION;
+import static com.eviware.loadui.ui.fx.MenuItemsProvider.Group.SAVE;
+import static com.eviware.loadui.ui.fx.MenuItemsProvider.Group.SETTINGS;
+
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
 import javafx.application.Platform;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
@@ -44,54 +53,86 @@ public class MenuItemsProvider
 {
 	private static final ContextMenuEventHandler ctxMenuHandler = new ContextMenuEventHandler();
 
+	public enum Group
+	{
+		NONE, OPEN_REMOVE, NEW, SAVE, SETTINGS, STATIC_INFO, LICENSE, USER_FEEDBACK, HELP, PRESENTATION, CLOSE
+	}
+
 	public static HasMenuItems createWith( Node eventFirer, Object eventArg, Options options )
 	{
-		return new HasMenuItems( itemsFor( eventArg, eventFirer, options ) );
+		return new HasMenuItems( eventArg, eventFirer, options );
 	}
 
 	private static MenuItem[] itemsFor( Object eventArg, Node firer, Options options )
 	{
-		List<MenuItem> items = new ArrayList<>( 6 );
+		final SimpleObjectProperty<Group> currentGroup = new SimpleObjectProperty<>( NONE );
+		final List<MenuItem> items = new ArrayList<>( 6 );
+
 		if( options.open )
-			items.add( itemFor( "open-item", options.openLabel,
-					eventHandler( IntentEvent.INTENT_OPEN, firer, eventArg, options.openActions ) ) );
-		if( options.rename && eventArg instanceof Mutable )
-			items.add( itemFor( "rename-item", options.renameLabel,
-					eventHandler( IntentEvent.INTENT_RENAME, firer, ( Mutable )eventArg ) ) );
-		if( options.save )
-			items.add( itemFor( "save-item", options.saveLabel, eventHandler( IntentEvent.INTENT_SAVE, firer, eventArg ) ) );
+			maybeAddSeparatorTo( items, OPEN_REMOVE, currentGroup ).add(
+					itemFor( "open-item", options.openLabel,
+							eventHandler( IntentEvent.INTENT_OPEN, firer, eventArg, options.openActions ) ) );
+
 		if( options.clone )
-			items.add( itemFor( "clone-item", options.cloneLabel, eventHandler( IntentEvent.INTENT_CLONE, firer, eventArg ) ) );
+			maybeAddSeparatorTo( items, OPEN_REMOVE, currentGroup ).add(
+					itemFor( "clone-item", options.cloneLabel, eventHandler( IntentEvent.INTENT_CLONE, firer, eventArg ) ) );
+
+		if( options.save )
+			maybeAddSeparatorTo( items, SAVE, currentGroup ).add(
+					itemFor( "save-item", options.saveLabel, eventHandler( IntentEvent.INTENT_SAVE, firer, eventArg ) ) );
+
 		if( options.delete && eventArg instanceof Deletable )
-			items.add( itemFor( "delete-item", options.deleteData.deleteLabel,
-					deleteHandler( firer, ( Deletable )eventArg, options.deleteData ) ) );
-		if( options.close )
-			items.add( itemFor( "close-item", options.closeLabel, eventHandler( IntentEvent.INTENT_CLOSE, firer, eventArg ) ) );
+			maybeAddSeparatorTo( items, OPEN_REMOVE, currentGroup ).add(
+					itemFor( "delete-item", options.deleteData.deleteLabel,
+							deleteHandler( firer, ( Deletable )eventArg, options.deleteData ) ) );
+
+		if( options.rename && eventArg instanceof Mutable )
+			maybeAddSeparatorTo( items, PRESENTATION, currentGroup ).add(
+					itemFor( "rename-item", options.renameLabel,
+							eventHandler( IntentEvent.INTENT_RENAME, firer, ( Mutable )eventArg ) ) );
+
 		if( options.settings )
-			items.add( itemFor( "settings-item", options.settingsData, firer ) );
+			maybeAddSeparatorTo( items, SETTINGS, currentGroup ).add(
+					itemFor( "settings-item", options.settingsData, firer ) );
+
 		if( options.create )
-		{
-			if( items.size() > 2 )
-				items.add( SeparatorMenuItemBuilder.create().build() );
-			items.add( itemFor( "create-item", options.createLabel,
-					eventHandler( IntentEvent.INTENT_CREATE, firer, options.typeToCreate ) ) );
-		}
+			maybeAddSeparatorTo( items, NEW, currentGroup ).add(
+					itemFor( "create-item", options.createLabel,
+							eventHandler( IntentEvent.INTENT_CREATE, firer, options.typeToCreate ) ) );
+
+		if( options.close )
+			maybeAddSeparatorTo( items, CLOSE, currentGroup ).add(
+					itemFor( "close-item", options.closeLabel, eventHandler( IntentEvent.INTENT_CLOSE, firer, eventArg ) ) );
+
 		return items.toArray( new MenuItem[items.size()] );
+	}
+
+	private static List<MenuItem> maybeAddSeparatorTo( List<MenuItem> items, Group itemGroup,
+			SimpleObjectProperty<Group> currentGroup )
+	{
+		if( !items.isEmpty() && itemGroup != currentGroup.get() )
+			items.add( SeparatorMenuItemBuilder.create().build() );
+		currentGroup.set( itemGroup );
+		return items;
 	}
 
 	public static class HasMenuItems
 	{
 
-		private MenuItem[] items;
+		private Object eventArg;
+		private Node eventFirer;
+		private Options options;
 
-		private HasMenuItems( MenuItem[] items )
+		public HasMenuItems( Object eventArg, Node eventFirer, Options options )
 		{
-			this.items = items;
+			this.eventArg = eventArg;
+			this.eventFirer = eventFirer;
+			this.options = options;
 		}
 
 		public MenuItem[] items()
 		{
-			return items;
+			return itemsFor( eventArg, eventFirer, options );
 		}
 	}
 
@@ -132,9 +173,9 @@ public class MenuItemsProvider
 			}
 		};
 	}
-	
+
 	private static <T> EventHandler<ActionEvent> eventHandler( final EventType<IntentEvent<? extends T>> eventType,
-			final Node firer, final T target, final Dialog dialog, final Runnable... actions  )
+			final Node firer, final T target, final Dialog dialog, final Runnable... actions )
 	{
 		return new EventHandler<ActionEvent>()
 		{
@@ -152,19 +193,24 @@ public class MenuItemsProvider
 	private static <T> EventHandler<ActionEvent> deleteHandler( final Node firer, final Deletable target,
 			final Options.DeleteData data )
 	{
-		if(data.confirmDelete){
-			return new EventHandler<ActionEvent>(){
+		if( data.confirmDelete )
+		{
+			return new EventHandler<ActionEvent>()
+			{
 				@Override
-				public void handle( ActionEvent _ ){
-					String name = (target instanceof Labeled) ? "'" + ((Labeled) target).getLabel() + "'" : "this item";
-					ConfirmationDialog dialog = new ConfirmationDialog( firer, "Are you sure you want to delete " + name +  "?",
-							"Delete" );
-					dialog.onConfirmProperty().set( eventHandler( IntentEvent.INTENT_DELETE, firer, target, dialog,
-							data.deleteActions ) );
-					dialog.show(); 
+				public void handle( ActionEvent _ )
+				{
+					String name = ( target instanceof Labeled ) ? "'" + ( ( Labeled )target ).getLabel() + "'" : "this item";
+					ConfirmationDialog dialog = new ConfirmationDialog( firer, "Are you sure you want to delete " + name
+							+ "?", "Delete" );
+					dialog.onConfirmProperty().set(
+							eventHandler( IntentEvent.INTENT_DELETE, firer, target, dialog, data.deleteActions ) );
+					dialog.show();
 				}
 			};
-		}else{
+		}
+		else
+		{
 			return eventHandler( IntentEvent.INTENT_DELETE, firer, target, data.deleteActions );
 		}
 	}
@@ -262,7 +308,7 @@ public class MenuItemsProvider
 
 		private class DeleteData
 		{
-			String deleteLabel = "Delete";
+			String deleteLabel = "Remove";
 			Runnable[] deleteActions = new Runnable[0];
 			boolean confirmDelete = true;
 		}

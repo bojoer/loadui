@@ -15,6 +15,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItemBuilder;
+import javafx.scene.control.SeparatorMenuItemBuilder;
 import javafx.scene.control.Slider;
 import javafx.scene.control.SliderBuilder;
 import javafx.scene.layout.Region;
@@ -156,7 +157,7 @@ public class LineSegmentView extends SegmentView<LineSegment>
 		} );
 
 		setMenuItemsFor( menuButton );
-		menuButton.getItems().add(
+		menuButton.getItems().addAll( SeparatorMenuItemBuilder.create().build(),
 				MenuItemBuilder.create().id( "scale-item" ).text( "Scale" ).onAction( scaleHandler() ).build() );
 
 	}

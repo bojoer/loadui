@@ -7,7 +7,6 @@ import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ContextMenuBuilder;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleButtonBuilder;
 import javafx.scene.input.ContextMenuEvent;
@@ -15,6 +14,7 @@ import javafx.scene.input.ContextMenuEvent;
 import com.eviware.loadui.api.component.categories.OnOffCategory;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.ui.fx.MenuItemsProvider;
+import com.eviware.loadui.ui.fx.MenuItemsProvider.HasMenuItems;
 import com.eviware.loadui.ui.fx.MenuItemsProvider.Options;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.LayoutContainerUtils;
@@ -35,13 +35,13 @@ public class ComponentView extends CanvasObjectView
 
 		FXMLUtils.load( this, null, ComponentView.class.getResource( ComponentView.class.getSimpleName() + ".fxml" ) );
 
-		MenuItem[] menuItems = MenuItemsProvider.createWith(
+		HasMenuItems hasMenuItems = MenuItemsProvider.createWith(
 				this,
 				getCanvasObject(),
 				Options.are().settings( "Component Settings",
-						LayoutContainerUtils.settingsTabsFromLayoutContainers( getComponent().getSettingsTabs() ) ) ).items();
-		menuButton.getItems().setAll( menuItems );
-		final ContextMenu ctxMenu = ContextMenuBuilder.create().items( menuItems ).build();
+						LayoutContainerUtils.settingsTabsFromLayoutContainers( getComponent().getSettingsTabs() ) ) );
+		menuButton.getItems().setAll( hasMenuItems.items() );
+		final ContextMenu ctxMenu = ContextMenuBuilder.create().items( hasMenuItems.items() ).build();
 
 		setOnContextMenuRequested( new EventHandler<ContextMenuEvent>()
 		{
@@ -57,7 +57,7 @@ public class ComponentView extends CanvasObjectView
 			}
 		} );
 
-		compactModeButton = ToggleButtonBuilder.create().id( "compact" ).text( "C" )
+		compactModeButton = ToggleButtonBuilder.create().id( "compact" ).styleClass( "styleable-graphic" )
 				.selected( Boolean.parseBoolean( component.getAttribute( COMPACT_MODE_ATTRIBUTE, "false" ) ) )
 				.onAction( new EventHandler<ActionEvent>()
 				{
