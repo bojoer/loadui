@@ -15,7 +15,12 @@
  */
 package com.eviware.loadui.ui.fx.views.assertions;
 
+import java.util.Set;
+
 import javafx.application.Platform;
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ContextMenuBuilder;
@@ -30,6 +35,8 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.VBoxBuilder;
 
+import javax.annotation.Nullable;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,10 +49,16 @@ import com.eviware.loadui.ui.fx.MenuItemsProvider.HasMenuItems;
 import com.eviware.loadui.ui.fx.MenuItemsProvider.Options;
 import com.eviware.loadui.ui.fx.util.NodeUtils;
 import com.eviware.loadui.ui.fx.util.Properties;
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 public class AssertionView extends VBox implements Deletable
 {
 	protected static final Logger log = LoggerFactory.getLogger( AssertionView.class );
+
+	private final AssertionItem<?> assertion;
+	private final ObservableList<? extends AssertionView> assertionList;
 
 	private final Runnable deleteAction = new Runnable()
 	{
@@ -56,14 +69,54 @@ public class AssertionView extends VBox implements Deletable
 		}
 	};
 
-	public AssertionView( final AssertionItem<?> assertion )
+	private final Runnable renameAction = new Runnable()
+	{
+
+		@Override
+		public void run()
+		{
+			String attemptedName = assertion.getLabel();
+			log.debug( "Assertion renamed to '" + attemptedName + "'" );
+			Set<String> assertionLabels = Sets.newHashSet( Lists.transform( assertionList,
+					new Function<AssertionView, String>()
+					{
+						@Override
+						@Nullable
+						public String apply( @Nullable AssertionView view )
+						{
+							return view == AssertionView.this ? "" : view.assertion.getLabel();
+						}
+					} ) );
+			int append = 1;
+			//FIXME the renaming algorithm here will add a new (n) instead of just increasing the current (n) if any
+			while( assertionLabels.contains( assertion.getLabel() ) )
+				( ( Labeled.Mutable )assertion ).setLabel( assertion.getLabel() + " (" + ( append++ ) + ")" );
+			if( attemptedName != assertion.getLabel() )
+				log.debug( "Name was already taken, changed to: " + assertion.getLabel() );
+		}
+
+	};
+
+	public AssertionView( final AssertionItem<?> assertion, ObservableList<AssertionView> assertionList )
 	{
 		getStyleClass().add( "assertion-view" );
+		this.assertion = assertion;
+		this.assertionList = assertionList;
 
 		HasMenuItems hasMenuItems = MenuItemsProvider.createWith( this, assertion, Options.are().delete( deleteAction ) );
 
 		final MenuButton menuButton = MenuButtonBuilder.create().items( hasMenuItems.items() ).build();
 		menuButton.textProperty().bind( Properties.forLabel( assertion ) );
+		menuButton.textProperty().addListener( new InvalidationListener()
+		{
+
+			@Override
+			public void invalidated( Observable _ )
+			{
+				renameAction.run();
+			}
+		} );
+
 		final ContextMenu ctxMenu = ContextMenuBuilder.create().items( hasMenuItems.items() ).build();
 
 		setOnContextMenuRequested( new EventHandler<ContextMenuEvent>()
@@ -136,7 +189,7 @@ public class AssertionView extends VBox implements Deletable
 	public void delete()
 	{
 		log.debug( "Deleting Assertion" );
-		//TODO remove assertion from any charts it may be in
+		//TODO may need to release resources
 	}
 
 }

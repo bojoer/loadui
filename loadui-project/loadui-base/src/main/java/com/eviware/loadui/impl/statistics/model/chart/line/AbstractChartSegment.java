@@ -79,7 +79,6 @@ public class AbstractChartSegment implements Segment.Removable
 	@Override
 	public void remove()
 	{
-		System.out.println( "SEGMENT " + this + " isRemoved!!!!!!!!!!!!!!!!!!!" );
 		isRemoved = true;
 		chartView.removeSegment( this );
 	}
@@ -89,4 +88,11 @@ public class AbstractChartSegment implements Segment.Removable
 	{
 		return id;
 	}
+
+	@Override
+	public String getId()
+	{
+		return id;
+	}
+
 }

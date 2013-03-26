@@ -143,4 +143,11 @@ public class SourceLineSegment implements LineSegment
 			}
 		}
 	}
+
+	@Override
+	public String getId()
+	{
+		return parent.getId();
+	}
+
 }

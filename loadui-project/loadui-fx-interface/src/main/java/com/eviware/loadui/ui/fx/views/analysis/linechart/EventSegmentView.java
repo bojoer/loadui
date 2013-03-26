@@ -47,7 +47,8 @@ public class EventSegmentView extends SegmentView<TestEventSegment>
 
 		segmentLabel.minWidthProperty().bind( Bindings.when( isExpandedProperty ).then( 250 ).otherwise( 180 ) );
 		segmentLabel.maxWidthProperty().bind( Bindings.when( isExpandedProperty ).then( 320 ).otherwise( 200 ) );
-		
+
 		setMenuItemsFor( menuButton );
 	}
+
 }

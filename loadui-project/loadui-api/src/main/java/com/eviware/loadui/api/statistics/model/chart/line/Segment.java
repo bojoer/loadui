@@ -20,6 +20,8 @@ import com.eviware.loadui.api.model.AttributeHolder;
 public interface Segment extends AttributeHolder
 {
 	boolean isRemoved();
+	
+	String getId();
 
 	public interface Removable extends Segment
 	{
