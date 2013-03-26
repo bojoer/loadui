@@ -1,3 +1,18 @@
+/*
+ * Copyright 2013 SmartBear Software
+ * 
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * http://ec.europa.eu/idabc/eupl
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the Licence for the specific language governing permissions and limitations
+ * under the Licence.
+ */
 package com.eviware.loadui.ui.fx.util.test;
 
 import java.io.File;
@@ -19,7 +34,6 @@ import javafx.scene.control.ButtonBuilder;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.Separator;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.SeparatorMenuItemBuilder;
 import javafx.scene.control.SplitPaneBuilder;
@@ -45,18 +59,18 @@ public class StyleTester extends Application
 	{
 		final Pane container = new FlowPane();
 		container.getStyleClass().add( "container" );
-		
+
 		SeparatorMenuItem separator = SeparatorMenuItemBuilder.create().build();
-		System.out.println(separator.getStyleClass());
-		
-		List<MenuItem> items = Arrays.asList( 
-				
-				new MenuItem( "Item 1" ), separator, new MenuItem("Item 2") );
-		MenuButton button = new MenuButton("Press this");
+		System.out.println( separator.getStyleClass() );
+
+		List<MenuItem> items = Arrays.asList(
+
+		new MenuItem( "Item 1" ), separator, new MenuItem( "Item 2" ) );
+		MenuButton button = new MenuButton( "Press this" );
 		//button.getContextMenu()
 		button.getItems().setAll( items );
 
-		container.getChildren().addAll( new Label( "hej världen" ), button );
+		container.getChildren().addAll( new Label( "hej varlden" ), button );
 
 		return container;
 

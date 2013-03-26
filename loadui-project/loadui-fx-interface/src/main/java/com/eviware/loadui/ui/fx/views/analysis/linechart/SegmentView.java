@@ -1,3 +1,18 @@
+/*
+ * Copyright 2013 SmartBear Software
+ * 
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * http://ec.europa.eu/idabc/eupl
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the Licence for the specific language governing permissions and limitations
+ * under the Licence.
+ */
 package com.eviware.loadui.ui.fx.views.analysis.linechart;
 
 import java.util.ArrayList;
@@ -98,7 +113,7 @@ public abstract class SegmentView<T extends Segment> extends StackPane implement
 	 */
 	protected void setMenuItemsFor( final MenuButton menuButton )
 	{
-		HasMenuItems hasMenuItems = MenuItemsProvider.createWith( this, this, Options.are().delete( false, new Runnable()
+		HasMenuItems hasMenuItems = MenuItemsProvider.createWith( this, this, Options.are().delete( "Remove", false, new Runnable()
 		{
 			@Override
 			public void run()
@@ -141,14 +156,16 @@ public abstract class SegmentView<T extends Segment> extends StackPane implement
 		Object targets = getProperties().get( "ListenerTargets" );
 		if( listeners != null )
 		{
-			List<InvalidationListener> invalidationListeners = ( List<InvalidationListener> )listeners;
-			List<Observable> observables = ( List<Observable> )targets;
-			for( Observable o : observables )
+			List<?> invalidationListeners = ( List<?> )listeners;
+			List<?> observables = ( List<?> )targets;
+			for( Object o : observables )
 			{
-				for( InvalidationListener l : invalidationListeners )
+				for( Object l : invalidationListeners )
 				{
-					log.debug( "REMOVING LISTENER " + l + " from " + o );
-					o.removeListener( l );
+					if (l instanceof InvalidationListener && o instanceof Observable) {
+						log.debug( "REMOVING LISTENER " + l + " from " + o );
+						( ( Observable )o ).removeListener( ( InvalidationListener )l );	
+					}
 				}
 			}
 		}
