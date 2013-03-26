@@ -25,6 +25,8 @@ import javafx.scene.control.ContextMenuBuilder;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleButtonBuilder;
 import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.layout.HBoxBuilder;
+import javafx.scene.layout.RegionBuilder;
 
 import com.eviware.loadui.api.component.categories.OnOffCategory;
 import com.eviware.loadui.api.model.ComponentItem;
@@ -72,7 +74,14 @@ public class ComponentView extends CanvasObjectView
 			}
 		} );
 
-		compactModeButton = ToggleButtonBuilder.create().id( "compact" ).styleClass( "styleable-graphic" )
+		compactModeButton = ToggleButtonBuilder
+				.create()
+				.id( "compact" )
+				.graphic(
+						HBoxBuilder
+								.create()
+								.children( RegionBuilder.create().styleClass( "graphic" ).build(),
+										RegionBuilder.create().styleClass( "secondary-graphic" ).build() ).build() )
 				.selected( Boolean.parseBoolean( component.getAttribute( COMPACT_MODE_ATTRIBUTE, "false" ) ) )
 				.onAction( new EventHandler<ActionEvent>()
 				{
