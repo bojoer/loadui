@@ -8,7 +8,6 @@ import static com.eviware.loadui.ui.fx.MenuItemsProvider.Group.PRESENTATION;
 import static com.eviware.loadui.ui.fx.MenuItemsProvider.Group.SAVE;
 import static com.eviware.loadui.ui.fx.MenuItemsProvider.Group.SETTINGS;
 
-import java.awt.MouseInfo;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +35,7 @@ import com.eviware.loadui.ui.fx.control.ConfirmationDialog;
 import com.eviware.loadui.ui.fx.control.Dialog;
 import com.eviware.loadui.ui.fx.control.SettingsDialog;
 import com.eviware.loadui.ui.fx.control.SettingsTab;
+import com.eviware.loadui.ui.fx.util.NodeUtils;
 import com.eviware.loadui.ui.fx.views.window.MainWindowView;
 import com.google.common.base.Preconditions;
 
@@ -254,7 +254,7 @@ public class MenuItemsProvider
 				wholeWindowRec.addEventHandler( MouseEvent.MOUSE_CLICKED, this );
 			}
 
-			Point mouseLocation = MouseInfo.getPointerInfo().getLocation();
+			Point mouseLocation = NodeUtils.getAbsMouseLocation();
 			currentMenu = ctxMenu;
 			ctxMenu.show( owner, mouseLocation.getX(), mouseLocation.getY() );
 			mainWindowView.getChildren().add( wholeWindowRec );
