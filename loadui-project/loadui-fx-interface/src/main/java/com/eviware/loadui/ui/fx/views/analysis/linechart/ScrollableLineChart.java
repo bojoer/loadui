@@ -231,8 +231,12 @@ public class ScrollableLineChart extends HBox implements ExecutionChart, Releasa
 		}
 
 		// resets the position after the span has changed
-		position.bind( scrollBar.leftSidePositionProperty() );
 		scrollBar.setLeftSidePosition( prePosition );
+		scrollBar.updateLeftSide();
+
+		position.set( scrollBar.leftSidePositionProperty().longValue() );
+		log.debug( "getPosition() is " + getPosition() );
+		position.bind( scrollBar.leftSidePositionProperty() );
 
 		manualDataUpdate.fireInvalidation();
 
