@@ -17,6 +17,7 @@ package com.eviware.loadui.ui.fx.input;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.WeakHashMap;
@@ -312,6 +313,8 @@ public class SelectableImpl implements Selectable
 	private static class SelectionRectangle extends Popup
 	{
 		private static ImmutableList<SelectableImpl> selectedAtSelectionStart = null;
+		private final Collection<Node> toBeCollected = Collections
+				.newSetFromMap( new HashMap<Node, Boolean>() ); 
 		private double startX;
 		private double startY;
 		private Node ownerNode;
@@ -357,20 +360,29 @@ public class SelectableImpl implements Selectable
 			for( Node node : SELECTABLE_NODES )
 			{
 				Scene scene = node.getScene();
-				if( scene != null && scene.windowProperty().get() != null )
+				if( scene != null )
 				{
-					Rectangle2D selectableRectangle = NodeUtils.localToScreen( node, scene );
-
-					if( selectionArea.intersects( selectableRectangle ) )
+					if( scene.windowProperty().get() != null )
 					{
-						Selectable selectable = nodeToSelectable( node );
-						if( e.isShiftDown() && selectedAtSelectionStart.contains( selectable ) )
-							selectable.deselect();
-						else
-							selectable.select();
+						Rectangle2D selectableRectangle = NodeUtils.localToScreen( node, scene );
+
+						if( selectionArea.intersects( selectableRectangle ) )
+						{
+							Selectable selectable = nodeToSelectable( node );
+							if( e.isShiftDown() && selectedAtSelectionStart.contains( selectable ) )
+								selectable.deselect();
+							else
+								selectable.select();
+						}
+					}else{
+						toBeCollected.add( node );
 					}
 				}
 			}
+			for(Node node : toBeCollected){
+				uninstallSelectable( node );
+			}
+			toBeCollected.clear();
 		}
 	}
 }
