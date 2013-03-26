@@ -2,7 +2,6 @@ package com.eviware.loadui.ui.fx.control.skin;
 
 import static java.lang.Math.round;
 
-import java.awt.MouseInfo;
 import java.awt.Point;
 
 import javafx.application.Platform;
@@ -109,7 +108,7 @@ public class StyleableGraphicSlider extends SliderSkin
 	private void showTooltip( final Slider slider )
 	{
 		tooltip.setText( getTooltipText( slider ) );
-		Point ml = MouseInfo.getPointerInfo().getLocation();
+		Point ml = NodeUtils.getAbsMouseLocation();
 		tooltip.show( slider.getScene().getWindow(), ml.getX(), ml.getY() );
 	}
 

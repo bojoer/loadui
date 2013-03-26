@@ -27,6 +27,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart.Data;
 import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
@@ -117,7 +118,6 @@ public class ScrollableLineChart extends HBox implements ExecutionChart, Releasa
 				ScrollableLineChart.class.getResource( ScrollableLineChart.class.getSimpleName() + ".fxml" ) );
 	}
 
-	@SuppressWarnings( "unchecked" )
 	@FXML
 	protected void initialize()
 	{
@@ -298,10 +298,10 @@ public class ScrollableLineChart extends HBox implements ExecutionChart, Releasa
 		ObservableLists.releaseElementsWhenRemoved( segmentViews );
 
 		seriesList = transform( segmentViews, segmentViewToSeries );
-		seriesList.addListener( new ListChangeListener<Series>()
+		seriesList.addListener( new ListChangeListener<Series<Long, Number>>()
 		{
 			@Override
-			public void onChanged( javafx.collections.ListChangeListener.Change<? extends Series> c )
+			public void onChanged( javafx.collections.ListChangeListener.Change<? extends Series<Long, Number>> c )
 			{
 				while( c.next() )
 				{
@@ -322,18 +322,18 @@ public class ScrollableLineChart extends HBox implements ExecutionChart, Releasa
 		if( chartView == chartView.getChartGroup().getChartView() )
 		{
 			log.debug( "Main chart view removed" );
-			for( SegmentView segmentView : segmentViews )
+			for( SegmentView<?> segmentView : segmentViews )
 				segmentView.delete();
 		}
 		clearSeries( seriesList );
 	}
 
-	protected static void clearSeries( Iterable<? extends Series> series )
+	protected static void clearSeries( Iterable<? extends Series<Long, Number>> series )
 	{
-		for( Series s : series )
+		for( Series<Long, Number> s : series )
 		{
 			log.debug( "!!!!! CLEANING SERIES " + series );
-			s.setData( FXCollections.observableArrayList() );
+			s.setData( FXCollections.<Data<Long, Number>> observableArrayList() );
 		}
 	}
 
