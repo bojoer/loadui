@@ -1,3 +1,18 @@
+/*
+ * Copyright 2013 SmartBear Software
+ * 
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * http://ec.europa.eu/idabc/eupl
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the Licence for the specific language governing permissions and limitations
+ * under the Licence.
+ */
 package com.eviware.loadui.ui.fx.views.analysis.linechart;
 
 import static com.eviware.loadui.ui.fx.util.ObservableLists.fx;
@@ -27,6 +42,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart.Data;
 import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
@@ -117,7 +133,6 @@ public class ScrollableLineChart extends HBox implements ExecutionChart, Releasa
 				ScrollableLineChart.class.getResource( ScrollableLineChart.class.getSimpleName() + ".fxml" ) );
 	}
 
-	@SuppressWarnings( "unchecked" )
 	@FXML
 	protected void initialize()
 	{
@@ -302,10 +317,10 @@ public class ScrollableLineChart extends HBox implements ExecutionChart, Releasa
 		ObservableLists.releaseElementsWhenRemoved( segmentViews );
 
 		seriesList = transform( segmentViews, segmentViewToSeries );
-		seriesList.addListener( new ListChangeListener<Series>()
+		seriesList.addListener( new ListChangeListener<Series<Long, Number>>()
 		{
 			@Override
-			public void onChanged( javafx.collections.ListChangeListener.Change<? extends Series> c )
+			public void onChanged( javafx.collections.ListChangeListener.Change<? extends Series<Long, Number>> c )
 			{
 				while( c.next() )
 				{
@@ -326,18 +341,18 @@ public class ScrollableLineChart extends HBox implements ExecutionChart, Releasa
 		if( chartView == chartView.getChartGroup().getChartView() )
 		{
 			log.debug( "Main chart view removed" );
-			for( SegmentView segmentView : segmentViews )
+			for( SegmentView<?> segmentView : segmentViews )
 				segmentView.delete();
 		}
 		clearSeries( seriesList );
 	}
 
-	protected static void clearSeries( Iterable<? extends Series> series )
+	protected static void clearSeries( Iterable<? extends Series<Long, Number>> series )
 	{
-		for( Series s : series )
+		for( Series<Long, Number> s : series )
 		{
 			log.debug( "!!!!! CLEANING SERIES " + series );
-			s.setData( FXCollections.observableArrayList() );
+			s.setData( FXCollections.<Data<Long, Number>> observableArrayList() );
 		}
 	}
 

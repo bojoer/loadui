@@ -1,3 +1,18 @@
+/*
+ * Copyright 2013 SmartBear Software
+ * 
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * http://ec.europa.eu/idabc/eupl
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the Licence for the specific language governing permissions and limitations
+ * under the Licence.
+ */
 package com.eviware.loadui.ui.fx.views.analysis.linechart;
 
 import static com.eviware.loadui.ui.fx.util.ObservableLists.fromExpression;
@@ -39,7 +54,7 @@ public final class SegmentViewToSeriesFunction implements Function<SegmentView<?
 	private final ObservableValue<Execution> execution;
 	//private final ObservableList<Observable> observables;
 
-	private final Group observablesUpdatedByUser;
+	private final Group<Observable> observablesUpdatedByUser;
 
 	private final Observable position;
 	private final Observable timePulse;
@@ -47,7 +62,7 @@ public final class SegmentViewToSeriesFunction implements Function<SegmentView<?
 
 	protected static final Logger log = LoggerFactory.getLogger( SegmentViewToSeriesFunction.class );
 
-	public SegmentViewToSeriesFunction( ObservableValue<Execution> execution, Group observablesUpdatedByUser,
+	public SegmentViewToSeriesFunction( ObservableValue<Execution> execution, Group<Observable> observablesUpdatedByUser,
 			Observable timePulse, Observable position, ExecutionChart chart )
 	{
 		this.execution = execution;

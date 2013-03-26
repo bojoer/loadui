@@ -1,3 +1,18 @@
+/*
+ * Copyright 2013 SmartBear Software
+ * 
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * http://ec.europa.eu/idabc/eupl
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the Licence for the specific language governing permissions and limitations
+ * under the Licence.
+ */
 package com.eviware.loadui.ui.fx;
 
 import static com.eviware.loadui.ui.fx.MenuItemsProvider.Group.CLOSE;
@@ -8,7 +23,6 @@ import static com.eviware.loadui.ui.fx.MenuItemsProvider.Group.PRESENTATION;
 import static com.eviware.loadui.ui.fx.MenuItemsProvider.Group.SAVE;
 import static com.eviware.loadui.ui.fx.MenuItemsProvider.Group.SETTINGS;
 
-import java.awt.MouseInfo;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +50,7 @@ import com.eviware.loadui.ui.fx.control.ConfirmationDialog;
 import com.eviware.loadui.ui.fx.control.Dialog;
 import com.eviware.loadui.ui.fx.control.SettingsDialog;
 import com.eviware.loadui.ui.fx.control.SettingsTab;
+import com.eviware.loadui.ui.fx.util.NodeUtils;
 import com.eviware.loadui.ui.fx.views.window.MainWindowView;
 import com.google.common.base.Preconditions;
 
@@ -254,7 +269,7 @@ public class MenuItemsProvider
 				wholeWindowRec.addEventHandler( MouseEvent.MOUSE_CLICKED, this );
 			}
 
-			Point mouseLocation = MouseInfo.getPointerInfo().getLocation();
+			Point mouseLocation = NodeUtils.getAbsMouseLocation();
 			currentMenu = ctxMenu;
 			ctxMenu.show( owner, mouseLocation.getX(), mouseLocation.getY() );
 			mainWindowView.getChildren().add( wholeWindowRec );
@@ -308,7 +323,7 @@ public class MenuItemsProvider
 
 		private class DeleteData
 		{
-			String deleteLabel = "Remove";
+			String deleteLabel = "Delete";
 			Runnable[] deleteActions = new Runnable[0];
 			boolean confirmDelete = true;
 		}

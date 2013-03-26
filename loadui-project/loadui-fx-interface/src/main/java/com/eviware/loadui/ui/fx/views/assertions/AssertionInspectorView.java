@@ -1,4 +1,23 @@
+/*
+ * Copyright 2013 SmartBear Software
+ * 
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * http://ec.europa.eu/idabc/eupl
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the Licence for the specific language governing permissions and limitations
+ * under the Licence.
+ */
 package com.eviware.loadui.ui.fx.views.assertions;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
@@ -32,17 +51,11 @@ import com.google.common.base.Function;
 @SuppressWarnings( "rawtypes" )
 public class AssertionInspectorView extends HBox
 {
+
+	private static int currentIdInt = 1;
+
 	@SuppressWarnings( "unused" )
 	private static final Logger log = LoggerFactory.getLogger( AssertionInspectorView.class );
-
-	private static final Function<AssertionItem, AssertionView> ASSERTION_TO_VIEW = new Function<AssertionItem, AssertionView>()
-	{
-		@Override
-		public AssertionView apply( AssertionItem assertion )
-		{
-			return new AssertionView( assertion );
-		}
-	};
 
 	private final ObjectProperty<ProjectItem> projectProperty = new SimpleObjectProperty<>();
 
@@ -52,7 +65,7 @@ public class AssertionInspectorView extends HBox
 	@FXML
 	private ScrollableList<AssertionView> assertionList;
 
-	private ObservableList<AssertionView> assertions = FXCollections.emptyObservableList();
+	private final ObservableList<AssertionView> assertions = FXCollections.observableArrayList();
 
 	public AssertionInspectorView()
 	{
@@ -62,6 +75,15 @@ public class AssertionInspectorView extends HBox
 	@FXML
 	private void initialize()
 	{
+		final Function<AssertionItem, AssertionView> ASSERTION_TO_VIEW = new Function<AssertionItem, AssertionView>()
+		{
+			@Override
+			public AssertionView apply( AssertionItem assertion )
+			{
+				return new AssertionView( assertion, assertions );
+			}
+		};
+
 		projectProperty.addListener( new ChangeListener<ProjectItem>()
 		{
 			@Override
@@ -74,8 +96,8 @@ public class AssertionInspectorView extends HBox
 				}
 				if( newValue != null )
 				{
-					assertions = ObservableLists.transform( ObservableLists.fx( AssertionUtils.assertions( newValue ) ),
-							ASSERTION_TO_VIEW );
+					assertions.setAll( ObservableLists.transform(
+							ObservableLists.fx( AssertionUtils.assertions( newValue ) ), ASSERTION_TO_VIEW ) );
 					Bindings.bindContent( assertionList.getItems(), assertions );
 				}
 			}
@@ -110,6 +132,7 @@ public class AssertionInspectorView extends HBox
 
 		dialog.setOnConfirm( new EventHandler<ActionEvent>()
 		{
+
 			@Override
 			public void handle( ActionEvent actionEvent )
 			{
@@ -119,6 +142,7 @@ public class AssertionInspectorView extends HBox
 
 				AssertionAddon assertionAddon = holder.getCanvas().getAddon( AssertionAddon.class );
 				AssertionItem.Mutable<Number> assertion = assertionAddon.createAssertion( holder, resolver );
+				assertion.setLabel( getUniqueAssertionLabel( assertionAddon.getAssertions() ) );
 
 				assertion.setConstraint( dialog.getConstraint() );
 				Pair<Integer, Integer> tolerance = dialog.getTolerance();
@@ -126,6 +150,7 @@ public class AssertionInspectorView extends HBox
 
 				dialog.close();
 			}
+
 		} );
 		dialog.show();
 	}
@@ -134,4 +159,20 @@ public class AssertionInspectorView extends HBox
 	{
 		return projectProperty;
 	}
+
+	public static String getUniqueAssertionLabel( Collection<? extends AssertionItem<?>> assertions )
+	{
+		Set<String> otherLabels = new HashSet<>();
+		for( AssertionItem<?> other : assertions )
+		{
+			otherLabels.add( other.getLabel() );
+		}
+
+		String label = null;
+		while( ( label = "Assertion " + currentIdInt++ ) != null && otherLabels.contains( label ) )
+		{
+		} // repeat until unique ID is found
+		return label;
+	}
+
 }
