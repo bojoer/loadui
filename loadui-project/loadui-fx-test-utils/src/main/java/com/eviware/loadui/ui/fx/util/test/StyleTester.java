@@ -19,7 +19,6 @@ import javafx.scene.control.ButtonBuilder;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.Separator;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.SeparatorMenuItemBuilder;
 import javafx.scene.control.SplitPaneBuilder;
@@ -45,18 +44,18 @@ public class StyleTester extends Application
 	{
 		final Pane container = new FlowPane();
 		container.getStyleClass().add( "container" );
-		
+
 		SeparatorMenuItem separator = SeparatorMenuItemBuilder.create().build();
-		System.out.println(separator.getStyleClass());
-		
-		List<MenuItem> items = Arrays.asList( 
-				
-				new MenuItem( "Item 1" ), separator, new MenuItem("Item 2") );
-		MenuButton button = new MenuButton("Press this");
+		System.out.println( separator.getStyleClass() );
+
+		List<MenuItem> items = Arrays.asList(
+
+		new MenuItem( "Item 1" ), separator, new MenuItem( "Item 2" ) );
+		MenuButton button = new MenuButton( "Press this" );
 		//button.getContextMenu()
 		button.getItems().setAll( items );
 
-		container.getChildren().addAll( new Label( "hej världen" ), button );
+		container.getChildren().addAll( new Label( "hej varlden" ), button );
 
 		return container;
 
