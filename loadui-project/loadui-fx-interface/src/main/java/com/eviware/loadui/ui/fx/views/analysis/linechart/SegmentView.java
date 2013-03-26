@@ -98,7 +98,7 @@ public abstract class SegmentView<T extends Segment> extends StackPane implement
 	 */
 	protected void setMenuItemsFor( final MenuButton menuButton )
 	{
-		HasMenuItems hasMenuItems = MenuItemsProvider.createWith( this, this, Options.are().delete( false, new Runnable()
+		HasMenuItems hasMenuItems = MenuItemsProvider.createWith( this, this, Options.are().delete( "Remove", false, new Runnable()
 		{
 			@Override
 			public void run()
@@ -141,14 +141,16 @@ public abstract class SegmentView<T extends Segment> extends StackPane implement
 		Object targets = getProperties().get( "ListenerTargets" );
 		if( listeners != null )
 		{
-			List<InvalidationListener> invalidationListeners = ( List<InvalidationListener> )listeners;
-			List<Observable> observables = ( List<Observable> )targets;
-			for( Observable o : observables )
+			List<?> invalidationListeners = ( List<?> )listeners;
+			List<?> observables = ( List<?> )targets;
+			for( Object o : observables )
 			{
-				for( InvalidationListener l : invalidationListeners )
+				for( Object l : invalidationListeners )
 				{
-					log.debug( "REMOVING LISTENER " + l + " from " + o );
-					o.removeListener( l );
+					if (l instanceof InvalidationListener && o instanceof Observable) {
+						log.debug( "REMOVING LISTENER " + l + " from " + o );
+						( ( Observable )o ).removeListener( ( InvalidationListener )l );	
+					}
 				}
 			}
 		}

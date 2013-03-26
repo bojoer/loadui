@@ -308,7 +308,7 @@ public class MenuItemsProvider
 
 		private class DeleteData
 		{
-			String deleteLabel = "Remove";
+			String deleteLabel = "Delete";
 			Runnable[] deleteActions = new Runnable[0];
 			boolean confirmDelete = true;
 		}

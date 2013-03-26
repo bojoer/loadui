@@ -22,7 +22,6 @@ import javafx.scene.layout.HBoxBuilder;
 import javafx.scene.layout.VBox;
 
 import com.eviware.loadui.ui.fx.util.ManualObservable;
-import com.sun.javafx.PlatformUtil;
 
 public class SegmentBox extends VBox
 {

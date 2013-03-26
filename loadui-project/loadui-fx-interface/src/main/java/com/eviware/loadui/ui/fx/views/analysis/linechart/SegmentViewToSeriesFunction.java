@@ -39,7 +39,7 @@ public final class SegmentViewToSeriesFunction implements Function<SegmentView<?
 	private final ObservableValue<Execution> execution;
 	//private final ObservableList<Observable> observables;
 
-	private final Group observablesUpdatedByUser;
+	private final Group<Observable> observablesUpdatedByUser;
 
 	private final Observable position;
 	private final Observable timePulse;
@@ -47,7 +47,7 @@ public final class SegmentViewToSeriesFunction implements Function<SegmentView<?
 
 	protected static final Logger log = LoggerFactory.getLogger( SegmentViewToSeriesFunction.class );
 
-	public SegmentViewToSeriesFunction( ObservableValue<Execution> execution, Group observablesUpdatedByUser,
+	public SegmentViewToSeriesFunction( ObservableValue<Execution> execution, Group<Observable> observablesUpdatedByUser,
 			Observable timePulse, Observable position, ExecutionChart chart )
 	{
 		this.execution = execution;
