@@ -26,6 +26,9 @@ import javax.imageio.ImageIO;
 import org.apache.commons.codec.binary.Base64;
 
 import com.eviware.loadui.api.traits.Releasable;
+import com.sun.glass.ui.Application;
+import com.sun.glass.ui.Robot;
+import com.sun.javafx.PlatformUtil;
 
 public final class NodeUtils
 {
@@ -156,7 +159,7 @@ public final class NodeUtils
 	 */
 	public static boolean isMouseOn( Node node )
 	{
-		Point mouseLocation = MouseInfo.getPointerInfo().getLocation();
+		Point mouseLocation = getAbsMouseLocation();
 		return absoluteBoundsOf( node ).contains( mouseLocation.getX(), mouseLocation.getY() );
 	}
 
@@ -167,6 +170,31 @@ public final class NodeUtils
 		Bounds boundsInScene = node.localToScene( node.getBoundsInLocal() );
 		return new BoundingBox( boundsInScene.getMinX() + tX, boundsInScene.getMinY() + tY, boundsInScene.getWidth(),
 				boundsInScene.getHeight() );
+	}
+	
+	/**
+	 * @return mouse absolute location on the screen. This works for Mac and Windows, as
+	 * opposed to AWT MouseInfo.getPointerInfo() which will not work in Mac (due to HeadlessException)
+	 */
+	public static Point getAbsMouseLocation() {
+		return PlatformUtil.isMac() ? getMacMouseLocation() : MouseInfo.getPointerInfo().getLocation();
+	}
+	
+	private static Point getMacMouseLocation() {
+		Robot robot = MacRobotHolder.getRobot();
+		return new Point(robot.getMouseX(), robot.getMouseY());
+	}
+	
+	private static class MacRobotHolder {
+		
+		static Robot robot;
+		
+		static Robot getRobot() {
+			if (robot == null) {
+				robot = Application.GetApplication().createRobot();
+			}
+			return robot;
+		}
 	}
 
 }
