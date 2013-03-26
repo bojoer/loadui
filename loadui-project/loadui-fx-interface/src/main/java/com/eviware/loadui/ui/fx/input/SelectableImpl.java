@@ -342,7 +342,7 @@ public class SelectableImpl implements Selectable
 			for( Node node : SELECTABLE_NODES )
 			{
 				Scene scene = node.getScene();
-				if( scene != null && scene.getWindow().isFocused() )
+				if( scene != null && scene.windowProperty().get() != null )
 				{
 					Rectangle2D selectableRectangle = NodeUtils.localToScreen( node, scene );
 
