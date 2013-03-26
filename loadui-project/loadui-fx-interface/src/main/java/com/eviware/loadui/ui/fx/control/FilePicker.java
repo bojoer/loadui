@@ -132,6 +132,10 @@ public class FilePicker extends HBox
 
 	public void setSelected( File file )
 	{
-		selectedProperty.set( file );
+		if(file != null){
+			selectedProperty.set( file );
+		}else{
+			System.out.println( "tried to add a non-file, skipping." );
+		}
 	}
 }
