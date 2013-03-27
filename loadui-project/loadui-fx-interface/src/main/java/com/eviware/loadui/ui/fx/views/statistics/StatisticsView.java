@@ -48,6 +48,7 @@ import com.eviware.loadui.api.execution.Phase;
 import com.eviware.loadui.api.execution.TestExecution;
 import com.eviware.loadui.api.execution.TestExecutionTask;
 import com.eviware.loadui.api.execution.TestRunner;
+import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.statistics.ProjectExecutionManager;
 import com.eviware.loadui.api.statistics.store.Execution;
@@ -73,6 +74,7 @@ public class StatisticsView extends StackPane
 	private final ManualObservable poll = new ManualObservable();
 	private final BooleanProperty isExecutionRunning;
 	private final CurrentExecutionListener execListener;
+	private final ProjectItem project;
 
 	private final TestExecutionTask executionTask = new TestExecutionTask()
 	{
@@ -112,6 +114,7 @@ public class StatisticsView extends StackPane
 
 	public StatisticsView( final ProjectItem project, FxExecutionsInfo executionsInfo )
 	{
+		this.project = project;
 		currentExecution = new SimpleObjectProperty<>( this, "currentExecution" );
 		isExecutionRunning = new SimpleBooleanProperty( TestExecutionUtils.isExecutionRunning() );
 		BeanInjector.getBean( TestRunner.class ).registerTask( executionTask, Phase.START, Phase.POST_STOP );
@@ -225,6 +228,9 @@ public class StatisticsView extends StackPane
 	public void close()
 	{
 		log.debug( "Closing StatisticView. Removing ExecutionListener" );
+		project.triggerAction( CanvasItem.STOP_ACTION );
+		TestExecutionUtils.stopCanvas( project );
+		execListener.pollTimeline.stop();
 		executionManager.removeExecutionListener( execListener );
 	}
 

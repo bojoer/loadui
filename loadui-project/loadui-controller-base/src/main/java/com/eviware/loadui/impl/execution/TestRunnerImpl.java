@@ -172,6 +172,10 @@ public class TestRunnerImpl extends AbstractTestRunner implements Releasable
 					execution.setState( TestState.COMPLETED );
 					log.debug( "Completed TestExecution: {}", execution );
 				}
+				else
+				{
+					log.warn( "Will not start as Execution was aborted" );
+				}
 
 				//TODO: Create ExecutionResult
 				return null;
