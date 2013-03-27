@@ -17,6 +17,7 @@ package com.eviware.loadui.ui.fx.views.project;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -62,6 +63,8 @@ import com.eviware.loadui.api.reporting.ReportingManager;
 import com.eviware.loadui.api.statistics.model.StatisticPage;
 import com.eviware.loadui.api.statistics.model.chart.ChartView;
 import com.eviware.loadui.api.statistics.store.Execution;
+import com.eviware.loadui.api.testevents.MessageLevel;
+import com.eviware.loadui.api.testevents.TestEventManager;
 import com.eviware.loadui.ui.fx.api.intent.AbortableTask;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.control.DetachableTab;
@@ -79,6 +82,7 @@ import com.eviware.loadui.ui.fx.views.workspace.CreateNewProjectDialog;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.projects.ProjectUtils;
 import com.google.common.base.Preconditions;
+import com.sun.javafx.PlatformUtil;
 
 public class ProjectView extends AnchorPane
 {
@@ -445,8 +449,20 @@ public class ProjectView extends AnchorPane
 
 		Map<ChartView, Image> images = LineChartUtils.createImages( pages, executionProp, null );
 
-		reportingManager.createReport( project.getLabel(), executionProp.getValue(), pages, images, executionProp
-				.getValue().getSummaryReport() );
+		// Remove the Mac special case when we have switched to JavaFX 8.
+		if( PlatformUtil.isMac() )
+		{
+			File reportFile = new File( "LoadUI_report.pdf" );
+			reportingManager.createReport( project.getLabel(), executionProp.getValue(), pages, images, new File(
+					"LoadUI_report.pdf" ), "PDF", executionProp.getValue().getSummaryReport() );
+			BeanInjector.getBean( TestEventManager.class ).logMessage( MessageLevel.WARNING,
+					"Report saved to " + reportFile.getAbsolutePath() );
+		}
+		else
+		{
+			reportingManager.createReport( project.getLabel(), executionProp.getValue(), pages, images, executionProp
+					.getValue().getSummaryReport() );
+		}
 	}
 
 	private class SaveAndCloseTask extends Task<ProjectRef>
