@@ -13,7 +13,7 @@
 		<maven.build.timestamp.format>yyyy/MM/dd HH\:mm</maven.build.timestamp.format>
 		<loadui.build.date>${maven.build.timestamp}</loadui.build.date>
 		<loadui.build.number>INTERNAL</loadui.build.number>
-		<loadui.name>loadUI</loadui.name>
+		<loadui.name>LoadUI</loadui.name>
 	</properties>
 	<pluginRepositories>
 		<pluginRepository>
