@@ -126,5 +126,7 @@ public class PlayButton extends StackPane
 
 		TestExecutionUtils.testRunner.registerTask( executionTask, Phase.PRE_START, Phase.POST_STOP );
 		getChildren().setAll( outer, indicator, inner, border, toggleButton );
+
+		setMaxSize( 27, 27 );
 	}
 }
