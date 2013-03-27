@@ -318,7 +318,7 @@ public class MenuItemsProvider
 		private String saveLabel = "Save";
 		private final DeleteData deleteData = new DeleteData();
 		private final SettingsData settingsData = new SettingsData();
-		private String renameLabel = "Rename";
+		private String renameLabel = "Rename\u2026";
 		private Runnable[] openActions = new Runnable[0];
 
 		private class DeleteData

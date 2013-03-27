@@ -47,6 +47,7 @@
  */
 .text{
 	-fx-font-family: "lucida sans";
+	-fx-font-size: 12; 
 }
 
 .tooltip {
@@ -113,7 +114,8 @@
 }
 
 .display .label {
-	-fx-text-fill: green;
+	-fx-text-fill: #01f110;
+	-fx-font-size: 10;
 }
 
 .button.styleable-graphic {

@@ -27,7 +27,7 @@ import com.google.common.collect.ImmutableList;
 
 public class ChartUtils
 {
-	private static final List<String> colors = ImmutableList.of( "#ff2100", "#ff9533", "#66d466", "#00b2d2", "#ae7dd3",
+	private static final List<String> colors = ImmutableList.of( "#ff7a66", "#ff9533", "#66d466", "#00b2d2", "#ae7dd3",
 			"#df51a5", "#c69c6d", "#c3e166", "#8383db", "#fffb00", "#ffffff", "#66afdb" );
 
 	public final static Logger log = LoggerFactory.getLogger( ChartUtils.class );

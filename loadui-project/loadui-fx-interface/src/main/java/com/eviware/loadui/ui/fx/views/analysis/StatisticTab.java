@@ -131,7 +131,7 @@ public class StatisticTab extends Tab implements Releasable
 		textProperty().bindBidirectional( tabTitle );
 		setId( UIUtils.toCssId( page.getLabel() ) );
 
-		MenuItem renameItem = new MenuItem( "Rename" );
+		MenuItem renameItem = new MenuItem( "Rename\u2026" );
 		renameItem.setId( "tab-rename" );
 		renameItem.setOnAction( new EventHandler<ActionEvent>()
 		{

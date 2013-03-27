@@ -30,6 +30,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBuilder;
 import javafx.scene.control.CheckBox;
@@ -91,9 +92,19 @@ public class ComponentLayoutUtils
 				MigPane pane = new MigPane( container.getLayoutConstraints(), container.getColumnConstraints(),
 						container.getRowConstraints() );
 				pane.getStyleClass().add( "display" );
+
+				// TODO: Ugly hack the day before release. Fix!
 				for( LayoutComponent child : container )
 				{
-					pane.add( instantiateLayout( child ), child.getConstraints() );
+					Node node = instantiateLayout( child );
+					if( node instanceof Parent )
+					{
+						for( Node n : ( ( Parent )node ).getChildrenUnmodifiable() )
+						{
+							n.setStyle( "-fx-font-size: 11;" );
+						}
+					}
+					pane.add( node, child.getConstraints() );
 				}
 				return pane;
 			}
@@ -327,9 +338,11 @@ public class ComponentLayoutUtils
 		else if( propertyLabel.getText().contains( "Groovy" ) )
 		{
 			filter = new ExtensionFilter( "Groovy Script (*.groovy)", "*.groovy" );
-		
-		}else if( propertyLabel.getText().contains("soapUI")){
-			filter = new ExtensionFilter( "SoapUI Project (*.xml)", "*.xml","*.XML");
+
+		}
+		else if( propertyLabel.getText().contains( "soapUI" ) )
+		{
+			filter = new ExtensionFilter( "SoapUI Project (*.xml)", "*.xml", "*.XML" );
 		}
 		//Just add more special cases here as we have more needs. 
 		FilePicker filePicker = new FilePicker( propertyLabel.getText(), filter );
