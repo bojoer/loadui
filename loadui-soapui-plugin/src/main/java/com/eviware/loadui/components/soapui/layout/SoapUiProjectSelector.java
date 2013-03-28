@@ -259,9 +259,9 @@ public class SoapUiProjectSelector
 				{
 					testCaseCombo.setItems( FXCollections.observableArrayList( testCases ) );
 					testCase.setValue( findSelection( testCases ) );
+					testCaseLatch.countDown();
 				}
 			} );
-			testCaseLatch.countDown();
 		} 
 	}
 
