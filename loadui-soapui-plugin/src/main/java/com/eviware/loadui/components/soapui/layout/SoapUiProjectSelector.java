@@ -246,19 +246,40 @@ public class SoapUiProjectSelector
 
 		testCaseLatch = new CountDownLatch( 1 );
 
-		Platform.runLater( new Runnable()
-		{
+		Platform.runLater(new Runnable() {
 			@Override
-			public void run()
-			{
-				if( testCases.length > 0 )
+			public void run() {
+				if (testCases.length > 0) 
 				{
-					testCaseCombo.setItems( FXCollections.observableArrayList( testCases ) );
-					testCase.setValue( testCases[0] );
+					testCaseCombo.setItems(FXCollections
+							.observableArrayList(testCases));
+
+					if (testCase.getValue() != null) 
+					{
+						int selector = 0;
+						for (String test : testCases) {
+							if (testCase.getValue().compareTo(test) == 0) 
+							{
+								break;
+							}
+							selector++;
+						}
+						if (selector < testCases.length) 
+						{
+							testCase.setValue(testCases[selector]);
+						}else
+						{
+							testCase.setValue(testCases[0]);
+						}
+					} 
+					else 
+					{
+						testCase.setValue(testCases[0]);
+					}
 				}
 				testCaseLatch.countDown();
 			}
-		} );
+		});
 	}
 
 	private class ProjectSelector extends PopupControl

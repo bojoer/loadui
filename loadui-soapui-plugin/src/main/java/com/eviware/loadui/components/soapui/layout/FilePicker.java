@@ -89,6 +89,8 @@ public class FilePicker extends HBox
 
 	public void setSelected( File file )
 	{
-		selectedProperty.set( file );
+		if(file != null){
+			selectedProperty.set( file );
+		}	
 	}
 }
