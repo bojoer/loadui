@@ -15,7 +15,6 @@
  */
 package com.eviware.loadui.components.soapui.layout;
 
-import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.util.concurrent.CountDownLatch;
 
@@ -67,14 +66,17 @@ public class SoapUiProjectSelector
 
 	private static final Logger log = LoggerFactory.getLogger( SoapUiProjectSelector.class );
 
-	private final Property<File> projectFile;
-	private final Property<String> testSuite;
-	private final Property<String> testCase;
+	private final com.eviware.loadui.api.property.Property<File> projectFile;
+	private final com.eviware.loadui.api.property.Property<String> testSuite;
+	private final com.eviware.loadui.api.property.Property<String> testCase;
+	private final javafx.beans.property.Property<String> convertedTestSuite;
+	private final javafx.beans.property.Property<String> convertedTestCase;
 
 	private CountDownLatch testCaseLatch = new CountDownLatch( 0 );
 
 	private final ComboBox<String> testSuiteCombo = ComboBoxBuilder.<String> create().maxHeight( Double.MAX_VALUE )
 			.maxWidth( Double.MAX_VALUE ).build();
+
 	private final ComboBox<String> testCaseCombo = ComboBoxBuilder.<String> create().maxHeight( Double.MAX_VALUE )
 			.maxWidth( Double.MAX_VALUE ).build();
 
@@ -91,6 +93,8 @@ public class SoapUiProjectSelector
 		projectFile = context.createProperty( "projectFile", File.class, null, false );
 		testSuite = context.createProperty( "testSuite", String.class );
 		testCase = context.createProperty( TEST_CASE, String.class );
+		convertedTestSuite = Properties.convert( testSuite );
+		convertedTestCase = Properties.convert( testCase );
 	}
 
 	public LayoutComponent buildLayout()
@@ -103,9 +107,9 @@ public class SoapUiProjectSelector
 	public Node buildNode()
 	{
 		SelectionModelUtils.writableSelectedItemProperty( testSuiteCombo.getSelectionModel(), true ).bindBidirectional(
-				Properties.convert( testSuite ) );
+				convertedTestSuite );
 		SelectionModelUtils.writableSelectedItemProperty( testCaseCombo.getSelectionModel(), true ).bindBidirectional(
-				Properties.convert( testCase ) );
+				convertedTestCase );
 
 		GridPane grid = GridPaneBuilder.create().rowConstraints( new RowConstraints( 18 ) )
 				.columnConstraints( new ColumnConstraints( 70, 70, 70 ) ).hgap( 28 ).build();
@@ -143,9 +147,9 @@ public class SoapUiProjectSelector
 		} );
 		final Label testSuiteLabel = LabelBuilder.create().build();
 
-		testSuiteLabel.textProperty().bind( Properties.convert( testSuite ) );
+		testSuiteLabel.textProperty().bind( convertedTestSuite );
 		final Label testCaseLabel = new Label();
-		testCaseLabel.textProperty().bind( Properties.convert( testCase ) );
+		testCaseLabel.textProperty().bind( convertedTestCase );
 
 		VBox projectVBox = VBoxBuilder.create().minWidth( 140 ).minHeight( 18 ).children( menuButton, projectLabel )
 				.build();
