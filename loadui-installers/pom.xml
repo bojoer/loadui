@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.eviware.loadui</groupId>
 	<artifactId>loadui-installers</artifactId>
-	<version>2.1.2</version>
+	<version>2.5.0</version>
 	<packaging>pom</packaging>
 	<name>loadUI Installers</name>
 	<description>This project builds the loadUI installers</description>
@@ -13,7 +13,7 @@
 		<maven.build.timestamp.format>yyyy/MM/dd HH\:mm</maven.build.timestamp.format>
 		<loadui.build.date>${maven.build.timestamp}</loadui.build.date>
 		<loadui.build.number>INTERNAL</loadui.build.number>
-		<loadui.name>loadUI</loadui.name>
+		<loadui.name>LoadUI</loadui.name>
 	</properties>
 	<pluginRepositories>
 		<pluginRepository>
@@ -110,9 +110,9 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.eviware.soapui</groupId>
+			<groupId>com.eviware.loadui</groupId>
 			<artifactId>loadui-soapui-plugin</artifactId>
-			<version>4.5.1.1-SNAPSHOT</version>
+			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
 </project>

@@ -1,25 +1,53 @@
+/*
+ * Copyright 2013 SmartBear Software
+ * 
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * http://ec.europa.eu/idabc/eupl
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the Licence for the specific language governing permissions and limitations
+ * under the Licence.
+ */
 package com.eviware.loadui.components.soapui.testStepsTable;
 
-import java.awt.Color;
-import java.awt.Dimension;
+import java.awt.image.BufferedImage;
+import java.util.Map;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import javax.annotation.CheckForNull;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.event.EventHandler;
+import javafx.scene.control.Label;
+import javafx.scene.control.LabelBuilder;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableColumn.CellDataFeatures;
+import javafx.scene.control.TableColumnBuilder;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TableViewBuilder;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.ImageViewBuilder;
+import javafx.scene.image.WritableImage;
+import javafx.scene.input.MouseEvent;
+import javafx.util.Callback;
+
 import javax.annotation.Nonnull;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableModel;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.components.soapui.SoapUISamplerComponent;
+import com.eviware.loadui.components.soapui.layout.SoapUiProjectSelector;
+import com.eviware.loadui.components.soapui.utils.SwingFXUtils2;
 import com.eviware.loadui.impl.layout.LayoutComponentImpl;
 import com.eviware.loadui.impl.layout.PropertyLayoutComponentImpl;
 import com.eviware.loadui.util.ScheduledExecutor;
@@ -30,190 +58,141 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
 
-/**
- * Backend for the TestStep table in the soapUI Runner.
- * 
- * @author henrik.olsson
- * 
- */
-
-public final class TestStepsTableModel extends AbstractTableModel implements Releasable
+public class TestStepsTableModel
 {
-	private static final Logger log = LoggerFactory.getLogger( TestStepsTableModel.class );
+	private static final ImageView DISABLED_ICON = new ImageView( TestStepsTableModel.class.getResource(
+			"/images/disabledTestStep.png" ).toExternalForm() );
+	private final static long UPDATE_INTERVAL = 500;
 
-	public static final int TESTSTEP_LABEL_COLUMN = 0;
-	public static final int TESTSTEP_DISABLED_COLUMN = 1;
-	public static final int TESTSTEP_COUNT_COLUMN = 2;
+	protected static final Logger log = LoggerFactory.getLogger( SoapUiProjectSelector.class );
 
-	private static final long serialVersionUID = 7482180639074166973L;
-	private final ImageIcon disabledIcon = new ImageIcon( getClass().getResource( "/images/disabledTestStep.png" ) );
-	private static final ImageIcon enabledIcon = null;
-
-	private WsdlTestCase testCase;
-	private final SoapUISamplerComponent component;
-	public ScheduledFuture<?> future;
-	private final long updateInterval = 500;
-
-	private final LoadingCache<Integer, JLabel> testStepLabels = CacheBuilder.newBuilder().build(
-			new CacheLoader<Integer, JLabel>()
+	private final TableView<TestStep> table;
+	private final LoadingCache<TestStep, IntegerProperty> invocationCounts = CacheBuilder.newBuilder().weakKeys()
+			.build( new CacheLoader<TestStep, IntegerProperty>()
 			{
 				@Override
-				public JLabel load( final Integer stepIndex ) throws Exception
+				public IntegerProperty load( TestStep step ) throws Exception
 				{
-					final TestStep step = testCase.getTestStepAt( stepIndex );
-					JLabel label = new JLabel( step.getLabel(), step.getIcon(), JLabel.LEFT );
 					try
 					{
-						label.setEnabled( !component.getTestStepIsDisabled( stepIndex ) );
+						return new SimpleIntegerProperty( component.getTestStepInvocationCount( step ) );
 					}
-					catch( Exception e )
+					catch( NullPointerException e )
 					{
-						log.debug( "EXCEPTION: " + e.getMessage() );
-						return null;
+						return new SimpleIntegerProperty( 0 );
 					}
-					return label;
 				}
 			} );
+	private final SoapUISamplerComponent component;
+	private final ScheduledFuture<?> future;
 
-	public static TestStepsTableModel newInstance( @Nonnull final SoapUISamplerComponent component )
-	{
-		TestStepsTableModel t = new TestStepsTableModel( component );
-		t.initRefresher();
-		return t;
-	}
-
-	private TestStepsTableModel( @Nonnull final SoapUISamplerComponent component )
+	public TestStepsTableModel( @Nonnull final SoapUISamplerComponent component )
 	{
 		this.component = component;
-	}
 
-	public void initRefresher()
-	{
+		TableColumn<TestStep, Label> testStepColumn = TableColumnBuilder.<TestStep, Label> create().resizable( false )
+				.prefWidth( 190 ).text( "TestStep" ).build();
+		TableColumn<TestStep, Label> disableColumn = TableColumnBuilder.<TestStep, Label> create().resizable( false )
+				.prefWidth( 47 ).text( "Disable" ).build();
+		TableColumn<TestStep, Number> countColumn = TableColumnBuilder.<TestStep, Number> create().resizable( false )
+				.prefWidth( 58 ).text( "Count" ).build();
+
+		table = TableViewBuilder.<TestStep> create().editable( false ).minWidth( 310 ).build();
+
+		table.getColumns().add( testStepColumn );
+		table.getColumns().add( disableColumn );
+		table.getColumns().add( countColumn );
+
+		testStepColumn.setCellValueFactory( new LabelCellFactory() );
+		disableColumn.setCellValueFactory( new DisabledCellFactory() );
+		countColumn.setCellValueFactory( new CountCellFactory() );
+
 		future = ScheduledExecutor.instance.scheduleAtFixedRate( new Runnable()
 		{
 			@Override
 			public void run()
 			{
-				for( int row = 0; row < getRowCount(); row++ )
-				{
-					fireTableCellUpdated( row, TESTSTEP_COUNT_COLUMN );
-				}
+				updateCounts();
 			}
-		}, updateInterval, updateInterval, TimeUnit.MILLISECONDS );
+		}, UPDATE_INTERVAL, UPDATE_INTERVAL, TimeUnit.MILLISECONDS );
 	}
 
-	@Override
+	private void updateCounts()
+	{
+		for( Map.Entry<TestStep, IntegerProperty> entry : invocationCounts.asMap().entrySet() )
+		{
+			int count = component.getTestStepInvocationCount( entry.getKey() );
+			entry.getValue().set( count );
+		}
+	}
+
 	public void release()
 	{
 		future.cancel( true );
 	}
 
-	@Override
-	public String getColumnName( int column )
-	{
-		switch( column )
-		{
-		case TESTSTEP_LABEL_COLUMN :
-			return "TestStep";
-		case TESTSTEP_DISABLED_COLUMN :
-			return "Disable";
-		case TESTSTEP_COUNT_COLUMN :
-			return "Count";
-		default :
-			throw new IllegalArgumentException( "Illegal column index specified: " + column + ". Number of columns is "
-					+ getColumnCount() + "." );
-		}
-	}
-
-	public void updateTestCase( @Nonnull WsdlTestCase newTestCase )
-	{
-		this.testCase = newTestCase;
-		testStepLabels.invalidateAll();
-		fireTableDataChanged();
-	}
-
-	@Override
-	public Class<?> getColumnClass( int columnIndex )
-	{
-		switch( columnIndex )
-		{
-		case TESTSTEP_LABEL_COLUMN :
-			return JLabel.class;
-		case TESTSTEP_DISABLED_COLUMN :
-			return ImageIcon.class;
-		case TESTSTEP_COUNT_COLUMN :
-			return Integer.class;
-		default :
-			throw new IllegalArgumentException( "Illegal column index specified: " + columnIndex
-					+ ". Number of columns is " + getColumnCount() + "." );
-		}
-	}
-
-	@Override
-	public int getRowCount()
-	{
-		if( testCase == null )
-			return 0;
-		return testCase.getTestStepCount();
-	}
-
-	@Override
-	public int getColumnCount()
-	{
-		return 3;
-	}
-
-	@Override
-	public Object getValueAt( int rowIndex, int columnIndex )
-	{
-		if( rowIndex >= getRowCount() )
-			return null;
-
-		assert testCase != null;
-
-		switch( columnIndex )
-		{
-		case TESTSTEP_LABEL_COLUMN :
-			return testStepLabels.getUnchecked( rowIndex );
-		case TESTSTEP_DISABLED_COLUMN :
-			return( component.getTestStepIsDisabled( rowIndex ) ? disabledIcon : enabledIcon );
-		case TESTSTEP_COUNT_COLUMN :
-			return component.getTestStepInvocationCount( rowIndex );
-		default :
-			throw new IllegalArgumentException( "Illegal column index specified: " + columnIndex
-					+ ". Number of columns is " + getColumnCount() + "." );
-		}
-	}
-
 	public LayoutComponentImpl buildLayout()
 	{
-		final JTable jTable = new JTable( this );
-		jTable.setAutoResizeMode( JTable.AUTO_RESIZE_OFF );
-		jTable.getColumnModel().getColumn( 0 ).setMinWidth( 196 );
-		jTable.getColumnModel().getColumn( 0 ).setMaxWidth( 196 );
-		jTable.getColumnModel().getColumn( 0 ).setResizable( false );
-		jTable.getColumnModel().getColumn( 1 ).setMinWidth( 47 );
-		jTable.getColumnModel().getColumn( 1 ).setMaxWidth( 47 );
-		jTable.getColumnModel().getColumn( 1 ).setResizable( false );
-		jTable.getColumnModel().getColumn( 2 ).setMinWidth( 60 );
-		jTable.getColumnModel().getColumn( 2 ).setMaxWidth( 60 );
-		jTable.getColumnModel().getColumn( 2 ).setResizable( false );
-		jTable.setDefaultRenderer( JLabel.class, new TestStepLabelRenderer() );
-		jTable.setIntercellSpacing( new Dimension( 11, 0 ) );
-		jTable.setGridColor( new Color( 200, 200, 200 ) );
-		jTable.getTableHeader().setReorderingAllowed( false );
-		jTable.setEnabled( false );
-		jTable.setRowHeight( jTable.getRowHeight() + 4 );
-		jTable.addMouseListener( new TestStepsTableMouseListener( jTable, component ) );
-
-		return new LayoutComponentImpl( ImmutableMap
-				.<String, Object> builder()
-				.put( "component",
-						new JScrollPane( jTable, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-								ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER ) ) //
+		return new LayoutComponentImpl( ImmutableMap.<String, Object> builder().put( "component", table )
 				.put( "componentHeight", 125 ) //
-				.put( "componentWidth", 314 ) //
+				.put( "componentWidth", 324 ) //
 				.put( PropertyLayoutComponentImpl.CONSTRAINTS, "spanx 3, h 125!" ) //
 				.build() );
+	}
+
+	public void updateTestCase( WsdlTestCase testCase )
+	{
+		invocationCounts.invalidateAll();
+		table.setItems( FXCollections.observableArrayList( testCase.getTestStepList() ) );
+	}
+
+	private final static class LabelCellFactory implements
+			Callback<CellDataFeatures<TestStep, Label>, ObservableValue<Label>>
+	{
+		@Override
+		public ObservableValue<Label> call( CellDataFeatures<TestStep, Label> p )
+		{
+			TestStep step = p.getValue();
+			java.awt.Image awtImage = step.getIcon().getImage();
+			BufferedImage bufferedImage = SwingFXUtils2.toBufferedImageUnchecked( awtImage );
+			WritableImage fxImage = new WritableImage( bufferedImage.getWidth(), bufferedImage.getHeight() );
+			SwingFXUtils.toFXImage( bufferedImage, fxImage );
+			ImageView icon = ImageViewBuilder.create().image( fxImage ).opacity( step.isDisabled() ? 0.4 : 1.0 ).build();
+			return new ReadOnlyObjectWrapper<Label>( new Label( step.getLabel(), icon ) );
+		}
+	}
+
+	private final class DisabledCellFactory implements
+			Callback<CellDataFeatures<TestStep, Label>, ObservableValue<Label>>
+	{
+		@Override
+		public ObservableValue<Label> call( CellDataFeatures<TestStep, Label> p )
+		{
+			final TestStep step = p.getValue();
+			ImageView image = null;
+			if( step.isDisabled() )
+				image = DISABLED_ICON;
+			Label label = LabelBuilder.create().graphic( image ).minWidth( 45 ).minHeight( 20 )
+					.onMouseClicked( new EventHandler<MouseEvent>()
+					{
+						@Override
+						public void handle( MouseEvent e )
+						{
+							component.setTestStepIsDisabled( step, !step.isDisabled() );
+						}
+					} ).build();
+			return new ReadOnlyObjectWrapper<Label>( label );
+		}
+	}
+
+	private final class CountCellFactory implements
+			Callback<CellDataFeatures<TestStep, Number>, ObservableValue<Number>>
+	{
+		@Override
+		public ObservableValue<Number> call( CellDataFeatures<TestStep, Number> p )
+		{
+			TestStep step = p.getValue();
+			return invocationCounts.getUnchecked( step );
+		}
 	}
 }

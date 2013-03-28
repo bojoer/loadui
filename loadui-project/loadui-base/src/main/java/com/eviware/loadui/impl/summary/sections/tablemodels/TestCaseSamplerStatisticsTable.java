@@ -1,12 +1,12 @@
 /*
- * Copyright 2011 SmartBear Software
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -27,7 +27,7 @@ public class TestCaseSamplerStatisticsTable extends AbstractTableModel
 
 	private static final long serialVersionUID = 7903409215023804173L;
 	String[] columnNames = { "name", "cnt", "min", "max", "avg", "std-dev", "min/avg", "max/avg", "err", "ratio" };
-	List<TestCaseSamplerStatisticsModel> data = new ArrayList<TestCaseSamplerStatisticsModel>();
+	List<TestCaseSamplerStatisticsModel> data = new ArrayList<>();
 
 	@Override
 	public String getColumnName( int column )
@@ -75,7 +75,7 @@ public class TestCaseSamplerStatisticsTable extends AbstractTableModel
 		public TestCaseSamplerStatisticsModel( String label, Map<String, String> stats )
 		{
 			this.name = label;
-			this.stats = new HashMap<String, String>( stats );
+			this.stats = new HashMap<>( stats );
 		}
 
 		public String getStat( String statName )

@@ -1,12 +1,12 @@
 /*
- * Copyright 2011 SmartBear Software
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -36,7 +36,7 @@ import com.google.common.collect.Multimap;
 public class PropertyMapImpl implements PropertyMap
 {
 	public static final Logger log = LoggerFactory.getLogger( PropertyMapImpl.class );
-	private final Map<String, Property<?>> map = new HashMap<String, Property<?>>();
+	private final Map<String, Property<?>> map = new HashMap<>();
 	private final Multimap<String, PropertyConfig> notLoadedProperties = HashMultimap.create();
 
 	private final PropertyHolder owner;
@@ -49,7 +49,7 @@ public class PropertyMapImpl implements PropertyMap
 		this.config = config;
 		this.conversionService = conversionService;
 
-		for( PropertyConfig pc : config.getPropertyArray() )
+		for( PropertyConfig pc : config.getPropertyList() )
 		{
 			try
 			{
@@ -65,7 +65,7 @@ public class PropertyMapImpl implements PropertyMap
 
 	private <T> PropertyImpl<T> loadProperty( PropertyConfig pc, Class<T> type )
 	{
-		return new PropertyImpl<T>( owner, pc, type, conversionService );
+		return new PropertyImpl<>( owner, pc, type, conversionService );
 	}
 
 	private void firePropertyEvent( Property<?> property, PropertyEvent.Event event, Object argument )
@@ -79,7 +79,7 @@ public class PropertyMapImpl implements PropertyMap
 		if( containsKey( key ) && !containsKey( newKey ) )
 		{
 			put( newKey, remove( key ) );
-			for( PropertyConfig p : config.getPropertyArray() )
+			for( PropertyConfig p : config.getPropertyList() )
 			{
 				if( p.getKey().equals( key ) )
 				{
@@ -90,16 +90,20 @@ public class PropertyMapImpl implements PropertyMap
 			}
 		}
 		else
+		{
 			throw new RuntimeException( "Cannot rename property '" + key + "': "
 					+ ( !containsKey( key ) ? "Property does not exist!" : "Another property already has that name!" ) );
+		}
 	}
 
 	@Override
 	public void clear()
 	{
 		map.clear();
-		for( int i = config.getPropertyArray().length - 1; i >= 0; i-- )
+		for( int i = config.sizeOfPropertyArray() - 1; i >= 0; i-- )
+		{
 			config.removeProperty( i );
+		}
 	}
 
 	@Override
@@ -112,7 +116,9 @@ public class PropertyMapImpl implements PropertyMap
 	public void putAll( Map<? extends String, ? extends Property<?>> m )
 	{
 		for( Entry<? extends String, ? extends Property<?>> entry : m.entrySet() )
+		{
 			put( entry.getKey(), entry.getValue() );
+		}
 	}
 
 	@Override
@@ -120,7 +126,9 @@ public class PropertyMapImpl implements PropertyMap
 	{
 		Property<?> property = map.remove( key );
 		if( property != null )
+		{
 			firePropertyEvent( property, PropertyEvent.Event.DELETED, property.getValue() );
+		}
 		return property;
 	}
 

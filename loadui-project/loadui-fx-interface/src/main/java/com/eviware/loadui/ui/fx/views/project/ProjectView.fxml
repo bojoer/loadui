@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.eviware.loadui.ui.fx.control.DetachableTab?>
+<?import com.eviware.loadui.ui.fx.views.project.ProjectPlaybackPanel?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import java.net.URL?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+
+
+<fx:root type="javafx.scene.layout.AnchorPane" styleClass="project-view"
+	xmlns:fx="http://javafx.com/fxml">
+	<stylesheets>
+		<URL value="@ProjectView.css" />
+	</stylesheets>
+	<VBox spacing="9" fillWidth="true" AnchorPane.topAnchor="0"
+		AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="0"
+		AnchorPane.leftAnchor="0">
+		<ToolBar minHeight="55" styleClass="header"/>
+		<StackPane VBox.vgrow="always">
+			<padding>
+				<Insets top="-45" />
+			</padding>
+			<children>
+				<TabPane id="project-tab-pane" tabClosingPolicy="unavailable">
+					<DetachableTab fx:id="designTab" id="designTab" text="Design" />
+					<DetachableTab fx:id="statsTab" id="statsTab" text="Statistics" />
+				</TabPane>
+			</children>
+		</StackPane>
+	</VBox>
+	<HBox maxWidth="200" maxHeight="27" alignment="CENTER_RIGHT" AnchorPane.topAnchor="7" AnchorPane.rightAnchor="12" spacing="9">
+		<Separator orientation="vertical"/>
+		<Button fx:id="summaryButton" id="summaryButton" styleClass="styleable-graphic, toolbar-button" onAction="#openSummaryPage" />
+		<Button fx:id="openHelpPageButton" id="openHelpPageButton" styleClass="styleable-graphic, toolbar-button" onAction="#openHelpPage" />
+		<Button fx:id="closeProjectButton" id="closeProjectButton" styleClass="styleable-graphic, toolbar-button" onAction="#closeProject" />
+	</HBox>	
+	<MenuButton maxWidth="170" fx:id="menuButton" styleClass="title"
+		AnchorPane.topAnchor="8" AnchorPane.leftAnchor="75">
+		<items>
+			<MenuItem fx:id="save" id="save" text="Save" onAction="#saveProject" />
+			<MenuItem fx:id="saveCopy" id="saveCopy" text="Save a copy..."
+				onAction="#cloneProject" />
+			<MenuItem fx:id="saveAndClose" id="saveAndClose" text="Save and close"
+				onAction="#saveProjectAndClose" />
+			<SeparatorMenuItem />
+			<MenuItem fx:id="clone" id="clone" text="Rename..."
+				onAction="#renameProject" />
+			<SeparatorMenuItem />
+			<MenuItem fx:id="close" id="close" text="Close" onAction="#closeProject" />
+		</items>
+	</MenuButton>
+</fx:root>

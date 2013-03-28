@@ -1,12 +1,12 @@
 /*
- * Copyright 2011 SmartBear Software
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -16,12 +16,10 @@
 package com.eviware.loadui.util.events;
 
 import java.lang.ref.WeakReference;
+import java.util.Arrays;
 import java.util.EventObject;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,55 +35,22 @@ public class EventSupport implements EventFirer, Releasable
 
 	private final WeakReference<Object> ownerRef;
 
-	private final Set<ListenerEntry<?>> listeners = new HashSet<ListenerEntry<?>>();
-	private static final BlockingQueue<Runnable> eventQueue = new LinkedBlockingQueue<Runnable>();
-
-	static
-	{
-		spawnEventThread();
-	}
-
-	private static void spawnEventThread()
-	{
-		Thread eventThread = new Thread( new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				try
-				{
-					while( true )
-					{
-						try
-						{
-							final Runnable action = eventQueue.poll( 1, TimeUnit.SECONDS );
-							if( action != null )
-							{
-								action.run();
-							}
-						}
-						catch( Exception e )
-						{
-							e.printStackTrace();
-						}
-					}
-				}
-				finally
-				{
-					spawnEventThread();
-				}
-				//listeners.clear();
-			}
-		}, "[" + /* object.getClass().getSimpleName() + */"] Event Thread" );
-
-		eventThread.setDaemon( true );
-		eventThread.start();
-	}
-
+	private final Set<ListenerEntry<?>> listeners = new HashSet<>();
+	
+	private final EventQueue eventQueue = EventQueue.getInstance();
+	
+	
 	public EventSupport( Object object )
 	{
-		ownerRef = new WeakReference<Object>( object );
+		ownerRef = new WeakReference<>( object );
+	}
 
+	private void offerToEventQueue( Runnable runnable, String errorMsg, Object... itemsToLog )
+	{
+		if( !eventQueue.offer( runnable ) )
+		{
+			log.error( errorMsg, Arrays.toString( itemsToLog ) );
+		}
 	}
 
 	@Override
@@ -94,43 +59,40 @@ public class EventSupport implements EventFirer, Releasable
 		if( listener == null )
 			throw new IllegalArgumentException( "Cannot add null EventHandler!" );
 
-		if( !eventQueue.offer( new Runnable()
+		offerToEventQueue( new Runnable()
 		{
 			@Override
 			public void run()
 			{
-				listeners.add( new ListenerEntry<T>( type, listener ) );
+				listeners.add( new ListenerEntry<>( type, listener ) );
 			}
-		} ) )
-			log.error( "Event queue full! Unable to add event listener: {}", listener );
+		}, "Event queue full! Unable to add event listener: {}", listener );
 	}
 
 	@Override
 	public <T extends EventObject> void removeEventListener( final Class<T> type, final EventHandler<? super T> listener )
 	{
-		if( !eventQueue.offer( new Runnable()
+		offerToEventQueue( new Runnable()
 		{
 			@Override
 			public void run()
 			{
-				listeners.remove( new ListenerEntry<T>( type, listener ) );
+				listeners.remove( new ListenerEntry<>( type, listener ) );
 			}
-		} ) )
-			log.error( "Event queue full! Unable to remove event listener: {}", listener );
+		}, "Event queue full! Unable to remove event listener: {}", listener );
 	}
 
 	@Override
 	public void clearEventListeners()
 	{
-		if( !eventQueue.offer( new Runnable()
+		offerToEventQueue( new Runnable()
 		{
 			@Override
 			public void run()
 			{
 				listeners.clear();
 			}
-		} ) )
-			log.error( "Event queue full! Unable to clear event listeners!" );
+		}, "Event queue full! Unable to clear event listeners!" );
 	}
 
 	@Override
@@ -143,43 +105,46 @@ public class EventSupport implements EventFirer, Releasable
 	@Override
 	public void fireEvent( final EventObject event )
 	{
-		if( !eventQueue.offer( new Runnable()
+		offerToEventQueue( new Runnable()
 		{
 			@Override
 			public void run()
 			{
-				for( ListenerEntry<?> listenerEntry : new HashSet<ListenerEntry<?>>( listeners ) )
+				for( ListenerEntry<?> listenerEntry : new HashSet<>( listeners ) )
 				{
 					if( listenerEntry.type.isInstance( event ) )
 					{
 						if( listenerEntry.listener != null )
 						{
-							queueEvent( event, listenerEntry.listener, listenerEntry.type );
+							queuePendingEvent( event, listenerEntry.listener );
 						}
 						else
 						{
 							EventHandler<?> listener = listenerEntry.weakListener.get();
 							if( listener != null )
 							{
-								queueEvent( event, listener, listenerEntry.type );
+								queuePendingEvent( event, listener );
 							}
 							else
 							{
+								log.debug( "Weak listener reference garbage collected" );
 								listeners.remove( listenerEntry );
 							}
 						}
 					}
-				}
+				}		
 			}
-		} ) )
-			log.error( "Event queue full! Unable to fire event: {}", event );
+		}, "Cannot fire event, queue is full!" );
+		
+		
+
 	}
 
 	@SuppressWarnings( "unchecked" )
-	private static <E extends EventObject> void queueEvent( EventObject event, EventHandler<?> handler, Class<E> type )
+	private <E extends EventObject> void queuePendingEvent( EventObject event, EventHandler<?> handler )
 	{
-		if( !eventQueue.offer( new PendingEvent<E>( ( E )event, ( EventHandler<E> )handler ) ) )
-			log.error( "Event queue full! Unable to queue event: {}", event );
+		offerToEventQueue( new PendingEvent<>( ( E )event, ( EventHandler<E> )handler ),
+				"Event queue full! Unable to queue event: {}", event );
 	}
 
 	private static class PendingEvent<E extends EventObject> implements Runnable

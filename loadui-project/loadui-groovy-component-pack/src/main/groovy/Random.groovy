@@ -1,12 +1,12 @@
 // 
-// Copyright 2011 SmartBear Software
+// Copyright 2013 SmartBear Software
 // 
 // Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
 // versions of the EUPL (the "Licence");
 // You may not use this work except in compliance with the Licence.
 // You may obtain a copy of the Licence at:
 // 
-// http://ec.europa.eu/idabc/eupl5
+// http://ec.europa.eu/idabc/eupl
 // 
 // Unless required by applicable law or agreed to in writing, software distributed under the Licence is
 // distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -72,8 +72,6 @@ addEventListener( PropertyEvent ) { event ->
 			cancelTasks()
 		if (stateProperty.value)
 			cancelTasks()
-		if (event.property == type)
-			redraw()
 		
 		if( event.property == unit ) {
 			if ( unit.value == "Sec" )
@@ -98,30 +96,25 @@ onAction( 'STOP' ) {
 	cancelTasks()
 }
 
-//Layout
-redraw = {
-	layout { 
-		property( property:rate, label:'Base Rate', min:0 ) 
-		separator( vertical:true )
-		property( property:unit, label:'Unit', options:['Sec','Min','Hour'] )
-		separator( vertical:true )
-		
-		node(widget: 'selectorWidget', label:'Distribution', labels:['Uniform','Exponential','Gaussian'], 
-				images:['linear_shape.png', 'poisson_shape.png', 'gauss_shape.png'], selected: type)
-		
-		separator( vertical:true )
-		def isNotExponential = (type.value != 'Exponential')
-		property( property:factor, label:'Random\nFactor', min: 0, max: 100, step: 1, enabled: isNotExponential )
-		separator( vertical:true )
-		box( widget:'display', layout:'align center') {
-			node( label:'Current rate', content: { "$rate.value / $unit.value" } )
-			node( label:'Random', content: { "$factor.value %" } )
-		}
+layout { 
+	property( property:rate, label:'Base Rate', min:0 ) 
+	separator( vertical:true )
+	property( property:unit, label:'Unit', options:['Sec','Min','Hour'] )
+	separator( vertical:true )
+	
+	node(widget: 'selectorWidget', label:'Distribution', labels:['Uniform','Exponential','Gaussian'], 
+			images:['linear_shape.png', 'poisson_shape.png', 'gauss_shape.png'], selected: type)
+	
+	separator( vertical:true )
+	def isNotExponential = (type.value != 'Exponential')
+	property( property:factor, label:'Random\nFactor', min: 0, max: 100, step: 1, enabled: isNotExponential )
+	separator( vertical:true )
+	box( widget:'display', layout:'align center') {
+		node( label:'Current rate', content: { "$rate.value / $unit.value" } )
+		node( label:'Random', content: { "$factor.value %" } )
 	}
 }
-redraw()
 	
-//Compact Layout
 compactLayout {
 	box( widget: 'display', layout: 'align center' ) {
 		node( label: 'Current rate', content: { "$rate.value / $unit.value" } )

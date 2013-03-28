@@ -3,76 +3,22 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans   
        http://www.springframework.org/schema/beans/spring-beans.xsd">
-
-	<bean id="scene" class="com.eviware.loadui.fx.JavaFXActivator"
-		factory-method="getScene" />
-		
-	<bean id="windowController" class="com.eviware.loadui.fx.JavaFXActivator"
-		factory-method="getWindowController" />
-		
-	<bean id="mainWindow" class="com.eviware.loadui.fx.MainWindow" factory-method="createInstance" destroy-method="destroy">
-		<constructor-arg ref="scene" />
-		<constructor-arg ref="windowController" />
-		<constructor-arg ref="workspaceProvider" />
-	</bean>
-	
-	<bean id="agentDiscoverer" class="com.eviware.loadui.fx.agents.discovery.AgentDiscoverer" init-method="initialize" destroy-method="destroy">
-		<property name="agentDiscovery" ref="agentDiscovery" />
-	</bean>
-
-	<!-- <bean id="httpClientHolder" class="com.eviware.loadui.fx.http.HttpClientHolder" init-method="initialize" destroy-method="destroy">
-		<property name="provider" ref="httpClientProvider" />
-	</bean> -->
-	
-	<!-- <bean id="inspectorPanel" factory-bean="mainWindow" factory-method="getInspectorPanel" /> -->
-	
-	<bean id="applicationState" factory-bean="mainWindow" factory-method="getApplicationState" />
-	
-	<bean id="toolbarItemManager" class="com.eviware.loadui.fx.osgi.ToolbarItemManager" />
-	
-	<bean id="inspectorManager" class="com.eviware.loadui.fx.osgi.InspectorManager" />
-	
-	<bean id="projectToolbar" factory-bean="mainWindow" factory-method="getProjectToolbar" />
-	<bean id="testcaseToolbar" factory-bean="mainWindow" factory-method="getTestcaseToolbar" />
-	
-	<bean id="componentManager" class="com.eviware.loadui.fx.osgi.ComponentManager">
-		<property name="projectToolbar" ref="projectToolbar" />
-		<property name="testcaseToolbar" ref="testcaseToolbar" />
-	</bean>
-	
-	<bean id="widgetRegistry" class="com.eviware.loadui.fx.osgi.WidgetRegistry" />
-	
-	<bean id="systemLogInspector" class="com.eviware.loadui.fx.log.LogInspector" factory-method="createInstance">
-		<constructor-arg value="com.eviware.loadui" />
-		<constructor-arg value="System Log" />
-	</bean>
-	
-	<bean id="agentInspector" class="com.eviware.loadui.fx.widgets.AgentInspector" factory-method="createInstance">
-		<constructor-arg value="Agents" />
-	</bean>
-	
-	<bean id="eventLogInspector" class="com.eviware.loadui.fx.eventlog.EventLogInspector" factory-method="createInstance">
+       
+	<bean id="eventLogInspector" class="com.eviware.loadui.ui.fx.views.eventlog.EventLogInspector">
+		<constructor-arg ref="executionManager" />
 		<constructor-arg ref="testEventManager" />
 	</bean>
-	
-	<bean id="assertionInspector" class="com.eviware.loadui.fx.assertions.AssertionInspector" factory-method="createInstance">
+	<!-- <bean id="systemLogInspector" class="com.eviware.loadui.ui.fx.views.syslog.SystemLogInspector" /> -->
+	<bean id="assertionInspector" class="com.eviware.loadui.ui.fx.views.assertions.AssertionInspector" >
 		<constructor-arg ref="statisticsManager" />
 	</bean>
-	
-	<bean id="tableWidget" class="com.eviware.loadui.fx.widgets.factories.TableWidgetFactory" />
-	<bean id="selectorWidget" class="com.eviware.loadui.fx.widgets.factories.SelectorWidgetFactory" />
-	<bean id="chartWidget" class="com.eviware.loadui.fx.widgets.factories.ChartWidgetFactory" />
-	<bean id="onOffSwitchFactory" class="com.eviware.loadui.fx.ui.layout.widgets.factories.OnOffSwitchFactory" />
-	<bean id="selectFactory" class="com.eviware.loadui.fx.ui.layout.widgets.factories.SelectFactory" />
-	<bean id="timeInputWidget" class="com.eviware.loadui.fx.ui.layout.widgets.factories.TimeInputFactory" />
-	<bean id="quartzCronInputWidget" class="com.eviware.loadui.fx.ui.layout.widgets.factories.QuartzCronInputFactory" />
-	<bean id="passwordInputWidget" class="com.eviware.loadui.fx.ui.layout.widgets.factories.PasswordInputFactory" />
-	<bean id="intervalWidget" class="com.eviware.loadui.fx.widgets.factories.IntervalWidgetFactory" />
-	<bean id="schedulerWidget" class="com.eviware.loadui.fx.widgets.factories.SchedulerWidgetFactory" />
-	<bean id="sliderWidget" class="com.eviware.loadui.fx.widgets.factories.SliderWidgetFactory" />
-	<bean id="displayContainerFactory" class="com.eviware.loadui.fx.ui.layout.widgets.factories.DisplayContainerFactory" />
-	
-	
-	<!-- Legacy stuff -->
-	<bean id="singleOutputWireEnforcer" class="com.eviware.loadui.fx.legacy.SingleOutputWireEnforcer" factory-method="createInstance" />
+	<bean id="executionsInfo" class="com.eviware.loadui.ui.fx.views.analysis.FxExecutionsInfo"/>
+	<bean id="mainWindowCreator" class="com.eviware.loadui.ui.fx.LoadUiMainWindowCreator">
+		<constructor-arg ref="workspaceProvider" />
+		<constructor-arg ref="testEventManager" />
+		<constructor-arg ref="executionsInfo" />
+	</bean>
+	<bean id="uiUtils" class="com.eviware.loadui.ui.fx.util.UIUtils">
+		<property name="imageResolvers" ref="imageResolvers" />
+	</bean>
 </beans>

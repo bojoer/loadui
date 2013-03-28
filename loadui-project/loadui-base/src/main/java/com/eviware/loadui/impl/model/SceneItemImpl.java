@@ -1,12 +1,12 @@
 /*
- * Copyright 2011 SmartBear Software
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -22,6 +22,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
+
+import javax.annotation.CheckForNull;
+import javax.annotation.Nonnull;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +43,8 @@ import com.eviware.loadui.api.events.PropertyEvent;
 import com.eviware.loadui.api.events.RemoteActionEvent;
 import com.eviware.loadui.api.events.TerminalEvent;
 import com.eviware.loadui.api.events.TerminalMessageEvent;
+import com.eviware.loadui.api.execution.Phase;
+import com.eviware.loadui.api.execution.TestExecution;
 import com.eviware.loadui.api.messaging.MessageEndpoint;
 import com.eviware.loadui.api.messaging.SceneCommunication;
 import com.eviware.loadui.api.model.AgentItem;
@@ -76,6 +81,7 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 
 	public static SceneItemImpl newInstance( ProjectItem project, SceneItemConfig config )
 	{
+		log.debug( "Got project: " + project );
 		SceneItemImpl object = new SceneItemImpl( project, config );
 		object.init();
 		object.postInit();
@@ -85,12 +91,15 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 
 	private final static String INCREMENT_VERSION = "incrementVersion";
 
+	//On agents, this field is null.
+	@CheckForNull
 	private final ProjectItem project;
+
 	private final ProjectListener projectListener;
 	private final WorkspaceListener workspaceListener;
 	private final TerminalHolderSupport terminalHolderSupport;
 	private final InputTerminal stateTerminal;
-	private final Map<AgentItem, Map<Object, Object>> remoteStatistics = new ConcurrentHashMap<AgentItem, Map<Object, Object>>();
+	private final Map<AgentItem, Map<Object, Object>> remoteStatistics = new ConcurrentHashMap<>();
 	private long version;
 	private boolean propagate = true;
 	private boolean wasLocalModeWhenStarted = true;
@@ -99,7 +108,7 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 
 	private final Property<Boolean> followProject;
 
-	private SceneItemImpl( ProjectItem project, SceneItemConfig config )
+	private SceneItemImpl( @Nonnull ProjectItem project, SceneItemConfig config )
 	{
 		super( config, LoadUI.isController() ? new RemoteAggregatedCounterSupport(
 				BeanInjector.getBean( CounterSynchronizer.class ) ) : new AggregatedCounterSupport() );
@@ -132,7 +141,7 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 	protected void init()
 	{
 		super.init();
-		if( project != null )
+		if( LoadUI.isController() )
 		{
 			project.addEventListener( ActionEvent.class, projectListener );
 			project.getWorkspace().addEventListener( PropertyEvent.class, workspaceListener );
@@ -179,7 +188,7 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 	@Override
 	public void release()
 	{
-		if( project != null )
+		if( LoadUI.isController() )
 		{
 			project.removeEventListener( ActionEvent.class, projectListener );
 			project.getWorkspace().removeEventListener( PropertyEvent.class, workspaceListener );
@@ -192,7 +201,7 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 	@Override
 	public void delete()
 	{
-		for( ComponentItem component : new ArrayList<ComponentItem>( getComponents() ) )
+		for( ComponentItem component : new ArrayList<>( getComponents() ) )
 		{
 			component.delete();
 		}
@@ -257,6 +266,12 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 	}
 
 	@Override
+	public Property<Boolean> followProjectProperty()
+	{
+		return followProject;
+	}
+
+	@Override
 	public InputTerminal getStateTerminal()
 	{
 		return stateTerminal;
@@ -308,7 +323,7 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 			// on agent, application is running in distributed mode, so send
 			// data to the controller
 
-			Map<String, Object> data = new HashMap<String, Object>();
+			Map<String, Object> data = new HashMap<>();
 			data.put( AgentItem.SCENE_ID, getId() );
 
 			for( ComponentItem component : getComponents() )
@@ -389,7 +404,7 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 		for( ComponentItem component : getComponents() )
 		{
 			String cId = component.getId();
-			Map<AgentItem, Object> cData = new HashMap<AgentItem, Object>();
+			Map<AgentItem, Object> cData = new HashMap<>();
 			for( Entry<AgentItem, Map<Object, Object>> e : remoteStatistics.entrySet() )
 				cData.put( e.getKey(), e.getValue().get( cId ) );
 			component.getBehavior().handleStatisticsData( cData );
@@ -452,11 +467,31 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 
 	private Collection<AgentItem> getActiveAgents()
 	{
-		ArrayList<AgentItem> agents = new ArrayList<AgentItem>();
+		ArrayList<AgentItem> agents = new ArrayList<>();
 		for( AgentItem agent : getProject().getAgentsAssignedTo( this ) )
 			if( agent.isReady() )
 				agents.add( agent );
 		return agents;
+	}
+
+	@Override
+	public boolean isAffectedByExecutionTask( TestExecution execution )
+	{
+		CanvasItem startedCanvas = execution.getCanvas();
+		log.debug( "startedCanvas==this: " + Boolean.toString( startedCanvas == this ) + " getProject()==startedCanvas: "
+				+ Boolean.toString( getProject() == startedCanvas ) + " isFollowProject(): "
+				+ Boolean.toString( isFollowProject() ) );
+		return startedCanvas == this || ( getProject() == startedCanvas && isFollowProject() );
+	}
+
+	@Override
+	protected void onExecutionTask( TestExecution execution, Phase phase )
+	{
+		if( isAffectedByExecutionTask( execution ) )
+		{
+			log.debug( "STARTING !!!" );
+			super.onExecutionTask( execution, phase );
+		}
 	}
 
 	private class SelfListener implements EventHandler<BaseEvent>

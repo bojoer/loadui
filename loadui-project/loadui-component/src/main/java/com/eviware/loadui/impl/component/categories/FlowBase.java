@@ -1,12 +1,12 @@
 /*
- * Copyright 2011 SmartBear Software
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -42,7 +42,7 @@ import com.eviware.loadui.util.ReleasableUtils;
 public abstract class FlowBase extends BaseCategory implements FlowCategory
 {
 	private final InputTerminal incomingTerminal;
-	private final List<OutputTerminal> outgoingTerminals = new ArrayList<OutputTerminal>();
+	private final List<OutputTerminal> outgoingTerminals = new ArrayList<>();
 	private Map<String, Class<?>> inputSignature = Collections.emptyMap();
 
 	private final BlinkOnUpdateActivityStrategy activityStrategy = ActivityStrategies.newBlinkOnUpdateStrategy();
@@ -183,8 +183,8 @@ public abstract class FlowBase extends BaseCategory implements FlowCategory
 
 	protected void updateSignature()
 	{
-		Map<String, Class<?>> newSig = new HashMap<String, Class<?>>();
-		for( Connection connection : new ArrayList<Connection>( incomingTerminal.getConnections() ) )
+		Map<String, Class<?>> newSig = new HashMap<>();
+		for( Connection connection : new ArrayList<>( incomingTerminal.getConnections() ) )
 			for( Entry<String, Class<?>> entry : connection.getOutputTerminal().getMessageSignature().entrySet() )
 				newSig.put( entry.getKey(), entry.getValue() );
 		inputSignature = newSig;

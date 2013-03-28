@@ -1,12 +1,12 @@
 /*
- * Copyright 2011 SmartBear Software
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -15,9 +15,11 @@
  */
 package com.eviware.loadui.impl.statistics.model;
 
-import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
-import org.junit.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
+import org.junit.Before;
+import org.junit.Test;
 
 import com.eviware.loadui.api.statistics.model.StatisticPage;
 import com.eviware.loadui.config.LoaduiProjectDocumentConfig;
@@ -54,9 +56,9 @@ public class StatisticPagesImplTest
 		assertThat( statisticPages.getChildAt( 1 ), is( third ) );
 		assertThat( statisticPages.getChildAt( 2 ), is( second ) );
 
-		assertThat( first.getTitle(), is( "first" ) );
-		assertThat( second.getTitle(), is( "second" ) );
-		assertThat( third.getTitle(), is( "third" ) );
+		assertThat( first.getLabel(), is( "first" ) );
+		assertThat( second.getLabel(), is( "second" ) );
+		assertThat( third.getLabel(), is( "third" ) );
 	}
 
 	@Test
@@ -80,12 +82,12 @@ public class StatisticPagesImplTest
 		assertThat( statisticPages.getChildAt( 2 ), is( third ) );
 		assertThat( statisticPages.getChildAt( 3 ), is( fourth ) );
 
-		third.setTitle( "newThree" );
+		third.setLabel( "newThree" );
 
-		assertThat( third.getTitle(), is( "newThree" ) );
+		assertThat( third.getLabel(), is( "newThree" ) );
 
 		statisticPages.movePage( first, 3 );
 
-		assertThat( third.getTitle(), is( "newThree" ) );
+		assertThat( third.getLabel(), is( "newThree" ) );
 	}
 }

@@ -1,12 +1,12 @@
 /*
- * Copyright 2011 SmartBear Software
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -92,7 +92,7 @@ public class ReportingManagerImpl implements ReportingManager
 
 	@Override
 	public void createReport( String label, Execution execution, Collection<StatisticPage> pages,
-			Map<Object, Image> charts, File file, String format )
+			Map<? extends Object, Image> charts, File file, String format )
 	{
 		try
 		{
@@ -107,13 +107,13 @@ public class ReportingManagerImpl implements ReportingManager
 
 	@Override
 	public void createReport( String label, Execution execution, Collection<StatisticPage> pages,
-			Map<Object, Image> charts, File jpFileToPrepend )
+			Map<? extends Object, Image> charts, File jpFileToPrepend )
 	{
 		createReport( label, execution, pages, charts, getJpFromFile( jpFileToPrepend ) );
 	}
 
 	public void createReport( String label, Execution execution, Collection<StatisticPage> pages,
-			Map<Object, Image> charts, JasperPrint jpToPrepend )
+			Map<? extends Object, Image> charts, JasperPrint jpToPrepend )
 	{
 		reportEngine.generateJasperReport( new ExecutionDataSource( label, execution, pages, charts ), RESULTS_REPORT,
 				execution.getLabel(), jpToPrepend );
@@ -121,13 +121,13 @@ public class ReportingManagerImpl implements ReportingManager
 
 	@Override
 	public void createReport( String label, Execution execution, Collection<StatisticPage> pages,
-			Map<Object, Image> charts, File file, String format, File jpFileToPrepend )
+			Map<? extends Object, Image> charts, File file, String format, File jpFileToPrepend )
 	{
 		createReport( label, execution, pages, charts, file, format, getJpFromFile( jpFileToPrepend ) );
 	}
 
 	public void createReport( String label, Execution execution, Collection<StatisticPage> pages,
-			Map<Object, Image> charts, File file, String format, JasperPrint jpToPrepend )
+			Map<? extends Object, Image> charts, File file, String format, JasperPrint jpToPrepend )
 	{
 		try
 		{

@@ -3,7 +3,7 @@
 	<parent>
 		<artifactId>loadui-project</artifactId>
 		<groupId>com.eviware.loadui</groupId>
-		<version>2.1.2</version>
+		<version>2.5.0</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>loadui-utils</artifactId>
@@ -11,15 +11,6 @@
 	<name>loadUI Utils</name>
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.0.2</version>
-				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
-				</configuration>
-			</plugin>
 			<plugin>
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-bundle-plugin</artifactId>
@@ -59,7 +50,7 @@
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
-			<version>12.0</version>
+			<version>14.0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
@@ -86,12 +77,6 @@
 			<groupId>gnu.cajo</groupId>
 			<artifactId>cajo</artifactId>
 			<version>1.142</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>net.sf.opencsv</groupId>
-			<artifactId>opencsv</artifactId>
-			<version>2.3</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>

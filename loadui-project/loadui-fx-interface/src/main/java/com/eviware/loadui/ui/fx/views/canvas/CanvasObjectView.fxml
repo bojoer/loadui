@@ -1,0 +1,47 @@
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Button?>
+<?import javafx.geometry.Insets?>
+<?import java.net.URL?>
+
+<fx:root type="javafx.scene.layout.StackPane" xmlns:fx="http://javafx.com/fxml"
+	styleClass="canvas-object-view">
+	<stylesheets>
+		<URL value="@CanvasObjectView.css" />
+	</stylesheets>
+		<VBox styleClass="canvas-object-base" id="base">
+			<HBox fx:id="inputTerminalPane" minHeight="14">
+				<VBox.margin>
+					<Insets top="-14" />
+				</VBox.margin>
+			</HBox>
+			<BorderPane fx:id="topBar">
+				<left>
+					<Label fx:id="canvasObjectLabel" text="CanvasObject Label" />
+				</left>
+				<right>
+					<HBox fx:id="buttonBar">
+					</HBox>
+				</right>
+				<bottom>
+					<MenuButton fx:id="menuButton" id="menu" text="Menu" />
+				</bottom>
+			</BorderPane>
+			<StackPane fx:id="content" id="content" minWidth="80" minHeight="50">
+				<VBox.margin>
+					<Insets top="3" right="5" bottom="6" left="5" />
+				</VBox.margin>
+			</StackPane>
+			<HBox fx:id="outputTerminalPane" minHeight="14">
+				<VBox.margin>
+					<Insets bottom="-14" />
+				</VBox.margin>
+			</HBox>
+		</VBox>
+</fx:root>

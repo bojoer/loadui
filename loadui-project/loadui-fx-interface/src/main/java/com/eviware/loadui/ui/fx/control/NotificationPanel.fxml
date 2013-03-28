@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.shape.Rectangle?>
+<?import java.net.URL?>
+
+
+<fx:root type="VBox" styleClass="notification-panel"
+	prefWidth="400" minWidth="200" maxWidth="400" xmlns:fx="http://javafx.com/fxml" StackPane.alignment="TOP_CENTER" >
+	<stylesheets>
+		<URL value="@NotificationPanel.css" />
+	</stylesheets>
+	<StackPane>
+		<Region styleClass="base" />
+		<VBox>
+			<padding>
+				<Insets  top="10" right="10" bottom="10" left="10" />
+			</padding>
+			<AnchorPane>
+				<Label fx:id="dateText" AnchorPane.leftAnchor="10"/>
+				<Label fx:id="msgCount" AnchorPane.rightAnchor="10" />
+			</AnchorPane>
+			<Label fx:id="msgText" id="notification-text" wrapText="true" />
+		</VBox>
+	</StackPane>
+	<StackPane>
+		<Region styleClass="bottom" />
+		<AnchorPane styleClass="bottomPanel">
+			<Button id="show-system-log" text="View messages in the Event Log »"
+				AnchorPane.leftAnchor="10" AnchorPane.topAnchor="6" AnchorPane.bottomAnchor="6"
+				onMouseClicked="#showSystemLog" />
+			<Button id="hide-notification-panel" AnchorPane.rightAnchor="10" AnchorPane.topAnchor="6"
+				onMouseClicked="#hideNotifications">
+				<graphic>
+					<Region maxHeight="5" styleClass="up-arrow" />
+				</graphic>
+			</Button>
+		</AnchorPane>
+	</StackPane>
+</fx:root>

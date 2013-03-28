@@ -1,12 +1,12 @@
 /*
- * Copyright 2011 SmartBear Software
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -17,7 +17,6 @@ package com.eviware.loadui.impl.statistics.db.table.model;
 
 import java.sql.SQLException;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -33,7 +32,7 @@ public class SourceMetadataTable extends TableBase
 
 	public static final String SOURCE_TABLE_NAME = "source_metadata";
 
-	private Set<String> inMemoryTable = new HashSet<String>();
+	private Set<String> inMemoryTable = new HashSet<>();
 
 	public SourceMetadataTable( String dbName, ConnectionRegistry connectionRegistry, DatabaseMetadata databaseMetadata,
 			TableRegistry tableRegistry ) throws SQLException

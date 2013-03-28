@@ -1,12 +1,12 @@
 /*
- * Copyright 2011 SmartBear Software
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -14,6 +14,8 @@
  * under the Licence.
  */
 package com.eviware.loadui.impl.statistics.model.chart.line;
+
+import static com.google.common.collect.Iterables.filter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +38,6 @@ import com.eviware.loadui.api.traits.Deletable;
 import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.util.StringUtils;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 
 /**
  * ConfigurableLineChartView for a Chart.
@@ -109,6 +110,7 @@ public class ChartLineChartView extends AbstractLineChartView implements Configu
 	private Segment addOrGetExistingSegment( Segment segment )
 	{
 		String segmentId = segment.toString();
+		log.debug( "SEGMENT ID: " + segmentId );
 
 		if( getSegment( segmentId ) == null )
 		{
@@ -148,7 +150,7 @@ public class ChartLineChartView extends AbstractLineChartView implements Configu
 	{
 		if( !released )
 		{
-			List<String> segmentsStrings = new ArrayList<String>();
+			List<String> segmentsStrings = new ArrayList<>();
 			for( Segment lineSegment : getSegments() )
 				segmentsStrings.add( lineSegment.toString() );
 			setAttribute( SEGMENTS_ATTRIBUTE, StringUtils.serialize( segmentsStrings ) );
@@ -205,7 +207,7 @@ public class ChartLineChartView extends AbstractLineChartView implements Configu
 			{
 				StatisticVariable removedElement = ( StatisticVariable )event.getElement();
 
-				for( LineSegment lineSegment : Iterables.filter( provider.getSegments(), LineSegment.class ) )
+				for( LineSegment lineSegment : filter( provider.getSegments(), LineSegment.class ) )
 					if( lineSegment.getStatistic().getStatisticVariable().equals( removedElement ) )
 						removeSegment( lineSegment );
 			}

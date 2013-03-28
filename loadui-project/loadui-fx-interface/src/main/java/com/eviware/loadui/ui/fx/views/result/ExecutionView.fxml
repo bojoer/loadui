@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import java.net.URL?>
+
+<fx:root type="javafx.scene.layout.Pane" xmlns:fx="http://javafx.com/fxml">
+	<stylesheets>
+		<URL value="@ExecutionView.css" />
+	</stylesheets>
+	<VBox styleClass="execution-view" maxWidth="135">
+		<HBox styleClass="topExecMenu">
+			<MenuButton fx:id="menuButton" minHeight="23" minWidth="135"/>
+		</HBox>
+		<StackPane onMouseClicked="#openExecution">
+			<Region styleClass="execution-background" minWidth="135" minHeight="80"/>
+			<ImageView>
+				<image>
+					<Image url="@icon-statistics-component.png"/>
+				</image>
+			</ImageView>
+		</StackPane>
+	</VBox>
+</fx:root>

@@ -1,12 +1,12 @@
 /*
- * Copyright 2011 SmartBear Software
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -36,6 +36,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.codec.digest.DigestUtils;
 
+import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.component.BehaviorProvider;
 import com.eviware.loadui.api.component.ComponentBehavior;
 import com.eviware.loadui.api.component.ComponentContext;
@@ -75,7 +76,7 @@ public class GroovyBehaviorProvider implements BehaviorProvider, EventFirer, Rel
 
 	private final File scriptDir;
 	private final ComponentRegistry registry;
-	private final Map<File, ScriptDescriptor> scripts = new HashMap<File, ScriptDescriptor>();
+	private final Map<File, ScriptDescriptor> scripts = new HashMap<>();
 	private final ScheduledFuture<?> future;
 	private final EventSupport eventSupport = new EventSupport( this );
 	private final ClassLoaderRegistry clr;
@@ -86,6 +87,10 @@ public class GroovyBehaviorProvider implements BehaviorProvider, EventFirer, Rel
 	public GroovyBehaviorProvider( ComponentRegistry registry, ScheduledExecutorService scheduler, File scriptDir,
 			ClassLoaderRegistry clr )
 	{
+		if( !scriptDir.isAbsolute() )
+		{
+			scriptDir = LoadUI.relativeFile( scriptDir.getPath() );
+		}
 		this.scriptDir = scriptDir;
 		this.registry = registry;
 		this.clr = clr;

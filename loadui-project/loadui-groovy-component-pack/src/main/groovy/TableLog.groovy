@@ -1,12 +1,12 @@
 // 
-// Copyright 2011 SmartBear Software
+// Copyright 2013 SmartBear Software
 // 
 // Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
 // versions of the EUPL (the "Licence");
 // You may not use this work except in compliance with the Licence.
 // You may obtain a copy of the Licence at:
 // 
-// http://ec.europa.eu/idabc/eupl5
+// http://ec.europa.eu/idabc/eupl
 // 
 // Unless required by applicable law or agreed to in writing, software distributed under the Licence is
 // distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -25,57 +25,42 @@
  * @nonBlocking true
  */
 
-import com.eviware.loadui.api.ui.table.LTableModel
-import com.eviware.loadui.api.events.PropertyEvent
 import au.com.bytecode.opencsv.CSVWriter
 import java.io.FileWriter
 import java.io.FileOutputStream
 import java.io.FileInputStream
-import com.eviware.loadui.api.events.ActionEvent
-import javax.swing.event.TableModelListener
-import javax.swing.event.TableModelEvent
 import java.text.SimpleDateFormat
+import java.util.concurrent.CopyOnWriteArraySet
 
-import com.eviware.loadui.api.summary.MutableSection
+import javafx.application.Platform
+import javafx.stage.FileChooser
+import javafx.scene.control.TableView
+import javafx.scene.control.TableColumn
+import javafx.util.Callback
+import javafx.beans.value.ObservableValue
+import javafx.beans.value.ChangeListener
 
 inputTerminal.description = 'Messages sent here will be displayed in the table.'
 likes( inputTerminal ) { true }
 
-createProperty( 'maxRows', Long, 1000 ) { value ->
-	myTableModel.maxRow = value
-}
-createProperty 'logFilePath', String
-createProperty 'saveFile', Boolean, false
-createProperty( 'follow', Boolean, false ) { value ->
-	if( myTableModel.follow != value as Boolean ) myTableModel.follow = value
-}
-createProperty( 'enabledInDistMode', Boolean, false ) { value ->
-	if( myTableModel.enabledInDistMode != value as Boolean ) myTableModel.enabledInDistMode = value
-}
-createProperty 'summaryRows', Long, 0
-createProperty 'appendSaveFile', Boolean, false
-createProperty 'formatTimestamps', Boolean, true
-createProperty 'addHeaders', Boolean, false
+createProperty( 'maxRows', Long, 1000 )
+createProperty( 'logFilePath', String )
+createProperty( 'saveFile', Boolean, false )
+createProperty( 'follow', Boolean, false )
+createProperty( 'enabledInDistMode', Boolean, false )
+createProperty( 'summaryRows', Long, 0 )
+createProperty( 'appendSaveFile', Boolean, false )
+createProperty( 'formatTimestamps', Boolean, true )
+createProperty( 'addHeaders', Boolean, false )
 
+table = null
+cellFactory = { val -> { it -> val.value[val.tableColumn.text] } as ObservableValue } as Callback
+rebuildTable = { table = new TableView( prefHeight: 200, minWidth: 500 ) }
+tableColumns = [] as CopyOnWriteArraySet
 def latestHeader
-
-myTableModel = new LTableModel(1000, follow.value as Boolean, enabledInDistMode.value as Boolean)
-myTableModel.addTableModelListener(new TableModelListener() {
-	public void tableChanged(TableModelEvent e){
-		updateProperties()
-	}
-});
-
 String saveFileName = null
-
 writer = null
-def formater = new SimpleDateFormat( "HH:mm:ss:SSS" )
-myTableModel.maxRow = maxRows.value
-
-updateProperties = {
-	follow.value = myTableModel.follow
-	enabledInDistMode.value = myTableModel.enabledInDistMode
-}
+def format = new SimpleDateFormat( "HH:mm:ss:SSS" )
 
 onMessage = { o, i, m ->
 	if( controller && i == remoteTerminal ) {
@@ -88,33 +73,45 @@ onMessage = { o, i, m ->
 output = { message ->
 	def writeLog = saveFile.value && saveFileName
 	if( controller || writeLog ) {
-		message.keySet().each { k -> myTableModel.addColumn( k ) }
-		lastMsgDate = new Date();
+		def addedColumns = message.keySet().findAll { tableColumns.add( it ) }
 		
 		if ( formatTimestamps.value ) {
 			message.each() { key, value ->
 				if ( key.toLowerCase().contains("timestamp") ) {
 					try {
-						message[key] = formater.format( new Date( value ) )
+						message[key] = format.format( new Date( value ) )
 					} catch ( IllegalArgumentException e ) {
 						log.info( "Failed to format Timestamp in a column whose name hinted about it containing a Timestamp" )
 					}
 				}
 			}
 		}
-
-		result = myTableModel.addRow( message )
-		if( writeLog && result ) {
-			if( writer == null ) {
-				writer = new CSVWriter( new FileWriter( saveFileName, appendSaveFile.value ), (char) ',' );
+		
+		if( controller ) {
+			Platform.runLater {
+				addedColumns.each {
+					def column = new TableColumn( cellValueFactory: cellFactory, text: it, sortable: false )
+					column.widthProperty().addListener( { obs, oldVal, width -> setAttribute( "width_$it", "$width" ) } as ChangeListener )
+					try {
+						column.width = Double.parseDouble( getAttribute( "width_$it", null ) )
+					} catch( e ) {
+					}
+					table.columns.add( column )
+				}
+				table.items.add( message )
+				while( table.items.size() > maxRows.value ) table.items.remove(0)
 			}
+		}
+		
+		if( writeLog ) {
+			if( !writer ) writer = new CSVWriter( new FileWriter( saveFileName, appendSaveFile.value ), (char) ',' )
 			try {
-				String[] header = myTableModel.header
+				def header = tableColumns as String[]
 				if( addHeaders.value && !Arrays.equals( latestHeader, header ) ) {
 					writer.writeNext( header )
 					latestHeader = header
 				}
-				String[] entries = myTableModel.lastRow
+				entries = header.collect { message[it] ?: "" } as String[]
 				writer.writeNext( entries )
 			} catch ( Exception e ) {
 				log.error( "Error writing to log file", e )
@@ -122,7 +119,7 @@ output = { message ->
 		}
 	}
 	
-	if( ! controller && myTableModel.enabledInDistMode ) {
+	if( ! controller && enabledInDistMode.value ) {
 		// on agent and enabled, so send message to controller
 		send( controllerTerminal, message )
 	}
@@ -135,14 +132,9 @@ onAction( "COMPLETE" ) {
 	writer = null
 }
 
-onAction( "RESET" ) {
-	myTableModel.reset()
-	buildFileName()
-}
+onAction( "RESET" ) { buildFileName() }
 
-onRelease = {
-	writer?.close()
-}
+onRelease = { writer?.close() }
 
 buildFileName = {
 	if( !saveFile.value ) {
@@ -150,9 +142,8 @@ buildFileName = {
 		writer = null
 		return
 	}
-	if( writer != null ) {
-		return
-	}
+	if( writer ) return
+
 	def filePath = "${getBaseLogDir()}${File.separator}${logFilePath.value}"
 	if( !validateLogFilePath( filePath ) ) {
 		filePath = "${getBaseLogDir()}${File.separator}logs${File.separator}table-log${File.separator}${getDefaultLogFileName()}"
@@ -171,17 +162,8 @@ buildFileName = {
 	saveFileName = filePath
 }
 
-getBaseLogDir = {
-	def dir = System.getProperty("loadui.home")
-	if(dir == null || dir.trim().length() == 0) {
-		dir = "."
-	}
-	return dir
-}
-				
-getDefaultLogFileName = {
-	return getLabel().replaceAll( " ","" )
-}
+getBaseLogDir = { System.getProperty( 'loadui.home', '.' ) }
+getDefaultLogFileName = { getLabel().replaceAll( ' ','' ) }
 				
 validateLogFilePath = { filePath ->
 	try {
@@ -200,61 +182,79 @@ validateLogFilePath = { filePath ->
 			fis.close()
 		}
 		return true
-	}
-	catch( Exception e ) {
+	} catch( e ) {
 		return false
 	}	
 }
 
-addTimestampToFileName = { name ->
-	def ext = ""
-	def ind = name.lastIndexOf( "." )
-	if( ind > -1 ){
-		ext = name.substring( ind, name.length() )
-		name = name.substring( 0, ind )
-	}
-	def timestamp = new Date().time
-	if( name.length() > 0 ) {
-		name = "${name}-"
-	}
-	return "$name$timestamp$ext"
-}
+addTimestampToFileName = { it.replaceAll('^(.*?)(\\.\\w+)?$', '$1-'+System.currentTimeMillis()+'$2') }
 
-layout { 
-	node( widget: 'tableWidget', model: myTableModel ) 
+refreshLayout = {
+	rebuildTable()
+	layout(layout: 'wrap 4') {
+		node( component: table, constraints: 'span' )
+		action( label: 'Reset', action: { table.items.clear() } )
+		action( label: 'Clear', action: {
+			tableColumns.clear()
+			refreshLayout()
+		} )
+		action( label: 'Save', action: {
+			def fileChooser = new FileChooser( title: 'Save log' )
+			fileChooser.extensionFilters.add( new FileChooser.ExtensionFilter( 'CSV', '*.csv' ) )
+			def saveFile = fileChooser.showSaveDialog( table.scene.window )
+			if( saveFile ) {
+				try {
+					def writer = new CSVWriter( new FileWriter( saveFile, false ), (char) ',' )
+					writer.writeNext( tableColumns as String[] )
+					table.items.each { message -> writer.writeNext( tableColumns.collect { message[it] ?: "" } as String[] ) }
+					writer.close()
+				} catch ( e ) {
+					log.error( 'Failed writing log to file!', e )
+				}
+			}
+		} )
+		property( property: enabledInDistMode, label: 'Enabled in distributed mode', constraints: 'aligny center, alignx right' )
+	}
 }
+if( controller ) refreshLayout()
 
 compactLayout {
 	box( widget: 'display' ) {
-		node( label: 'Rows', content: { myTableModel.rowCount } )
+		node( label: 'Rows', content: { table.items.size() } )
 		node( label: 'Output File', content: { saveFileName ?: '-' } )
 	}
 }
 
-// settings
 settings( label: "General" ) {
 	box {
-		property(property: maxRows, label: 'Max Rows in Table' )
+		property( property: maxRows, label: 'Max Rows in Table' )
 	}
 	box {
-		property(property: summaryRows, label: 'Max Rows in Summary' )
+		property( property: summaryRows, label: 'Max Rows in Summary' )
 	}	
 }
 
-settings(label:'Logging') {
+settings( label:'Logging' ) {
 	box {
-		property(property: saveFile, label: 'Save Logs?' )
-		property(property: logFilePath, label: 'Log File (Comma separated, relative to loadUI home dir)' )
-		property(property: appendSaveFile, label: 'Check to append selected file', )
-		property(property: formatTimestamps, label: 'Check to format timestamps(hh:mm:ss:ms)')
-		property(property: addHeaders, label: 'Check to add headers to a file')
-		label('(If not appending file, its name will be used to generate new log files each time test is run.)')
+		property( property: saveFile, label: 'Save Logs?' )
+		property( property: logFilePath, label: 'Log File (Comma separated, relative to loadUI home dir)' )
+		property( property: appendSaveFile, label: 'Check to append selected file' )
+		property( property: formatTimestamps, label: 'Check to format timestamps(hh:mm:ss:ms)' )
+		property( property: addHeaders, label: 'Check to add headers to a file' )
+		label( '(If not appending file, its name will be used to generate new log files each time test is run.)' )
 	}
 }
 
 generateSummary = { chapter ->
 	if( summaryRows.value > 0 ) {
-   	MutableSection sect = chapter.addSection( getLabel() )
-   	sect.addTable( getLabel(), myTableModel.getLastRows( summaryRows.value ) )
-   }
+		int nRows = summaryRows.value
+		def rows = table.items.subList( table.items.size() - nRows, table.items.size() )
+		def cols = tableColumns as List
+		chapter.addSection( getLabel() ).addTable( getLabel(), new javax.swing.table.AbstractTableModel() {
+			int getColumnCount() { cols.size() }
+			int getRowCount() { nRows }
+			String getColumnName( int c ) { cols[c] }
+			Object getValueAt( int r, int c ) { rows[r][cols[c]] }
+		} )
+	}
 }

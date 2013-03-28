@@ -1,12 +1,12 @@
 /*
- * Copyright 2011 SmartBear Software
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -60,10 +60,10 @@ public class StatisticVariableImpl implements StatisticVariable.Mutable, Releasa
 	private final AddressableRegistry addressableRegistry;
 	private final String name;
 	private final StatisticHolder parent;
-	private final Set<StatisticsWriter> writers = new HashSet<StatisticsWriter>();
-	private final Set<TrackDescriptor> descriptors = new HashSet<TrackDescriptor>();
-	private final Set<String> statisticNames = new HashSet<String>();
-	private final CacheMap<String, StatisticImpl<?>> statisticCache = new CacheMap<String, StatisticImpl<?>>();
+	private final Set<StatisticsWriter> writers = new HashSet<>();
+	private final Set<TrackDescriptor> descriptors = new HashSet<>();
+	private final Set<String> statisticNames = new HashSet<>();
+	private final CacheMap<String, StatisticImpl<?>> statisticCache = new CacheMap<>();
 	private final ActionListener actionListener = new ActionListener();
 
 	private String description;
@@ -94,6 +94,7 @@ public class StatisticVariableImpl implements StatisticVariable.Mutable, Releasa
 
 	public void addStatisticsWriter( @Nonnull StatisticsWriter writer )
 	{
+		System.out.println( "ADDING STATISTIC WRITER!!!" );
 		if( writers.add( writer ) )
 		{
 			TrackDescriptor descriptor = writer.getTrackDescriptor();
@@ -113,7 +114,7 @@ public class StatisticVariableImpl implements StatisticVariable.Mutable, Releasa
 	@Override
 	public Set<String> getSources()
 	{
-		Set<String> sources = new HashSet<String>();
+		Set<String> sources = new HashSet<>();
 		sources.add( MAIN_SOURCE );
 
 		// Add labels of assigned agents.
@@ -178,9 +179,9 @@ public class StatisticVariableImpl implements StatisticVariable.Mutable, Releasa
 	{
 		parent.removeEventListener( ActionEvent.class, actionListener );
 
+		ReleasableUtils.releaseAll( writers );
 		for( StatisticsWriter writer : writers )
 			addressableRegistry.unregister( writer );
-		ReleasableUtils.releaseAll( writers );
 		writers.clear();
 	}
 

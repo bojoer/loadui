@@ -1,0 +1,103 @@
+#project-tab-pane > .tab-header-area {
+	-fx-padding: 0 0 0 250;
+}
+
+.tab-header-area .headers-region{
+	-fx-padding: 5 0 0 0; 
+}
+
+.title{
+	-fx-background-insets: 0 15 0 0; 
+}
+
+.title .text{
+	-fx-font-size: 14px;
+}
+
+.title .arrow{
+	-fx-translate-x: -15;
+	-fx-scale-x: 0.5; 
+}
+/**
+ * Button-graphics
+ */
+#settingsButton .graphic {
+	-fx-shape: -fx-shape-icon-settings;
+}
+
+#openHelpPageButton .graphic {
+	-fx-shape: -fx-shape-icon-help;
+	-fx-scale-x: 0.7;
+}
+
+#closeProjectButton .graphic {
+	-fx-shape: -fx-shape-icon-close;
+}
+
+#summaryButton .graphic {
+	-fx-shape: -fx-shape-icon-summary;
+}					
+
+/**
+ * Detachable-tabs
+ */
+
+.tab-header-background {
+	-fx-background-color: transparent;
+}
+
+.project-view .tool-bar{
+	-fx-background-color: linear-gradient(to bottom, -base-color-mid 0%, -fx-header-color 75%, #000000 76%, #272727 81%);
+}
+
+.detachable-tab{
+	-fx-padding: 0 0 0 18;
+	-fx-translate-y: -6; 
+}
+
+.detachable-tab .tab-label {
+	-fx-content-display: right;
+	-fx-text-fill: #333333;
+	-fx-padding: -2 2 0 0;
+}
+
+.detachable-tab .styleable-graphic {
+	-color-button-gradient: transparent;
+	-color-button-border: transparent;
+	-color-arrow: -fx-body-color;
+
+	-fx-background-color: 
+		-color-button-border,
+		-color-button-gradient;
+
+	-fx-padding: 
+		0,
+		0;
+	-fx-background-radius: 
+		4,
+		4;
+	
+	-fx-background-insets: 
+		-3 -2 5 1,
+		-2 -1 6 2;	
+}
+
+.detachable-tab .styleable-graphic:hover {
+	-color-button-gradient:  linear-gradient(to bottom, derive(-base-color-mid, 50%),  derive(-base-color-mid, 10%));
+	-color-button-border: #666666;
+	-color-arrow: #666666;
+}
+
+.detachable-tab .graphic {
+	-fx-background-color: -color-arrow;
+	-fx-background-insets: 1 2 9 5;
+	-fx-padding: 0 6;
+	-fx-shape: -fx-shape-icon-detach-arrow;
+	
+}
+
+.project-view #link-scenario.toggle-button{
+	-fx-translate-x: -25;
+	-fx-translate-y: -20;
+	-fx-translate-z: 1; 
+}

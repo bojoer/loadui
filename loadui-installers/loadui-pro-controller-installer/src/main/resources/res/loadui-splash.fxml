@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.Scene?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.geometry.Insets?>
+
+<Scene xmlns:fx="http://javafx.com/fxml" fill="transparent">
+	<StackPane>
+		<ImageView>
+			<image>
+				<Image url="@loadui-splash.png" />
+			</image>
+		</ImageView>
+		<VBox alignment="top_right" spacing="24">
+			<padding>
+				<Insets top="223" right="62" />
+			</padding>
+			<HBox spacing="4" alignment="top_right">
+				<Label style="-fx-text-fill: white; -fx-font-weight: bold;"
+					text="LoadUI Pro" />
+				<Label style="-fx-text-fill: white;" text="2.5.0" />
+			</HBox>
+			<Label style="-fx-text-fill: white; -fx-text-alignment: right" text="Copyright SmartBear Software&#10;&#10;www.loadui.org&#10;www.smartbear.com" />
+		</VBox>
+	</StackPane>
+</Scene>

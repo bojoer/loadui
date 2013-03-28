@@ -1,12 +1,12 @@
 /*
- * Copyright 2011 SmartBear Software
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -29,11 +29,11 @@ import java.util.Set;
 public class SchedulerModel extends Observable
 {
 
-	private List<Day> days = new ArrayList<Day>();
+	private List<Day> days = new ArrayList<>();
 
-	private final List<Integer> seconds = new ArrayList<Integer>();
-	private final List<Integer> minutes = new ArrayList<Integer>();
-	private final List<Integer> hours = new ArrayList<Integer>();
+	private final List<Integer> seconds = new ArrayList<>();
+	private final List<Integer> minutes = new ArrayList<>();
+	private final List<Integer> hours = new ArrayList<>();
 
 	private long duration = 0;
 	private long maxDuration = 0;
@@ -231,8 +231,8 @@ public class SchedulerModel extends Observable
 
 	public Map<Integer, List<ExecutionTime>> getExecutionTimeMap()
 	{
-		List<ExecutionTime> prevList = new ArrayList<ExecutionTime>();
-		List<ExecutionTime> nextList = new ArrayList<ExecutionTime>();
+		List<ExecutionTime> prevList = new ArrayList<>();
+		List<ExecutionTime> nextList = new ArrayList<>();
 
 		int current = new ExecutionTime().getTime();
 		//move 10 seconds in future to be sure 
@@ -273,7 +273,7 @@ public class SchedulerModel extends Observable
 			nextList.remove( nextList.size() - 1 );
 		}
 
-		HashMap<Integer, List<ExecutionTime>> result = new HashMap<Integer, List<ExecutionTime>>();
+		HashMap<Integer, List<ExecutionTime>> result = new HashMap<>();
 		for( int i = 1; i < 8; i++ )
 		{
 			result.put( i, new ArrayList<ExecutionTime>() );

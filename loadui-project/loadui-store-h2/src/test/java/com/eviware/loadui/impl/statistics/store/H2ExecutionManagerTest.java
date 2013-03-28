@@ -1,12 +1,12 @@
 /*
- * Copyright 2011 SmartBear Software
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -116,7 +116,7 @@ public class H2ExecutionManagerTest
 		h2.startExecution( "test1", 10 );
 
 		// add descriptor
-		Map<String, Class<? extends Number>> types = new HashMap<String, Class<? extends Number>>();
+		Map<String, Class<? extends Number>> types = new HashMap<>();
 		types.put( COLUMN_1, Long.class );
 		types.put( COLUMN_2, Long.class );
 		types.put( COLUMN_3, Integer.class );
@@ -146,13 +146,13 @@ public class H2ExecutionManagerTest
 	{
 		h2.startExecution( "test1", 10 );
 
-		Map<String, Class<? extends Number>> types = new HashMap<String, Class<? extends Number>>();
+		Map<String, Class<? extends Number>> types = new HashMap<>();
 		types.put( COLUMN_1, Long.class );
 		types.put( COLUMN_2, Long.class );
 		types.put( COLUMN_3, Integer.class );
 		types.put( COLUMN_4, Double.class );
 
-		Map<String, Number> values = new HashMap<String, Number>();
+		Map<String, Number> values = new HashMap<>();
 		values.put( COLUMN_1, 1 );
 		values.put( COLUMN_2, 2 );
 		values.put( COLUMN_3, 3 );
@@ -171,7 +171,7 @@ public class H2ExecutionManagerTest
 	@Test
 	public void testWriteTestEvent()
 	{
-		Execution e = h2.startExecution( "test event sample execution", System.currentTimeMillis() );
+		Execution e = h2.startExecution( "test event execution", System.currentTimeMillis() );
 
 		StringBuffer sb = new StringBuffer();
 		for( int i = 0; i < 10000; i++ )
@@ -226,17 +226,56 @@ public class H2ExecutionManagerTest
 	}
 
 	@Test
+	public void testReadWithInterpolationlevel()
+	{
+		Execution e = h2.startExecution( "test event execution2", System.currentTimeMillis() );
+		try
+		{
+			StringBuffer sb = new StringBuffer();
+			for( int i = 0; i < 1000; i++ )
+				sb.append( "large-amount-of-data-" );
+			byte[] data = sb.toString().getBytes();
+
+			@SuppressWarnings( "unchecked" )
+			Source<TestEvent> source1 = mock( TestEvent.Source.class );
+			when( source1.getLabel() ).thenReturn( "sample-source-label-1" );
+			when( source1.getHash() ).thenReturn( "-sample-source-hash-1" );
+			when( source1.getData() ).thenReturn( data );
+			when( source1.getType() ).thenReturn( TestEvent.class );
+
+			for( int i = 0; i < 30; i++ )
+			{
+				h2.writeTestEvent( "test-event-type-label", source1, i, data, 0 );
+			}
+
+			for( int i = 0; i < 10; i++ )
+			{
+				h2.writeTestEvent( "test-event-type-label", source1, i + 10, data, 1 );
+			}
+
+			assertEquals( 30, Iterables.size( h2.readTestEventRange( e.getId(), Long.MIN_VALUE, Long.MAX_VALUE, 0,
+					new ArrayList<TestEventSourceConfig>() ) ) );
+			assertEquals( 10, Iterables.size( h2.readTestEventRange( e.getId(), Long.MIN_VALUE, Long.MAX_VALUE, 1,
+					new ArrayList<TestEventSourceConfig>() ) ) );
+		}
+		finally
+		{
+			h2.delete( e.getId() );
+		}
+	}
+
+	@Test
 	public void testRelease()
 	{
 		h2.startExecution( "test1", 10 );
 
-		Map<String, Class<? extends Number>> types = new HashMap<String, Class<? extends Number>>();
+		Map<String, Class<? extends Number>> types = new HashMap<>();
 		types.put( COLUMN_1, Long.class );
 		types.put( COLUMN_2, Long.class );
 		types.put( COLUMN_3, Integer.class );
 		types.put( COLUMN_4, Double.class );
 
-		Map<String, Number> values = new HashMap<String, Number>();
+		Map<String, Number> values = new HashMap<>();
 		values.put( COLUMN_1, 1 );
 		values.put( COLUMN_2, 2 );
 		values.put( COLUMN_3, 3 );

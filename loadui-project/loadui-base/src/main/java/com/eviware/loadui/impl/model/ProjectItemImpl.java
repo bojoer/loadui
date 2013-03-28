@@ -1,12 +1,12 @@
 /*
- * Copyright 2011 SmartBear Software
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -18,6 +18,7 @@ package com.eviware.loadui.impl.model;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -27,9 +28,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+
+import javax.annotation.Nonnull;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
@@ -43,7 +47,6 @@ import com.eviware.loadui.api.counter.CounterSynchronizer;
 import com.eviware.loadui.api.events.ActionEvent;
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.CollectionEvent;
-import com.eviware.loadui.api.events.CollectionEvent.Event;
 import com.eviware.loadui.api.events.EventFirer;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.RemoteActionEvent;
@@ -52,11 +55,13 @@ import com.eviware.loadui.api.execution.TestExecution;
 import com.eviware.loadui.api.execution.TestExecutionTask;
 import com.eviware.loadui.api.execution.TestRunner;
 import com.eviware.loadui.api.messaging.BroadcastMessageEndpoint;
+import com.eviware.loadui.api.messaging.MessageAwaiterFactory;
 import com.eviware.loadui.api.messaging.MessageEndpoint;
 import com.eviware.loadui.api.messaging.MessageListener;
 import com.eviware.loadui.api.messaging.SceneCommunication;
 import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.Assignment;
+import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.CanvasObjectItem;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.model.ProjectItem;
@@ -88,6 +93,7 @@ import com.eviware.loadui.impl.summary.sections.ProjectExecutionNotablesSection;
 import com.eviware.loadui.impl.terminal.ConnectionImpl;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.ReleasableUtils;
+import com.eviware.loadui.util.collections.CollectionEventSupport;
 import com.eviware.loadui.util.collections.CollectionFuture;
 import com.eviware.loadui.util.events.EventFuture;
 import com.eviware.loadui.util.messaging.BroadcastMessageEndpointImpl;
@@ -104,15 +110,17 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 {
 	protected static final Logger log = LoggerFactory.getLogger( ProjectItemImpl.class );
 
+	
 	private final WorkspaceItem workspace;
 	private final LoaduiProjectDocumentConfig doc;
-	private final Set<Assignment> assignments = Sets.newHashSet();
+	private final CollectionEventSupport<Assignment, Void> assignments = new CollectionEventSupport<>( this, ASSIGNMENTS );
 	private final AgentListener agentListener = new AgentListener();
 	private final SceneListener sceneListener = new SceneListener();
 	private final WorkspaceListener workspaceListener = new WorkspaceListener();
 	private final SceneComponentListener sceneComponentListener = new SceneComponentListener();
 	private final Map<SceneItem, BroadcastMessageEndpoint> sceneEndpoints = Maps.newHashMap();
 	private final AgentReadyAwaiterTask agentAwaiter = new AgentReadyAwaiterTask();
+	private final MessageAwaiterFactory messageAwaiterFactory; 
 	private final ConversionService conversionService;
 	private final PropertySynchronizer propertySynchronizer;
 	private final CounterSynchronizer counterSynchronizer;
@@ -121,7 +129,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	private final Property<Boolean> saveReport;
 	private final Property<String> reportFolder;
 	private final Property<String> reportFormat;
-	private final Property<Long> numberOfAutosaves;
+	
 	private final File projectFile;
 
 	private static LoaduiProjectDocumentConfig preProcessProjectFile( LoaduiProjectDocumentConfig config )
@@ -150,10 +158,10 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		conversionService = BeanInjector.getBean( ConversionService.class );
 		propertySynchronizer = BeanInjector.getBean( PropertySynchronizer.class );
 		counterSynchronizer = BeanInjector.getBean( CounterSynchronizer.class );
+		messageAwaiterFactory = BeanInjector.getBean( MessageAwaiterFactory.class ); 
 		saveReport = createProperty( SAVE_REPORT_PROPERTY, Boolean.class, false );
 		reportFolder = createProperty( REPORT_FOLDER_PROPERTY, String.class, "" );
 		reportFormat = createProperty( REPORT_FORMAT_PROPERTY, String.class, "" );
-		numberOfAutosaves = createProperty( STATISTIC_NUMBER_OF_AUTOSAVES, Long.class, 5L );
 		statisticPages = new StatisticPagesImpl( getConfig().getStatistics() == null ? getConfig().addNewStatistics()
 				: getConfig().getStatistics() );
 
@@ -163,7 +171,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	@Override
 	protected void init()
 	{
-		for( SceneItemConfig conf : getConfig().getSceneArray() )
+		for( SceneItemConfig conf : getConfig().getSceneList() )
 		{
 			attachScene( SceneItemImpl.newInstance( this, conf ) );
 		}
@@ -175,7 +183,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		for( AgentItem agent : workspace.getAgents() )
 			agentListener.attach( agent );
 
-		for( SceneAssignmentConfig conf : getConfig().getSceneAssignmentArray() )
+		for( SceneAssignmentConfig conf : getConfig().getSceneAssignmentList() )
 		{
 			SceneItem scene = ( SceneItem )addressableRegistry.lookup( conf.getSceneRef() );
 			AgentItem agent = ( AgentItem )addressableRegistry.lookup( conf.getAgentRef() );
@@ -204,11 +212,9 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 			if( agent != null )
 			{
 				sceneEndpoints.get( scene ).registerEndpoint( agent );
-				AssignmentImpl assignment = new AssignmentImpl( scene, agent );
-				if( assignments.add( assignment ) )
+				if( assignments.addItem( getOrCreateAssignment( scene, agent ) ) )
 				{
 					sendAssignMessage( agent, scene );
-					fireCollectionEvent( ASSIGNMENTS, Event.ADDED, assignment );
 				}
 			}
 		}
@@ -390,8 +396,9 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	@Override
 	public void assignScene( SceneItem scene, AgentItem agent )
 	{
-		AssignmentImpl assignment = new AssignmentImpl( scene, agent );
-		if( assignments.add( assignment ) )
+		AssignmentImpl assignment = getOrCreateAssignment( scene, agent );
+		
+		if( assignments.addItem( assignment ) )
 		{
 			sceneEndpoints.get( scene ).registerEndpoint( agent );
 			SceneAssignmentConfig conf = getConfig().addNewSceneAssignment();
@@ -400,16 +407,16 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 			conf.setAgentRef( agent.getId() );
 			conf.setAgentLabel( agent.getLabel() );
 			conf.setAgentAddress( agent.getUrl() );
+						
 			sendAssignMessage( agent, scene );
-			fireCollectionEvent( ASSIGNMENTS, Event.ADDED, assignment );
 		}
 	}
 
 	@Override
 	public Collection<AgentItem> getAgentsAssignedTo( SceneItem scene )
 	{
-		Set<AgentItem> agents = new HashSet<AgentItem>();
-		for( Assignment assignment : assignments )
+		Set<AgentItem> agents = new HashSet<>();
+		for( Assignment assignment : assignments.getItems() )
 			if( scene.equals( assignment.getScene() ) )
 				agents.add( assignment.getAgent() );
 		return agents;
@@ -418,8 +425,8 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	@Override
 	public Collection<SceneItem> getScenesAssignedTo( AgentItem agent )
 	{
-		Set<SceneItem> scenesOnAgent = new HashSet<SceneItem>();
-		for( Assignment assignment : assignments )
+		Set<SceneItem> scenesOnAgent = new HashSet<>();
+		for( Assignment assignment : assignments.getItems() )
 			if( agent.equals( assignment.getAgent() ) )
 				scenesOnAgent.add( assignment.getScene() );
 		return scenesOnAgent;
@@ -428,15 +435,16 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	@Override
 	public Collection<Assignment> getAssignments()
 	{
-		return Collections.unmodifiableCollection( assignments );
+		return Collections.unmodifiableCollection( assignments.getItems() );
 	}
 
 	@Override
 	public void unassignScene( SceneItem scene, AgentItem agent )
 	{
-		AssignmentImpl assignment = new AssignmentImpl( scene, agent );
-		if( assignments.remove( assignment ) )
+		AssignmentImpl assignment = getAssignment( scene, agent );
+		if( assignment != null )
 		{
+			assignments.removeItem( assignment );
 			BroadcastMessageEndpoint bme = sceneEndpoints.get( scene );
 			if( bme != null )
 			{
@@ -447,20 +455,19 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 			int size = getConfig().sizeOfSceneAssignmentArray();
 			for( int i = 0; i < size; i++ )
 			{
-				SceneAssignmentConfig conf = getConfig().getSceneAssignmentArray()[i];
+				SceneAssignmentConfig conf = getConfig().getSceneAssignmentArray( i );
 				if( scene.getId().equals( conf.getSceneRef() ) && agent.getId().equals( conf.getAgentRef() ) )
 				{
 					getConfig().removeSceneAssignment( i );
 					break;
 				}
 			}
-			fireCollectionEvent( ASSIGNMENTS, Event.REMOVED, assignment );
 		}
 	}
 
 	private void sendSceneCommand( SceneItem scene, String... args )
 	{
-		List<String> message = new ArrayList<String>();
+		List<String> message = new ArrayList<>();
 		message.add( scene.getId() );
 		message.add( Long.toString( scene.getVersion() ) );
 		for( String arg : args )
@@ -471,11 +478,17 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 
 	private AssignmentImpl getAssignment( SceneItem scene, AgentItem agent )
 	{
-		for( Assignment assignment : assignments )
+		for( Assignment assignment : assignments.getItems() )
 			if( assignment.getScene() == scene && assignment.getAgent() == agent )
 				return ( AssignmentImpl )assignment;
 
 		return null;
+	}
+
+	private AssignmentImpl getOrCreateAssignment( SceneItem scene, AgentItem agent )
+	{
+		AssignmentImpl assignment = getAssignment( scene, agent );
+		return assignment != null ? assignment : new AssignmentImpl( scene, agent );
 	}
 
 	@Override
@@ -542,9 +555,9 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 
 		config.set( ( ( SceneItemImpl )obj ).getConfig() );
 		config.setLabel( "Copy of " + config.getLabel() );
-		Map<String, String> addresses = new HashMap<String, String>();
+		Map<String, String> addresses = new HashMap<>();
 		addresses.put( config.getId(), addressableRegistry.generateId() );
-		for( ComponentItemConfig component : config.getComponentArray() )
+		for( ComponentItemConfig component : config.getComponentList() )
 			addresses.put( component.getId(), addressableRegistry.generateId() );
 		String data = config.xmlText();
 		for( Entry<String, String> e : addresses.entrySet() )
@@ -579,21 +592,15 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	}
 
 	@Override
+	public Property<Boolean> saveReportProperty()
+	{
+		return saveReport;
+	}
+
+	@Override
 	public void setSaveReport( boolean save )
 	{
 		saveReport.setValue( save );
-	}
-
-	@Override
-	public long getNumberOfAutosaves()
-	{
-		return numberOfAutosaves.getValue();
-	}
-
-	@Override
-	public void setNumberOfAutosaves( long n )
-	{
-		numberOfAutosaves.setValue( n );
 	}
 
 	@Override
@@ -643,7 +650,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		private final AgentItem agent;
 		private boolean loaded = false;
 
-		public AssignmentImpl( SceneItem scene, AgentItem agent )
+		private AssignmentImpl( SceneItem scene, AgentItem agent )
 		{
 			this.scene = scene;
 			this.agent = agent;
@@ -668,29 +675,6 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		public SceneItem getScene()
 		{
 			return scene;
-		}
-
-		@Override
-		public int hashCode()
-		{
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + ( ( agent == null ) ? 0 : agent.getId().hashCode() );
-			return prime * result + ( ( scene == null ) ? 0 : scene.getId().hashCode() );
-		}
-
-		@Override
-		public boolean equals( Object obj )
-		{
-			if( this == obj )
-				return true;
-			if( obj == null )
-				return false;
-			if( getClass() != obj.getClass() )
-				return false;
-			AssignmentImpl other = ( AssignmentImpl )obj;
-
-			return( agent.getId().equals( other.agent.getId() ) && scene.getId().equals( other.scene.getId() ) );
 		}
 	}
 
@@ -761,7 +745,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 
 	private class AgentListener implements EventHandler<BaseEvent>, MessageListener, Releasable
 	{
-		private final Set<AgentItem> agents = new HashSet<AgentItem>();
+		private final Set<AgentItem> agents = new HashSet<>();
 		private final AgentContextListener subListener = new AgentContextListener();
 
 		public void attach( AgentItem agent )
@@ -821,7 +805,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		public void handleMessage( String channel, MessageEndpoint endpoint, Object data )
 		{
 			Preconditions.checkArgument( endpoint instanceof AgentItem, "Endpoint: %s is not an AgentItem", endpoint );
-			AgentItem agent = ( AgentItem )endpoint;
+			final AgentItem agent = ( AgentItem )endpoint;
 
 			Map<String, String> message = ( Map<String, String> )data;
 			if( message.containsKey( AgentItem.DEFINE_SCENE ) )
@@ -861,9 +845,29 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 			{
 				SceneItem scene = ( SceneItem )addressableRegistry.lookup( message.get( AgentItem.STARTED ) );
 				AssignmentImpl assignment = getAssignment( scene, agent );
+				
 				if( assignment != null )
 					assignment.setLoaded( true );
 
+				if(scene.isRunning() && !workspace.isLocalMode() ) {
+					
+					if( scene != null && scene.isRunning() && !scene.getProject().getWorkspace().isLocalMode() )
+					{
+						final String canvasId = message.get( AgentItem.STARTED );
+						BeanInjector.getBean( ExecutorService.class ).execute( new Runnable()
+						{
+							@Override
+							public void run()
+							{
+								for( Phase phase : Arrays.asList( Phase.PRE_START, Phase.START, Phase.POST_START ) )
+								{
+									messageAwaiterFactory.create( ( AgentItem )agent, canvasId, phase ).await();
+								}
+							}
+						} );
+					}
+				}
+				
 				if( scene.isRunning() && !workspace.isLocalMode() )
 				{
 					agent.sendMessage( SceneCommunication.CHANNEL,
@@ -873,7 +877,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 			}
 		}
 	}
-
+	
 	private class AgentContextListener implements MessageListener
 	{
 		@Override
@@ -1065,7 +1069,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 					{
 						if( agent.isEnabled() && !isSceneLoaded( scene, agent ) )
 						{
-							awaitingScenes.add( new EventFuture<BaseEvent>( ProjectItemImpl.this, BaseEvent.class,
+							awaitingScenes.add( new EventFuture<>( ProjectItemImpl.this, BaseEvent.class,
 									new Predicate<BaseEvent>()
 									{
 										@Override
@@ -1080,7 +1084,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 
 				try
 				{
-					new CollectionFuture<BaseEvent>( awaitingScenes ).get( 10, TimeUnit.SECONDS );
+					new CollectionFuture<>( awaitingScenes ).get( 10, TimeUnit.SECONDS );
 				}
 				catch( InterruptedException e )
 				{
@@ -1096,5 +1100,12 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 				}
 			}
 		}
+	}
+
+	@Override
+	@Nonnull
+	public CanvasItem getCanvas()
+	{
+		return this;
 	}
 }

@@ -3,7 +3,7 @@
 	<parent>
 		<artifactId>loadui-project</artifactId>
 		<groupId>com.eviware.loadui</groupId>
-		<version>2.1.2</version>
+		<version>2.5.0</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>loadui-groovy-component-pack</artifactId>
@@ -15,6 +15,29 @@
 				<directory>${project.basedir}/src/main/groovy</directory>
 			</resource>
 		</resources>
+		<plugins>
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.7</version>
+				<executions>
+					<execution>
+						<phase>generate-test-resources</phase>
+						<configuration>
+							<tasks>
+								<copy todir="${basedir}/target/.groovy">
+									<fileset
+										dir="${basedir}/../../loadui-installers/src/main/resources/.groovy"
+										includes="**/*" />
+								</copy>
+							</tasks>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
 	</build>
 	<dependencies>
 		<dependency>
@@ -54,6 +77,19 @@
 			<version>${project.version}</version>
 			<type>test-jar</type>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.eviware.loadui</groupId>
+			<artifactId>loadui-fx-interface</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.oracle</groupId>
+			<artifactId>javafx-runtime</artifactId>
+			<version>2.2</version>
+			<systemPath>${env.JAVA_HOME}/jre/lib/jfxrt.jar</systemPath>
+			<scope>system</scope>
 		</dependency>
 	</dependencies>
 </project>

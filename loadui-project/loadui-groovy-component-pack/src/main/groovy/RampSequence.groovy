@@ -1,3 +1,19 @@
+// 
+// Copyright 2013 SmartBear Software
+// 
+// Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+// versions of the EUPL (the "Licence");
+// You may not use this work except in compliance with the Licence.
+// You may obtain a copy of the Licence at:
+// 
+// http://ec.europa.eu/idabc/eupl
+// 
+// Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+// distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+// express or implied. See the Licence for the specific language governing permissions and limitations
+// under the Licence.
+// 
+
 /**
  * Ramps up, holds steady and then ramps down.
  *
@@ -13,7 +29,7 @@ import java.util.concurrent.TimeUnit
 createProperty( 'rampLength', Long, 10 ) { calculateAcceleration() }
 createProperty( 'peakRate', Long, 10 ) { calculateAcceleration() }
 createProperty( 'peakLength', Long, 10 )
-createProperty( 'peakRateUnit', String, 'sec' ) { calculateAcceleration(); redraw() }
+createProperty( 'peakRateUnit', String, 'sec' ) { calculateAcceleration() }
 
 future = null
 cancellingFuture = null
@@ -89,20 +105,17 @@ def getT0() {
 	return relativeTime
 }
 
-def redraw() {
-	layout {
-		property( property:rampLength, label:'Ramp Duration\n(sec)', min:1 )
-		property( property:peakLength, label:'Peak Duration\n(sec)', min:0 )
-		separator( vertical:true )
-		property( property:peakRate, label:'Peak Rate\n(VU/' + peakRateUnit.value + ')', min:1 )
-		property( property:peakRateUnit, label:'Unit', options:['sec','min'] )
-		separator( vertical:true )
-		box( widget:'display' ) {
-			node( label:'Rate', content: { if( getT0() > 0 ) String.format( '%7.1f', peakRateUnit.value == 'sec' ? a*getT0() : a*getT0()*60 ) else 0 }, constraints:'w 45!' )
-		}
+layout {
+	property( property:rampLength, label:'Ramp Duration\n(sec)', min:1 )
+	property( property:peakLength, label:'Peak Duration\n(sec)', min:0 )
+	separator( vertical:true )
+	property( property:peakRate, label:'Peak Rate\n(VU/' + peakRateUnit.value + ')', min:1 )
+	property( property:peakRateUnit, label:'Unit', options:['sec','min'] )
+	separator( vertical:true )
+	box( widget:'display' ) {
+		node( label:'Rate', content: { if( getT0() > 0 ) String.format( '%7.1f', peakRateUnit.value == 'sec' ? a*getT0() : a*getT0()*60 ) else 0 }, constraints:'w 45!' )
 	}
 }
-redraw()
 
 compactLayout {
 	box( widget:'display' ) {

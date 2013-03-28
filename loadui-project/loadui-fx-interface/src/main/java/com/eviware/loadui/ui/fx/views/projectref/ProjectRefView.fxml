@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.image.ImageView?>
+<?import java.net.URL?>
+
+<fx:root type="javafx.scene.layout.StackPane" xmlns:fx="http://javafx.com/fxml">
+	<VBox xmlns:fx="http://javafx.com/fxml" styleClass="project-ref-view">
+	<stylesheets>
+			<URL value="@ProjectRefView.css" />
+		</stylesheets>
+		<MenuButton fx:id="menuButton" HBox.hgrow="SOMETIMES" maxWidth="200" styleClass="project-ref-menu-button" />
+		<ImageView fx:id="miniature" onMouseClicked="#regionClickHandler" />
+	</VBox>
+</fx:root>

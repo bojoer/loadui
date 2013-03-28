@@ -1,12 +1,12 @@
 /*
- * Copyright 2011 SmartBear Software
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -70,8 +70,7 @@ public class AssertionAddonImpl implements AssertionAddon, Releasable
 	{
 		this.context = context;
 		this.canvas = canvas;
-		assertionItems = new CollectionEventSupport<AssertionItemImpl<?>, AddonItem.Support>( context.getOwner(),
-				ASSERTION_ITEMS );
+		assertionItems = new CollectionEventSupport<>( context.getOwner(), ASSERTION_ITEMS );
 
 		for( AddonItem.Support addonItemSupport : context.getAddonItemSupports() )
 		{
@@ -124,7 +123,7 @@ public class AssertionAddonImpl implements AssertionAddon, Releasable
 			Resolver<? extends ListenableValue<T>> listenableValueResolver )
 	{
 		AddonItem.Support addonItemSupport = context.createAddonItemSupport();
-		AssertionItemImpl<T> assertionItem = new AssertionItemImpl<T>( canvas, this, addonItemSupport, owner,
+		AssertionItemImpl<T> assertionItem = new AssertionItemImpl<>( canvas, this, addonItemSupport, owner,
 				listenableValueResolver );
 		assertionItems.addItemWith( assertionItem, addonItemSupport );
 		if( assertionTask.running )
@@ -132,6 +131,7 @@ public class AssertionAddonImpl implements AssertionAddon, Releasable
 			assertionItem.start();
 		}
 
+		log.debug( "Assertion created" );
 		return assertionItem;
 	}
 

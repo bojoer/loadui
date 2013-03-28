@@ -1,12 +1,12 @@
 /*
- * Copyright 2011 SmartBear Software
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -15,9 +15,9 @@
  */
 package com.eviware.loadui.impl.statistics.model.chart.line;
 
-import java.util.Collection;
 import java.util.EventObject;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -40,7 +40,7 @@ import com.google.common.collect.ImmutableList;
 public abstract class AbstractLineChartView extends AbstractChartView implements LineChartView, Releasable
 {
 	private final EventSupport eventSupport = new EventSupport( this );
-	private final Map<String, Segment> segments = new HashMap<String, Segment>();
+	private final Map<String, Segment> segments = new HashMap<>();
 
 	public AbstractLineChartView( LineChartViewProvider provider, AttributeHolder attributeDelegate, String prefix )
 	{
@@ -100,7 +100,7 @@ public abstract class AbstractLineChartView extends AbstractChartView implements
 	protected abstract void segmentRemoved( Segment segment );
 
 	@Override
-	public Collection<Segment> getSegments()
+	public List<Segment> getSegments()
 	{
 		return ImmutableList.copyOf( segments.values() );
 	}

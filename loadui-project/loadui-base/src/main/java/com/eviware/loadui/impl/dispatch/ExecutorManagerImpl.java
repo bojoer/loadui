@@ -1,12 +1,12 @@
 /*
- * Copyright 2011 SmartBear Software
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -42,7 +42,7 @@ public final class ExecutorManagerImpl implements ExecutorManager
 	public final static Logger log = LoggerFactory.getLogger( ExecutorManagerImpl.class );
 
 	private final CustomThreadPoolExecutor executor;
-	private final ResizableBlockingQueue<Runnable> queue = new ResizableBlockingQueue<Runnable>( DEFAULT_QUEUE_SIZE );
+	private final ResizableBlockingQueue<Runnable> queue = new ResizableBlockingQueue<>( DEFAULT_QUEUE_SIZE );
 
 	public ExecutorManagerImpl( final WorkspaceProvider workspaceProvider )
 	{
@@ -54,6 +54,7 @@ public final class ExecutorManagerImpl implements ExecutorManager
 			public Thread newThread( Runnable r )
 			{
 				final Thread thread = new Thread( r, "executor-thread-" + threadCount.getAndIncrement() );
+				thread.setDaemon( true );
 				try
 				{
 					if( EventQueue.isDispatchThread() )

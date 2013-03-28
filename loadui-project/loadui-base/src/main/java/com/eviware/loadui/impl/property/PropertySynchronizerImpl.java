@@ -1,12 +1,12 @@
 /*
- * Copyright 2011 SmartBear Software
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -56,7 +56,7 @@ public class PropertySynchronizerImpl implements PropertySynchronizer
 
 	private static String generateSignature( Map<String, String> map )
 	{
-		List<String> entries = new ArrayList<String>();
+		List<String> entries = new ArrayList<>();
 		for( Map.Entry<String, String> entry : map.entrySet() )
 			entries.add( "[" + entry.getKey() + ":" + entry.getValue() + "]" );
 		Collections.sort( entries );
@@ -67,8 +67,8 @@ public class PropertySynchronizerImpl implements PropertySynchronizer
 		return s.toString();
 	}
 
-	private final Set<String> handled = new HashSet<String>();
-	private final Map<ModelItem, MessageEndpoint> endpoints = new HashMap<ModelItem, MessageEndpoint>();
+	private final Set<String> handled = new HashSet<>();
+	private final Map<ModelItem, MessageEndpoint> endpoints = new HashMap<>();
 	private final Listener messageListener = new Listener();
 	private final PropertyEventHandler eventHandler = new PropertyEventHandler();
 	private final AddressableRegistry addressableRegistry;
@@ -107,7 +107,7 @@ public class PropertySynchronizerImpl implements PropertySynchronizer
 
 	private Map<String, String> createMessage( PropertyEvent event )
 	{
-		Map<String, String> message = new HashMap<String, String>();
+		Map<String, String> message = new HashMap<>();
 		message.put( MODELITEM, ( ( ModelItem )event.getSource() ).getId() );
 		message.put( EVENT, event.getEvent().toString() );
 		Property<?> property = event.getProperty();

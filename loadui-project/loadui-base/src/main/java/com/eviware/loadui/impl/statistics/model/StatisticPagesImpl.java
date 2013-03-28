@@ -1,12 +1,12 @@
 /*
- * Copyright 2011 SmartBear Software
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -39,13 +39,15 @@ public class StatisticPagesImpl implements StatisticPages
 	{
 		this.config = config;
 
-		collectionSupport = new OrderedCollectionSupport<StatisticPage>( this );
+		collectionSupport = new OrderedCollectionSupport<>( this );
 	}
 
 	public void init()
 	{
-		for( StatisticsPageConfig statisticPageConfig : config.getPageArray() )
+		for( StatisticsPageConfig statisticPageConfig : config.getPageList() )
+		{
 			collectionSupport.addChild( new StatisticPageImpl( this, statisticPageConfig ) );
+		}
 	}
 
 	@Override
@@ -73,14 +75,14 @@ public class StatisticPagesImpl implements StatisticPages
 	}
 
 	@Override
-	public StatisticPage createPage( String title )
+	public StatisticPage createPage( String label )
 	{
 		for( StatisticPage page : getChildren() )
-			if( title.equals( page.getTitle() ) )
-				throw new IllegalArgumentException( "Non-unique title given for StatisticPage!" );
+			if( label.equals( page.getLabel() ) )
+				throw new IllegalArgumentException( "Non-unique label given for StatisticPage: " + label );
 
 		StatisticsPageConfig statisticPageConfig = config.addNewPage();
-		statisticPageConfig.setTitle( title );
+		statisticPageConfig.setTitle( label );
 		StatisticPageImpl statisticPage = new StatisticPageImpl( this, statisticPageConfig );
 		collectionSupport.addChild( statisticPage );
 		return statisticPage;
@@ -89,7 +91,8 @@ public class StatisticPagesImpl implements StatisticPages
 	@Override
 	public void movePage( StatisticPage page, int index )
 	{
-		StatisticsPageConfig[] pageArray = XmlBeansUtils.moveArrayElement( config.getPageArray(), indexOf( page ), index );
+		StatisticsPageConfig[] pageArray = XmlBeansUtils.moveArrayElement(
+				config.getPageList().toArray( new StatisticsPageConfig[config.sizeOfPageArray()] ), indexOf( page ), index );
 		config.setPageArray( pageArray );
 		collectionSupport.moveChild( page, index );
 		for( int i = 0; i < pageArray.length; i++ )

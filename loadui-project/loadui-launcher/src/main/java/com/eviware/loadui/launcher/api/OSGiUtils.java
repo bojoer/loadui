@@ -1,12 +1,12 @@
 /*
- * Copyright 2011 SmartBear Software
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -29,6 +29,12 @@ public class OSGiUtils
 	}
 
 	public static void shutdown( int code )
+	{
+		stopFramework();
+		System.exit( code );
+	}
+
+	private static void stopFramework()
 	{
 		if( framework != null )
 		{
@@ -62,11 +68,33 @@ public class OSGiUtils
 				e.printStackTrace();
 			}
 		}
-		System.exit( code );
 	}
 
 	public static void setFramework( Framework framework )
 	{
 		OSGiUtils.framework = framework;
+	}
+
+	public static void restart()
+	{
+		stopFramework();
+		try
+		{
+			framework.waitForStop( 0 );
+		}
+		catch( InterruptedException e1 )
+		{
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		try
+		{
+			framework.start();
+		}
+		catch( BundleException e )
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

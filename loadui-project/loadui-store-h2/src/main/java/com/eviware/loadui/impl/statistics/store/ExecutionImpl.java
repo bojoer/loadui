@@ -1,12 +1,12 @@
 /*
- * Copyright 2011 SmartBear Software
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -133,12 +133,9 @@ public class ExecutionImpl implements Execution, Releasable
 					return new TestEventEntryImpl( new UnknownTestEvent( input.getTimestamp() ), input
 							.getTestEventSourceConfig().getLabel(), "Unknown", input.getInterpolationLevel() );
 				}
-				else
-				{
-					return new TestEventEntryImpl( factory.createTestEvent( input.getTimestamp(), input
-							.getTestEventSourceConfig().getData(), input.getData() ), input.getTestEventSourceConfig()
-							.getLabel(), factory.getLabel(), input.getInterpolationLevel() );
-				}
+				return new TestEventEntryImpl( factory.createTestEvent( input.getTimestamp(), input
+						.getTestEventSourceConfig().getData(), input.getData() ),
+						input.getTestEventSourceConfig().getLabel(), factory.getLabel(), input.getInterpolationLevel() );
 			}
 		};
 
@@ -154,18 +151,15 @@ public class ExecutionImpl implements Execution, Releasable
 							input.getTimestamp(), input.getData() ), input.getTestEventSourceConfig().getLabel(), "Unknown",
 							input.getInterpolationLevel() );
 				}
-				else
-				{
-					return new TestEventEntryImpl( InterpolatedTestEvent.createEvent( UnknownTestEvent.class,
-							input.getTimestamp(), input.getData() ), input.getTestEventSourceConfig().getLabel(),
-							factory.getLabel(), input.getInterpolationLevel() );
-				}
+				return new TestEventEntryImpl( InterpolatedTestEvent.createEvent( UnknownTestEvent.class,
+						input.getTimestamp(), input.getData() ), input.getTestEventSourceConfig().getLabel(),
+						factory.getLabel(), input.getInterpolationLevel() );
 			}
 		};
 
 		this.executionDir = executionDir;
 		this.manager = manager;
-		trackMap = new HashMap<String, Track>();
+		trackMap = new HashMap<>();
 
 		propertiesFile = new File( executionDir, "execution.properties" );
 
@@ -278,6 +272,7 @@ public class ExecutionImpl implements Execution, Releasable
 		{
 			setAttribute( KEY_ARCHIVED, Boolean.TRUE.toString() );
 			fireEvent( new BaseEvent( this, ARCHIVED ) );
+			manager.archiveExecution( getId() );
 		}
 	}
 
@@ -411,30 +406,13 @@ public class ExecutionImpl implements Execution, Releasable
 
 	private synchronized void storeAttributes()
 	{
-		FileOutputStream fos = null;
-		try
+		try (FileOutputStream fos = new FileOutputStream( propertiesFile ))
 		{
-			fos = new FileOutputStream( propertiesFile );
 			attributes.store( fos, "" );
-		}
-		catch( FileNotFoundException e )
-		{
-			log.error( "Could not store execution properties file!", e );
 		}
 		catch( IOException e )
 		{
 			log.error( "Could not store execution properties file!", e );
-		}
-		finally
-		{
-			try
-			{
-				if( fos != null )
-					fos.close();
-			}
-			catch( IOException e )
-			{
-			}
 		}
 	}
 

@@ -1,12 +1,12 @@
 /*
- * Copyright 2011 SmartBear Software
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -22,6 +22,7 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 
 import com.eviware.loadui.api.discovery.AgentDiscovery.AgentReference;
+import com.eviware.loadui.api.property.Property;
 
 /**
  * A loadUI workspace. It holds references to projects and agents.
@@ -47,6 +48,9 @@ public interface WorkspaceItem extends ModelItem
 	public final static String LOADUI_CAJO_PORT_PROPERTY = WorkspaceItem.class.getSimpleName() + ".loadUICajoPort";
 
 	public final static String STATISTIC_RESULTS_PATH = WorkspaceItem.class.getSimpleName() + ".statisticResultsPath";
+	public static final String STATISTIC_NUMBER_OF_AUTOSAVES = WorkspaceItem.class.getSimpleName()
+			+ ".statisticNumberOfAutosaves";
+
 	public final static String IGNORED_VERSION_UPDATE = WorkspaceItem.class.getSimpleName() + ".ignoredVersionUpdate";
 
 	/**
@@ -94,9 +98,9 @@ public interface WorkspaceItem extends ModelItem
 	 *           The name to give the new project.
 	 * @param enabled
 	 *           The initial state of the ProjectItem.
-	 * @return The newly created ProjectItem.
+	 * @return The added ProjectRef pointing to the newly created ProjectItem.
 	 */
-	public ProjectItem createProject( File projectFile, String label, boolean enabled );
+	public ProjectRef createProject( File projectFile, String label, boolean enabled );
 
 	/**
 	 * Imports an existing project into the workspace.
@@ -166,6 +170,11 @@ public interface WorkspaceItem extends ModelItem
 	public void removeAgent( AgentItem agent );
 
 	/**
+	 * Gets the localMode property.
+	 */
+	public Property<Boolean> localModeProperty();
+
+	/**
 	 * Gets the localMode property value.
 	 * 
 	 * @return
@@ -182,4 +191,21 @@ public interface WorkspaceItem extends ModelItem
 	 * @param localMode
 	 */
 	public void setLocalMode( boolean localMode );
+
+	/**
+	 * Gets the maximum number of executions for all projects that are
+	 * automatically saved before the oldest one is deleted.
+	 * 
+	 * @return
+	 */
+	long getNumberOfAutosaves();
+
+	/**
+	 * Sets the maximum number of executions for all projects that are
+	 * automatically saved before the oldest one is deleted.
+	 * 
+	 * @return
+	 */
+	void setNumberOfAutosaves( long n );
+
 }

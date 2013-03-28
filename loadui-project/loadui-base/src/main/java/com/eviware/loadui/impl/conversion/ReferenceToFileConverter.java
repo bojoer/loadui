@@ -1,12 +1,12 @@
-/* 
- * Copyright 2011 SmartBear Software
+/*
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -58,12 +58,12 @@ public class ReferenceToFileConverter implements Converter<Reference, File>, Eve
 
 	private final File storage = new File( System.getProperty( LoadUI.LOADUI_HOME ) + File.separator + "fileStorage" );
 	private final FilePropertyListener filePropertyListener = new FilePropertyListener();
-	private final Set<File> filesInUse = new HashSet<File>();
+	private final Set<File> filesInUse = new HashSet<>();
 
-	private final Map<String, File> files = new HashMap<String, File>();
+	private final Map<String, File> files = new HashMap<>();
 	private final FileReceiver listener = new FileReceiver();
 
-	private final Set<String> filesInProgress = new HashSet<String>();
+	private final Set<String> filesInProgress = new HashSet<>();
 
 	public ReferenceToFileConverter( AddressableRegistry addressableRegistry, ScheduledExecutorService executorService )
 	{
@@ -308,7 +308,7 @@ public class ReferenceToFileConverter implements Converter<Reference, File>, Eve
 		@Override
 		public void run()
 		{
-			List<File> unused = new ArrayList<File>();
+			List<File> unused = new ArrayList<>();
 			for( File file : storage.listFiles() )
 				if( !filesInUse.contains( file ) )
 					unused.add( file );

@@ -5,11 +5,11 @@ set LOADUI_HOME=%~dp0
 cd /d %~dp0 
 echo %CD%
 
-set JAVAFX=%JAVAFX_HOME%\bin\javafx
+set JAVA=java
 
-if not "%JAVAFX_HOME%" == "" goto SET_CLASSPATH
-
-set JAVAFX=javafx
+if exist jre/bin/java.exe (
+    set JAVA=jre/bin/java.exe
+)
 
 :SET_CLASSPATH
 
@@ -19,11 +19,11 @@ set CLASSPATH=.;lib/*;
 
 rem JVM parameters, modify as appropriate
 
-set JAVA_OPTS=-Xms128m -Xmx1024m -XX:MaxPermSize=256m -Dsun.java2d.noddraw=true
+set JAVA_OPTS=-Xms128m -Xmx1024m -XX:MaxPermSize=256m
 
 :START
 
 rem ********* run loadui ***********
 
-"%JAVAFX%" -agentpath:C:\PROGRA~1\JPROFI~1\bin\WINDOW~1\jprofilerti.dll=port=8849 %JAVA_OPTS% -cp "%CLASSPATH%" com.eviware.loadui.launcher.LoadUILauncher %*
+"%JAVA%" -agentpath:C:\PROGRA~1\JPROFI~1\bin\WINDOW~1\jprofilerti.dll=port=8849 %JAVA_OPTS% -cp "%CLASSPATH%" com.javafx.main.Main --nofx=false %*
 

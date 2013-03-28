@@ -1,12 +1,12 @@
 /*
- * Copyright 2011 eviware software ab
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -20,14 +20,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
 
-import org.mortbay.log.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,10 +43,7 @@ import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.api.terminal.Terminal;
 import com.eviware.loadui.components.soapui.MockServiceComponent;
 import com.eviware.loadui.components.soapui.SoapUISamplerComponent;
-import com.eviware.loadui.util.StringUtils;
-import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -62,9 +57,9 @@ public class LoadUIUtils
 
 	public static List<String> getProjectsRefsLabelsList( WorkspaceProvider workspaceProvider )
 	{
-		List<String> projectsRefsLabelsList = new ArrayList<String>();
+		List<String> projectsRefsLabelsList = new ArrayList<>();
 
-		List<ProjectRef> projectList = new ArrayList<ProjectRef>();
+		List<ProjectRef> projectList = new ArrayList<>();
 		projectList.addAll( workspaceProvider.getWorkspace().getProjectRefs() );
 		for( ProjectRef projectRef : projectList )
 		{
@@ -75,7 +70,7 @@ public class LoadUIUtils
 
 	public static List<ProjectRef> getProjectsRefsList( WorkspaceProvider workspaceProvider )
 	{
-		List<ProjectRef> projectsRefsList = new ArrayList<ProjectRef>();
+		List<ProjectRef> projectsRefsList = new ArrayList<>();
 		for( ProjectRef projectRef : workspaceProvider.getWorkspace().getProjectRefs() )
 		{
 			projectsRefsList.add( projectRef );
@@ -373,7 +368,7 @@ public class LoadUIUtils
 
 		File newProjectFile = tweakProjectFilename( loadUIProjectName, filename, fileDir );
 		logger.debug( "project file name = " + newProjectFile.getAbsolutePath() );
-		return workspaceProvider.getWorkspace().createProject( newProjectFile, loadUIProjectName, true );
+		return workspaceProvider.getWorkspace().createProject( newProjectFile, loadUIProjectName, true ).getProject();
 	}
 
 	private static File tweakProjectFilename( String loadUIProjectName, String filename, File fileDir )
@@ -455,7 +450,7 @@ public class LoadUIUtils
 			ComponentContext componentContext )
 	{
 		Collection<Property<?>> properties = componentContext.getProperties();
-		HashMap<String, String> propertiesMap = new HashMap<String, String>();
+		HashMap<String, String> propertiesMap = new HashMap<>();
 		for( Property<?> property : properties )
 		{
 			if( !property.getKey().contains( "_script" ) )

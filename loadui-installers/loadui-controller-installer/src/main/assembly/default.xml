@@ -13,11 +13,10 @@
 			<outputDirectory>bundle</outputDirectory>
 			<includes>
 				<include>com.eviware.loadui:loadui-controller-deps</include>
-				<include>com.eviware.soapui:loadui-soapui-plugin</include>
+				<include>com.eviware.loadui:loadui-soapui-plugin</include>
 			</includes>
 			<excludes>
 				<exclude>*:pom</exclude>
-				<exclude>javafx</exclude>
 				<exclude>com.google.code.findbugs</exclude>
 			</excludes>
 			<useTransitiveDependencies>true</useTransitiveDependencies>
@@ -31,6 +30,7 @@
 			</includes>
 			<excludes>
 				<exclude>org.apache.felix:org.apache.felix.framework</exclude>
+				<exclude>com.oracle:javafx-runtime</exclude>
 			</excludes>
 			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
 			<useTransitiveDependencies>true</useTransitiveDependencies>

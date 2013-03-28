@@ -5,7 +5,7 @@
 
 	<bean id="reportingManager" class="com.eviware.loadui.impl.reporting.ReportingManagerImpl" />
 	
-	<bean id="lineChart.Factory" class="com.eviware.loadui.impl.charting.line.LineChartImpl$Factory" />
+	<!--  <bean id="lineChart.Factory" class="com.eviware.loadui.impl.charting.line.LineChartImpl$Factory" /> -->
 	
-	<bean class="com.eviware.loadui.impl.Init" init-method="initJIDE" />
+	<!-- <bean class="com.eviware.loadui.impl.Init" init-method="initJIDE" /> -->
 </beans>

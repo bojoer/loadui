@@ -1,12 +1,12 @@
-/* 
- * Copyright 2011 SmartBear Software
+/*
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -17,16 +17,13 @@ package com.eviware.loadui.util.test.matchers;
 
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.verifyZeroInteractions;
 
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
-import org.mockito.exceptions.misusing.NotAMockException;
+import org.mockito.Mockito;
 
 /**
- * Checks if an Object is a mock or not. Limited by the fact that it checks that
- * no interactions have been invoked on the mock, meaning it needs to be called
- * before invoking any method on the mock to function.
+ * Checks if an Object is a mock or not.
  * 
  * @author dain.nilsson
  * 
@@ -39,16 +36,7 @@ public class IsMock<T> extends BaseMatcher<T>
 	{
 		assertThat( item, notNullValue() );
 
-		try
-		{
-			verifyZeroInteractions( item );
-		}
-		catch( NotAMockException e )
-		{
-			return false;
-		}
-
-		return true;
+		return Mockito.mockingDetails( item ).isMock();
 	}
 
 	@Override

@@ -1,12 +1,12 @@
 /*
- * Copyright 2011 SmartBear Software
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -64,7 +64,7 @@ public class PropertyHolderResolver implements GroovyResolver.Methods, GroovyRes
 	 */
 	public void invokeReplaceHandlers()
 	{
-		for( Property<?> property : new HashSet<Property<?>>( handler.replaceHandlers.keySet() ) )
+		for( Property<?> property : new HashSet<>( handler.replaceHandlers.keySet() ) )
 			handler.handleEvent( new PropertyEvent( property.getOwner(), property, PropertyEvent.Event.VALUE, null ) );
 	}
 
@@ -152,7 +152,7 @@ public class PropertyHolderResolver implements GroovyResolver.Methods, GroovyRes
 
 	private class PropertyEventHandler implements WeakEventHandler<PropertyEvent>
 	{
-		private final Map<Property<?>, Closure<?>> replaceHandlers = new HashMap<Property<?>, Closure<?>>();
+		private final Map<Property<?>, Closure<?>> replaceHandlers = new HashMap<>();
 
 		@Override
 		public void handleEvent( PropertyEvent event )

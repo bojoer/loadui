@@ -1,12 +1,12 @@
 /*
- * Copyright 2011 SmartBear Software
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -68,7 +68,6 @@ public class ConversionServiceTest
 		assertEquals( "47.11", conversionService.convert( new Double( 47.11 ), String.class ) );
 	}
 
-	@SuppressWarnings( "unchecked" )
 	@Test
 	public void shouldConvertBothWays()
 	{
@@ -76,7 +75,6 @@ public class ConversionServiceTest
 			assertEquals( obj, conversionService.convert( conversionService.convert( obj, String.class ), obj.getClass() ) );
 	}
 
-	@SuppressWarnings( "unchecked" )
 	@Test
 	public void shouldConvertNumbers()
 	{

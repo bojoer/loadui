@@ -1,0 +1,15 @@
+.mini-playback-panel{
+	-fx-background-color: linear-gradient(to bottom, -base-color-mid 0%, #888888 100%);
+	-fx-background-radius: 5;
+	-fx-padding: 3 6 3 6;  
+	-fx-spacing: 6; 
+	-fx-border-width: 2; 
+	-fx-border-color: #555555;  
+	-fx-border-radius: 4; 
+}
+
+.scenario-view #link-scenario.toggle-button{
+	-fx-translate-x: 5;
+	-fx-translate-y: 0; 
+	-fx-translate-z: 1; 
+}

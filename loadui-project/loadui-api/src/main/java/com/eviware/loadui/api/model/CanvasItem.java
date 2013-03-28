@@ -1,12 +1,12 @@
 /*
- * Copyright 2011 SmartBear Software
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 import com.eviware.loadui.api.component.ComponentCreationException;
 import com.eviware.loadui.api.component.ComponentDescriptor;
 import com.eviware.loadui.api.counter.CounterHolder;
+import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.summary.Summary;
 import com.eviware.loadui.api.terminal.Connection;
@@ -222,9 +223,14 @@ public interface CanvasItem extends ModelItem, CounterHolder, StatisticHolder
 	public void cancelComponents();
 
 	/**
-	 * Determines if ongoing requests should be aborted on finish
+	 * Determines whether ongoing requests should be aborted on finish
 	 */
 	public boolean isAbortOnFinish();
+
+	/**
+	 * Determines whether ongoing requests should be aborted on finish
+	 */
+	public Property<Boolean> abortOnFinishProperty();
 
 	/**
 	 * Used to define if ongoing requests should be aborted on finish

@@ -3,12 +3,13 @@
 	<parent>
 		<artifactId>loadui-project</artifactId>
 		<groupId>com.eviware.loadui</groupId>
-		<version>2.1.2</version>
+		<version>2.5.0</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>loadui-model-xmlbeans</artifactId>
 	<name>loadUI Model XmlBeans</name>
 	<build>
+		<sourceDirectory>${project.build.directory}/generated-sources/xmlbeans</sourceDirectory>
 		<plugins>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -23,17 +24,23 @@
 					</execution>
 				</executions>
 				<configuration>
-					<outputJar>target/loadui-model-xmlbeans-${project.version}.jar</outputJar>
+					<javaSource>1.5</javaSource>
+					<!-- <outputJar>target/loadui-model-xmlbeans-${project.version}.jar</outputJar> -->
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.5</source>
+					<target>1.5</target>
 				</configuration>
 			</plugin>
 		</plugins>
 	</build>
 	<dependencies>
-		<!-- <dependency>
-			<groupId>org.apache.xmlbeans</groupId>
-			<artifactId>com.springsource.org.apache.xmlbeans</artifactId>
-			<version>2.4.0</version>
-		</dependency> -->
+		<!-- <dependency> <groupId>org.apache.xmlbeans</groupId> <artifactId>com.springsource.org.apache.xmlbeans</artifactId> 
+			<version>2.4.0</version> </dependency> -->
 		<dependency>
 			<groupId>org.apache.xmlbeans</groupId>
 			<artifactId>xmlbeans</artifactId>

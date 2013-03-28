@@ -1,12 +1,12 @@
 /*
- * Copyright 2011 SmartBear Software
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -26,8 +26,8 @@ import com.eviware.loadui.api.layout.OptionsProvider;
 
 public class OptionsProviderImpl<T> implements OptionsProvider<T>
 {
-	private final Set<OptionsListener> listeners = new HashSet<OptionsListener>();
-	private final Map<Runnable, RunnableOptionsListener> runnableListeners = new HashMap<Runnable, RunnableOptionsListener>();
+	private final Set<OptionsListener> listeners = new HashSet<>();
+	private final Map<Runnable, RunnableOptionsListener> runnableListeners = new HashMap<>();
 	private Iterable<T> options;
 	private String nullString = "-";
 
@@ -41,6 +41,7 @@ public class OptionsProviderImpl<T> implements OptionsProvider<T>
 		options = iterable;
 	}
 
+	@SafeVarargs
 	public OptionsProviderImpl( T... options )
 	{
 		this.options = Arrays.asList( options );
@@ -69,11 +70,14 @@ public class OptionsProviderImpl<T> implements OptionsProvider<T>
 		listeners.add( listener );
 	}
 
-	public void setOptions( T... options )
+	@SafeVarargs
+	public final void setOptions( T... options )
 	{
 		this.options = Arrays.asList( options );
 		for( OptionsListener listener : listeners )
+		{
 			listener.onOptionsChange( this );
+		}
 	}
 
 	@Override

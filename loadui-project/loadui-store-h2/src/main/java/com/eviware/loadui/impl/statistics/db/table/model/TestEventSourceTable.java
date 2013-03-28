@@ -1,12 +1,12 @@
 /*
- * Copyright 2011 SmartBear Software
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -108,7 +108,7 @@ public class TestEventSourceTable extends TableBase
 	 */
 	public synchronized List<Map<String, Object>> getByTypeId( Long typeId )
 	{
-		List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+		List<Map<String, Object>> result = new ArrayList<>();
 		for( Entry<String, Map<String, Object>> entry : inMemoryTable.entrySet() )
 		{
 			if( typeId.equals( entry.getValue().get( STATIC_FIELD_TYPEID ) ) )
@@ -149,7 +149,7 @@ public class TestEventSourceTable extends TableBase
 	 */
 	public synchronized List<Long> getIdsByHash( List<String> hashes )
 	{
-		List<Long> result = new ArrayList<Long>();
+		List<Long> result = new ArrayList<>();
 		for( Entry<String, Map<String, Object>> item : inMemoryTable.entrySet() )
 		{
 			if( hashes.size() == 0 || hashes.contains( item.getValue().get( STATIC_FIELD_HASH ) ) )

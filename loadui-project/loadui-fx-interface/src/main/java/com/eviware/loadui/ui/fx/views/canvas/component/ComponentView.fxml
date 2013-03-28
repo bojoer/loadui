@@ -1,0 +1,9 @@
+<?import javafx.scene.layout.StackPane?>
+<?import java.net.URL?>
+
+<fx:root type="javafx.scene.layout.StackPane" xmlns:fx="http://javafx.com/fxml"
+	styleClass="component-view">
+	<stylesheets>
+		<URL value="@ComponentView.css" />
+	</stylesheets>
+</fx:root>

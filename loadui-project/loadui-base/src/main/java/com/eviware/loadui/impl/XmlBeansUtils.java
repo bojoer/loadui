@@ -1,12 +1,12 @@
 /*
- * Copyright 2011 SmartBear Software
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -58,7 +58,7 @@ public class XmlBeansUtils
 	@SuppressWarnings( "unchecked" )
 	public static <T extends XmlObject> T[] moveArrayElement( T[] array, int from, int to )
 	{
-		List<T> list = new ArrayList<T>( array.length );
+		List<T> list = new ArrayList<>( array.length );
 		for( int i = 0; i < array.length; i++ )
 			if( i != from )
 				list.add( array[i]/* .copy() */);

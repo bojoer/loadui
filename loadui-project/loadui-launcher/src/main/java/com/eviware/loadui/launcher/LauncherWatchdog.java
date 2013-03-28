@@ -1,12 +1,12 @@
 /*
- * Copyright 2011 SmartBear Software
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -15,11 +15,31 @@
  */
 package com.eviware.loadui.launcher;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.logging.Logger;
+
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBuilder;
+import javafx.scene.layout.HBoxBuilder;
+import javafx.scene.layout.VBoxBuilder;
+import javafx.scene.text.Text;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.launch.Framework;
+
+import com.eviware.loadui.launcher.util.ErrorHandler;
+import com.sun.javafx.PlatformUtil;
 
 public class LauncherWatchdog implements Runnable
 {
@@ -77,10 +97,11 @@ public class LauncherWatchdog implements Runnable
 
 				if( System.getProperty( "noclose" ) == null )
 				{
-					System.exit( -1 );
+					ErrorHandler.promptRestart();
 				}
 				break;
 			}
 		}
 	}
+
 }

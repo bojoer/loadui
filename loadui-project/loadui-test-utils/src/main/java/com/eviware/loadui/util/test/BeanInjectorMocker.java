@@ -1,12 +1,12 @@
-/* 
- * Copyright 2011 SmartBear Software
+/*
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -16,6 +16,7 @@
 package com.eviware.loadui.util.test;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -89,13 +90,27 @@ public class BeanInjectorMocker
 		BeanInjector.setBundleContext( contextMock );
 		BeanInjector.INSTANCE.clearCache();
 
-		when( contextMock.getServiceReference( any( Class.class ) ) ).thenAnswer( new Answer<ServiceReference<Object>>()
+		//TODO: We can't use generics here until the OSGi jars stop using compilation flags that are not compatible with Java7.
+		when( contextMock.getServiceReference( any( Class.class ) ) ).thenAnswer( new Answer<ServiceReference>()
 		{
 			@Override
-			public ServiceReference<Object> answer( InvocationOnMock invocation ) throws Throwable
+			public ServiceReference/* <Object> */answer( InvocationOnMock invocation ) throws Throwable
 			{
-				ServiceReference<Object> referenceMock = mock( ServiceReference.class );
+				ServiceReference/* <Object> */referenceMock = mock( ServiceReference.class );
 				Object value = getBean( ( Class<?> )invocation.getArguments()[0] );
+				when( contextMock.getService( referenceMock ) ).thenReturn( value );
+
+				return referenceMock;
+			}
+		} );
+
+		when( contextMock.getServiceReference( anyString() ) ).thenAnswer( new Answer<ServiceReference>()
+		{
+			@Override
+			public ServiceReference/* <Object> */answer( InvocationOnMock invocation ) throws Throwable
+			{
+				ServiceReference/* <Object> */referenceMock = mock( ServiceReference.class );
+				Object value = getBean( Class.forName( ( String )invocation.getArguments()[0] ) );
 				when( contextMock.getService( referenceMock ) ).thenReturn( value );
 
 				return referenceMock;

@@ -1,12 +1,12 @@
 /*
- * Copyright 2011 SmartBear Software
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -15,6 +15,7 @@
  */
 package com.eviware.loadui.util;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -173,7 +174,7 @@ public class StringUtils
 	 */
 	public static List<String> deserialize( String serialized )
 	{
-		List<String> strings = new ArrayList<String>();
+		List<String> strings = new ArrayList<>();
 		String remaining = serialized;
 		String[] parts = remaining.split( ":", 2 );
 		while( parts.length == 2 )
@@ -186,4 +187,24 @@ public class StringUtils
 		return strings;
 	}
 
+	public static String toHhMmSs( long seconds )
+	{
+		DecimalFormat f = new DecimalFormat( "00" );
+		long h = seconds / 3600;
+		long m = ( seconds % 3600 ) / 60;
+		long s = seconds % 60;
+		return f.format( h ) + ":" + f.format( m ) + ":" + f.format( s );
+	}
+
+	public static String padLeft( String str, int length )
+	{
+		if (length <= 0) length = 1;
+		return String.format( "%1$" + length + "s", str );
+	}
+
+	public static String padRight( String str, int length )
+	{
+		if (length <= 0) length = 1;
+		return String.format( "%1$-" + length + "s", str );
+	}
 }

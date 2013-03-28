@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.geometry.Insets?>
+<?import javafx.geometry.*?>
+<?import java.net.URL?>
+
+<?import com.eviware.loadui.ui.fx.views.analysis.AnalysisToolBox?>
+
+<fx:root type="javafx.scene.layout.StackPane" xmlns:fx="http://javafx.com/fxml">
+	<VBox xmlns:fx="http://javafx.com/fxml" styleClass="analysis-view">
+		<stylesheets>
+			<URL value="@AnalysisView.css" />
+		</stylesheets>
+		<HBox fx:id="analysisToolbar" styleClass="analysis-toolbar" spacing="10" minHeight="45" maxHeight="45" alignment="baseline_left">
+			<padding>
+				<Insets top="9" right="10" left="85" bottom="0"/>
+			</padding>
+			<Label id="current-execution-label" fx:id="executionLabel" styleClass="title" minWidth="165" maxWidth="165" />
+			<Button id="open-execution" text="Previous test runs"
+					onAction="#openPreviousRuns" />
+		</HBox>
+		<AnchorPane VBox.vgrow="ALWAYS">
+			<TabPane fx:id="tabPane" AnchorPane.topAnchor="0"
+				AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="30"
+				AnchorPane.leftAnchor="0" />
+			<AnalysisToolBox fx:id="toolBox"
+				AnchorPane.leftAnchor="0" AnchorPane.topAnchor="62" heightPerItem="110"
+				minWidth="100" maxWidth="120" />
+		</AnchorPane>
+		</VBox>
+</fx:root>

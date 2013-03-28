@@ -1,12 +1,12 @@
 /*
- * Copyright 2011 SmartBear Software
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -29,9 +29,14 @@ import com.eviware.loadui.api.testevents.TestEvent;
 public interface ExecutionManager extends EventFirer
 {
 	/**
-	 * CollectionEvent key for Executions.
+	 * CollectionEvent key for recent Executions.
 	 */
-	public static final String EXECUTIONS = ExecutionManager.class.getName() + "@executions";
+	public static final String RECENT_EXECUTIONS = ExecutionManager.class.getName() + "@recentexecutions";
+
+	/**
+	 * CollectionEvent key for archived Executions.
+	 */
+	public static final String ARCHIVE_EXECUTIONS = ExecutionManager.class.getName() + "@archivedexecutions";
 
 	/**
 	 * Gets the current Execution. Returns null if no Execution is currently
@@ -77,6 +82,13 @@ public interface ExecutionManager extends EventFirer
 	 * @return
 	 */
 	public void stopExecution();
+
+	/**
+	 * Archive the execution with the given id.
+	 * 
+	 * @param executionId
+	 */
+	public void archiveExecution( String executionId );
 
 	/**
 	 * Registers a TrackDescriptor, providing the structure of a Track.
@@ -217,11 +229,12 @@ public interface ExecutionManager extends EventFirer
 	 */
 	public enum State
 	{
-		STARTED, PAUSED, STOPPED
+		STARTED, STOPPED
 	}
 
 	/**
 	 * Return current state of ExecutionManager
 	 */
 	public State getState();
+
 }

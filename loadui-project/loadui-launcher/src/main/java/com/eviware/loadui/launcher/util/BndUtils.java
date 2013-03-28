@@ -1,12 +1,12 @@
 /*
- * Copyright 2011 SmartBear Software
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -17,14 +17,12 @@ package com.eviware.loadui.launcher.util;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import aQute.lib.io.IO;
 import aQute.lib.osgi.Analyzer;
@@ -69,7 +67,7 @@ public class BndUtils
 			}
 		} );
 
-		final Set<String> createdBundles = new HashSet<String>();
+		final Set<String> createdBundles = new HashSet<>();
 		for( File source : sources )
 		{
 			File dest = new File( destDir, ".__" + source.getName() );
@@ -109,11 +107,10 @@ public class BndUtils
 	 *           Java library to create bundle from.
 	 * @param output
 	 *           Created bundle file.
-	 * @return true on success, false otherwise.
 	 */
-	public static boolean wrap( File input, File output )
+	public static void wrap( File input, File output )
 	{
-		return wrap( input, output, null, null, null, true );
+		wrap( input, output, null, null, null, true );
 	}
 
 	/**
@@ -131,17 +128,16 @@ public class BndUtils
 	 * @param pedantic
 	 * @return true on success, false otherwise.
 	 */
-	public static boolean wrap( File input, File output, File properties, File classpath[],
-			Map<String, String> additional, boolean pedantic )
+	public static void wrap( File input, File output, File properties, File classpath[], Map<String, String> additional,
+			boolean pedantic )
 	{
 		if( !input.exists() )
 		{
 			//log.error( "Error creating bundle. No such file: " + input.getAbsolutePath() );
-			return false;
+			throw new IllegalArgumentException( "Input file does not exist: " + input.getAbsolutePath() );
 		}
 
-		Analyzer analyzer = new Analyzer();
-		try
+		try (Analyzer analyzer = new Analyzer())
 		{
 			analyzer.setPedantic( pedantic );
 			analyzer.setJar( input );
@@ -183,10 +179,9 @@ public class BndUtils
 			output = setOutputPath( input, output, properties );
 
 			analyzer.calcManifest();
-			Jar jar = analyzer.getJar();
 			File f = File.createTempFile( "tmpbnd", ".jar" );
 			f.deleteOnExit();
-			try
+			try (Jar jar = analyzer.getJar())
 			{
 				jar.write( f );
 				jar.close();
@@ -198,18 +193,14 @@ public class BndUtils
 			finally
 			{
 				if( !f.delete() )
-					System.out.println( "Failed deleting file: " + f.getAbsolutePath() );
+				{
+					throw new IOException( "Failed deleting file: " + f.getAbsolutePath() );
+				}
 			}
-			return true;
 		}
 		catch( Exception e )
 		{
-			//log.error( "Error creating bundle. No such file: " + input.getAbsolutePath() );
-			return false;
-		}
-		finally
-		{
-			analyzer.close();
+			throw new RuntimeException( e );
 		}
 	}
 

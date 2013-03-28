@@ -1,12 +1,12 @@
 /*
- * Copyright 2011 SmartBear Software
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -54,7 +54,7 @@ public abstract class TableBase implements Releasable
 
 	private final PreparedStatement deleteStatement;
 
-	private Map<String, ? extends Class<? extends Object>> dynamicFields = new HashMap<String, Class<? extends Object>>();
+	private Map<String, ? extends Class<? extends Object>> dynamicFields = new HashMap<>();
 
 	private final Connection connection;
 
@@ -292,13 +292,13 @@ public abstract class TableBase implements Releasable
 
 	public synchronized List<Map<String, Object>> select( Map<String, Object> data ) throws SQLException
 	{
-		List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+		List<Map<String, Object>> result = new ArrayList<>();
 		selectStatement.setArguments( data );
 		ResultSet rs = selectStatement.executeQuery();
 		Map<String, Object> row;
 		while( rs.next() )
 		{
-			row = new HashMap<String, Object>();
+			row = new HashMap<>();
 			for( int i = 0; i < rs.getMetaData().getColumnCount(); i++ )
 			{
 				int columnType = rs.getMetaData().getColumnType( i + 1 );
@@ -321,7 +321,7 @@ public abstract class TableBase implements Releasable
 	{
 		selectStatement.setArguments( data );
 		ResultSet rs = selectStatement.executeQuery();
-		Map<String, Object> row = new HashMap<String, Object>();
+		Map<String, Object> row = new HashMap<>();
 		if( rs.next() )
 		{
 			for( int i = 0; i < rs.getMetaData().getColumnCount(); i++ )
@@ -349,14 +349,9 @@ public abstract class TableBase implements Releasable
 
 	public synchronized void drop() throws SQLException
 	{
-		Statement stm = connection.createStatement();
-		try
+		try (Statement stm = connection.createStatement())
 		{
 			stm.execute( "drop table " + tableName );
-		}
-		finally
-		{
-			stm.close();
 		}
 	}
 
@@ -435,7 +430,7 @@ public abstract class TableBase implements Releasable
 		{
 			if( extraStatementMap == null )
 			{
-				extraStatementMap = new HashMap<String, PreparedStatement>();
+				extraStatementMap = new HashMap<>();
 			}
 			extraStatementMap.put( name, connection.prepareStatement( sql ) );
 		}

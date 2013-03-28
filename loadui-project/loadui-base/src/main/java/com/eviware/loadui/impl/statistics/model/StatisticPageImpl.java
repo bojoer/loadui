@@ -1,12 +1,12 @@
 /*
- * Copyright 2011 SmartBear Software
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -35,16 +35,21 @@ public class StatisticPageImpl implements StatisticPage
 	private StatisticsPageConfig config;
 	private final OrderedCollectionSupport<ChartGroup> collectionSupport;
 	private final EventSupport eventSupport = new EventSupport( this );
+	private String label;
 
 	public StatisticPageImpl( StatisticPagesImpl parent, StatisticsPageConfig config )
 	{
 		this.parent = parent;
 		this.config = config;
 
-		collectionSupport = new OrderedCollectionSupport<ChartGroup>( this );
+		label = config.isSetTitle() ? config.getTitle() : "";
 
-		for( ChartGroupConfig chartGroupConfig : config.getChartGroupArray() )
+		collectionSupport = new OrderedCollectionSupport<>( this );
+
+		for( ChartGroupConfig chartGroupConfig : config.getChartGroupList() )
+		{
 			collectionSupport.addChild( new ChartGroupImpl( this, chartGroupConfig ) );
+		}
 	}
 
 	@Override
@@ -74,7 +79,8 @@ public class StatisticPageImpl implements StatisticPage
 	@Override
 	public void moveChartGroup( ChartGroup chartGroup, int index )
 	{
-		ChartGroupConfig[] chartGroupArray = XmlBeansUtils.moveArrayElement( config.getChartGroupArray(),
+		ChartGroupConfig[] chartGroupArray = XmlBeansUtils.moveArrayElement(
+				config.getChartGroupList().toArray( new ChartGroupConfig[config.sizeOfChartGroupArray()] ),
 				indexOf( chartGroup ), index );
 		config.setChartGroupArray( chartGroupArray );
 		collectionSupport.moveChild( chartGroup, index );
@@ -83,15 +89,17 @@ public class StatisticPageImpl implements StatisticPage
 	}
 
 	@Override
-	public String getTitle()
+	public String getLabel()
 	{
-		return config.isSetTitle() ? config.getTitle() : "";
+		return label;
 	}
 
 	@Override
-	public void setTitle( String title )
+	public void setLabel( String value )
 	{
-		config.setTitle( title );
+		label = value;
+		config.setTitle( value );
+		fireEvent( new BaseEvent( this, LABEL ) );
 	}
 
 	@Override

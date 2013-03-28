@@ -1,12 +1,12 @@
 /*
- * Copyright 2011 SmartBear Software
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -26,8 +26,10 @@ import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.EventHandler;
+import com.eviware.loadui.api.events.WeakEventHandler;
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.ProjectRef;
+import com.eviware.loadui.api.traits.Labeled;
 import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.config.ProjectReferenceConfig;
 import com.eviware.loadui.impl.property.AttributeHolderSupport;
@@ -40,13 +42,16 @@ public final class ProjectRefImpl implements ProjectRef, Releasable
 
 	private final WorkspaceItemImpl workspace;
 	private final ProjectReferenceConfig config;
+	private final ProjectListener projectListener = new ProjectListener();
 	private final EventSupport eventSupport = new EventSupport( this );
 	private final AttributeHolderSupport attributeHolderSupport;
 	private final File projectFile;
-	private ProjectItem project;
+	private volatile ProjectItem project;
+	private String label;
 	// With the current UI, we do not wish to autoload projects at startup, so do
 	// not save the enabled state as true, ever.
 	private boolean enabled = false;
+	private boolean released = false;
 
 	public ProjectRefImpl( WorkspaceItemImpl workspace, ProjectReferenceConfig config ) throws IOException
 	{
@@ -77,15 +82,54 @@ public final class ProjectRefImpl implements ProjectRef, Releasable
 	@Override
 	public String getLabel()
 	{
-		if( project != null )
-			config.setLabel( project.getLabel() );
-		return config.getLabel();
+		if( !released )
+		{
+			if( project != null )
+				config.setLabel( project.getLabel() );
+			label = config.getLabel();
+		}
+
+		return label;
 	}
 
-	private void setLabel( String label )
+	@Override
+	public void setLabel( String label )
+	{
+		boolean disable = !isEnabled();
+		if( disable )
+		{
+			try
+			{
+				setEnabled( true );
+			}
+			catch( IOException e )
+			{
+				//Ignore, already logged.
+			}
+		}
+
+		getProject().setLabel( label );
+		eventSupport.fireEvent( new BaseEvent( this, LABEL ) );
+
+		if( disable )
+		{
+			try
+			{
+				getProject().save();
+				setEnabled( false );
+			}
+			catch( IOException e )
+			{
+				//Ignore, already logged.
+			}
+		}
+	}
+
+	private void doSetLabel( String label )
 	{
 		if( label != null && ( getLabel() == null || !getLabel().equals( label ) ) )
 		{
+			this.label = label;
 			config.setLabel( label );
 			eventSupport.fireEvent( new BaseEvent( this, LABEL ) );
 		}
@@ -117,8 +161,9 @@ public final class ProjectRefImpl implements ProjectRef, Releasable
 		try
 		{
 			project = ProjectItemImpl.loadProject( workspace, projectFile );
-			setLabel( project.getLabel() );
+			doSetLabel( project.getLabel() );
 			config.setProjectId( project.getId() );
+			project.addEventListener( BaseEvent.class, projectListener );
 			fireEvent( new BaseEvent( this, LOADED ) );
 			workspace.projectLoaded( project );
 		}
@@ -139,6 +184,8 @@ public final class ProjectRefImpl implements ProjectRef, Releasable
 					loadProject();
 				else
 				{
+					//Do this since there may be an updated label that hasn't yet propagated.
+					doSetLabel( project.getLabel() );
 					project.release();
 					project = null;
 					eventSupport.fireEvent( new BaseEvent( this, UNLOADED ) );
@@ -151,6 +198,12 @@ public final class ProjectRefImpl implements ProjectRef, Releasable
 				throw e;
 			}
 		}
+	}
+
+	@Override
+	public void delete()
+	{
+		delete( false );
 	}
 
 	@Override
@@ -228,6 +281,37 @@ public final class ProjectRefImpl implements ProjectRef, Releasable
 	@Override
 	public void release()
 	{
+		released = true;
 		ReleasableUtils.releaseAll( project, eventSupport );
+	}
+
+	private class ProjectListener implements WeakEventHandler<BaseEvent>
+	{
+		@Override
+		public void handleEvent( BaseEvent event )
+		{
+			//Verify that the event is from the same INSTANCE:
+			if( event.getSource() == project )
+			{
+				if( Releasable.RELEASED.equals( event.getKey() ) )
+				{
+					try
+					{
+						setEnabled( false );
+					}
+					catch( IOException e )
+					{
+						//Ignore already logged exception.
+					}
+				}
+				else if( Labeled.LABEL.equals( event.getKey() ) )
+				{
+					if( project != null )
+					{
+						doSetLabel( project.getLabel() );
+					}
+				}
+			}
+		}
 	}
 }

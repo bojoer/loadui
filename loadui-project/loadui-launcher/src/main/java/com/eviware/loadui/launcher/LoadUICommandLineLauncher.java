@@ -1,12 +1,12 @@
 /*
- * Copyright 2011 SmartBear Software
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -16,15 +16,25 @@
 package com.eviware.loadui.launcher;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import javafx.application.Application;
+import javafx.concurrent.Task;
+import javafx.stage.Stage;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleException;
 
 import com.eviware.loadui.launcher.api.GroovyCommand;
 import com.eviware.loadui.launcher.impl.FileGroovyCommand;
@@ -51,22 +61,150 @@ public class LoadUICommandLineLauncher extends LoadUILauncher
 
 	public static void main( String[] args )
 	{
-		System.setSecurityManager( null );
-
-		String[] newArgs = new String[args.length + 1];
-		System.arraycopy( args, 0, newArgs, 0, args.length );
-		newArgs[args.length] = "-" + NOFX_OPTION;
-
-		LoadUICommandLineLauncher launcher = new LoadUICommandLineLauncher( newArgs );
-		launcher.init();
-		launcher.start();
+		Application.launch( CommandApplication.class, args );
 	}
-
-	private GroovyCommand command;
 
 	public LoadUICommandLineLauncher( String[] args )
 	{
 		super( args );
+	}
+
+	private static GroovyCommand command;
+
+	@Override
+	protected void beforeBundlesStart( Bundle[] bundles )
+	{
+		final Set<String> doNotStart = new HashSet<>( Arrays.asList( "loadui-pro-fx" ) );
+
+		for( Bundle bundle : bundles )
+		{
+			if( is( bundle ).in( doNotStart ) )
+			{
+				try
+				{
+					System.out.println( "Uninstalling bundle: " + bundle.getSymbolicName() );
+					bundle.uninstall();
+				}
+				catch( BundleException e )
+				{
+					e.printStackTrace();
+				}
+			}
+			else
+			{
+				System.out.println( "Starting: " + bundle.getSymbolicName() );
+			}
+		}
+
+	}
+
+	private ContainsSimilarItem is( Bundle bundle )
+	{
+		return new ContainsSimilarItem( bundle.getSymbolicName() );
+	}
+
+	private class ContainsSimilarItem
+	{
+
+		String name;
+
+		public ContainsSimilarItem( String name )
+		{
+			this.name = name;
+		}
+
+		boolean in( Set<String> set )
+		{
+			for( String item : set )
+				if( name.contains( item ) )
+					return true;
+			return false;
+		}
+
+	}
+
+	@Override
+	protected void processCommandLine( CommandLine cmd )
+	{
+		try (InputStream is = getClass().getResourceAsStream( "/packages-extra.txt" ))
+		{
+			if( is != null )
+			{
+				StringBuilder out = new StringBuilder();
+				byte[] b = new byte[4096];
+				for( int n; ( n = is.read( b ) ) != -1; )
+					out.append( new String( b, 0, n ) );
+
+				String extra = configProps.getProperty( ORG_OSGI_FRAMEWORK_SYSTEM_PACKAGES_EXTRA, "" );
+				if( !extra.isEmpty() )
+					out.append( "," ).append( extra );
+
+				configProps.setProperty( ORG_OSGI_FRAMEWORK_SYSTEM_PACKAGES_EXTRA, out.toString() );
+			}
+		}
+		catch( IOException e )
+		{
+			e.printStackTrace();
+		}
+
+		Map<String, Object> attributes = new HashMap<>();
+
+		if( cmd.hasOption( PROJECT_OPTION ) )
+		{
+			attributes.put( "workspaceFile",
+					cmd.hasOption( WORKSPACE_OPTION ) ? new File( cmd.getOptionValue( WORKSPACE_OPTION ) ) : null );
+			attributes.put( "projectFile",
+					cmd.hasOption( PROJECT_OPTION ) ? new File( cmd.getOptionValue( PROJECT_OPTION ) ) : null );
+			attributes.put( "testCase", cmd.getOptionValue( TESTCASE_OPTION ) );
+			if( cmd.getOptionValue( VU_SCENARIO_OPTION ) != null )
+				attributes.put( "testCase", cmd.getOptionValue( VU_SCENARIO_OPTION ) );
+			attributes.put( "limits", cmd.hasOption( LIMITS_OPTION ) ? cmd.getOptionValue( LIMITS_OPTION ).split( ":" )
+					: null );
+			attributes.put( "localMode", cmd.hasOption( LOCAL_OPTION ) );
+			Map<String, String[]> agents = null;
+			if( cmd.hasOption( AGENT_OPTION ) )
+			{
+				agents = new HashMap<>();
+				for( String option : cmd.getOptionValues( AGENT_OPTION ) )
+				{
+					int ix = option.indexOf( "=" );
+					if( ix != -1 )
+						agents.put( option.substring( 0, ix ), option.substring( ix + 1 ).split( "," ) );
+					else
+						agents.put( option, null );
+				}
+			}
+			attributes.put( "agents", agents );
+
+			attributes.put( "reportFolder", cmd.getOptionValue( REPORT_DIR_OPTION ) );
+			attributes.put( "reportFormat",
+					cmd.hasOption( REPORT_FORMAT_OPTION ) ? cmd.getOptionValue( REPORT_FORMAT_OPTION ) : "PDF" );
+
+			List<String> statisticPages = null;
+			if( cmd.hasOption( STATISTICS_REPORT_OPTION ) )
+			{
+				String[] optionValues = cmd.getOptionValues( STATISTICS_REPORT_OPTION );
+				statisticPages = optionValues == null ? Collections.<String> emptyList() : Arrays.asList( optionValues );
+			}
+			attributes.put( "statisticPages", statisticPages );
+			attributes.put( "compare", cmd.getOptionValue( STATISTICS_REPORT_COMPARE_OPTION ) );
+
+			attributes.put( "abort", cmd.getOptionValue( ABORT_ONGOING_REQUESTS_OPTION ) );
+
+			attributes.put( "includeSummary", cmd.hasOption( STATISTICS_REPORT_INCLUDE_SUMMARY_OPTION ) );
+
+			attributes.put( "retainZoom", cmd.hasOption( RETAIN_SAVED_ZOOM_LEVELS ) );
+
+			command = new ResourceGroovyCommand( "/RunTest.groovy", attributes );
+		}
+		else if( cmd.hasOption( FILE_OPTION ) )
+		{
+			command = new FileGroovyCommand( new File( cmd.getOptionValue( FILE_OPTION ) ), attributes );
+		}
+		else
+		{
+			printUsageAndQuit();
+		}
 	}
 
 	@Override
@@ -115,77 +253,46 @@ public class LoadUICommandLineLauncher extends LoadUILauncher
 		return options;
 	}
 
-	@Override
-	protected void processCommandLine( CommandLine cmd )
+	public static class CommandApplication extends Application
 	{
-		super.processCommandLine( cmd );
+		private LoadUILauncher launcher;
 
-		Map<String, Object> attributes = new HashMap<String, Object>();
-
-		if( cmd.hasOption( PROJECT_OPTION ) )
+		@Override
+		public void start( final Stage stage ) throws Exception
 		{
-			attributes.put( "workspaceFile",
-					cmd.hasOption( WORKSPACE_OPTION ) ? new File( cmd.getOptionValue( WORKSPACE_OPTION ) ) : null );
-			attributes.put( "projectFile",
-					cmd.hasOption( PROJECT_OPTION ) ? new File( cmd.getOptionValue( PROJECT_OPTION ) ) : null );
-			attributes.put( "testCase", cmd.getOptionValue( TESTCASE_OPTION ) );
-			if( cmd.getOptionValue( VU_SCENARIO_OPTION ) != null )
-				attributes.put( "testCase", cmd.getOptionValue( VU_SCENARIO_OPTION ) );
-			attributes.put( "limits", cmd.hasOption( LIMITS_OPTION ) ? cmd.getOptionValue( LIMITS_OPTION ).split( ":" )
-					: null );
-			attributes.put( "localMode", cmd.hasOption( LOCAL_OPTION ) );
-			Map<String, String[]> agents = null;
-			if( cmd.hasOption( AGENT_OPTION ) )
+			System.out.println( "CommandApplication starting" );
+
+			Task<Void> task = new Task<Void>()
 			{
-				agents = new HashMap<String, String[]>();
-				for( String option : cmd.getOptionValues( AGENT_OPTION ) )
+				@Override
+				protected Void call() throws Exception
 				{
-					int ix = option.indexOf( "=" );
-					if( ix != -1 )
-						agents.put( option.substring( 0, ix ), option.substring( ix + 1 ).split( "," ) );
-					else
-						agents.put( option, null );
+					System.setSecurityManager( null );
+					launcher = createLauncher( getParameters().getRaw().toArray( new String[0] ) );
+					launcher.init();
+					launcher.start();
+
+					System.out.println( "command: " + command );
+
+					if( command != null )
+						framework.getBundleContext().registerService( GroovyCommand.class.getName(), command, null );
+
+					return null;
 				}
-			}
-			attributes.put( "agents", agents );
+			};
 
-			attributes.put( "reportFolder", cmd.getOptionValue( REPORT_DIR_OPTION ) );
-			attributes.put( "reportFormat",
-					cmd.hasOption( REPORT_FORMAT_OPTION ) ? cmd.getOptionValue( REPORT_FORMAT_OPTION ) : "PDF" );
-
-			List<String> statisticPages = null;
-			if( cmd.hasOption( STATISTICS_REPORT_OPTION ) )
-			{
-				String[] optionValues = cmd.getOptionValues( STATISTICS_REPORT_OPTION );
-				statisticPages = optionValues == null ? Collections.<String> emptyList() : Arrays.asList( optionValues );
-			}
-			attributes.put( "statisticPages", statisticPages );
-			attributes.put( "compare", cmd.getOptionValue( STATISTICS_REPORT_COMPARE_OPTION ) );
-
-			attributes.put( "abort", cmd.getOptionValue( ABORT_ONGOING_REQUESTS_OPTION ) );
-
-			attributes.put( "includeSummary", cmd.hasOption( STATISTICS_REPORT_INCLUDE_SUMMARY_OPTION ) );
-
-			attributes.put( "retainZoom", cmd.hasOption( RETAIN_SAVED_ZOOM_LEVELS ) );
-
-			command = new ResourceGroovyCommand( "/RunTest.groovy", attributes );
+			new Thread( task ).start();
 		}
-		else if( cmd.hasOption( FILE_OPTION ) )
+
+		protected LoadUILauncher createLauncher( String[] args )
 		{
-			command = new FileGroovyCommand( new File( cmd.getOptionValue( FILE_OPTION ) ), attributes );
+			return new LoadUICommandLineLauncher( args );
 		}
-		else
+
+		@Override
+		public void stop() throws Exception
 		{
-			printUsageAndQuit();
+			launcher.framework.getBundleContext().getBundle( 0 ).stop();
 		}
-	}
-
-	@Override
-	protected void start()
-	{
-		super.start();
-
-		if( command != null )
-			framework.getBundleContext().registerService( GroovyCommand.class.getName(), command, null );
 	}
 }

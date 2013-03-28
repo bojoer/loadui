@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.eviware.loadui.ui.fx.views.inspector.InspectorView?>
+
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.geometry.Insets?>
+<?import java.net.URL?>
+<?import com.eviware.loadui.ui.fx.views.window.MainWindowView?>
+<?import com.eviware.loadui.ui.fx.control.NotificationPanel?>
+
+<fx:root type="javafx.scene.layout.StackPane" styleClass="loadui-main-window holds-notification-panel" xmlns:fx="http://javafx.com/fxml">
+	<stylesheets>
+		<URL value="@MainWindowView.css" />
+	</stylesheets>
+	<StackPane fx:id="container" />
+	<InspectorView fx:id="inspectorView" StackPane.alignment="bottom_center">
+		<StackPane.margin>
+			<Insets top="100" />
+		</StackPane.margin>
+	</InspectorView>
+	<MenuButton id="mainButton" fx:id="mainButton" styleClass="main-button" StackPane.alignment="top_left">
+		<items>
+			<MenuItem id="about" text="About" onAction="#about" />
+			<MenuItem id="feedback" text="Give Feedback" onAction="#feedback" />
+			<SeparatorMenuItem />
+			<MenuItem id="settings" text="Settings" onAction="#settings" />
+			<MenuItem id="systemProperties" text="System Properties" onAction="#systemProperties" />
+		</items>
+	</MenuButton>
+	<NotificationPanel fx:id="notificationPanel" StackPane.alignment="top_center" />
+</fx:root>

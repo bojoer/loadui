@@ -1,12 +1,12 @@
 /*
- * Copyright 2011 SmartBear Software
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -33,9 +33,9 @@ public class ConnectionRegistry implements Releasable
 {
 	private final DataSourceProvider dsProvider;
 
-	private final Map<String, DataSource> dataSourceMap = new HashMap<String, DataSource>();
+	private final Map<String, DataSource> dataSourceMap = new HashMap<>();
 
-	private final Map<String, Connection> connectionMap = new HashMap<String, Connection>();
+	private final Map<String, Connection> connectionMap = new HashMap<>();
 
 	public ConnectionRegistry( DataSourceProvider dsProvider )
 	{
@@ -64,7 +64,7 @@ public class ConnectionRegistry implements Releasable
 	public void release( String dbName )
 	{
 		// release all connections to the database
-		ArrayList<String> connectionsToClose = new ArrayList<String>();
+		ArrayList<String> connectionsToClose = new ArrayList<>();
 		Iterator<String> keys = connectionMap.keySet().iterator();
 		while( keys.hasNext() )
 		{

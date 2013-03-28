@@ -31,7 +31,7 @@ import com.eviware.loadui.api.statistics.ProjectExecutionManager
 import com.eviware.loadui.api.reporting.ReportingManager
 import com.eviware.loadui.util.BeanInjector
 import com.eviware.loadui.util.FormattingUtils
-import com.eviware.loadui.util.charting.LineChartUtils
+import com.eviware.loadui.ui.fx.views.analysis.reporting.LineChartUtils
 import com.google.common.io.Files
 
 def log = log //Needed for agentMessageListener to be able to reference log.
@@ -116,22 +116,12 @@ log.info "Loading Project: {}", projectFile.absolutePath
 projectRef.enabled = true
 def project = projectRef.project
 
-//def summaryExported = 0
-//def summaryExportListener = new EventHandler<BaseEvent>() {
-//	public void handleEvent( BaseEvent event ) {
-//		if( ProjectItem.SUMMARY_EXPORTED == event.key ) {
-//			summaryExported++
-//		}
-//	}
-//}
-//project.addEventListener( BaseEvent, summaryExportListener )
-
 //Get the target
 def target = testCase ? project.getSceneByLabel( testCase ) : project
 if( !target ) {
-	log.error "TestCase '${testCase}' doesn't exist in Project '${project.label}'"
+	log.error "Scenario '${testCase}' doesn't exist in Project '${project.label}'"
 	workspace?.release()
-	return
+	return 1
 }
 
 //Set limits
@@ -143,7 +133,7 @@ if( limits ) {
 		} catch( e ) {
 			log.error( "Error setting limits:", e )
 			workspace?.release()
-			return
+			return 1
 		}
 	}
 }
@@ -169,9 +159,9 @@ if( agents ) {
 			for( tcLabel in tcs ) {
 				def tc = project.getSceneByLabel( tcLabel )
 				if( tc == null ) {
-					log.error "TestCase '${tcLabel}' doesn't exist in Project '${project.label}'"
+					log.error "Scenario '${tcLabel}' doesn't exist in Project '${project.label}'"
 					workspace?.release()
-					return
+					return 1
 				}
 				agentMessageListener[agent] = tc
 				project.assignScene( tc, agent )
@@ -206,7 +196,7 @@ if( !workspace.localMode ) {
 		if( System.currentTimeMillis() > timeout ) {
 			log.error "Agents not connectable: ${notReady}"
 			workspace?.release()
-			return false
+			return 1
 		}
 		sleep 500
 		notReady.removeAll { it.ready }
@@ -215,13 +205,13 @@ if( !workspace.localMode ) {
 
 // wait until all test cases on all agents are ready
 if( !agentMessageListener.testCasesReady ) { 
-	log.info "Awaiting remote TestCase initialization..."
+	log.info "Awaiting remote Scenario initialization..."
 	def timeout = System.currentTimeMillis() + 60000
 	while( !agentMessageListener.testCasesReady ) {
 		if( System.currentTimeMillis() >= timeout ) {
-			log.error "Some TestCases not initialized during timeout period. Program will exit"
+			log.error "Some Scenarios not initialized during timeout period. Program will exit"
 			workspace?.release()
-			return
+			return 1
 		}
 		sleep 500
 	}
@@ -245,7 +235,7 @@ log.info """
 ------------------------------------
  RUNNING TEST
  TARGET ${target.label}
- LIMITS Time: ${FormattingUtils.formatTime(target.getLimit(CanvasItem.TIMER_COUNTER))} Samples: ${displayLimit(target.getLimit(CanvasItem.SAMPLE_COUNTER))} Failures: ${displayLimit(target.getLimit(CanvasItem.FAILURE_COUNTER))}
+ LIMITS Time: ${FormattingUtils.formatTime(target.getLimit(CanvasItem.TIMER_COUNTER))} Requests: ${displayLimit(target.getLimit(CanvasItem.SAMPLE_COUNTER))} Failures: ${displayLimit(target.getLimit(CanvasItem.FAILURE_COUNTER))}
 ------------------------------------
 
 """
@@ -263,19 +253,13 @@ def failures = target.getCounter( CanvasItem.FAILURE_COUNTER )
 
 //Monitor
 while( testExecution.state != TestState.COMPLETED ) {
-	log.info "Time: ${FormattingUtils.formatTime(time.value)} Samples: ${samples.value} Failures: ${failures.value}"
+	log.info "Time: ${FormattingUtils.formatTime(time.value)} Requests: ${samples.value} Failures: ${failures.value}"
 	sleep 1000
 }
 
-//Wait for reports to be generated and saved (SUMMARY_EXPORTED is fired once when the summary is saved to the execution, then once again once the summary has been exported, but only if it should be exported).
-//while( summaryExported < ( project.saveReport ? 2 : 1 ) ) {
-//	sleep 1000
-//	log.info 'Waiting for summary generation to complete...'
-//}
-
 //Save Statistics report
 if( statisticPages != null && project.reportFolder ) {
-	def pages = statisticPages.empty ? project.statisticPages.children : project.statisticPages.children.findAll { statisticPages.contains( it.title ) }
+	def pages = statisticPages.empty ? project.statisticPages.children : project.statisticPages.children.findAll { statisticPages.contains( it.label ) }
 	if( !retainZoom ) {
 		for( page in pages ) {
 			for( chartGroup in page.children ) {
@@ -312,7 +296,7 @@ log.info """
 
 ------------------------------------
  TEST EXECUTION COMPLETED
- FINAL RESULTS: ${FormattingUtils.formatTime(time.value)} Samples: ${samples.value} Failures: ${failures.value}
+ FINAL RESULTS: ${FormattingUtils.formatTime(time.value)} Requests: ${samples.value} Failures: ${failures.value}
 ------------------------------------
 
 """
@@ -322,7 +306,6 @@ def success = project.getLimit( CanvasItem.FAILURE_COUNTER ) == -1 || project.ge
 log.info "Shutting down..."
 sleep 1000
 
-project.removeEventListener( BaseEvent, summaryExportListener )
 project.release()
 
 workspace.removeEventListener( CollectionEvent, workspaceCollectionListener )

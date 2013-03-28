@@ -1,12 +1,12 @@
 /*
- * Copyright 2011 SmartBear Software
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -32,7 +32,7 @@ import com.google.common.collect.Iterables;
 
 public class StatisticImpl<T extends Number> implements Statistic<T>
 {
-	private final ListenableValueSupport<T> listenableValueSupport = new ListenableValueSupport<T>();
+	private final ListenableValueSupport<T> listenableValueSupport = new ListenableValueSupport<>();
 	private final EntryListener entryListener = new EntryListener();
 	private final ExecutionManager manager;
 	private final Class<T> type;
@@ -109,7 +109,7 @@ public class StatisticImpl<T extends Number> implements Statistic<T>
 					@SuppressWarnings( "unchecked" )
 					public DataPoint<T> apply( Entry entry )
 					{
-						return new DataPointImpl<T>( entry.getTimestamp(), ( T )entry.getValue( name ) );
+						return new DataPointImpl<>( entry.getTimestamp(), ( T )entry.getValue( name ) );
 					}
 				} );
 	}

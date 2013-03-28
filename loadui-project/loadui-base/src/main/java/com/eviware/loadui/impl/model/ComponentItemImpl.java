@@ -1,12 +1,12 @@
 /*
- * Copyright 2011 SmartBear Software
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -69,8 +69,8 @@ import com.eviware.loadui.config.ComponentItemConfig;
 import com.eviware.loadui.impl.counter.CounterSupport;
 import com.eviware.loadui.impl.counter.RemoteAggregatedCounterSupport;
 import com.eviware.loadui.impl.model.DummyTerminal.AgentTerminal;
-import com.eviware.loadui.impl.model.DummyTerminal.RemoteTerminal;
 import com.eviware.loadui.impl.model.DummyTerminal.ControllerTerminal;
+import com.eviware.loadui.impl.model.DummyTerminal.RemoteTerminal;
 import com.eviware.loadui.impl.statistics.StatisticHolderSupport;
 import com.eviware.loadui.impl.terminal.InputTerminalImpl;
 import com.eviware.loadui.impl.terminal.OutputTerminalImpl;
@@ -410,6 +410,12 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		return statisticHolderSupport.getStatisticVariableNames();
 	}
 
+	@Override
+	public Collection<? extends StatisticVariable> getStatisticVariables()
+	{
+		return statisticHolderSupport.getStatisticVariables();
+	}
+
 	public void sendAgentMessage( AgentItem agent, TerminalMessage message )
 	{
 		if( agent.isReady() )
@@ -531,7 +537,7 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 
 	private class Context implements ComponentContext
 	{
-		private final List<EventHandlerRegistration<?>> handlerRegistrations = new ArrayList<EventHandlerRegistration<?>>();
+		private final List<EventHandlerRegistration<?>> handlerRegistrations = new ArrayList<>();
 
 		@Override
 		public InputTerminal createInput( String name, String label, String description )
@@ -693,14 +699,14 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		public <T extends EventObject> void addEventListener( Class<T> type, EventHandler<? super T> listener )
 		{
 			ComponentItemImpl.this.addEventListener( type, listener );
-			handlerRegistrations.add( new EventHandlerRegistration<T>( listener, type ) );
+			handlerRegistrations.add( new EventHandlerRegistration<>( listener, type ) );
 		}
 
 		@Override
 		public <T extends EventObject> void removeEventListener( Class<T> type, EventHandler<? super T> listener )
 		{
 			ComponentItemImpl.this.removeEventListener( type, listener );
-			handlerRegistrations.remove( new EventHandlerRegistration<T>( listener, type ) );
+			handlerRegistrations.remove( new EventHandlerRegistration<>( listener, type ) );
 		}
 
 		@Override
@@ -874,7 +880,7 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		@Override
 		public Collection<DualTerminal> getAgentTerminals()
 		{
-			List<DualTerminal> terminals = new ArrayList<DualTerminal>();
+			List<DualTerminal> terminals = new ArrayList<>();
 			if( isController() && getCanvas() instanceof SceneItem )
 				for( AgentItem agent : getCanvas().getProject().getAgentsAssignedTo( ( SceneItem )getCanvas() ) )
 					terminals.add( getAgentTerminal( agent ) );
@@ -1039,6 +1045,8 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 				break;
 			case POST_STOP :
 				terminalsEnabled = false;
+				break;
+			default :
 				break;
 			}
 		}

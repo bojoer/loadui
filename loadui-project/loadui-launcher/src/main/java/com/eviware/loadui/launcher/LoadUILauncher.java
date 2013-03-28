@@ -1,12 +1,12 @@
 /*
- * Copyright 2011 SmartBear Software
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -22,16 +22,21 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintStream;
 import java.io.RandomAccessFile;
 import java.math.BigInteger;
 import java.nio.channels.FileLock;
 import java.nio.channels.OverlappingFileLockException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
+
+import javafx.application.Application;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -44,12 +49,13 @@ import org.apache.felix.main.AutoProcessor;
 import org.apache.felix.main.Main;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
-import org.osgi.framework.Constants;
 import org.osgi.framework.launch.Framework;
 
+import com.eviware.loadui.launcher.LoadUICommandLineLauncher.CommandApplication;
+import com.eviware.loadui.launcher.LoadUIFXLauncher.FXApplication;
 import com.eviware.loadui.launcher.api.OSGiUtils;
-import com.eviware.loadui.launcher.api.SplashController;
 import com.eviware.loadui.launcher.util.BndUtils;
+import com.eviware.loadui.launcher.util.ErrorHandler;
 
 /**
  * Starts an embedded OSGi Runtime (Felix) with all the required JavaFX packages
@@ -57,13 +63,14 @@ import com.eviware.loadui.launcher.util.BndUtils;
  * 
  * @author dain.nilsson
  */
-public class LoadUILauncher
+public abstract class LoadUILauncher
 {
-	private static final String LOADUI_HOME = "loadui.home";
-	private static final String LOADUI_NAME = "loadui.name";
-	private static final String LOADUI_BUILD_DATE = "loadui.build.date";
-	private static final String LOADUI_BUILD_NUMBER = "loadui.build.number";
-	private static final String ORG_OSGI_FRAMEWORK_SYSTEM_PACKAGES_EXTRA = "org.osgi.framework.system.packages.extra";
+	protected static final String LOADUI_HOME = "loadui.home";
+	protected static final String LOADUI_NAME = "loadui.name";
+	protected static final String LOADUI_BUILD_DATE = "loadui.build.date";
+	protected static final String LOADUI_BUILD_NUMBER = "loadui.build.number";
+
+	protected static final String ORG_OSGI_FRAMEWORK_SYSTEM_PACKAGES_EXTRA = "org.osgi.framework.system.packages.extra";
 	protected static final String NOFX_OPTION = "nofx";
 	protected static final String SYSTEM_PROPERTY_OPTION = "D";
 	protected static final String HELP_OPTION = "h";
@@ -71,59 +78,56 @@ public class LoadUILauncher
 
 	protected final static Logger log = Logger.getLogger( LauncherWatchdog.class.getName() );
 
+	protected final static File WORKING_DIR = new File( System.getProperty( "loadui.working", "." ) ).getAbsoluteFile();
+
 	public static void main( String[] args )
 	{
-		System.setSecurityManager( null );
+		for( String arg : args )
+		{
+			System.out.println( "LoadUILauncher arg: " + arg );
+			if( arg.contains( "cmd" ) )
+			{
+				List<String> argList = new ArrayList<>( Arrays.asList( args ) );
+				argList.remove( arg );
+				String[] newArgs = argList.toArray( new String[argList.size()] );
+				Application.launch( CommandApplication.class, newArgs );
+				return;
+			}
+		}
 
-		LoadUILauncher launcher = new LoadUILauncher( args );
-		launcher.init();
-		launcher.start();
+		Application.launch( FXApplication.class, args );
 
-		new Thread( new LauncherWatchdog( launcher.framework, 20000 ), "loadUI Launcher Watchdog" ).start();
+		// Is the below just old legacy code from JavaFX 1?
+
+		//		System.setSecurityManager( null );
+		//
+		//		LoadUILauncher launcher = new LoadUILauncher( args );
+		//		launcher.init();
+		//		launcher.start();
+		//
+		//		new Thread( new LauncherWatchdog( launcher.framework, 20000 ), "loadUI Launcher Watchdog" ).start();
 	}
 
 	private static void loadPropertiesFile()
 	{
 		Properties systemProperties = new Properties();
-		FileInputStream fis = null;
-		try
+		try (FileInputStream fis = new FileInputStream( "conf" + File.separator + "system.properties" ))
 		{
-			fis = new FileInputStream( "conf" + File.separator + "system.properties" );
 			systemProperties.load( fis );
 			for( Entry<Object, Object> entry : systemProperties.entrySet() )
 				System.setProperty( ( String )entry.getKey(), ( String )entry.getValue() );
-		}
-		catch( FileNotFoundException e )
-		{
-			// Ignore
 		}
 		catch( IOException e )
 		{
 			// Ignore
 		}
-		finally
-		{
-			if( fis != null )
-			{
-				try
-				{
-					fis.close();
-				}
-				catch( IOException e )
-				{
-					e.printStackTrace();
-				}
-			}
-		}
 	}
 
-	protected Framework framework;
+	protected static Framework framework;
 	protected final Properties configProps;
 	protected final String[] argv;
 	private final Options options;
 	private final CommandLine cmd;
-
-	private boolean nofx = false;
 
 	/**
 	 * Initiates and starts the OSGi runtime.
@@ -131,13 +135,13 @@ public class LoadUILauncher
 	public LoadUILauncher( String[] args )
 	{
 		argv = args;
-		
+
 		//Fix for Protection!
 		String username = System.getProperty( "user.name" );
 		System.setProperty( "user.name.original", username );
 		System.setProperty( "user.name", username.toLowerCase() );
 
-		File externalFile = new File( "res/buildinfo.txt" );
+		File externalFile = new File( WORKING_DIR, "res/buildinfo.txt" );
 
 		//Workaround for some versions of Java 6 which have a known SSL issue
 		String versionString = System.getProperty( "java.version", "0.0.0_00" );
@@ -160,10 +164,8 @@ public class LoadUILauncher
 
 		if( externalFile.exists() )
 		{
-			InputStream is = null;
-			try
+			try (InputStream is = new FileInputStream( externalFile ))
 			{
-				is = new FileInputStream( externalFile );
 				Properties buildinfo = new Properties();
 				buildinfo.load( is );
 				System.setProperty( LOADUI_BUILD_NUMBER, buildinfo.getProperty( "build.number" ) );
@@ -173,20 +175,6 @@ public class LoadUILauncher
 			catch( IOException e )
 			{
 				e.printStackTrace();
-			}
-			finally
-			{
-				try
-				{
-					if( is != null )
-					{
-						is.close();
-					}
-				}
-				catch( IOException e )
-				{
-					e.printStackTrace();
-				}
 			}
 		}
 		else
@@ -206,7 +194,7 @@ public class LoadUILauncher
 		{
 			System.err.print( "Error parsing commandline args: " + e.getMessage() + "\n" );
 			HelpFormatter formatter = new HelpFormatter();
-			formatter.printHelp( "loadUILauncher", options );
+			formatter.printHelp( "", options );
 
 			exitInError();
 			throw new RuntimeException();
@@ -218,6 +206,45 @@ public class LoadUILauncher
 		}
 
 		initSystemProperties();
+
+		String sysOutFilePath = System.getProperty( "system.out.file" );
+		if( sysOutFilePath != null )
+		{
+			File sysOutFile = new File( sysOutFilePath );
+			if( !sysOutFile.exists() )
+			{
+				try
+				{
+					sysOutFile.createNewFile();
+				}
+				catch( IOException e )
+				{
+					e.printStackTrace();
+				}
+			}
+
+			try
+			{
+				System.err.println( "Writing stdout and stderr to file:" + sysOutFile.getAbsolutePath() );
+
+				final PrintStream outStream = new PrintStream( sysOutFile );
+				System.setOut( outStream );
+				System.setErr( outStream );
+
+				Runtime.getRuntime().addShutdownHook( new Thread( new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						outStream.close();
+					}
+				} ) );
+			}
+			catch( FileNotFoundException e )
+			{
+				throw new RuntimeException( e );
+			}
+		}
 
 		System.out.println( "Launching " + System.getProperty( LOADUI_NAME ) + " Build: "
 				+ System.getProperty( LOADUI_BUILD_NUMBER, "[internal]" ) + " "
@@ -267,12 +294,7 @@ public class LoadUILauncher
 		{
 			framework.init();
 			AutoProcessor.process( configProps, framework.getBundleContext() );
-
-			if( nofx )
-			{
-				startAllNonFxBundles();
-			}
-
+			beforeBundlesStart( framework.getBundleContext().getBundles() );
 			loadExternalJarsAsBundles();
 		}
 		catch( BundleException ex )
@@ -281,30 +303,9 @@ public class LoadUILauncher
 		}
 	}
 
-	private void startAllNonFxBundles()
-	{
-		Pattern fxPattern = Pattern.compile( "^com\\.eviware\\.loadui\\.(\\w+[.-])*((fx-interface)|(cssbox-browser)).*$" );
-		for( Bundle bundle : framework.getBundleContext().getBundles() )
-		{
-			String bundleName = bundle.getSymbolicName();
-			if( bundle.getHeaders().get( Constants.FRAGMENT_HOST ) == null
-					&& ( bundleName == null || !fxPattern.matcher( bundleName ).find() ) )
-			{
-				try
-				{
-					bundle.start();
-				}
-				catch( Exception e )
-				{
-					e.printStackTrace();
-				}
-			}
-		}
-	}
-
 	private void loadExternalJarsAsBundles()
 	{
-		File source = new File( "." + File.separator + "ext" );
+		File source = new File( WORKING_DIR, "ext" );
 		if( source.isDirectory() )
 		{
 			for( File ext : source.listFiles( new FilenameFilter()
@@ -344,11 +345,20 @@ public class LoadUILauncher
 				if( !lockFile.createNewFile() )
 					throw new RuntimeException( "Unable to create file: " + lockFile.getAbsolutePath() );
 
-			FileLock lock = new RandomAccessFile( lockFile, "rw" ).getChannel().tryLock();
-			if( lock == null )
+			try
 			{
-				System.err.println( "An instance of loadUI is already running!" );
-				exitInError();
+				@SuppressWarnings( "resource" )
+				RandomAccessFile randomAccessFile = new RandomAccessFile( lockFile, "rw" );
+				FileLock lock = randomAccessFile.getChannel().tryLock();
+				if( lock == null )
+				{
+					ErrorHandler.promptRestart( "An instance of LoadUI is already running!" );
+					exitInError();
+				}
+			}
+			catch( Exception e )
+			{
+				e.printStackTrace();
 			}
 		}
 		catch( OverlappingFileLockException e )
@@ -363,7 +373,7 @@ public class LoadUILauncher
 		}
 	}
 
-	protected final void exitInError()
+	protected final static void exitInError()
 	{
 		try
 		{
@@ -403,26 +413,24 @@ public class LoadUILauncher
 		Options newOptions = new Options();
 		newOptions.addOption( SYSTEM_PROPERTY_OPTION, true, "Sets system property with name=value" );
 		newOptions.addOption( NOFX_OPTION, false, "Do not include or require the JavaFX runtime" );
+		newOptions.addOption( "agent", false, "Run in Agent mode" );
 		newOptions.addOption( HELP_OPTION, "help", false, "Prints this message" );
 		newOptions.addOption( IGNORE_CURRENTLY_RUNNING_OPTION, false, "Disable lock file" );
 
 		return newOptions;
 	}
 
-	protected void processCommandLine( CommandLine cmdLine )
+	protected abstract void processCommandLine( CommandLine cmdLine );
+
+	/**
+	 * Allows sub-classes to check the installed bundles before they are started.
+	 * Default action does nothing.
+	 * 
+	 * @param bundles
+	 */
+	protected void beforeBundlesStart( Bundle[] bundles )
 	{
-		if( !cmdLine.hasOption( NOFX_OPTION ) )
-		{
-			System.out.println( "Opening splash..." );
-			SplashController.openSplash();
-			addJavaFxPackages();
-		}
-		else
-		{
-			//Do not auto-load any loadui JavaFX bundles
-			configProps.setProperty( "felix.auto.deploy.action", "install" );
-			nofx = true;
-		}
+		// no action
 	}
 
 	protected final void initSystemProperties()
@@ -441,9 +449,8 @@ public class LoadUILauncher
 
 		setDefaultSystemProperty( "loadui.instance", "controller" );
 
-		setDefaultSystemProperty( "sun.java2d.noddraw", "true" );
-
 		File loaduiHome = new File( System.getProperty( LOADUI_HOME ) );
+		System.out.println( "LoadUI Home: " + loaduiHome.getAbsolutePath() );
 		if( !loaduiHome.isDirectory() )
 			if( !loaduiHome.mkdirs() )
 				throw new RuntimeException( "Unable to create directory: " + loaduiHome.getAbsolutePath() );
@@ -453,11 +460,9 @@ public class LoadUILauncher
 		//Remove the old expired keystore, if it exists
 		if( keystore.exists() )
 		{
-			FileInputStream kis = null;
-			try
+			try (FileInputStream kis = new FileInputStream( keystore ))
 			{
 				MessageDigest digest = MessageDigest.getInstance( "MD5" );
-				kis = new FileInputStream( keystore );
 				byte[] buffer = new byte[8192];
 				int read = 0;
 				while( ( read = kis.read( buffer ) ) > 0 )
@@ -467,37 +472,13 @@ public class LoadUILauncher
 				String hash = new BigInteger( 1, digest.digest() ).toString( 16 );
 				if( "10801d8ea0f0562aa3ae22dcea258339".equals( hash ) )
 				{
-					kis.close();
-					kis = null;
 					if( !keystore.delete() )
 						System.err.println( "Could not delete old keystore: " + keystore.getAbsolutePath() );
 				}
 			}
-			catch( NoSuchAlgorithmException e )
+			catch( NoSuchAlgorithmException | IOException e )
 			{
 				e.printStackTrace();
-			}
-			catch( FileNotFoundException e )
-			{
-				e.printStackTrace();
-			}
-			catch( IOException e )
-			{
-				e.printStackTrace();
-			}
-			finally
-			{
-				try
-				{
-					if( kis != null )
-					{
-						kis.close();
-					}
-				}
-				catch( IOException e )
-				{
-					e.printStackTrace();
-				}
 			}
 		}
 
@@ -515,11 +496,9 @@ public class LoadUILauncher
 
 	private void createKeyStore( File keystore )
 	{
-		InputStream is = getClass().getResourceAsStream( "/keystore.jks" );
-		FileOutputStream fos = null;
-		try
+		try (FileOutputStream fos = new FileOutputStream( keystore );
+				InputStream is = getClass().getResourceAsStream( "/keystore.jks" ))
 		{
-			fos = new FileOutputStream( keystore );
 			byte buf[] = new byte[1024];
 			int len;
 			while( ( len = is.read( buf ) ) > 0 )
@@ -529,37 +508,14 @@ public class LoadUILauncher
 		catch( Exception e )
 		{
 			e.printStackTrace();
-		}
-		finally
-		{
-			try
-			{
-				if( is != null )
-					is.close();
-			}
-			catch( IOException e )
-			{
-				e.printStackTrace();
-			}
-			try
-			{
-				if( fos != null )
-					fos.close();
-			}
-			catch( IOException e )
-			{
-				e.printStackTrace();
-			}
 		}
 	}
 
 	private void createTrustStore( File truststore )
 	{
-		InputStream is = getClass().getResourceAsStream( "/certificate.pem" );
-		FileOutputStream fos = null;
-		try
+		try (FileOutputStream fos = new FileOutputStream( truststore );
+				InputStream is = getClass().getResourceAsStream( "/certificate.pem" ))
 		{
-			fos = new FileOutputStream( truststore );
 			byte buf[] = new byte[1024];
 			int len;
 			while( ( len = is.read( buf ) ) > 0 )
@@ -570,79 +526,13 @@ public class LoadUILauncher
 		{
 			e.printStackTrace();
 		}
-		finally
-		{
-			try
-			{
-				if( is != null )
-					is.close();
-			}
-			catch( IOException e )
-			{
-				e.printStackTrace();
-			}
-			try
-			{
-				if( fos != null )
-					fos.close();
-			}
-			catch( IOException e )
-			{
-				e.printStackTrace();
-			}
-		}
 	}
 
-	protected void setDefaultSystemProperty( String property, String value )
+	protected static void setDefaultSystemProperty( String property, String value )
 	{
 		if( System.getProperty( property ) == null )
 		{
 			System.setProperty( property, value );
-		}
-	}
-
-	protected void addJavaFxPackages()
-	{
-		try
-		{
-			Class.forName( "javafx.lang.FX" );
-		}
-		catch( ClassNotFoundException e )
-		{
-			return;
-		}
-
-		InputStream is = getClass().getResourceAsStream( "/packages-extra.txt" );
-		if( is != null )
-		{
-			try
-			{
-				StringBuilder out = new StringBuilder();
-				byte[] b = new byte[4096];
-				for( int n; ( n = is.read( b ) ) != -1; )
-					out.append( new String( b, 0, n ) );
-
-				String extra = configProps.getProperty( ORG_OSGI_FRAMEWORK_SYSTEM_PACKAGES_EXTRA, "" );
-				if( !extra.isEmpty() )
-					out.append( "," ).append( extra );
-
-				configProps.setProperty( ORG_OSGI_FRAMEWORK_SYSTEM_PACKAGES_EXTRA, out.toString() );
-			}
-			catch( IOException e )
-			{
-				e.printStackTrace();
-			}
-			finally
-			{
-				try
-				{
-					is.close();
-				}
-				catch( IOException e )
-				{
-					e.printStackTrace();
-				}
-			}
 		}
 	}
 }

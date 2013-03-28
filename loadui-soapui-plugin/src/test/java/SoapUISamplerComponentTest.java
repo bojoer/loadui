@@ -1,3 +1,18 @@
+/*
+ * Copyright 2013 SmartBear Software
+ * 
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * http://ec.europa.eu/idabc/eupl
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the Licence for the specific language governing permissions and limitations
+ * under the Licence.
+ */
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -11,14 +26,12 @@ import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.net.URISyntaxException;
-import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Matchers;
 
@@ -201,29 +214,29 @@ public class SoapUISamplerComponentTest
 		assertThat( message.get( "Status" ), is( ( Object )Boolean.TRUE ) );
 	}
 
-	@Test
-	public void disablingTestSteps_should_work() throws InterruptedException, URISyntaxException, ExecutionException,
-			TimeoutException
-	{
-		setTestCase( "soapUI-loadUI-plugin-project.xml", "TestSuite 1", "TestCase 4" );
-		BlockingQueue<TerminalMessage> results = ComponentTestUtils.getMessagesFrom( resultsTerminal );
-
-		sendSimpleTrigger();
-
-		TerminalMessage message = results.poll( 5, TimeUnit.SECONDS );
-
-		assertThat( message.get( "changedLastBy" ), is( ( Object )"Step1" ) );
-
-		runner.setTestStepIsDisabled( 0, true );
-		TestUtils.awaitEvents( component );
-
-		sendSimpleTrigger();
-
-		message = results.poll( 5, TimeUnit.SECONDS );
-
-		assertThat( message.get( "changedLastBy" ), is( ( Object )"never" ) );
-
-	}
+	//	@Test
+	//	public void disablingTestSteps_should_work() throws InterruptedException, URISyntaxException, ExecutionException,
+	//			TimeoutException
+	//	{
+	//		setTestCase( "soapUI-loadUI-plugin-project.xml", "TestSuite 1", "TestCase 4" );
+	//		BlockingQueue<TerminalMessage> results = ComponentTestUtils.getMessagesFrom( resultsTerminal );
+	//
+	//		sendSimpleTrigger();
+	//
+	//		TerminalMessage message = results.poll( 5, TimeUnit.SECONDS );
+	//
+	//		assertThat( message.get( "changedLastBy" ), is( ( Object )"Step1" ) );
+	//
+	//		runner.setTestStepIsDisabled( 0, true );
+	//		TestUtils.awaitEvents( component );
+	//
+	//		sendSimpleTrigger();
+	//
+	//		message = results.poll( 5, TimeUnit.SECONDS );
+	//
+	//		assertThat( message.get( "changedLastBy" ), is( ( Object )"never" ) );
+	//
+	//	}
 
 	@Test
 	public void propertiesInSettings_shouldOverride_testCaseProperties() throws InterruptedException,

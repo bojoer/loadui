@@ -1,12 +1,12 @@
 /*
- * Copyright 2011 SmartBear Software
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -26,7 +26,7 @@ import com.eviware.loadui.impl.statistics.db.table.TableBase;
 
 public class TableRegistry implements Releasable
 {
-	private final Map<String, TableBase> tableMap = new HashMap<String, TableBase>();
+	private final Map<String, TableBase> tableMap = new HashMap<>();
 
 	public void putAll( String dbName, List<TableBase> tableList )
 	{
@@ -48,7 +48,7 @@ public class TableRegistry implements Releasable
 
 	public List<TableBase> getAllTables( String dbName )
 	{
-		List<TableBase> result = new ArrayList<TableBase>();
+		List<TableBase> result = new ArrayList<>();
 		Iterator<String> keys = tableMap.keySet().iterator();
 		while( keys.hasNext() )
 		{

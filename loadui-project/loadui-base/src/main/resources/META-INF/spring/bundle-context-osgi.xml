@@ -3,60 +3,95 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
                       http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd">
-	
-	<osgi:reference interface="com.eviware.loadui.api.messaging.MessageEndpointProvider" id="messageEndpointProvider" cardinality="0..1" />
-	
-	<osgi:reference interface="com.eviware.loadui.api.statistics.store.ExecutionManager" id="executionManager" cardinality="0..1" />
-	
-	<osgi:service interface="com.eviware.loadui.api.messaging.BroadcastMessageEndpoint" ref="broadcastMessageEndpoint" />
-	
-	<osgi:service interface="com.eviware.loadui.api.addon.AddonRegistry" ref="addonRegistry" />
-	
-	<osgi:service interface="com.eviware.loadui.api.model.WorkspaceProvider" ref="workspaceProvider" />
-	
-	<osgi:service interface="com.eviware.loadui.api.component.ComponentRegistry" ref="componentRegistry" />
-	
-	<osgi:service interface="com.eviware.loadui.api.addressable.AddressableRegistry" ref="addressableRegistry" />
-	
-	<osgi:service interface="java.util.concurrent.ScheduledExecutorService" ref="scheduledExecutorService" />
-	
-	<osgi:service interface="com.eviware.loadui.api.property.PropertySynchronizer" ref="propertySynchronizer" />
-	
-	<osgi:service interface="org.springframework.core.convert.ConversionService" ref="conversionService" />
-	
-	<osgi:service interface="java.util.concurrent.ExecutorService" ref="executorService" />
-	
-	<osgi:service interface="com.eviware.loadui.api.dispatch.ExecutorManager" ref="executorManager" />
-	
-	<osgi:service interface="com.eviware.loadui.api.testevents.TestEventRegistry" ref="testEventRegistry" />
-	
-	<osgi:service interface="com.eviware.loadui.api.statistics.StatisticsManager" ref="statisticsManager" />
-	
-	<osgi:service interface="com.eviware.loadui.api.counter.CounterSynchronizer" ref="counterSynchronizer" />
-	
-	<osgi:service interface="com.eviware.loadui.api.statistics.model.chart.ChartViewProviderFactory" ref="chartViewProviderFactory" />
-	
-	<osgi:set id="statisticWriterFactories" interface="com.eviware.loadui.api.statistics.StatisticsWriterFactory"
+
+	<osgi:reference
+		interface="com.eviware.loadui.api.messaging.MessageEndpointProvider"
+		id="messageEndpointProvider" cardinality="0..1" />
+
+	<osgi:reference
+		interface="com.eviware.loadui.api.statistics.store.ExecutionManager"
+		id="executionManager" cardinality="0..1" />
+		
+	<osgi:reference
+		interface="com.eviware.loadui.api.messaging.MessageAwaiterFactory"
+		id="messageAwaiterFactory" cardinality="0..1" />
+		
+	<osgi:service
+		interface="com.eviware.loadui.api.messaging.BroadcastMessageEndpoint"
+		ref="broadcastMessageEndpoint" />
+
+	<osgi:service interface="com.eviware.loadui.api.addon.AddonRegistry"
+		ref="addonRegistry" />
+
+	<osgi:service interface="com.eviware.loadui.api.model.WorkspaceProvider"
+		ref="workspaceProvider" />
+
+	<osgi:service interface="com.eviware.loadui.api.component.ComponentRegistry"
+		ref="componentRegistry" />
+
+	<osgi:service interface="com.eviware.loadui.api.addressable.AddressableRegistry"
+		ref="addressableRegistry" />
+
+	<osgi:service interface="java.util.concurrent.ScheduledExecutorService"
+		ref="scheduledExecutorService" />
+
+	<osgi:service interface="com.eviware.loadui.api.property.PropertySynchronizer"
+		ref="propertySynchronizer" />
+
+	<osgi:service interface="org.springframework.core.convert.ConversionService"
+		ref="conversionService" />
+
+	<osgi:service interface="java.util.concurrent.ExecutorService"
+		ref="executorService" />
+
+	<osgi:service interface="com.eviware.loadui.api.dispatch.ExecutorManager"
+		ref="executorManager" />
+
+	<osgi:service interface="com.eviware.loadui.api.testevents.TestEventRegistry"
+		ref="testEventRegistry" />
+
+	<osgi:service interface="com.eviware.loadui.api.statistics.StatisticsManager"
+		ref="statisticsManager" />
+
+	<osgi:service interface="com.eviware.loadui.api.counter.CounterSynchronizer"
+		ref="counterSynchronizer" />
+
+	<osgi:service
+		interface="com.eviware.loadui.api.statistics.model.chart.ChartViewProviderFactory"
+		ref="chartViewProviderFactory" />
+
+	<osgi:set id="statisticWriterFactories"
+		interface="com.eviware.loadui.api.statistics.StatisticsWriterFactory"
 		cardinality="0..N">
 		<osgi:listener bind-method="registerStatisticsWriterFactory"
 			unbind-method="unregisterStatisticsWriterFactory" ref="statisticsManager" />
 	</osgi:set>
-	
-	<osgi:list id="testEventFactories" interface="com.eviware.loadui.api.testevents.TestEvent$Factory" cardinality="0..N">
-		<osgi:listener ref="testEventRegistry" bind-method="factoryAdded" unbind-method="factoryRemoved" />
+
+	<osgi:list id="testEventFactories"
+		interface="com.eviware.loadui.api.testevents.TestEvent$Factory"
+		cardinality="0..N">
+		<osgi:listener ref="testEventRegistry" bind-method="factoryAdded"
+			unbind-method="factoryRemoved" />
 	</osgi:list>
-	
-	<osgi:service ref="assertionAddonFactory" interface="com.eviware.loadui.api.addon.Addon$Factory" />
-	
-	<osgi:service ref="assertionFailureEventFactory" interface="com.eviware.loadui.api.testevents.TestEvent$Factory" />
-	
+
+	<osgi:service ref="assertionAddonFactory"
+		interface="com.eviware.loadui.api.addon.Addon$Factory" />
+
+	<osgi:service ref="assertionFailureEventFactory"
+		interface="com.eviware.loadui.api.testevents.TestEvent$Factory" />
+
 	<osgi:set id="addonFactories" interface="com.eviware.loadui.api.addon.Addon$Factory"
 		cardinality="0..N">
-		<osgi:listener bind-method="factoryAdded" unbind-method="factoryRemoved" ref="addonRegistry" />
+		<osgi:listener bind-method="factoryAdded" unbind-method="factoryRemoved"
+			ref="addonRegistry" />
 	</osgi:set>
-	
-	<osgi:service ref="sampleStatisticsWriter" interface="com.eviware.loadui.api.statistics.StatisticsWriterFactory" />
-	<osgi:service ref="throughputStatisticsWriter" interface="com.eviware.loadui.api.statistics.StatisticsWriterFactory" />
-	<osgi:service ref="counterStatisticsWriter" interface="com.eviware.loadui.api.statistics.StatisticsWriterFactory" />
-	<osgi:service ref="variableStatisticsWriter" interface="com.eviware.loadui.api.statistics.StatisticsWriterFactory" />	
+
+	<osgi:service ref="sampleStatisticsWriter"
+		interface="com.eviware.loadui.api.statistics.StatisticsWriterFactory" />
+	<osgi:service ref="throughputStatisticsWriter"
+		interface="com.eviware.loadui.api.statistics.StatisticsWriterFactory" />
+	<osgi:service ref="counterStatisticsWriter"
+		interface="com.eviware.loadui.api.statistics.StatisticsWriterFactory" />
+	<osgi:service ref="variableStatisticsWriter"
+		interface="com.eviware.loadui.api.statistics.StatisticsWriterFactory" />
 </beans>

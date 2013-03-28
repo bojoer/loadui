@@ -1,12 +1,12 @@
 /*
- * Copyright 2011 SmartBear Software
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -19,7 +19,10 @@ import java.util.Map;
 
 import com.eviware.loadui.api.layout.LayoutComponent;
 import com.eviware.loadui.util.MapUtils;
+import com.google.common.base.Objects;
+import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 
 public class LayoutComponentImpl implements LayoutComponent
 {
@@ -29,7 +32,7 @@ public class LayoutComponentImpl implements LayoutComponent
 
 	public LayoutComponentImpl( Map<String, ?> args )
 	{
-		properties = args;
+		properties = ImmutableMap.copyOf( Maps.filterKeys( args, Predicates.notNull() ) );
 	}
 
 	public LayoutComponentImpl( String constraints )
@@ -53,5 +56,11 @@ public class LayoutComponentImpl implements LayoutComponent
 	public boolean has( String key )
 	{
 		return properties.containsKey( key );
+	}
+
+	@Override
+	public String toString()
+	{
+		return Objects.toStringHelper( this ).addValue( properties ).toString();
 	}
 }

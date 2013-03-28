@@ -1,12 +1,12 @@
 /*
- * Copyright 2011 eviware software ab
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -26,6 +26,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.component.ComponentContext;
 import com.eviware.loadui.api.component.ComponentCreationException;
 import com.eviware.loadui.api.component.ComponentDescriptor;
@@ -114,8 +115,7 @@ public class LoadUIIntegrator
 		else
 			ext = "sh";
 
-		File pathFile = new File( "" );
-		String path = pathFile.getAbsolutePath();
+		String path = LoadUI.getWorkingDir().getAbsolutePath();
 		path += File.separator + "loadUI." + ext;
 
 		File f = new File( path );
@@ -135,7 +135,7 @@ public class LoadUIIntegrator
 		ComponentContext compContext = createRunner( context, SOAPUI_RUNNER_BASE_NAME );
 		createAndConnectComponents( context, compContext );
 
-		HashMap<String, String> soapuiRunnerProperties = new HashMap<String, String>();
+		HashMap<String, String> soapuiRunnerProperties = new HashMap<>();
 		soapuiRunnerProperties.put( SOAPUI_RUNNER_LABEL, compContext.getLabel() );
 		CanvasItem canvas = compContext.getCanvas();
 		if( canvas instanceof ProjectItem )
@@ -155,7 +155,7 @@ public class LoadUIIntegrator
 	public HashMap<String, String> createMockServiceRunner( HashMap<String, Object> context ) throws IOException
 	{
 		ComponentContext compContext = createRunner( context, MOCK_RUNNER_BASE_NAME );
-		HashMap<String, String> componentProperties = new HashMap<String, String>();
+		HashMap<String, String> componentProperties = new HashMap<>();
 		componentProperties.put( MOCKSERVICE_RUNNER_LABEL, compContext.getLabel() );
 		CanvasItem canvas = compContext.getCanvas();
 		if( canvas instanceof ProjectItem )
@@ -186,7 +186,7 @@ public class LoadUIIntegrator
 	private ComponentContext createRunner( HashMap<String, Object> context, String baseComponentName )
 			throws IOException
 	{
-		HashMap<String, String> soapuiRunnerProperties = new HashMap<String, String>();
+		HashMap<String, String> soapuiRunnerProperties = new HashMap<>();
 		String componentLabel = "";
 		String loadUIProjectName = ( String )context.get( LOADUI_PROJECT_NAME );
 		String loadUITestCaseName = ( String )context.get( LOADUI_TEST_CASE_NAME );
@@ -340,7 +340,7 @@ public class LoadUIIntegrator
 					STATISTICS_LABEL, STATISTICS_CREATE_NEW );
 		}
 
-		List<ComponentItem> assertionsList = new ArrayList<ComponentItem>();
+		List<ComponentItem> assertionsList = new ArrayList<>();
 		for( String assertion : getAssertionTypeKeys( context ) )
 		{
 			String i = assertion.substring( ASSERTION_TYPE.length() );
@@ -374,7 +374,7 @@ public class LoadUIIntegrator
 		// after creation is done connect all components to each other as
 		// specified
 		OutputTerminal statisticsOutputTerminal = null;
-		if( context.get( STATISTICS_TYPE ) != null )
+		if( statisticsComponentItem != null )
 		{
 			InputTerminal statisticsInputTerminal = ( InputTerminal )LoadUIUtils.findTerminalByName(
 					statisticsComponentItem.getTerminals(), AnalysisCategory.INPUT_TERMINAL );
@@ -427,7 +427,7 @@ public class LoadUIIntegrator
 		// LoadUIUtils.savesBackProperties( context, DELAY_PROPERTIES,
 		// delayComponentContext );
 		// }
-		if( context.get( TRIGGER_TYPE ) != null )
+		if( triggerComponentItem != null )
 		{
 			OutputTerminal triggerOutputTerminal = ( OutputTerminal )LoadUIUtils.findTerminalByName(
 					triggerComponentItem.getTerminals(), GeneratorCategory.TRIGGER_TERMINAL );
@@ -461,7 +461,7 @@ public class LoadUIIntegrator
 
 	private List<String> getAssertionTypeKeys( HashMap<String, Object> context )
 	{
-		List<String> assertions = new ArrayList<String>();
+		List<String> assertions = new ArrayList<>();
 		for( String key : context.keySet() )
 		{
 			if( key.contains( ASSERTION_TYPE ) )
@@ -472,7 +472,7 @@ public class LoadUIIntegrator
 		return assertions;
 	}
 
-	private ProjectRef findProject( String loadUIProjectName, Collection<? extends ProjectRef> projectList )
+	private static ProjectRef findProject( String loadUIProjectName, Collection<? extends ProjectRef> projectList )
 	{
 		if( projectList != null )
 		{
@@ -543,7 +543,8 @@ public class LoadUIIntegrator
 		return loadUITestCaseName;
 	}
 
-	private String createProjectName( Collection<? extends ProjectRef> projectList, HashMap<String, Object> context )
+	private static String createProjectName( Collection<? extends ProjectRef> projectList,
+			HashMap<String, Object> context )
 	{
 
 		int i = projectList.size();

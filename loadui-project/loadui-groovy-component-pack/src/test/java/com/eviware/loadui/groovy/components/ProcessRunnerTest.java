@@ -1,31 +1,35 @@
+/*
+ * Copyright 2013 SmartBear Software
+ * 
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * http://ec.europa.eu/idabc/eupl
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the Licence for the specific language governing permissions and limitations
+ * under the Licence.
+ */
 package com.eviware.loadui.groovy.components;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
 
 import java.io.File;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mockito.Matchers;
 
-import com.eviware.loadui.api.component.ComponentContext;
 import com.eviware.loadui.api.component.ComponentCreationException;
 import com.eviware.loadui.api.component.categories.RunnerCategory;
 import com.eviware.loadui.api.model.ComponentItem;
-import com.eviware.loadui.api.statistics.Statistic;
-import com.eviware.loadui.api.statistics.StatisticVariable;
-import com.eviware.loadui.api.statistics.StatisticVariable.Mutable;
 import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.groovy.util.GroovyComponentTestUtils;
-import com.eviware.loadui.util.component.ComponentTestUtils;
 import com.google.common.base.Joiner;
 
 public class ProcessRunnerTest
@@ -39,26 +43,10 @@ public class ProcessRunnerTest
 	}
 
 	@Before
-	@SuppressWarnings( "unchecked" )
 	public void setup() throws ComponentCreationException
 	{
 		GroovyComponentTestUtils.getDefaultBeanInjectorMocker();
-
-		ComponentItem componentSpy = spy( ComponentTestUtils.createComponentItem() );
-		ComponentContext contextSpy = spy( componentSpy.getContext() );
-		doReturn( contextSpy ).when( componentSpy ).getContext();
-
-		final Mutable mockVariable = mock( StatisticVariable.Mutable.class );
-		when( mockVariable.getStatisticHolder() ).thenReturn( componentSpy );
-		@SuppressWarnings( "rawtypes" )
-		final Statistic statisticMock = mock( Statistic.class );
-		when( statisticMock.getStatisticVariable() ).thenReturn( mockVariable );
-		when( mockVariable.getStatistic( anyString(), anyString() ) ).thenReturn( statisticMock );
-		doReturn( mockVariable ).when( contextSpy ).addStatisticVariable( anyString(), anyString(),
-				Matchers.<String> anyVararg() );
-		doReturn( mockVariable ).when( contextSpy ).addListenableStatisticVariable( anyString(), anyString(),
-				Matchers.<String> anyVararg() );
-		component = GroovyComponentTestUtils.createComponent( "Process Runner", componentSpy );
+		component = GroovyComponentTestUtils.createComponent( "Process Runner" );
 	}
 
 	@Test

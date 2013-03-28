@@ -1,3 +1,18 @@
+/*
+ * Copyright 2013 SmartBear Software
+ * 
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * http://ec.europa.eu/idabc/eupl
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the Licence for the specific language governing permissions and limitations
+ * under the Licence.
+ */
 package com.eviware.loadui.util.component;
 
 import static org.mockito.Matchers.any;
@@ -107,8 +122,10 @@ public class ComponentTestUtils
 
 	public static void setComponentBehavior( ComponentItem component, ComponentBehavior behavior )
 	{
-		assert component instanceof ComponentItemImpl;
-		( ( ComponentItemImpl )component ).setBehavior( behavior );
+		if( component instanceof ComponentItemImpl )
+		{
+			( ( ComponentItemImpl )component ).setBehavior( behavior );
+		}
 	}
 
 	public static void sendMessage( InputTerminal terminal, Map<String, ?> message )
@@ -143,7 +160,7 @@ public class ComponentTestUtils
 
 	public static BlockingQueue<TerminalMessage> getMessagesFrom( OutputTerminal terminal )
 	{
-		LinkedBlockingQueue<TerminalMessage> queue = new LinkedBlockingQueue<TerminalMessage>();
+		LinkedBlockingQueue<TerminalMessage> queue = new LinkedBlockingQueue<>();
 		terminal.addEventListener( TerminalMessageEvent.class, new MessageListener( queue ) );
 
 		return queue;

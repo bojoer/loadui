@@ -1,12 +1,12 @@
-/* 
- * Copyright 2011 SmartBear Software
+/*
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -16,6 +16,9 @@
 package com.eviware.loadui.impl.statistics.model.chart.line;
 
 import java.util.Arrays;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.statistics.Statistic;
 import com.eviware.loadui.api.statistics.StatisticHolder;
@@ -30,7 +33,9 @@ public class ChartLineSegment extends AbstractChartSegment implements LineSegmen
 	private final String statisticName;
 	private final String source;
 
-	private Statistic<?> statistic;
+	private Statistic<Number> statistic;
+
+	protected static final Logger log = LoggerFactory.getLogger( ChartLineSegment.class );
 
 	public ChartLineSegment( ChartLineChartView chart, String variableName, String statisticName, String source )
 	{
@@ -69,18 +74,32 @@ public class ChartLineSegment extends AbstractChartSegment implements LineSegmen
 		return statisticName;
 	}
 
+	@SuppressWarnings( "unchecked" )
 	@Override
-	public Statistic<?> getStatistic()
+	public Statistic<Number> getStatistic()
 	{
 		if( statistic == null )
 		{
 			final StatisticVariable statisticVariable = getStatisticHolder().getStatisticVariable( variableName );
 			if( statisticVariable != null )
 			{
-				statistic = statisticVariable.getStatistic( statisticName, source );
+
+				statistic = ( Statistic<Number> )statisticVariable.getStatistic( statisticName, source );
+
 			}
 		}
 
 		return statistic;
+
+	}
+
+	@Override
+	public void remove()
+	{
+		super.remove();
+		if( getChartView().getSegments().size() == 0 )
+		{
+			getChart().delete();
+		}
 	}
 }

@@ -1,5 +1,21 @@
+/*
+ * Copyright 2013 SmartBear Software
+ * 
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * http://ec.europa.eu/idabc/eupl
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the Licence for the specific language governing permissions and limitations
+ * under the Licence.
+ */
 package com.eviware.loadui.util.test;
 
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -51,6 +67,24 @@ public class TestUtils
 			EventFuture<BaseEvent> eventFuture = EventFuture.forKey( eventFirer, AWAIT_EVENTS );
 			eventFirer.fireEvent( new BaseEvent( eventFirer, AWAIT_EVENTS ) );
 			eventFuture.get( 5, TimeUnit.SECONDS );
+		}
+	}
+
+	public static void awaitCondition( Callable<Boolean> condition ) throws Exception
+	{
+		awaitCondition( condition, 5 );
+	}
+
+	public static void awaitCondition( Callable<Boolean> condition, int timeoutInSeconds ) throws Exception
+	{
+		long timeout = System.currentTimeMillis() + timeoutInSeconds * 1000;
+		while( !condition.call() )
+		{
+			Thread.sleep( 10 );
+			if( System.currentTimeMillis() > timeout )
+			{
+				throw new TimeoutException();
+			}
 		}
 	}
 }

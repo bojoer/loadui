@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.eviware.loadui.ui.fx.control.DetachableTab?>
+<?import com.eviware.loadui.ui.fx.views.scenario.ScenarioPlaybackPanel?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import java.net.URL?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.Separator?>
+
+<fx:root type="javafx.scene.layout.AnchorPane" minHeight="60"
+	maxHeight="60" styleClass="scenario-toolbar" xmlns:fx="http://javafx.com/fxml">
+	<stylesheets>
+		<URL value="@ScenarioToolbar.css" />
+	</stylesheets>
+	<VBox fillWidth="true" AnchorPane.topAnchor="0"
+		AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="0"
+		AnchorPane.leftAnchor="0" styleClass="scenario-background">
+		<ToolBar minHeight="40" /> 
+	</VBox>
+	<MenuButton fx:id="menuButton" maxWidth="240" styleClass="title"
+		AnchorPane.topAnchor="3" AnchorPane.leftAnchor="75">
+		<items>
+			<MenuItem fx:id="clone" id="clone" text="Rename" onAction="#renameScenario" />
+			<MenuItem fx:id="close" id="close" text="Close" onAction="#closeScenario" />
+		</items>
+	</MenuButton>
+	<HBox maxWidth="200" maxHeight="60" alignment="CENTER_RIGHT"
+		AnchorPane.topAnchor="3" AnchorPane.rightAnchor="12" spacing="9">
+		<Separator orientation="vertical"/>
+		<Button fx:id="openHelpPageButton" id="openHelpPageButton" styleClass="styleable-graphic, toolbar-button" onAction="#openHelpPage" />
+		<Button fx:id="closeScenarioButton" id="closeScenarioButton" styleClass="styleable-graphic, toolbar-button" onAction="#closeScenario" />
+	</HBox>
+</fx:root>

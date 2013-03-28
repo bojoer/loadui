@@ -1,12 +1,12 @@
 /*
- * Copyright 2011 SmartBear Software
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -24,10 +24,11 @@ import java.net.UnknownHostException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
@@ -36,6 +37,7 @@ import org.slf4j.LoggerFactory;
 import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.discovery.AgentDiscovery;
 import com.google.common.collect.Sets;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 public final class AgentDiscoveryImpl implements AgentDiscovery
 {
@@ -46,14 +48,9 @@ public final class AgentDiscoveryImpl implements AgentDiscovery
 	private final Thread listenerThread;
 	private final Set<AgentReference> agents = Sets.newCopyOnWriteArraySet();
 
-	private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor( new ThreadFactory()
-	{
-		@Override
-		public Thread newThread( Runnable r )
-		{
-			return new Thread( r, "loadUI Agent discovery" );
-		}
-	} );
+	private final ScheduledExecutorService executor = Executors
+			.newSingleThreadScheduledExecutor( new ThreadFactoryBuilder().setNameFormat( "loadUI Agent discovery" )
+					.setDaemon( true ).build() );
 
 	public AgentDiscoveryImpl()
 	{
@@ -144,17 +141,18 @@ public final class AgentDiscoveryImpl implements AgentDiscovery
 	@Override
 	public Collection<AgentReference> getDiscoveredAgents()
 	{
-		Iterator<AgentReference> it = agents.iterator();
 		long now = System.currentTimeMillis();
-		while( it.hasNext() )
+		List<AgentReference> refsToRemove = new LinkedList<>();
+		for( AgentReference ref : agents )
 		{
-			AgentRefImpl ref = ( AgentRefImpl )it.next();
-			if( ref.discoveryTime + 2000 * DELAY < now )
+			AgentRefImpl refImpl = ( AgentRefImpl )ref;
+			if( refImpl.discoveryTime + 2000 * DELAY < now )
 			{
 				log.debug( "Removing stale entry: {}", ref );
-				it.remove();
+				refsToRemove.add( ref );
 			}
 		}
+		agents.removeAll( refsToRemove );
 		return Collections.unmodifiableSet( agents );
 	}
 

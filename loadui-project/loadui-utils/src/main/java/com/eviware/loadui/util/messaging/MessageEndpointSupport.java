@@ -1,12 +1,12 @@
 /*
- * Copyright 2011 SmartBear Software
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -30,9 +30,9 @@ public class MessageEndpointSupport implements Releasable
 {
 	private final MessageEndpoint target;
 	private final MessageEndpoint source;
-	private final Map<MessageListener, MessageListenerProxy> messageProxies = new WeakHashMap<MessageListener, MessageListenerProxy>();
-	private final Map<ConnectionListener, ConnectionListenerProxy> connectionProxies = new WeakHashMap<ConnectionListener, ConnectionListenerProxy>();
-	private final Set<MessageListener> errorListeners = new HashSet<MessageListener>();
+	private final Map<MessageListener, MessageListenerProxy> messageProxies = new WeakHashMap<>();
+	private final Map<ConnectionListener, ConnectionListenerProxy> connectionProxies = new WeakHashMap<>();
+	private final Set<MessageListener> errorListeners = new HashSet<>();
 
 	public MessageEndpointSupport( MessageEndpoint wrapper, MessageEndpoint source )
 	{
@@ -47,7 +47,7 @@ public class MessageEndpointSupport implements Releasable
 
 	public void fireError( Throwable error )
 	{
-		for( MessageListener listener : new ArrayList<MessageListener>( errorListeners ) )
+		for( MessageListener listener : new ArrayList<>( errorListeners ) )
 			listener.handleMessage( MessageEndpoint.ERROR_CHANNEL, target, error );
 	}
 
@@ -100,7 +100,7 @@ public class MessageEndpointSupport implements Releasable
 		for( ConnectionListenerProxy listener : connectionProxies.values() )
 			source.removeConnectionListener( listener );
 		connectionProxies.clear();
-		for( MessageListenerProxy listener : messageProxies.values() )
+		for( MessageListenerProxy listener : new ArrayList<>( messageProxies.values() ) )
 			source.removeMessageListener( listener );
 		messageProxies.clear();
 		errorListeners.clear();

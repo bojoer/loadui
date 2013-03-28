@@ -12,8 +12,8 @@
 		<dependencySet>
 			<outputDirectory>bundle</outputDirectory>
 			<includes>
-				<include>com.eviware.loadui:loadui-agent-deps</include>
-				<include>com.eviware.soapui:loadui-soapui-plugin</include>
+				<include>com.eviware.loadui.pro:loadui-pro-agent-deps</include>
+				<include>com.eviware.loadui:loadui-soapui-plugin</include>
 			</includes>
 			<excludes>
 				<exclude>*:pom</exclude>
@@ -30,6 +30,7 @@
 			</includes>
 			<excludes>
 				<exclude>org.apache.felix:org.apache.felix.framework</exclude>
+				<exclude>com.oracle:javafx-runtime</exclude>
 			</excludes>
 			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
 			<useTransitiveDependencies>true</useTransitiveDependencies>

@@ -1,12 +1,12 @@
 /*
- * Copyright 2011 eviware software ab
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -42,11 +42,11 @@ public class SoapUIProjectLoader
 {
 	private static volatile SoapUIProjectLoader instance;
 
-	private final HashMap<WsdlProject, String> projectFiles = new HashMap<WsdlProject, String>();
-	private final HashMap<String, WsdlProject> loadedProjects = new HashMap<String, WsdlProject>();;
-	private final HashMap<ProjectSettings, Long> timestamps = new HashMap<ProjectSettings, Long>();
-	private final HashMap<WsdlProject, Integer> counters = new HashMap<WsdlProject, Integer>();
-	private final Set<ProjectUpdateListener> listeners = new HashSet<ProjectUpdateListener>();
+	private final HashMap<WsdlProject, String> projectFiles = new HashMap<>();
+	private final HashMap<String, WsdlProject> loadedProjects = new HashMap<>();;
+	private final HashMap<ProjectSettings, Long> timestamps = new HashMap<>();
+	private final HashMap<WsdlProject, Integer> counters = new HashMap<>();
+	private final Set<ProjectUpdateListener> listeners = new HashSet<>();
 	private static final Logger log = LoggerFactory.getLogger( SoapUIProjectLoader.class );
 
 	public static SoapUIProjectLoader getInstance()

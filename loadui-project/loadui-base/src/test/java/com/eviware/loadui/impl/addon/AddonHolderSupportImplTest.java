@@ -1,12 +1,12 @@
-/* 
- * Copyright 2011 SmartBear Software
+/*
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -15,11 +15,21 @@
  */
 package com.eviware.loadui.impl.addon;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.sameInstance;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+
 import java.util.Collection;
 import java.util.Collections;
 
 import org.hamcrest.collection.IsEmptyCollection;
-import org.junit.*;
+import org.junit.Before;
+import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
@@ -32,10 +42,6 @@ import com.eviware.loadui.api.addressable.AddressableRegistry;
 import com.eviware.loadui.config.AddonListConfig;
 import com.eviware.loadui.util.test.BeanInjectorMocker;
 import com.eviware.loadui.util.test.DefaultAddonRegistry;
-
-import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
-import static org.mockito.Mockito.*;
 
 public class AddonHolderSupportImplTest
 {
@@ -109,14 +115,14 @@ public class AddonHolderSupportImplTest
 		assertThat( context.getAddonItemSupports(),
 				is( ( Collection<AddonItem.Support> )Collections.singleton( addonItemSupport ) ) );
 
-		assertThat( config.getAddonArray().length, is( 1 ) );
+		assertThat( config.getAddonList().size(), is( 1 ) );
 		assertThat( config.getAddonArray( 0 ).getType(), is( MockAddon.class.getName() ) );
 
 		context.createAddonItemSupport();
 
 		assertThat( context.getAddonItemSupports().size(), is( 2 ) );
 
-		assertThat( config.getAddonArray().length, is( 2 ) );
+		assertThat( config.getAddonList().size(), is( 2 ) );
 	}
 
 	@SuppressWarnings( "unchecked" )
@@ -148,7 +154,7 @@ public class AddonHolderSupportImplTest
 
 		assertThat( context.getAddonItemSupports().size(), is( 2 ) );
 		assertThat( secondContext.getAddonItemSupports().size(), is( 1 ) );
-		assertThat( config.getAddonArray().length, is( 3 ) );
+		assertThat( config.getAddonList().size(), is( 3 ) );
 	}
 
 	@Test

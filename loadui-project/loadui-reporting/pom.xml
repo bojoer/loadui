@@ -3,7 +3,7 @@
 	<parent>
 		<artifactId>loadui-project</artifactId>
 		<groupId>com.eviware.loadui</groupId>
-		<version>2.1.2</version>
+		<version>2.5.0</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>loadui-reporting</artifactId>
@@ -25,15 +25,6 @@
 		</resources>
 		<plugins>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.0.2</version>
-				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
-				</configuration>
-			</plugin>
-			<plugin>
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-bundle-plugin</artifactId>
 				<version>${mavenBundlePluginVersion}</version>
@@ -43,7 +34,7 @@
 						<_include>src/main/filters/default.properties</_include>
 						<Export-Package>com.eviware.loadui.api.reporting.*;com.eviware.loadui.api.charting.*;com.eviware.loadui.util.charting.*</Export-Package>
 						<Embed-Dependency>*;scope=provided</Embed-Dependency>
-						<Import-Package>!antlr*;!apple.*;!com.apple.*;!bsh;!com.lowagie.*;!com.sun.*;!sun.*;!javax.persistence;!mondrian.olap;!net.sourceforge.barbecue.*;!org.apache.batik.*;!org.apache.commons.javaflow;!org.apache.poi.*;!org.apache.tools.ant.*;!org.apache.xml.*;!org.apache.xpath.*;!org.bouncycastle.*;!org.eclipse.*;!org.hibernate.*;!org.jaxen.*;!org.jfree.*;!org.krysalis.*;!org.mozilla.*;!org.w3c.dom.svg;*</Import-Package>
+						<Import-Package>!antlr*;!apple.*;!com.apple.*;!bsh;!com.lowagie.*;!com.sun.*;!sun.*;!javax.servlet*;!javax.persistence;!mondrian.olap;!net.sourceforge.barbecue.*;!org.apache.batik.*;!org.apache.commons.javaflow;!org.apache.poi.*;!org.apache.tools.ant.*;!org.apache.xml.*;!org.apache.xpath.*;!org.bouncycastle.*;!org.eclipse.*;!org.hibernate.*;!org.jaxen.*;!org.jfree.*;!org.krysalis.*;!org.mozilla.*;!org.w3c.dom.traversal;!org.w3c.dom.svg;*</Import-Package>
 					</instructions>
 				</configuration>
 			</plugin>

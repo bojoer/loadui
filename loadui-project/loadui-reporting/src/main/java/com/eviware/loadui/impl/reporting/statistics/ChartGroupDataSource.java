@@ -1,12 +1,12 @@
 /*
- * Copyright 2011 SmartBear Software
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -22,23 +22,23 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JRField;
+import net.sf.jasperreports.engine.data.JRAbstractBeanDataSource;
+
 import com.eviware.loadui.api.statistics.model.Chart;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
 import com.eviware.loadui.api.statistics.model.chart.ChartView;
 import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
 
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JRField;
-import net.sf.jasperreports.engine.data.JRAbstractBeanDataSource;
-
 public class ChartGroupDataSource extends JRAbstractBeanDataSource
 {
-	private final Map<Object, Image> charts;
-	private final List<ChartView> chartViews = new ArrayList<ChartView>();
+	private final Map<? extends Object, Image> charts;
+	private final List<ChartView> chartViews = new ArrayList<>();
 	private ChartView currentChartView;
 	private Iterator<ChartView> chartViewIterator;
 
-	public ChartGroupDataSource( ChartGroup chartGroup, Map<Object, Image> charts )
+	public ChartGroupDataSource( ChartGroup chartGroup, Map<? extends Object, Image> charts )
 	{
 		super( true );
 
@@ -51,7 +51,7 @@ public class ChartGroupDataSource extends JRAbstractBeanDataSource
 			if( charts.containsKey( chartView ) )
 				chartViews.add( chartView );
 		}
-		ArrayList<String> sources = new ArrayList<String>();
+		List<String> sources = new ArrayList<>();
 		sources.addAll( chartGroup.getSources() );
 		Collections.sort( sources );
 		for( String source : sources )
@@ -73,14 +73,17 @@ public class ChartGroupDataSource extends JRAbstractBeanDataSource
 	@Override
 	public Object getFieldValue( JRField field ) throws JRException
 	{
-		String fieldName = field.getName();
-		if( fieldName.equals( "chartName" ) )
+		switch( field.getName() )
+		{
+		case "chartName" :
 			return currentChartView.getLabel();
-		else if( fieldName.equals( "chart" ) )
+		case "chart" :
 			return charts.get( currentChartView );
-		else if( fieldName.equals( "legend" ) )
+		case "legend" :
 			return new ChartLegendDataSource( ( LineChartView )currentChartView );
-		return null;
+		default :
+			return null;
+		}
 	}
 
 	@Override

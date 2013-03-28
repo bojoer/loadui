@@ -5,105 +5,17 @@
        http://www.springframework.org/schema/beans/spring-beans.xsd                      
        http://www.springframework.org/schema/osgi  
        http://www.springframework.org/schema/osgi/spring-osgi.xsd">
-
-	<!--<osgi:service interface="javafx.scene.Scene" ref="scene" />-->
-
-	<!-- <osgi:reference interface="com.eviware.loadui.api.http.HttpClientProvider" id="httpClientProvider" /> -->
-
-	<osgi:reference interface="com.eviware.loadui.api.model.WorkspaceProvider"
-		id="workspaceProvider" />
+       
+    <osgi:reference id="executionManager"  interface="com.eviware.loadui.api.statistics.store.ExecutionManager" />
+    <osgi:reference id="testEventManager"  interface="com.eviware.loadui.api.testevents.TestEventManager" />
+    <osgi:reference id="statisticsManager" interface="com.eviware.loadui.api.statistics.StatisticsManager" />
+    <osgi:reference id="workspaceProvider" interface="com.eviware.loadui.api.model.WorkspaceProvider" />
+    
+    <osgi:list id="imageResolvers" interface="com.eviware.loadui.ui.fx.api.ImageResolver" cardinality="0..N" />
+    
+    <osgi:service ref="eventLogInspector"  interface="com.eviware.loadui.ui.fx.api.Inspector" />
+	<!-- <osgi:service ref="systemLogInspector" interface="com.eviware.loadui.ui.fx.api.Inspector" /> -->
+	<osgi:service ref="assertionInspector" interface="com.eviware.loadui.ui.fx.api.Inspector" />
+	<osgi:service ref="executionsInfo" interface="com.eviware.loadui.ui.fx.api.analysis.ExecutionsInfo"/>
 	
-	<osgi:reference interface="com.eviware.loadui.api.reporting.ReportingManager" id="reportingManager" />
-	
-	<osgi:reference interface="com.eviware.loadui.api.statistics.ProjectExecutionManager" id="projectExecutionManager" />
-	
-	<osgi:service interface="com.eviware.loadui.api.ui.WindowController" ref="windowController" />
-	
-	<osgi:service interface="com.eviware.loadui.api.ui.inspector.Inspector"
-		ref="systemLogInspector" >
-		<osgi:service-properties>
-			<entry key="panelId" value="MainWindowInspector"/>
-		</osgi:service-properties>
-	</osgi:service>
-	
-	<osgi:service interface="com.eviware.loadui.api.ui.inspector.Inspector"
-		ref="agentInspector">
-		<osgi:service-properties>
-			<entry key="panelId" value="MainWindowInspector"/>
-		</osgi:service-properties>
-	</osgi:service>
-	
-	<osgi:service interface="com.eviware.loadui.api.ui.inspector.Inspector"
-		ref="assertionInspector">
-		<osgi:service-properties>
-			<entry key="panelId" value="MainWindowInspector"/>
-		</osgi:service-properties>
-	</osgi:service>
-	
-	<osgi:service interface="com.eviware.loadui.api.ui.inspector.Inspector"
-		ref="eventLogInspector">
-		<osgi:service-properties>
-			<entry key="panelId" value="StatisticWorkbenchInspector"/>
-		</osgi:service-properties>
-	</osgi:service>
-
-	<osgi:set id="inspectors" interface="com.eviware.loadui.api.ui.inspector.Inspector"
-		cardinality="0..N">
-		<osgi:listener bind-method="onBind" unbind-method="onUnbind"
-			ref="inspectorManager" />
-	</osgi:set>
-	
-	<osgi:set id="toolbarItems" interface="com.eviware.loadui.api.ui.ToolbarItem"
-		cardinality="0..N">
-		<osgi:listener bind-method="toolbarItemServiceAdded" unbind-method="toolbarItemServiceRemoved"
-			ref="toolbarItemManager" />
-	</osgi:set>
-	
-	<osgi:set id="widgetFactories" interface="com.eviware.loadui.api.layout.WidgetFactory"
-		cardinality="0..N">
-		<osgi:listener bind-method="registerFactory"
-			unbind-method="unregisterFactory" ref="widgetRegistry" />
-	</osgi:set>
-
-	<osgi:reference id="componentRegistry"
-		interface="com.eviware.loadui.api.component.ComponentRegistry">
-		<osgi:listener bind-method="onBind" unbind-method="onUnbind"
-			ref="componentManager" />
-	</osgi:reference>
-	 <!-- 
-	<osgi:reference id="executorService" interface="java.util.concurrent.ThreadPoolExecutor"></osgi:reference>
-	 -->
-	
-	<osgi:service interface="com.eviware.loadui.api.ui.ApplicationState" ref="applicationState" />
-	 
-	<osgi:reference id="agentDiscovery" interface="com.eviware.loadui.api.discovery.AgentDiscovery" />
-	
-	<osgi:reference id="statisticsManager" interface="com.eviware.loadui.api.statistics.StatisticsManager" />
-	
-	<osgi:reference id="testEventManager" interface="com.eviware.loadui.api.testevents.TestEventManager" />
-	
-	<osgi:service interface="com.eviware.loadui.api.layout.WidgetFactory"
-		ref="tableWidget" />
-	<osgi:service interface="com.eviware.loadui.api.layout.WidgetFactory"
-		ref="selectorWidget" />
-	<osgi:service interface="com.eviware.loadui.api.layout.WidgetFactory"
-		ref="chartWidget" />
-	<osgi:service interface="com.eviware.loadui.api.layout.WidgetFactory"
-		ref="onOffSwitchFactory" />
-	<osgi:service interface="com.eviware.loadui.api.layout.WidgetFactory"
-		ref="selectFactory" />
-	<osgi:service interface="com.eviware.loadui.api.layout.WidgetFactory"
-		ref="displayContainerFactory" />
-    <osgi:service interface="com.eviware.loadui.api.layout.WidgetFactory"
-        ref="sliderWidget" />
-    <osgi:service interface="com.eviware.loadui.api.layout.WidgetFactory"
-        ref="intervalWidget" />
-    <osgi:service interface="com.eviware.loadui.api.layout.WidgetFactory"
-        ref="schedulerWidget" />
-    <osgi:service interface="com.eviware.loadui.api.layout.WidgetFactory"
-        ref="timeInputWidget" />
-    <osgi:service interface="com.eviware.loadui.api.layout.WidgetFactory"
-        ref="quartzCronInputWidget" />
-    <osgi:service interface="com.eviware.loadui.api.layout.WidgetFactory"
-        ref="passwordInputWidget" />
 </beans>

@@ -1,0 +1,23 @@
+.result-view{
+	-fx-background-color: #373737;
+}
+
+.results-toolbar{
+	-fx-background-color: linear-gradient(to bottom, -base-color-mid 0%, -fx-header-color 85%, #000000 86%, #373737 100%);
+}
+
+.title{
+	-fx-font-size: 14px; 
+}
+
+#current-result .nav {
+	visibility: hidden;
+}
+
+#current-result .page-number {
+	visibility: hidden;
+}
+
+.page-list .title{
+	-fx-padding: 0 0 18 0; 
+}

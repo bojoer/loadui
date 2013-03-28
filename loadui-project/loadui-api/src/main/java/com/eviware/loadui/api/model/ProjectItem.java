@@ -1,12 +1,12 @@
 /*
- * Copyright 2011 SmartBear Software
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -21,6 +21,7 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.api.statistics.model.StatisticPages;
 
 /**
@@ -37,8 +38,6 @@ public interface ProjectItem extends CanvasItem
 	public static final String SAVE_REPORT_PROPERTY = ModelItem.class.getSimpleName() + ".saveReport";
 	public static final String REPORT_FOLDER_PROPERTY = ModelItem.class.getSimpleName() + ".reportFolder";
 	public static final String REPORT_FORMAT_PROPERTY = ModelItem.class.getSimpleName() + ".reportFormat";
-	public static final String STATISTIC_NUMBER_OF_AUTOSAVES = ProjectItem.class.getSimpleName()
-			+ ".statisticNumberOfAutosaves";
 
 	/**
 	 * Gets the File for this ProjectItem.
@@ -151,14 +150,19 @@ public interface ProjectItem extends CanvasItem
 	public void unassignScene( @Nonnull SceneItem scene, @Nonnull AgentItem agent );
 
 	/**
-	 * Checks if summaries are saved at the end of each run
+	 * Checks if summaries are saved at the end of each run.
 	 * 
 	 * @return true if the summaries are saved.
 	 */
 	public boolean isSaveReport();
 
 	/**
-	 * Used to set whether the summary should be saved at the end of each run
+	 * Whether summary reports are saved at the end of each run.
+	 */
+	public Property<Boolean> saveReportProperty();
+
+	/**
+	 * Used to set whether the summary should be saved at the end of each run.
 	 * 
 	 * @param save
 	 *           true if the reports should be saved
@@ -219,19 +223,5 @@ public interface ProjectItem extends CanvasItem
 	 */
 	public void cancelScenes( boolean linkedOnly );
 
-	/**
-	 * Gets the maximum number of executions of this project that are
-	 * automatically saved before the oldest one is deleted.
-	 * 
-	 * @return
-	 */
-	long getNumberOfAutosaves();
 
-	/**
-	 * Sets the maximum number of executions of this project that are
-	 * automatically saved before the oldest one is deleted.
-	 * 
-	 * @return
-	 */
-	void setNumberOfAutosaves( long n );
 }

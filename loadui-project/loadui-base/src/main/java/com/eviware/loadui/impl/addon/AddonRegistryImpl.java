@@ -1,12 +1,12 @@
 /*
- * Copyright 2011 SmartBear Software
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -45,7 +45,8 @@ public class AddonRegistryImpl implements AddonRegistry, BundleContextAware
 		addonHolder.getAddon( factory.getType() );
 	}
 
-	private final Map<String, ServiceRegistration<?>> registrations = Maps.newHashMap();
+	//TODO: We can't use generics here until the OSGi jars stop using compilation flags that are not compatible with Java7.
+	private final Map<String, ServiceRegistration/* <?> */> registrations = Maps.newHashMap();
 	private final Map<String, Addon.Factory<?>> factories = Maps.newHashMap();
 	private final Multimap<Class<?>, Addon.Factory<?>> eagerAddons = HashMultimap.create();
 	private final Set<AddonHolder> registeredHolders = Collections
@@ -62,7 +63,7 @@ public class AddonRegistryImpl implements AddonRegistry, BundleContextAware
 	@Override
 	public synchronized <T extends Addon> void registerFactory( Class<T> type, Addon.Factory<T> factory )
 	{
-		Hashtable<String, String> properties = new Hashtable<String, String>();
+		Hashtable<String, String> properties = new Hashtable<>();
 		properties.put( "type", type.getName() );
 
 		registrations.put( type.getName(), bundleContext.registerService( Addon.Factory.class, factory, properties ) );
@@ -71,7 +72,7 @@ public class AddonRegistryImpl implements AddonRegistry, BundleContextAware
 	@Override
 	public synchronized <T extends Addon> void unregisterFactory( Class<T> type, Addon.Factory<T> factory )
 	{
-		ServiceRegistration<?> registration = registrations.get( type.getName() );
+		ServiceRegistration/* <?> */registration = registrations.get( type.getName() );
 		if( registration != null )
 			registration.unregister();
 	}

@@ -1,12 +1,12 @@
 /*
- * Copyright 2011 SmartBear Software
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -26,6 +26,7 @@ public class AbstractChartSegment implements Segment.Removable
 	private final ChartLineChartView chartView;
 	private final DelegatingAttributeHolderSupport attributeSupport;
 	private final String id;
+	private boolean isRemoved = false;
 
 	public AbstractChartSegment( ChartLineChartView chart, String id )
 	{
@@ -38,6 +39,11 @@ public class AbstractChartSegment implements Segment.Removable
 	public Chart getChart()
 	{
 		return chartView.getChart();
+	}
+
+	public ChartLineChartView getChartView()
+	{
+		return chartView;
 	}
 
 	@Override
@@ -65,8 +71,15 @@ public class AbstractChartSegment implements Segment.Removable
 	}
 
 	@Override
+	public boolean isRemoved()
+	{
+		return isRemoved;
+	}
+
+	@Override
 	public void remove()
 	{
+		isRemoved = true;
 		chartView.removeSegment( this );
 	}
 
@@ -75,4 +88,11 @@ public class AbstractChartSegment implements Segment.Removable
 	{
 		return id;
 	}
+
+	@Override
+	public String getId()
+	{
+		return id;
+	}
+
 }

@@ -1,12 +1,12 @@
 /*
- * Copyright 2011 SmartBear Software
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -52,6 +52,8 @@ import net.sf.jasperreports.view.JasperViewer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.eviware.loadui.LoadUI;
+
 public class ReportEngine
 {
 	public enum ReportFormats
@@ -61,7 +63,7 @@ public class ReportEngine
 
 	private static final Logger log = LoggerFactory.getLogger( ReportEngine.class );
 
-	private static final File reportDirectory = new File( "reports" );
+	private static final File reportDirectory = LoadUI.relativeFile( "reports" );
 
 	private static JasperReport compileReport( LReportTemplate report )
 	{
@@ -82,7 +84,7 @@ public class ReportEngine
 		return jr;
 	}
 
-	private final Map<String, LReportTemplate> reports = new TreeMap<String, LReportTemplate>();
+	private final Map<String, LReportTemplate> reports = new TreeMap<>();
 
 	private final ReportProtocolFactory protocolFactory;
 
@@ -122,18 +124,9 @@ public class ReportEngine
 				switch( rf )
 				{
 				case JASPER_PRINT :
-					try
+					try (ObjectOutput oo = new ObjectOutputStream( new FileOutputStream( outfile ) ))
 					{
-						ObjectOutput oo;
-						oo = new ObjectOutputStream( new FileOutputStream( outfile ) );
-						try
-						{
-							oo.writeObject( jp );
-						}
-						finally
-						{
-							oo.close();
-						}
+						oo.writeObject( jp );
 					}
 					catch( IOException e )
 					{
@@ -230,7 +223,7 @@ public class ReportEngine
 
 		JasperReport jr = compileReport( report );
 
-		HashMap<String, Object> map = new HashMap<String, Object>();
+		HashMap<String, Object> map = new HashMap<>();
 		map.put( JRParameter.REPORT_URL_HANDLER_FACTORY, protocolFactory );
 
 		return JasperFillManager.fillReport( jr, map, dataSource );

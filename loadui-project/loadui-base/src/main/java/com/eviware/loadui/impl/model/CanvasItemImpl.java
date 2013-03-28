@@ -1,12 +1,12 @@
 /*
- * Copyright 2011 SmartBear Software
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -109,7 +109,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 
 	private boolean loadingErrors = false;
 
-	protected final Map<String, Long> limits = new HashMap<String, Long>();
+	protected final Map<String, Long> limits = new HashMap<>();
 
 	private boolean running = false;
 	private boolean completed = false;
@@ -118,8 +118,8 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 
 	// here keep all not loaded components and connections, remove them at the
 	// end of init
-	private final ArrayList<ComponentItemConfig> badComponents = new ArrayList<ComponentItemConfig>();
-	private final ArrayList<ConnectionConfig> badConnections = new ArrayList<ConnectionConfig>();
+	private final ArrayList<ComponentItemConfig> badComponents = new ArrayList<>();
+	private final ArrayList<ConnectionConfig> badConnections = new ArrayList<>();
 
 	private final StatisticHolderSupport statisticHolderSupport;
 	private final CounterStatisticSupport counterStatisticSupport;
@@ -203,7 +203,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 
 	private void createComponents()
 	{
-		for( ComponentItemConfig componentConfig : getConfig().getComponentArray() )
+		for( ComponentItemConfig componentConfig : getConfig().getComponentList() )
 		{
 			try
 			{
@@ -219,7 +219,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 
 	private void createConnections()
 	{
-		for( ConnectionConfig connectionConfig : getConfig().getConnectionArray() )
+		for( ConnectionConfig connectionConfig : getConfig().getConnectionList() )
 		{
 			try
 			{
@@ -242,8 +242,8 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 		{
 			int cnt = 0;
 			boolean found = false;
-			for( ; cnt < getConfig().getConnectionArray().length; cnt++ )
-				if( getConfig().getConnectionArray()[cnt].equals( badConnection ) )
+			for( ; cnt < getConfig().getConnectionList().size(); cnt++ )
+				if( getConfig().getConnectionArray( cnt ).equals( badConnection ) )
 				{
 					found = true;
 					break;
@@ -259,8 +259,8 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 		{
 			int cnt = 0;
 			boolean found = false;
-			for( ; cnt < getConfig().getComponentArray().length; cnt++ )
-				if( getConfig().getComponentArray()[cnt].equals( badComponent ) )
+			for( ; cnt < getConfig().getComponentList().size(); cnt++ )
+				if( getConfig().getComponentArray( cnt ).equals( badComponent ) )
 				{
 					found = true;
 					break;
@@ -572,6 +572,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 
 	protected void setRunning( boolean running )
 	{
+		log.debug( "setRunning canvas: " + this.getClass().toString() );
 		if( this.running != running )
 		{
 			this.running = running;
@@ -646,9 +647,21 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 	}
 
 	@Override
+	public Collection<? extends StatisticVariable> getStatisticVariables()
+	{
+		return statisticHolderSupport.getStatisticVariables();
+	}
+
+	@Override
 	public boolean isAbortOnFinish()
 	{
 		return abortOnFinish.getValue();
+	}
+
+	@Override
+	public Property<Boolean> abortOnFinishProperty()
+	{
+		return abortOnFinish;
 	}
 
 	@Override
@@ -756,6 +769,69 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 		}
 	}
 
+	private static final Function<ComponentItem, Future<BaseEvent>> busyFuture = new Function<ComponentItem, Future<BaseEvent>>()
+	{
+		@Override
+		public Future<BaseEvent> apply( ComponentItem component )
+		{
+			return component.isBusy() ? EventFuture.forKey( component, ComponentItem.BUSY ) : Futures
+					.<BaseEvent> immediateFuture( null );
+		}
+	};
+
+	protected void onExecutionTask( TestExecution execution, Phase phase )
+	{
+		if( execution.contains( CanvasItemImpl.this ) )
+		{
+			switch( phase )
+			{
+			case START :
+				setRunning( true );
+				setTime( 0 );
+				startTime = new Date();
+				timerFuture = scheduler.scheduleAtFixedRate( new TimeUpdateTask(), 250, 250, TimeUnit.MILLISECONDS );
+				fixTimeLimit();
+				hasStarted = true;
+				setCompleted( false );
+				break;
+			case PRE_STOP :
+				hasStarted = false;
+				if( timeLimitFuture != null )
+					timeLimitFuture.cancel( true );
+
+				if( isAbortOnFinish() )
+				{
+					cancelComponents();
+				}
+				else
+				{
+					for( Future<BaseEvent> future : Iterables.transform( getComponents(), busyFuture ) )
+					{
+						try
+						{
+							future.get();
+						}
+						catch( InterruptedException e )
+						{
+							log.error( "Failed waiting for a Component", e );
+						}
+						catch( ExecutionException e )
+						{
+							log.error( "Failed waiting for a Component", e );
+						}
+					}
+				}
+				onComplete( execution.getCanvas() );
+				break;
+			case STOP :
+				if( timerFuture != null )
+					timerFuture.cancel( true );
+				setRunning( false );
+				break;
+			}
+		}
+	}
+
 	private class TimeLimitTask implements Runnable
 	{
 		@Override
@@ -810,68 +886,10 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 
 	private class CanvasTestExecutionTask implements TestExecutionTask
 	{
-		private final Function<ComponentItem, Future<BaseEvent>> busyFuture = new Function<ComponentItem, Future<BaseEvent>>()
-		{
-			@Override
-			public Future<BaseEvent> apply( ComponentItem component )
-			{
-				return component.isBusy() ? EventFuture.forKey( component, ComponentItem.BUSY ) : Futures
-						.<BaseEvent> immediateFuture( null );
-			}
-		};
-
 		@Override
 		public void invoke( TestExecution execution, Phase phase )
 		{
-			if( execution.contains( CanvasItemImpl.this ) )
-			{
-				switch( phase )
-				{
-				case START :
-					setRunning( true );
-					setTime( 0 );
-					startTime = new Date();
-					timerFuture = scheduler.scheduleAtFixedRate( new TimeUpdateTask(), 250, 250, TimeUnit.MILLISECONDS );
-					fixTimeLimit();
-					hasStarted = true;
-					setCompleted( false );
-					break;
-				case PRE_STOP :
-					hasStarted = false;
-					if( timeLimitFuture != null )
-						timeLimitFuture.cancel( true );
-
-					if( isAbortOnFinish() )
-					{
-						cancelComponents();
-					}
-					else
-					{
-						for( Future<BaseEvent> future : Iterables.transform( getComponents(), busyFuture ) )
-						{
-							try
-							{
-								future.get();
-							}
-							catch( InterruptedException e )
-							{
-								log.error( "Failed waiting for a Component", e );
-							}
-							catch( ExecutionException e )
-							{
-								log.error( "Failed waiting for a Component", e );
-							}
-						}
-					}
-					onComplete( execution.getCanvas() );
-					break;
-				case STOP :
-					if( timerFuture != null )
-						timerFuture.cancel( true );
-					setRunning( false );
-					break;
-				}
-			}
+			onExecutionTask( execution, phase );
 		}
 	}
 }

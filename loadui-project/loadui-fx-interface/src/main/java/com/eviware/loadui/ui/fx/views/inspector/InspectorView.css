@@ -1,0 +1,35 @@
+.inspector {
+	-fx-background-color: #3b3b3b;
+}
+
+.tab-header-background {
+	-fx-background-color: #666666;
+	-fx-cursor: V_RESIZE;
+}
+
+.tab {
+	/* height 21 m border, padding 16 */
+	-fx-cursor: hand;
+}
+
+.tab .tab-label {
+	-fx-text-fill: #f2f2f2;
+}
+
+.tab:hover {
+	-color-gradient: linear-gradient(to bottom, #737373, #404040);
+	-color-border: #404040;
+} 
+
+.tab:pressed {
+	-color-gradient: linear-gradient(to bottom, #1a1a1a, #404040);	
+	-color-border: #404040;
+}
+
+.tab:selected {
+	-color-gradient: linear-gradient(to bottom, #252525, #505050);	
+	-color-border: #404040;
+}
+
+
+

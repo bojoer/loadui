@@ -1,12 +1,12 @@
 /*
- * Copyright 2011 SmartBear Software
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -35,7 +35,7 @@ import java.util.concurrent.Callable;
  */
 public class CacheMap<K, V> implements Map<K, V>
 {
-	private final Map<K, WeakReference<V>> cache = new HashMap<K, WeakReference<V>>();
+	private final Map<K, WeakReference<V>> cache = new HashMap<>();
 
 	private void compact()
 	{
@@ -68,7 +68,7 @@ public class CacheMap<K, V> implements Map<K, V>
 	@Override
 	public Set<Entry<K, V>> entrySet()
 	{
-		Set<Entry<K, V>> entries = new HashSet<Entry<K, V>>();
+		Set<Entry<K, V>> entries = new HashSet<>();
 		compact();
 		for( K key : cache.keySet() )
 			entries.add( new CacheEntry( key ) );
@@ -99,7 +99,7 @@ public class CacheMap<K, V> implements Map<K, V>
 	public V put( K key, V value )
 	{
 		V oldVal = get( key );
-		cache.put( key, new WeakReference<V>( value ) );
+		cache.put( key, new WeakReference<>( value ) );
 		return oldVal;
 	}
 
@@ -127,7 +127,7 @@ public class CacheMap<K, V> implements Map<K, V>
 	@Override
 	public Collection<V> values()
 	{
-		Collection<V> values = new ArrayList<V>();
+		Collection<V> values = new ArrayList<>();
 		for( WeakReference<V> valRef : cache.values() )
 			if( valRef.get() != null )
 				values.add( valRef.get() );

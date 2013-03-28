@@ -1,12 +1,12 @@
 /*
- * Copyright 2011 SmartBear Software
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -61,6 +61,7 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 	private final ProjectListener projectListener = new ProjectListener();
 	private final AgentListener agentListener = new AgentListener();
 	private final Property<Boolean> localMode;
+	private final Property<Long> numberOfAutosaves;
 
 	public static WorkspaceItemImpl loadWorkspace( File workspaceFile ) throws XmlException, IOException
 	{
@@ -94,6 +95,7 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 		createProperty( STATISTIC_RESULTS_PATH, File.class,
 				new File( System.getProperty( LoadUI.LOADUI_HOME ), "results" ) );
 		createProperty( IGNORED_VERSION_UPDATE, String.class, "" );
+		numberOfAutosaves = createProperty( STATISTIC_NUMBER_OF_AUTOSAVES, Long.class, 5L );
 	}
 
 	@Override
@@ -101,14 +103,17 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 	{
 		super.init();
 
-		for( AgentItemConfig agentConfig : getConfig().getAgentArray() )
+		if( LoadUI.isPro() )
 		{
-			AgentItemImpl agent = AgentItemImpl.newInstance( this, agentConfig );
-			agent.addEventListener( BaseEvent.class, agentListener );
-			agentList.addItem( agent );
+			for( AgentItemConfig agentConfig : getConfig().getAgentList() )
+			{
+				AgentItemImpl agent = AgentItemImpl.newInstance( this, agentConfig );
+				agent.addEventListener( BaseEvent.class, agentListener );
+				agentList.addItem( agent );
+			}
 		}
 
-		for( ProjectReferenceConfig projectRefConfig : getConfig().getProjectArray() )
+		for( ProjectReferenceConfig projectRefConfig : getConfig().getProjectList() )
 		{
 			try
 			{
@@ -154,16 +159,16 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 	}
 
 	@Override
-	public ProjectItem createProject( File projectFile, String label, boolean enabled )
+	public ProjectRef createProject( File projectFile, String label, boolean enabled )
 	{
 		try
 		{
-			if( projectFile.createNewFile() )
+			if( projectFile.isFile() || projectFile.createNewFile() )
 			{
 				LoaduiProjectDocumentConfig projectConfig = LoaduiProjectDocumentConfig.Factory.newInstance();
 				projectConfig.addNewLoaduiProject().setLabel( label );
 				projectConfig.save( projectFile );
-				return importProject( projectFile, enabled ).getProject();
+				return importProject( projectFile, enabled );
 			}
 			else
 				throw new IllegalArgumentException( "File already exists: " + projectFile );
@@ -242,7 +247,7 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 	@Override
 	public Collection<ProjectItem> getProjects()
 	{
-		Collection<ProjectItem> list = new ArrayList<ProjectItem>();
+		Collection<ProjectItem> list = new ArrayList<>();
 		for( ProjectRef ref : projectList.getItems() )
 			if( ref.isEnabled() )
 				list.add( ref.getProject() );
@@ -354,9 +359,12 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 	@Override
 	public boolean isLocalMode()
 	{
-		return localMode.getValue();
+		if( Boolean.parseBoolean( System.getProperty( "loadui.pro" ) ) )
+			return localMode.getValue();
+		return true;
 	}
 
+	//TODO: Remove and make the distribution mode selector disabled when running instead?
 	@Override
 	public void setLocalMode( boolean localMode )
 	{
@@ -368,6 +376,18 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 			}
 			this.localMode.setValue( localMode );
 		}
+	}
+
+	@Override
+	public long getNumberOfAutosaves()
+	{
+		return numberOfAutosaves.getValue();
+	}
+
+	@Override
+	public void setNumberOfAutosaves( long n )
+	{
+		numberOfAutosaves.setValue( n );
 	}
 
 	private class ProjectListener implements EventHandler<BaseEvent>
@@ -397,5 +417,11 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 						AgentItem.SET_MAX_THREADS, ( ( PropertyEvent )event ).getProperty().getStringValue() ) );
 			}
 		}
+	}
+
+	@Override
+	public Property<Boolean> localModeProperty()
+	{
+		return localMode;
 	}
 }

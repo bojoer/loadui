@@ -1,12 +1,12 @@
 /*
- * Copyright 2011 SmartBear Software
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -24,6 +24,7 @@ import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.config.PropertyConfig;
 import com.eviware.loadui.impl.serialization.MutableValueImpl;
 import com.eviware.loadui.util.StringUtils;
+import com.google.common.base.Objects;
 
 public class PropertyImpl<T> extends MutableValueImpl<T> implements Property<T>
 {
@@ -59,9 +60,8 @@ public class PropertyImpl<T> extends MutableValueImpl<T> implements Property<T>
 		T oldVal = getValue();
 		super.setValue( value );
 		T newVal = getValue();
-		if( ( oldVal == null && newVal == null ) || ( newVal != null && newVal.equals( oldVal ) ) )
+		if( Objects.equal( oldVal, newVal ) )
 			return;
-
 		config.setStringValue( getStringValue() );
 		owner.fireEvent( new PropertyEvent( owner, this, PropertyEvent.Event.VALUE, oldVal ) );
 	}
@@ -93,4 +93,5 @@ public class PropertyImpl<T> extends MutableValueImpl<T> implements Property<T>
 			config.setPropagates( false );
 		}
 	}
+
 }

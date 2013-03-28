@@ -1,0 +1,54 @@
+.component-view #content {
+	-fx-background-color:
+		#acacac,
+		linear-gradient(to bottom, #dedede 0%, #c9c9c9 40%, #b5b5b5 100%);
+	-fx-background-insets: 0, 1;
+	-fx-background-radius: 8;
+}
+
+.component-view #compact.toggle-button{
+	-fx-background-color: transparent;
+	-fx-background-insets: 0 5 5 5;
+	-fx-opacity: 0.5; 
+}
+
+.component-view #compact.toggle-button:hover{
+	-fx-background-color: #5A5A5A;
+}
+
+.component-view #compact.toggle-button:pressed{
+	-fx-background-color: #818181; 
+}
+
+.component-view #compact.toggle.button:selected{
+ 	-fx-background-color: transparent; 
+}
+
+.component-view #compact.toggle-button .graphic{
+	-fx-background-color: grey; 
+	-fx-background-insets: 0 0 15 0; 
+	-fx-border-color: #000000; 
+	-fx-border-width: 1; 
+	-fx-border-insets: 0 0 14 0;
+	-fx-padding: 0 5 0 5; 
+	-fx-opacity: 0.5;  
+}
+
+.component-view #compact.toggle-button:selected .graphic{
+	-fx-padding: 0; 
+	-fx-border-width: 0; 
+}
+
+.component-view #compact.toggle-button .secondary-graphic{
+	-fx-background-color: linear-gradient(to bottom, grey 0%, grey 33%, transparent 34%, transparent 100%);
+	-fx-opacity: 0.5;  
+	-fx-padding: 0; 
+}
+
+.component-view #compact.toggle-button:selected .secondary-graphic{
+	-fx-background-insets: 0 0 5 0; 
+	-fx-padding: 0 5 0 5; 
+	-fx-border-color: #000000; 
+	-fx-border-width: 1; 
+	-fx-border-insets: 0 0 4 0;
+}

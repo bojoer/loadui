@@ -1,12 +1,12 @@
 /*
- * Copyright 2011 SmartBear Software
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -54,7 +54,7 @@ public class TrackImplTest
 		h2 = new H2ExecutionManager( mock( TestEventRegistry.class ) );
 		h2.startExecution( "trackTestExecution", now );
 
-		Map<String, Class<? extends Number>> types = new HashMap<String, Class<? extends Number>>();
+		Map<String, Class<? extends Number>> types = new HashMap<>();
 		types.put( "a", Long.class );
 		types.put( "b", Long.class );
 		types.put( "c", Integer.class );
@@ -64,7 +64,7 @@ public class TrackImplTest
 		h2.registerTrackDescriptor( td );
 		track = h2.getTrack( "testTrack" );
 
-		Map<String, Number> values = new HashMap<String, Number>();
+		Map<String, Number> values = new HashMap<>();
 		values.put( "a", 1 );
 		values.put( "b", 2 );
 		values.put( "c", 3 );

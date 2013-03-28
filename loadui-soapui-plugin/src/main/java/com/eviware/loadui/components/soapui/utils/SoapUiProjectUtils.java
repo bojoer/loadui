@@ -1,3 +1,18 @@
+/*
+ * Copyright 2013 SmartBear Software
+ * 
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * http://ec.europa.eu/idabc/eupl
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the Licence for the specific language governing permissions and limitations
+ * under the Licence.
+ */
 package com.eviware.loadui.components.soapui.utils;
 
 import java.io.File;
@@ -8,6 +23,7 @@ import javax.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.integration.SoapUIProjectLoader;
 import com.eviware.soapui.SoapUIExtensionClassLoader;
 import com.eviware.soapui.SoapUIExtensionClassLoader.SoapUIClassLoaderState;
@@ -16,7 +32,6 @@ import com.eviware.soapui.impl.wsdl.WsdlProjectPro;
 import com.eviware.soapui.impl.wsdl.testcase.WsdlTestCase;
 import com.eviware.soapui.impl.wsdl.teststeps.WsdlDataSourceTestStep;
 import com.eviware.soapui.impl.wsdl.teststeps.WsdlMessageAssertion;
-import com.eviware.soapui.impl.wsdl.teststeps.WsdlTestStep;
 import com.eviware.soapui.model.testsuite.Assertable;
 import com.eviware.soapui.model.testsuite.TestAssertion;
 import com.eviware.soapui.model.testsuite.TestCase;
@@ -107,7 +122,7 @@ public class SoapUiProjectUtils
 	public static void registerJdbcDrivers()
 	{
 		log.debug( "Registering JDBC Drivers." );
-		File extDirectory = new File( ".", "ext" );
+		File extDirectory = LoadUI.relativeFile( "ext" );
 
 		if( extDirectory.isDirectory() )
 		{

@@ -1,12 +1,12 @@
 /*
- * Copyright 2011 SmartBear Software
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -147,11 +147,11 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 
 	private final TestEventRegistry testEventRegistry;
 
-	private final Map<String, ExecutionImpl> executionMap = new HashMap<String, ExecutionImpl>();
+	private final Map<String, ExecutionImpl> executionMap = new HashMap<>();
 
-	private final Map<String, TrackDescriptor> trackDescriptors = new HashMap<String, TrackDescriptor>();
+	private final Map<String, TrackDescriptor> trackDescriptors = new HashMap<>();
 
-	private final Map<String, Entry> latestEntries = new HashMap<String, Entry>();
+	private final Map<String, Entry> latestEntries = new HashMap<>();
 
 	private final TableRegistry tableRegistry = new TableRegistry();
 
@@ -166,6 +166,8 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 	private final ResultPathListener resultPathListener = new ResultPathListener();
 
 	private final Map<String, TestEventTypeDescriptorImpl> eventTypes = Maps.newHashMap();
+
+	private boolean loadedExecutionsFromDisk = false;
 
 	public ExecutionManagerImpl( TestEventRegistry testEventRegistry )
 	{
@@ -371,7 +373,7 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 					SourceMetadataTable.SOURCE_TABLE_NAME );
 			if( !sources.doesInMemoryTableContain( source ) )
 			{
-				Map<String, Object> data = new HashMap<String, Object>();
+				Map<String, Object> data = new HashMap<>();
 				data.put( SourceMetadataTable.STATIC_FIELD_SOURCE_NAME, source );
 				sources.insert( data );
 			}
@@ -380,7 +382,7 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 					InterpolationLevelTable.INTERPOLATION_LEVEL_TABLE_NAME );
 			if( !levels.getInMemoryTable().contains( interpolationLevel ) )
 			{
-				Map<String, Object> data = new HashMap<String, Object>();
+				Map<String, Object> data = new HashMap<>();
 				data.put( InterpolationLevelTable.STATIC_FIELD_INTERPOLATION_LEVEL, interpolationLevel );
 				levels.insert( data );
 			}
@@ -414,7 +416,7 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 			String dbName = currentExecution.getExecutionDir().getName();
 
 			// insert into meta-table
-			Map<String, Object> data = new HashMap<String, Object>();
+			Map<String, Object> data = new HashMap<>();
 			data.put( TrackMetadataTable.STATIC_FIELD_TRACK_NAME, td.getId() );
 			TableBase trackMetadataTable = tableRegistry.getTable( dbName, TrackMetadataTable.TABLE_NAME );
 			trackMetadataTable.insert( data );
@@ -430,6 +432,14 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 
 	@Override
 	public final Collection<Execution> getExecutions()
+	{
+		if( loadedExecutionsFromDisk )
+			return ImmutableSet.<Execution> copyOf( executionMap.values() );
+		else
+			return readExecutionsFromDisk();
+	}
+
+	private Collection<Execution> readExecutionsFromDisk()
 	{
 		File baseDir = new File( getDBBaseDir() );
 		if( !baseDir.exists() )
@@ -456,7 +466,6 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 			if( !executionMap.containsKey( execution.getId() ) )
 			{
 				executionMap.put( execution.getId(), execution );
-				fireEvent( new CollectionEvent( this, EXECUTIONS, CollectionEvent.Event.ADDED, execution ) );
 			}
 		}
 
@@ -465,10 +474,9 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 			return Sets.difference( ImmutableSet.<Execution> copyOf( executionMap.values() ),
 					ImmutableSet.of( currentExecution ) );
 		}
-		else
-		{
-			return ImmutableSet.<Execution> copyOf( executionMap.values() );
-		}
+
+		loadedExecutionsFromDisk = true;
+		return ImmutableSet.<Execution> copyOf( executionMap.values() );
 	}
 
 	@Override
@@ -482,11 +490,8 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 		{
 			return executionMap.get( executionId );
 		}
-		else
-		{
-			log.error( "Execution {} does not exist!", new Object[] { executionId } );
-			throw new IllegalArgumentException( "Execution with the specified ID does not exist!" );
-		}
+		log.error( "Execution {} does not exist!", new Object[] { executionId } );
+		throw new IllegalArgumentException( "Execution with the specified ID does not exist!" );
 	}
 
 	/**
@@ -513,8 +518,8 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 				// keep everything in temporary lists, until all SQL operations
 				// are finished successfully and then create objects and add
 				// tables to table registry
-				List<TrackDescriptor> tracksToCreate = new ArrayList<TrackDescriptor>();
-				List<TableBase> createdTableList = new ArrayList<TableBase>();
+				List<TrackDescriptor> tracksToCreate = new ArrayList<>();
+				List<TableBase> createdTableList = new ArrayList<>();
 				try
 				{
 					// create source meta table
@@ -655,7 +660,7 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 			latestEntries.put( key, adjustedEntry );
 
 			currentExecution.updateLength( timestamp );
-			Map<String, Object> data = new HashMap<String, Object>();
+			Map<String, Object> data = new HashMap<>();
 			data.put( DataTable.STATIC_FIELD_TIMESTAMP, timestamp );
 
 			for( String name : track.getTrackDescriptor().getValueNames().keySet() )
@@ -707,7 +712,7 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 					.getExecutionDir().getName(), TestEventSourceTable.TABLE_NAME );
 			Long sourceId = eventSourceTable.getIdByHash( sourceConfig.getHash() );
 
-			Map<String, Object> data = new HashMap<String, Object>();
+			Map<String, Object> data = new HashMap<>();
 			data.put( TestEventTable.STATIC_FIELD_TIMESTAMP, timestamp );
 			data.put( TestEventTable.STATIC_FIELD_DATA, testEventData );
 			data.put( TestEventTable.STATIC_FIELD_SOURCEID, sourceId );
@@ -720,7 +725,7 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 			try
 			{
 				eventTable.insert( data );
-				log.debug( "Wrote TestEvent[{}] from {}", typeLabel, source );
+				log.debug( "Wrote TestEvent[{}] from {} with interpolation level " + interpolationLevel, typeLabel, source );
 			}
 			catch( Exception e )
 			{
@@ -749,7 +754,7 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 						InterpolationLevelTable.INTERPOLATION_LEVEL_TABLE_NAME );
 				if( !levels.getInMemoryTable().contains( interpolationLevel ) )
 				{
-					Map<String, Object> data = new HashMap<String, Object>();
+					Map<String, Object> data = new HashMap<>();
 					data.put( InterpolationLevelTable.STATIC_FIELD_INTERPOLATION_LEVEL, interpolationLevel );
 					levels.insert( data );
 				}
@@ -765,7 +770,7 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 				throw new RuntimeException( "Unable to create test event data table!", e );
 			}
 		}
-		return ( TestEventTable )tableRegistry.getTable( dbName, buildTestEventTableName( 0 ) );
+		return ( TestEventTable )tableRegistry.getTable( dbName, name );
 	}
 
 	private TestEventSourceConfig getConfigForSource( String typeLabel, TestEvent.Source<?> source )
@@ -793,7 +798,7 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 
 				Long typeId = eventTypeTable.getIdByTypeName( source.getType().getName() );
 
-				Map<String, Object> data = new HashMap<String, Object>();
+				Map<String, Object> data = new HashMap<>();
 				data.put( TestEventSourceTable.STATIC_FIELD_LABEL, source.getLabel() );
 				data.put( TestEventSourceTable.STATIC_FIELD_HASH, hash );
 				data.put( TestEventSourceTable.STATIC_FIELD_DATA, source.getData() );
@@ -835,7 +840,7 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 				.getExecutionDir().getName(), TestEventTypeTable.TABLE_NAME );
 		try
 		{
-			Map<String, Object> data = new HashMap<String, Object>();
+			Map<String, Object> data = new HashMap<>();
 			data.put( TestEventTypeTable.STATIC_FIELD_LABEL, typeLabel );
 			data.put( TestEventTypeTable.STATIC_FIELD_TYPE, typeName );
 			eventTypeTable.insert( data );
@@ -854,47 +859,44 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 		{
 			return ImmutableSet.copyOf( eventTypes.values() );
 		}
-		else
+		loadExecution( executionId );
+
+		Set<TestEventTypeDescriptorImpl> result = new HashSet<>();
+
+		TestEventTypeTable eventTypeTable = ( TestEventTypeTable )tableRegistry.getTable( getExecution( executionId )
+				.getExecutionDir().getName(), TestEventTypeTable.TABLE_NAME );
+		TestEventSourceTable eventSourceTable = getTestEventSourceTable( executionId );
+
+		Map<String, Map<String, Object>> typeMap = eventTypeTable.getInMemoryTable();
+		for( java.util.Map.Entry<String, Map<String, Object>> type : typeMap.entrySet() )
 		{
-			loadExecution( executionId );
+			String typeName = type.getKey();
+			String typeLabel = ( String )type.getValue().get( TestEventTypeTable.STATIC_FIELD_LABEL );
+			Long typeId = ( Long )type.getValue().get( TestEventTypeTable.STATIC_FIELD_ID );
 
-			Set<TestEventTypeDescriptorImpl> result = new HashSet<TestEventTypeDescriptorImpl>();
+			TestEventTypeDescriptorImpl typeDescr = new TestEventTypeDescriptorImpl( typeLabel );
+			result.add( typeDescr );
 
-			TestEventTypeTable eventTypeTable = ( TestEventTypeTable )tableRegistry.getTable( getExecution( executionId )
-					.getExecutionDir().getName(), TestEventTypeTable.TABLE_NAME );
-			TestEventSourceTable eventSourceTable = getTestEventSourceTable( executionId );
-
-			Map<String, Map<String, Object>> typeMap = eventTypeTable.getInMemoryTable();
-			for( java.util.Map.Entry<String, Map<String, Object>> type : typeMap.entrySet() )
+			Map<String, TestEventSourceDescriptorImpl> sourceMap = new HashMap<>();
+			List<Map<String, Object>> sourceListResult = eventSourceTable.getByTypeId( typeId );
+			for( Map<String, Object> s : sourceListResult )
 			{
-				String typeName = type.getKey();
-				String typeLabel = ( String )type.getValue().get( TestEventTypeTable.STATIC_FIELD_LABEL );
-				Long typeId = ( Long )type.getValue().get( TestEventTypeTable.STATIC_FIELD_ID );
-
-				TestEventTypeDescriptorImpl typeDescr = new TestEventTypeDescriptorImpl( typeLabel );
-				result.add( typeDescr );
-
-				Map<String, TestEventSourceDescriptorImpl> sourceMap = new HashMap<String, TestEventSourceDescriptorImpl>();
-				List<Map<String, Object>> sourceListResult = eventSourceTable.getByTypeId( typeId );
-				for( Map<String, Object> s : sourceListResult )
+				String sourceLabel = ( String )s.get( TestEventSourceTable.STATIC_FIELD_LABEL );
+				if( !sourceMap.containsKey( sourceLabel ) )
 				{
-					String sourceLabel = ( String )s.get( TestEventSourceTable.STATIC_FIELD_LABEL );
-					if( !sourceMap.containsKey( sourceLabel ) )
-					{
-						TestEventSourceDescriptorImpl sourceDescr = new TestEventSourceDescriptorImpl( typeDescr, sourceLabel );
-						sourceMap.put( sourceLabel, sourceDescr );
-					}
-
-					Long sourceId = ( Long )s.get( TestEventSourceTable.STATIC_FIELD_ID );
-					String sourceHash = ( String )s.get( TestEventSourceTable.STATIC_FIELD_HASH );
-					byte[] sourceData = ( byte[] )s.get( TestEventSourceTable.STATIC_FIELD_DATA );
-					sourceMap.get( sourceLabel ).putConfig( sourceHash,
-							new TestEventSourceConfig( sourceLabel, typeName, sourceData, sourceHash, sourceId ) );
+					TestEventSourceDescriptorImpl sourceDescr = new TestEventSourceDescriptorImpl( typeDescr, sourceLabel );
+					sourceMap.put( sourceLabel, sourceDescr );
 				}
-			}
 
-			return result;
+				Long sourceId = ( Long )s.get( TestEventSourceTable.STATIC_FIELD_ID );
+				String sourceHash = ( String )s.get( TestEventSourceTable.STATIC_FIELD_HASH );
+				byte[] sourceData = ( byte[] )s.get( TestEventSourceTable.STATIC_FIELD_DATA );
+				sourceMap.get( sourceLabel ).putConfig( sourceHash,
+						new TestEventSourceConfig( sourceLabel, typeName, sourceData, sourceHash, sourceId ) );
+			}
 		}
+
+		return result;
 	}
 
 	public <T extends TestEvent> Iterable<TestEventData> readTestEvents( String executionId, int offset, int limit,
@@ -951,7 +953,8 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 				TestEventSourceTable.TABLE_NAME );
 	}
 
-	private List<Long> getSourceIds( Iterable<TestEventSourceConfig> sources, TestEventSourceTable eventSourceTable )
+	private static List<Long> getSourceIds( Iterable<TestEventSourceConfig> sources,
+			TestEventSourceTable eventSourceTable )
 	{
 		List<String> hashes = Lists.newArrayList( Iterables.transform( sources,
 				new Function<TestEventSourceConfig, String>()
@@ -1031,13 +1034,13 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 		}
 	}
 
-	private String buildDataTableName( String trackId, long interpolationLevel, String source )
+	private static String buildDataTableName( String trackId, long interpolationLevel, String source )
 	{
 		source = source.replaceAll( "[^A-Za-z0-9]", "" );
 		return trackId + "_" + interpolationLevel + "_" + source;
 	}
 
-	private String buildTestEventTableName( int interpolationLevel )
+	private static String buildTestEventTableName( int interpolationLevel )
 	{
 		return TestEventTable.TABLE_NAME_PREFIX + "_" + interpolationLevel;
 	}
@@ -1076,7 +1079,7 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 
 		Track track = getTrack( trackId );
 
-		Map<String, Object> data = new HashMap<String, Object>();
+		Map<String, Object> data = new HashMap<>();
 		if( dtd == null || track == null )
 		{
 			// if table or track does not exist return empty set
@@ -1111,10 +1114,10 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 		if( dtd == null || track == null )
 		{
 			// if table or track does not exist return empty set
-			return new ArrayList<Map<String, Object>>();
+			return new ArrayList<>();
 		}
 
-		Map<String, Object> data = new HashMap<String, Object>();
+		Map<String, Object> data = new HashMap<>();
 		data.put( DataTable.SELECT_ARG_TIMESTAMP_GTE, startTime );
 		data.put( DataTable.SELECT_ARG_TIMESTAMP_LTE, endTime );
 
@@ -1163,6 +1166,7 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 
 	public void delete( String executionId )
 	{
+		log.debug( "Trying to delete Execution wiht ID=" + executionId );
 		ExecutionImpl execution = getExecution( executionId );
 		if( execution == null )
 			return;
@@ -1173,7 +1177,8 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 		{
 			FileUtil.deleteDirectory( execution.getExecutionDir() );
 		}
-		fireEvent( new CollectionEvent( this, EXECUTIONS, CollectionEvent.Event.REMOVED, execution ) );
+		String listName = execution.isArchived() ? ARCHIVE_EXECUTIONS : RECENT_EXECUTIONS;
+		fireEvent( new CollectionEvent( this, listName, CollectionEvent.Event.REMOVED, execution ) );
 	}
 
 	public void release( String executionId )
@@ -1199,6 +1204,7 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 	{
 		ReleasableUtils.releaseAll( tableRegistry, connectionRegistry, eventSupport );
 		executionMap.clear();
+		loadedExecutionsFromDisk = false;
 		ecs.removeAllExecutionListeners();
 	}
 
@@ -1218,16 +1224,26 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 	public void stopExecution()
 	{
 		// execution can be stopped only if started or paused previously
-		if( executionState == State.STARTED || executionState == State.PAUSED )
+		if( executionState == State.STARTED )
 		{
 			State oldState = executionState;
 			executionState = State.STOPPED;
 			currentExecution.flushLength();
 			latestEntries.clear();
 			ecs.fireExecutionStopped( oldState );
-			fireEvent( new CollectionEvent( this, EXECUTIONS, CollectionEvent.Event.ADDED, currentExecution ) );
+			fireEvent( new CollectionEvent( this, RECENT_EXECUTIONS, CollectionEvent.Event.ADDED, currentExecution ) );
 			log.debug( "State changed: " + oldState.name() + " -> STOPPED " );
 		}
+	}
+
+	@Override
+	public void archiveExecution( String executionId )
+	{
+		ExecutionImpl execution = getExecution( executionId );
+		if( execution == null )
+			return;
+		fireEvent( new CollectionEvent( this, RECENT_EXECUTIONS, CollectionEvent.Event.REMOVED, execution ) );
+		fireEvent( new CollectionEvent( this, ARCHIVE_EXECUTIONS, CollectionEvent.Event.ADDED, execution ) );
 	}
 
 	@Override
@@ -1288,7 +1304,7 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 		}
 	}
 
-	private String convertToURI( File baseDirectory )
+	private static String convertToURI( File baseDirectory )
 	{
 		return baseDirectory.toURI().toString().replaceAll( "%20", " " ) + File.separator;
 	}
@@ -1379,7 +1395,7 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 	{
 		private static final int maxSize = 10;
 
-		private final ArrayList<ExecutionImpl> list = new ArrayList<ExecutionImpl>();
+		private final ArrayList<ExecutionImpl> list = new ArrayList<>();
 
 		private ExecutionImpl currentExecution;
 

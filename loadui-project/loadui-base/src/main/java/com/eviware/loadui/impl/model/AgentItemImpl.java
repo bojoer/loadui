@@ -1,12 +1,12 @@
 /*
- * Copyright 2011 SmartBear Software
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -35,6 +35,8 @@ import com.eviware.loadui.api.messaging.MessageListener;
 import com.eviware.loadui.api.messaging.VersionMismatchException;
 import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.WorkspaceItem;
+import com.eviware.loadui.api.testevents.MessageLevel;
+import com.eviware.loadui.api.testevents.TestEventManager;
 import com.eviware.loadui.config.AgentItemConfig;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.ReleasableUtils;
@@ -72,6 +74,7 @@ public final class AgentItemImpl extends ModelItemImpl<AgentItemConfig> implemen
 		broadcastEndpoint = BeanInjector.getBean( BroadcastMessageEndpoint.class );
 		provider = BeanInjector.getBean( MessageEndpointProvider.class );
 		executorService = BeanInjector.getBean( ScheduledExecutorService.class );
+
 		createProperty( MAX_THREADS_PROPERTY, Long.class, 1000 );
 		setupClient();
 
@@ -181,6 +184,8 @@ public final class AgentItemImpl extends ModelItemImpl<AgentItemConfig> implemen
 				{
 					log.warn( "Unable to connect to agent {}: {}", getLabel(),
 							( ( VersionMismatchException )data ).getMessage() );
+					BeanInjector.getBean( TestEventManager.class ).logMessage( MessageLevel.ERROR,
+							"Tried to connect to an incompatible version of LoadUI!" );
 					setEnabled( false );
 				}
 			}
