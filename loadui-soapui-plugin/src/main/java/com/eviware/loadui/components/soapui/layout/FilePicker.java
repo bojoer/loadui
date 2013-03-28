@@ -54,6 +54,7 @@ public class FilePicker extends HBox
 
 	public FilePicker( final Window window, String title, ExtensionFilter filters )
 	{
+		setSpacing( 4 );
 		final TextField textField = TextFieldBuilder.create().editable( false ).build();
 		selectedProperty.addListener( new ChangeListener<File>()
 		{

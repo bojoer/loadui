@@ -21,6 +21,7 @@ import java.util.concurrent.CountDownLatch;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.geometry.HPos;
+import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
@@ -248,42 +249,39 @@ public class SoapUiProjectSelector
 		if( LoadUI.isHeadless() )
 			return;
 
-		testCaseLatch = new CountDownLatch( 1 );
-
-		Platform.runLater(new Runnable() {
-			@Override
-			public void run() {
-				if (testCases.length > 0) 
+		if( testCases.length > 0 )
+		{
+			testCaseLatch = new CountDownLatch( 1 );
+			Platform.runLater( new Runnable()
+			{
+				@Override
+				public void run()
 				{
-					testCaseCombo.setItems(FXCollections
-							.observableArrayList(testCases));
-
-					if (testCase.getValue() != null) 
-					{
-						int selector = 0;
-						for (String test : testCases) {
-							if (testCase.getValue().compareTo(test) == 0) 
-							{
-								break;
-							}
-							selector++;
-						}
-						if (selector < testCases.length) 
-						{
-							testCase.setValue(testCases[selector]);
-						}else
-						{
-							testCase.setValue(testCases[0]);
-						}
-					} 
-					else 
-					{
-						testCase.setValue(testCases[0]);
-					}
+					testCaseCombo.setItems( FXCollections.observableArrayList( testCases ) );
+					testCase.setValue( findSelection( testCases ) );
 				}
-				testCaseLatch.countDown();
-			}
-		});
+			} );
+			testCaseLatch.countDown();
+		} 
+	}
+
+	private String findSelection( String[] testCases )
+	{
+		if( testCase.getValue() == null )
+			return testCases[0];
+
+		int selector = 0;
+		for( String test : testCases )
+		{
+			if( testCase.getValue().equals( test ) )
+				break;
+			selector++ ;
+		}
+
+		if( selector < testCases.length )
+			return testCases[selector];
+		else
+			return testCases[0];
 	}
 
 	private class ProjectSelector extends PopupControl
@@ -307,6 +305,8 @@ public class SoapUiProjectSelector
 					.fillWidth( true )
 					.prefHeight( 325 )
 					.prefHeight( 160 )
+					.spacing( 10 )
+					.padding( new Insets( 10 ) )
 					.style( "-fx-background-color: #f4f4f4;" )
 					.children( new Label( "SoapUI Project" ), picker, new Label( "TestSuite" ), testSuiteCombo,
 							new Label( "TestCase" ), testCaseCombo ).build();
