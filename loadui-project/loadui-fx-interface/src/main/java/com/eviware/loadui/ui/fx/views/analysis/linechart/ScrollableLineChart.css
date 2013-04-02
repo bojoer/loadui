@@ -24,7 +24,11 @@
 .chart-vertical-grid-lines{
 	-fx-stroke: -fx-grid-line-color;
 }
- 
+
+.overlayed-chart-text .text{
+	-fx-font-size: 9;
+}
+
 #zoomLevel.overlayed-chart-text{
 	-fx-border-width: 12px 0px 0px 11px;
 	-fx-border-color: #111111 #111111 transparent #111111;

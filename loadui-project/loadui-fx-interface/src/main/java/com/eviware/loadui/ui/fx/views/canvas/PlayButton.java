@@ -1,3 +1,18 @@
+/*
+ * Copyright 2013 SmartBear Software
+ * 
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * http://ec.europa.eu/idabc/eupl
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the Licence for the specific language governing permissions and limitations
+ * under the Licence.
+ */
 package com.eviware.loadui.ui.fx.views.canvas;
 
 import javafx.application.Platform;
@@ -5,7 +20,6 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.geometry.Insets;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.ProgressIndicatorBuilder;
 import javafx.scene.control.ToggleButton;
@@ -76,6 +90,7 @@ public class PlayButton extends StackPane
 		@Override
 		public void changed( ObservableValue<? extends Boolean> observable, Boolean wasPlaying, Boolean isPlaying )
 		{
+			log.debug( "Play Button state changed, isPlaying? " + isPlaying + ", isCanvasRunning? " + canvas.isRunning() );
 			if( isPlaying && !canvas.isRunning() )
 			{
 				canvas.triggerAction( CanvasItem.COUNTER_RESET_ACTION );
@@ -96,21 +111,20 @@ public class PlayButton extends StackPane
 
 		playingProperty.addListener( playCanvas );
 		playingProperty.bindBidirectional( toggleButton.selectedProperty() );
-		
-		Circle border = CircleBuilder.create().styleClass("play-button-border").radius( 14 ).build();
-		Region inner = RegionBuilder.create().styleClass("inner-spinner-overlay").build();
-		Region outer = RegionBuilder.create().styleClass("outer-spinner-overlay").build();
-		ProgressIndicator indicator = ProgressIndicatorBuilder.create().build(); 
+
+		Circle border = CircleBuilder.create().styleClass( "play-button-border" ).radius( 14 ).build();
+		Region inner = RegionBuilder.create().styleClass( "inner-spinner-overlay" ).build();
+		Region outer = RegionBuilder.create().styleClass( "outer-spinner-overlay" ).build();
+		ProgressIndicator indicator = ProgressIndicatorBuilder.create().build();
 
 		inner.visibleProperty().bind( toggleButton.selectedProperty() );
 		outer.visibleProperty().bind( toggleButton.selectedProperty() );
 		indicator.visibleProperty().bind( toggleButton.selectedProperty() );
 		border.visibleProperty().bind( toggleButton.selectedProperty().not() );
-				
-		TestExecutionUtils.testRunner.registerTask( executionTask, Phase.PRE_START, Phase.POST_STOP );
 
-		setPadding( new Insets( 0, 6, 0, 6 ) );
-		getChildren().setAll( outer, indicator,
-				inner, border, toggleButton );
+		TestExecutionUtils.testRunner.registerTask( executionTask, Phase.PRE_START, Phase.POST_STOP );
+		getChildren().setAll( outer, indicator, inner, border, toggleButton );
+
+		setMaxSize( 27, 27 );
 	}
 }

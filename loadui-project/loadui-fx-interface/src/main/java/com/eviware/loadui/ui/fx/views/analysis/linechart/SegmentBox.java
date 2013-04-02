@@ -1,3 +1,18 @@
+/*
+ * Copyright 2013 SmartBear Software
+ * 
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * http://ec.europa.eu/idabc/eupl
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the Licence for the specific language governing permissions and limitations
+ * under the Licence.
+ */
 package com.eviware.loadui.ui.fx.views.analysis.linechart;
 
 import javafx.beans.InvalidationListener;
@@ -22,22 +37,11 @@ import javafx.scene.layout.HBoxBuilder;
 import javafx.scene.layout.VBox;
 
 import com.eviware.loadui.ui.fx.util.ManualObservable;
-import com.sun.javafx.PlatformUtil;
 
 public class SegmentBox extends VBox
 {
 	private final VBox segmentViewContainer = new VBox();
-	private final Button scalingCloseButton = ButtonBuilder.create().id( "scaling-ok-button" ).text( "Ok" )
-			.onAction( new EventHandler<ActionEvent>()
-			{
-				@Override
-				public void handle( ActionEvent _ )
-				{
-					scaling.set( false );
-				}
-			} ).build();
-
-	private final Button scalingCancelButton = ButtonBuilder.create().id( "scaling-cancel-button" ).text( "Cancel" )
+	private final Button scalingCloseButton = ButtonBuilder.create().id( "scaling-ok-button" ).text( "Done" )
 			.onAction( new EventHandler<ActionEvent>()
 			{
 				@Override
@@ -55,7 +59,7 @@ public class SegmentBox extends VBox
 	private final HBox betweenStatisticsAndLineSegmentViews;
 	private final HBox betweenScalingAndScalingButtons;
 
-	private final String styleClass = "chart-segment-box";
+	private static final String styleClass = "chart-segment-box";
 
 	public SegmentBox()
 	{
@@ -73,20 +77,9 @@ public class SegmentBox extends VBox
 		AnchorPane.setLeftAnchor( statisticsLabel, 0d );
 		AnchorPane.setRightAnchor( expandCollapseSegments, 0d );
 
-		if( !PlatformUtil.isMac() )
-		{
-			scalingButtonBox = HBoxBuilder.create().visible( false )
-					.children( scalingCloseButton, HBoxBuilder.create().minWidth( 3 ).build(), scalingCancelButton )
-					.styleClass( "scaling-button-box" ).alignment( Pos.BOTTOM_RIGHT ).build();
-
-		}
-		else
-		{
-			scalingButtonBox = HBoxBuilder.create().visible( false )
-					.children( scalingCancelButton, HBoxBuilder.create().minWidth( 3 ).build(), scalingCloseButton )
-					.styleClass( "scaling-button-box" ).alignment( Pos.BOTTOM_RIGHT ).build();
-
-		}
+		scalingButtonBox = HBoxBuilder.create().visible( false )
+				.children( scalingCloseButton, HBoxBuilder.create().minWidth( 3 ).build() )
+				.styleClass( "scaling-button-box" ).alignment( Pos.BOTTOM_RIGHT ).build();
 
 		//Give me some space..
 		betweenStatisticsAndLineSegmentViews = HBoxBuilder.create().minHeight( 6 ).build();
@@ -117,10 +110,8 @@ public class SegmentBox extends VBox
 						LineSegmentView view = ( LineSegmentView )node;
 						view.scalingProperty().bind( scaling );
 						view.setContainer( SegmentBox.this );
-
 					}
 				}
-
 				chartUpdate.fireInvalidation();
 			}
 		} );

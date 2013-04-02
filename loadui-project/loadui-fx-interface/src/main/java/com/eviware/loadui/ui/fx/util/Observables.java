@@ -1,3 +1,18 @@
+/*
+ * Copyright 2013 SmartBear Software
+ * 
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * http://ec.europa.eu/idabc/eupl
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the Licence for the specific language governing permissions and limitations
+ * under the Licence.
+ */
 package com.eviware.loadui.ui.fx.util;
 
 import java.util.Arrays;
@@ -17,14 +32,19 @@ public class Observables
 	 * @return
 	 */
 
-	public static Group group( Observable... observables )
+	public static <T extends Observable> Group<T> group( T[] observables )
 	{
-		return new Group( Arrays.asList( observables ) );
+		return new Group<T>( Arrays.asList( observables ) );
 	}
 
-	public static Group group( Iterable<Observable> observables )
+	public static <T extends Observable> Group<T> group( Iterable<T> observables )
 	{
-		return new Group( observables );
+		return new Group<T>( observables );
+	}
+
+	public static <T extends Observable> Group<T> group()
+	{
+		return new Group<T>( Arrays.<T> asList() );
 	}
 
 	/**
@@ -37,9 +57,9 @@ public class Observables
 	 * 
 	 */
 
-	public static class Group extends ObservableBase
+	public static class Group<T extends Observable> extends ObservableBase
 	{
-		private final ObservableList<Observable> observables = FXCollections.observableArrayList();
+		private final ObservableList<T> observables = FXCollections.observableArrayList();
 		private final InvalidationListener invalidationListener = new InvalidationListener()
 		{
 			@Override
@@ -49,34 +69,35 @@ public class Observables
 			}
 		};
 
-		private Group( Iterable<Observable> observables )
+		private Group( Iterable<T> list )
 		{
-			this.observables.addListener( new ListChangeListener<Observable>()
+			this.observables.addListener( new ListChangeListener<T>()
 			{
 				@Override
-				public void onChanged( ListChangeListener.Change<? extends Observable> change )
+				public void onChanged( ListChangeListener.Change<? extends T> change )
 				{
 					while( change.next() )
 					{
-						for( Observable observable : change.getAddedSubList() )
+						for( T observable : change.getAddedSubList() )
 						{
 							observable.addListener( invalidationListener );
 						}
-						for( Observable observable : change.getRemoved() )
+						for( T observable : change.getRemoved() )
 						{
 							observable.removeListener( invalidationListener );
 						}
 					}
 				}
+
 			} );
 
-			for( Observable observable : observables )
+			for( T observable : list )
 			{
 				this.observables.add( observable );
 			}
 		}
 
-		public ObservableList<Observable> getObservables()
+		public ObservableList<T> getObservables()
 		{
 			return observables;
 		}

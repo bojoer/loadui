@@ -1,3 +1,18 @@
+/*
+ * Copyright 2013 SmartBear Software
+ * 
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * http://ec.europa.eu/idabc/eupl
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the Licence for the specific language governing permissions and limitations
+ * under the Licence.
+ */
 package com.eviware.loadui.ui.fx.views.eventlog;
 
 import javafx.application.Platform;
@@ -7,12 +22,16 @@ import javafx.beans.property.ReadOnlyProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.StackPaneBuilder;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
@@ -22,19 +41,20 @@ import com.eviware.loadui.ui.fx.api.Inspector;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.api.perspective.PerspectiveEvent;
 import com.eviware.loadui.util.statistics.ExecutionListenerAdapter;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 public class EventLogInspector implements Inspector
 {
 	private static final String FILTER = PerspectiveEvent.getPath( PerspectiveEvent.PERSPECTIVE_PROJECT ) + ".*";
 
-	private final EventLogView eventLog = new EventLogView();
+	protected static final Logger log = LoggerFactory.getLogger( EventLogInspector.class );
+
 	private final StackPane panel;
 	private final ExecutionManager executionManager;
 	private final TestEventManager testEventManager;
 
-	private Property<Execution> execution = new SimpleObjectProperty<>( this, "execution" );
+	private final Property<Execution> execution = new SimpleObjectProperty<>( this, "execution" );
+	private final EventLogView eventLog = new EventLogView( execution );
 
 	public EventLogInspector( ExecutionManager executionManager, TestEventManager testEventManager )
 	{
@@ -48,7 +68,8 @@ public class EventLogInspector implements Inspector
 		execution.addListener( new ChangeListener<Execution>()
 		{
 			@Override
-			public void changed( ObservableValue<? extends Execution> arg0, Execution oldExecution, Execution newExecution )
+			public void changed( ObservableValue<? extends Execution> arg0, Execution oldExecution,
+					final Execution newExecution )
 			{
 				if( newExecution == null )
 				{
@@ -56,7 +77,30 @@ public class EventLogInspector implements Inspector
 				}
 				else
 				{
-					eventLog.getItems().setAll( Lists.newArrayList( newExecution.getTestEventRange( 0, Long.MAX_VALUE ) ) );
+					Platform.runLater( new Runnable()
+					{
+
+						@Override
+						public void run()
+						{
+							eventLog.fireEvent( IntentEvent.create( IntentEvent.INTENT_RUN_BLOCKING, new Task<Void>()
+							{
+
+								@Override
+								protected Void call() throws Exception
+								{
+									log.debug( "loading execution to Event Log" );
+
+									updateMessage( "Fetching TestEvents" );
+									eventLog.getItems().setAll(
+											Lists.newArrayList( newExecution.getTestEventRange( 0, Long.MAX_VALUE ) ) );
+									return null;
+								}
+							} ) );
+
+						}
+					} );
+
 				}
 			}
 		} );
@@ -80,7 +124,7 @@ public class EventLogInspector implements Inspector
 	{
 		if( scene != null )
 		{
-			scene.addEventFilter( IntentEvent.INTENT_OPEN, new EventHandler<IntentEvent<?>>()
+			scene.addEventHandler( IntentEvent.INTENT_OPEN, new EventHandler<IntentEvent<?>>()
 			{
 				@Override
 				public void handle( IntentEvent<?> event )
@@ -158,10 +202,7 @@ public class EventLogInspector implements Inspector
 					@Override
 					public void run()
 					{
-						//We need to get it from the Execution for it to have the adjusted timestamp.
-						eventLog.getItems().add(
-								Iterables.getFirst( execution.getValue().getTestEvents( eventLog.getItems().size(), false ),
-										null ) );
+						eventLog.getItems().add( eventEntry );
 					}
 				} );
 			}

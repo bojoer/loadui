@@ -1,3 +1,18 @@
+/*
+ * Copyright 2013 SmartBear Software
+ * 
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * http://ec.europa.eu/idabc/eupl
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the Licence for the specific language governing permissions and limitations
+ * under the Licence.
+ */
 package com.eviware.loadui.ui.fx.control;
 
 import java.lang.reflect.InvocationTargetException;
@@ -82,28 +97,28 @@ public class SettingsTab extends Tab
 			{
 				e.printStackTrace();
 			}
+			
 			ValidatableComboBoxField combo = new ValidatableComboBoxField();
 			combo.setItems( FXCollections.observableArrayList( enumValues ) );
 			combo.getSelectionModel().select( property.getValue() );
 			combo.setId( UIUtils.toCssId( label ) );
 			vBox.getChildren().add( combo );
 
-			// TODO: We need a ValidatableComboBoxField for this.
 			fieldToLoaduiProperty.put( combo, property );
 		}
 		else
 		{
 			ValidatableTextField<?> textField;
 
-			if( property.getType().equals( String.class ) )
-			{
-				textField = new ValidatableStringField();
-				textField.setText( Objects.firstNonNull( property.getValue(), "" ).toString() );
-			}
-			else
+			if( property.getType().equals( Long.class ) )
 			{
 				textField = ValidatableLongField.Builder.create()
 						.text( Objects.firstNonNull( property.getValue(), "" ).toString() ).build();
+			}
+			else
+			{
+				textField = new ValidatableStringField();
+				textField.setText( Objects.firstNonNull( property.getValue(), "" ).toString() );
 			}
 			textField.setId( UIUtils.toCssId( label ) );
 			vBox.getChildren().addAll( new Label( label + ":" ), textField );
@@ -156,7 +171,6 @@ public class SettingsTab extends Tab
 	@SuppressWarnings( "unchecked" )
 	void addActionButton( final ActionLayoutComponent action )
 	{
-
 		if( action.getLabel().compareTo( "Test Connection" ) == 0 )
 		{
 			try
@@ -243,7 +257,43 @@ public class SettingsTab extends Tab
 			throw new UnsupportedOperationException( "This operation is not yet available for label " + action.getLabel() );
 		}
 	}
-
+	
+	@SuppressWarnings( "unchecked" )
+	public void refreshFields(){
+		for(Property<?> prop : fieldToLoaduiProperty.values()){
+			if(prop.getType().equals( Boolean.class )){
+				ValidatableCheckBox checkBox = (ValidatableCheckBox) getFieldFor( prop );			
+				checkBox.setSelected( Boolean.parseBoolean( prop.getStringValue() ) );
+			}else if(prop.getType().isEnum() ){
+				ValidatableComboBoxField comboBox = (ValidatableComboBoxField) getFieldFor( prop );
+				
+				Object[] enumValues = new Object[0];
+				
+				try
+				{
+					enumValues = ( Object[] )prop.getType().getMethod( "values" ).invoke( null );
+				}
+				catch( IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
+						| SecurityException e )
+				{
+					e.printStackTrace();
+				}
+				
+				comboBox.setItems( FXCollections.observableArrayList( enumValues ));
+				comboBox.getSelectionModel().select( prop.getValue() );
+					
+			}else if(prop.getType().equals( Long.class )){
+				ValidatableLongField field = (ValidatableLongField) getFieldFor( prop );
+				field.setText( Objects.firstNonNull( prop.getValue(), "" ).toString());
+			}else if(prop.getType().equals( String.class )){
+				ValidatableStringField field = (ValidatableStringField) getFieldFor( prop );
+				field.setText( Objects.firstNonNull( prop.getValue(), "" ).toString());
+			}else{
+				//do nothing.
+			}
+		}
+	}
+	
 	private void backupCurrentSettings()
 	{
 		ObservableList<Tab> tabList = getTabPane().getTabs();

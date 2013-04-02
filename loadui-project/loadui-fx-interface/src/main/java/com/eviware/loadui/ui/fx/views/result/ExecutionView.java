@@ -1,11 +1,24 @@
+/*
+ * Copyright 2013 SmartBear Software
+ * 
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * http://ec.europa.eu/idabc/eupl
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the Licence for the specific language governing permissions and limitations
+ * under the Licence.
+ */
 package com.eviware.loadui.ui.fx.views.result;
 
 import java.io.Closeable;
 import java.io.IOException;
 
 import javafx.application.Platform;
-import javafx.concurrent.Task;
-import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.ContextMenu;
@@ -36,23 +49,23 @@ public class ExecutionView extends Pane
 
 	protected static final Logger log = LoggerFactory.getLogger( ExecutionView.class );
 
-	private Runnable openExecution = new Runnable()
-	{
-		@Override
-		public void run()
-		{
-			openExecution( null );
-		}
-	};
-
 	@FXML
 	private MenuButton menuButton;
 
-	private final Task<Void> loadAndOpenExecution;
 	private final boolean isDragIcon;
 	private final Execution execution;
 	private final ExecutionState state;
 	private final Closeable toClose;
+
+	private final Runnable closeWindowRunnable = new Runnable()
+	{
+
+		@Override
+		public void run()
+		{
+			closeWindow();
+		}
+	};
 
 	public ExecutionView( final Execution execution, ExecutionState state, @Nullable Closeable toClose )
 	{
@@ -65,37 +78,6 @@ public class ExecutionView extends Pane
 		this.isDragIcon = isDragIcon;
 		this.state = state;
 		this.toClose = toClose;
-
-		if( !isDragIcon )
-		{
-			loadAndOpenExecution = new Task<Void>()
-			{
-				{
-					updateMessage( "Loading execution: " + execution.getLabel() );
-				}
-
-				@Override
-				protected Void call() throws Exception
-				{
-					execution.getTestEventCount();
-					return null;
-				}
-			};
-			loadAndOpenExecution.setOnSucceeded( new EventHandler<WorkerStateEvent>()
-			{
-				@Override
-				public void handle( WorkerStateEvent workserStateEvent )
-				{
-					fireEvent( IntentEvent.create( IntentEvent.INTENT_OPEN, execution ) );
-				}
-			} );
-
-			log.debug( "Created Execution View " + execution.getLabel() );
-		}
-		else
-		{
-			loadAndOpenExecution = null;
-		}
 
 		FXMLUtils.load( this );
 
@@ -111,7 +93,7 @@ public class ExecutionView extends Pane
 
 			DragNode.install( this, new ExecutionView( execution, state, true, null ) ).setData( execution );
 
-			Options menuOptions = Options.are().open( openExecution );
+			Options menuOptions = Options.are().open( closeWindowRunnable );
 
 			if( state == ExecutionState.RECENT )
 				menuOptions.noRename();
@@ -142,30 +124,42 @@ public class ExecutionView extends Pane
 	{
 		if( event == null || event.getClickCount() == 2 )
 		{
-			log.info( "Opening Execution " + execution.getLabel() );
-			fireEvent( IntentEvent.create( IntentEvent.INTENT_RUN_BLOCKING, loadAndOpenExecution ) );
+			fireEvent( IntentEvent.create( IntentEvent.INTENT_OPEN, execution ) );
+			log.debug( "Finished open of execution: " + execution.getLabel() );
 
-			if( toClose != null )
-			{
-				// cannot run this now or will have ConcurrentModificationException
-				Platform.runLater( new Runnable()
-				{
-					@Override
-					public void run()
-					{
-						try
-						{
-							toClose.close();
-						}
-						catch( IOException e )
-						{
-							log.warn( "Problem closing ResultsPopup", e );
-						}
-					}
-				} );
-			}
+			closeWindow();
 
 		}
+	}
+
+	private void closeWindow()
+	{
+		if( toClose != null )
+		{
+			// cannot run this now or will have ConcurrentModificationException
+			Platform.runLater( new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					try
+					{
+						toClose.close();
+					}
+					catch( IOException e )
+					{
+						log.warn( "Problem closing ResultsPopup", e );
+					}
+				}
+			} );
+		}
+
+	}
+
+	@Override
+	public String toString()
+	{
+		return execution.getLabel();
 	}
 
 	public Execution getExecution()

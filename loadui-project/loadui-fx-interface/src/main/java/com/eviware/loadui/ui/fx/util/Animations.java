@@ -1,3 +1,18 @@
+/*
+ * Copyright 2013 SmartBear Software
+ * 
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * http://ec.europa.eu/idabc/eupl
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the Licence for the specific language governing permissions and limitations
+ * under the Licence.
+ */
 package com.eviware.loadui.ui.fx.util;
 
 import java.util.ArrayList;
@@ -19,26 +34,28 @@ public class Animations
 
 	public enum State
 	{
-		HIDDEN, SLIDING_DOWN, SLIDING_UP, FADING_AWAY, VISIBLE
+		HIDDEN, SLIDING_DOWN, SLIDING_UP, FADING_IN, FADING_AWAY, VISIBLE
 	}
 
 	private static final Duration DEFAULT_SLIDE_DOWN_DURATION = Duration.millis( 500 );
 	private static final Duration DEFAULT_SLIDE_UP_DURATION = Duration.millis( 500 );
+	private static final Duration DEFAULT_FADE_IN_DURATION = Duration.millis( 250 );
 	private static final Duration DEFAULT_FADE_AWAY_DURATION = Duration.seconds( 1 );
-
+	
 	private final TranslateTransition SLIDE_DOWN;
 	private final TranslateTransition SLIDE_UP;
 	private final FadeTransition FADE_AWAY;
+	private final FadeTransition FADE_IN;
 	private State state;
 	private Node toAnimate;
 
 	public Animations( Node toAnimate, boolean initiallyVisible )
 	{
 		this( toAnimate, initiallyVisible, DEFAULT_SLIDE_DOWN_DURATION, DEFAULT_SLIDE_UP_DURATION,
-				DEFAULT_FADE_AWAY_DURATION );
+				DEFAULT_FADE_IN_DURATION, DEFAULT_FADE_AWAY_DURATION );
 	}
 
-	public Animations( Node toAnimate, boolean initiallyVisible, Duration slideDown, Duration slideUp, Duration fadeAway )
+	public Animations( Node toAnimate, boolean initiallyVisible, Duration slideDown, Duration slideUp, Duration fadeIn, Duration fadeAway )
 	{
 		this.toAnimate = toAnimate;
 		toAnimate.setVisible( initiallyVisible );
@@ -73,6 +90,15 @@ public class Animations
 						toHiddenState();
 					}
 				} ).build();
+		FADE_IN = FadeTransitionBuilder.create().node( toAnimate ).fromValue( 0 ).toValue( 1 ).duration( fadeIn )
+				.onFinished( new EventHandler<ActionEvent>()
+				{
+					@Override
+					public void handle( ActionEvent arg0 )
+					{
+						toVisibleState();
+					}
+				} ).build();
 	}
 
 	public State getCurrentState()
@@ -98,6 +124,7 @@ public class Animations
 		default :
 			return state;
 		case SLIDING_UP :
+		case FADING_IN:
 			stop( SLIDE_UP );
 			state = State.VISIBLE;
 			return state;
@@ -117,6 +144,16 @@ public class Animations
 			toAnimate.setVisible( true );
 			state = State.FADING_AWAY;
 			FADE_AWAY.playFromStart();
+		}
+	}
+	
+	public void fadeIn()
+	{
+		if( stopAnyRunningAnimation() == State.HIDDEN )
+		{
+			toAnimate.setVisible( true );
+			state = State.FADING_IN;
+			FADE_IN.playFromStart();
 		}
 	}
 

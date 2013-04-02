@@ -1,7 +1,23 @@
+/*
+ * Copyright 2013 SmartBear Software
+ * 
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * http://ec.europa.eu/idabc/eupl
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the Licence for the specific language governing permissions and limitations
+ * under the Licence.
+ */
 package com.eviware.loadui.ui.fx.input;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.WeakHashMap;
@@ -297,6 +313,8 @@ public class SelectableImpl implements Selectable
 	private static class SelectionRectangle extends Popup
 	{
 		private static ImmutableList<SelectableImpl> selectedAtSelectionStart = null;
+		private final Collection<Node> toBeCollected = Collections
+				.newSetFromMap( new HashMap<Node, Boolean>() ); 
 		private double startX;
 		private double startY;
 		private Node ownerNode;
@@ -342,20 +360,29 @@ public class SelectableImpl implements Selectable
 			for( Node node : SELECTABLE_NODES )
 			{
 				Scene scene = node.getScene();
-				if( scene != null && scene.getWindow().isFocused() )
+				if( scene != null )
 				{
-					Rectangle2D selectableRectangle = NodeUtils.localToScreen( node, scene );
-
-					if( selectionArea.intersects( selectableRectangle ) )
+					if( scene.windowProperty().get() != null )
 					{
-						Selectable selectable = nodeToSelectable( node );
-						if( e.isShiftDown() && selectedAtSelectionStart.contains( selectable ) )
-							selectable.deselect();
-						else
-							selectable.select();
+						Rectangle2D selectableRectangle = NodeUtils.localToScreen( node, scene );
+
+						if( selectionArea.intersects( selectableRectangle ) )
+						{
+							Selectable selectable = nodeToSelectable( node );
+							if( e.isShiftDown() && selectedAtSelectionStart.contains( selectable ) )
+								selectable.deselect();
+							else
+								selectable.select();
+						}
+					}else{
+						toBeCollected.add( node );
 					}
 				}
 			}
+			for(Node node : toBeCollected){
+				uninstallSelectable( node );
+			}
+			toBeCollected.clear();
 		}
 	}
 }

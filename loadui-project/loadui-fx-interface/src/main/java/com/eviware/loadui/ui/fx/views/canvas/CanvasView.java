@@ -1,3 +1,18 @@
+/*
+ * Copyright 2013 SmartBear Software
+ * 
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * http://ec.europa.eu/idabc/eupl
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the Licence for the specific language governing permissions and limitations
+ * under the Licence.
+ */
 package com.eviware.loadui.ui.fx.views.canvas;
 
 import static com.eviware.loadui.ui.fx.util.ObservableLists.bindContentUnordered;
@@ -89,7 +104,7 @@ public class CanvasView extends StackPane
 	private static final Effect selectedEffect = new DropShadow( BlurType.GAUSSIAN, new Color( 0.4, 0.4, 0.4, 0.5 ),
 			10.0, 3.0, 0, 0 );
 	private static final int GRID_SIZE = 36;
-	private static final double PADDING = -45;
+	private static final double PADDING = 0;
 	private final UninstallCanvasObjectView uninstallCanvasObject = new UninstallCanvasObjectView();
 
 	private static final Function<String, String> TO_LOWER = new Function<String, String>()
@@ -157,7 +172,7 @@ public class CanvasView extends StackPane
 				{
 					if( selected )
 					{
-						toFront();
+						connectionView.toFront();
 					}
 				}
 			} );
@@ -290,10 +305,11 @@ public class CanvasView extends StackPane
 		ToolBox<Labeled> descriptors = new ToolBox<>( "Components" );
 		defineComparators( descriptors );
 
-		descriptors.setMaxWidth( 100 );
+		descriptors.setMaxWidth( 120 );
+		descriptors.setMinWidth( 110 );
 		descriptors.setHeightPerItem( 120 );
 		StackPane.setAlignment( descriptors, Pos.CENTER_LEFT );
-		StackPane.setMargin( descriptors, new Insets( 10, 0, 34, 0 ) );
+		StackPane.setMargin( descriptors, new Insets( 17, 0, 57, 0 ) );
 		descriptors.maxHeightProperty().bind( descriptors.prefHeightProperty() );
 
 		Bindings.bindContent( descriptors.getItems(), createToolBoxContent() );
@@ -407,6 +423,8 @@ public class CanvasView extends StackPane
 				enforceCanvasBounds();
 			}
 		} );
+		
+		
 	}
 
 	private void enforceCanvasBounds()
@@ -417,10 +435,11 @@ public class CanvasView extends StackPane
 			return;
 		}
 
-		double minX = -bounds.getMinX() + PADDING;
+		// hard coded values for toolbar and buttom panel
+		double minX = -bounds.getMinX() + PADDING + 100;
 		double maxX = getWidth() - bounds.getMaxX() - PADDING;
 		double minY = -bounds.getMinY() + PADDING;
-		double maxY = getHeight() - bounds.getMaxY() - PADDING;
+		double maxY = getHeight() - bounds.getMaxY() - PADDING - 30;
 
 		double layoutX = canvasLayer.getLayoutX();
 		double layoutY = canvasLayer.getLayoutY();
@@ -470,6 +489,7 @@ public class CanvasView extends StackPane
 				canvasLayer.setLayoutY( maxY );
 			}
 		}
+		
 	}
 
 	public CanvasItem getCanvas()
@@ -582,7 +602,6 @@ public class CanvasView extends StackPane
 		{
 			wire.setFill( Color.GRAY );
 			wire.setVisible( false );
-
 			canvasLayer.getChildren().add( 0, wire );
 		}
 

@@ -1,3 +1,18 @@
+/*
+ * Copyright 2013 SmartBear Software
+ * 
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * http://ec.europa.eu/idabc/eupl
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the Licence for the specific language governing permissions and limitations
+ * under the Licence.
+ */
 package com.eviware.loadui.ui.fx.views.analysis.linechart;
 
 import javafx.beans.InvalidationListener;
@@ -9,7 +24,10 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
+import javafx.scene.Node;
 import javafx.scene.control.ScrollBar;
+import javafx.scene.input.MouseEvent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +63,6 @@ public class ChartScrollBar extends ScrollBar
 
 		followValue.addListener( new ChangeListener<Number>()
 		{
-
 			@Override
 			public void changed( ObservableValue<? extends Number> arg0, Number oldValue, Number newValue )
 			{
@@ -62,6 +79,8 @@ public class ChartScrollBar extends ScrollBar
 			}
 		} );
 
+		disableFollowOnUserScroll();
+
 		/*
 		 * to make follow instantly go to right position without waiting for data
 		 * update. NOTICE do not remove this, it will make binding followValue not
@@ -69,7 +88,6 @@ public class ChartScrollBar extends ScrollBar
 		 */
 		followState.addListener( new InvalidationListener()
 		{
-
 			@Override
 			public void invalidated( Observable arg0 )
 			{
@@ -83,7 +101,6 @@ public class ChartScrollBar extends ScrollBar
 
 		visibleAmountProperty().addListener( new InvalidationListener()
 		{
-
 			// gets triggered on ZoomLevel change and when Y axis resizes
 			@Override
 			public void invalidated( Observable arg0 )
@@ -92,10 +109,34 @@ public class ChartScrollBar extends ScrollBar
 				{
 					updateLeftSide();
 				}
-
 			}
 		} );
 
+	}
+
+	private void disableFollowOnUserScroll()
+	{
+		skinProperty().addListener( new InvalidationListener()
+		{
+			@Override
+			public void invalidated( Observable arg0 )
+			{
+				Node node = getSkin().getNode().lookup( ".thumb" );
+				if( node != null )
+				{
+					final EventHandler<? super MouseEvent> regularHandler = node.getOnMousePressed();
+					node.setOnMousePressed( new EventHandler<MouseEvent>()
+					{
+						@Override
+						public void handle( MouseEvent e )
+						{
+							followState.set( false );
+							regularHandler.handle( e );
+						}
+					} );
+				}
+			}
+		} );
 	}
 
 	public void updateLeftSide()

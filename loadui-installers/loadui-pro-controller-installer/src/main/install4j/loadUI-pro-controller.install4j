@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="5.1.5" transformSequenceNumber="4">
   <directoryPresets config="${compiler:builddir}" />
-  <application name="loadUI Pro ${compiler:version}" distributionSourceDir="" applicationId="3648-6792-9261-9102" mediaDir="../../../target" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}" compression="6" lzmaCompression="false" pack200Compression="false" excludeSignedFromPacking="true" commonExternalFiles="false" createMd5Sums="true" shrinkRuntime="true" shortName="loadUI" publisher="SmartBear Software" publisherWeb="http://www.smartbear.com" version="${compiler:version}" allPathsRelative="true" backupOnSave="false" autoSave="false" convertDotsToUnderscores="false" macSignature="????" installerName="" javaMinVersion="1.6" javaMaxVersion="" allowBetaVM="false" jdkMode="runtimeJre" jdkName="">
+  <application name="LoadUI Pro ${compiler:version}" distributionSourceDir="" applicationId="3648-6792-9261-9102" mediaDir="../../../target" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}" compression="6" lzmaCompression="false" pack200Compression="false" excludeSignedFromPacking="true" commonExternalFiles="false" createMd5Sums="true" shrinkRuntime="true" shortName="LoadUI" publisher="SmartBear Software" publisherWeb="http://www.smartbear.com" version="${compiler:version}" allPathsRelative="true" backupOnSave="false" autoSave="false" convertDotsToUnderscores="false" macSignature="????" installerName="" javaMinVersion="1.6" javaMaxVersion="" allowBetaVM="false" jdkMode="runtimeJre" jdkName="">
     <languages skipLanguageSelection="false" languageSelectionInPrincipalLanguage="false">
       <principalLanguage id="en" customLocalizationFile="" />
       <additionalLanguages />
@@ -35,8 +35,8 @@
     <components />
   </files>
   <launchers>
-    <launcher name="loadUI Pro" id="1014" customizedId="" external="false" excludeFromMenu="false" unixMode="755" menuName="" icnsFile="${compiler:resourcedir}/loadUI_icon_mac.icns" customMacBundleIdentifier="false" macBundleIdentifier="" swtApp="false" fileset="" macBundleBinary="JavaApplicationStub" addMacEntitlements="false" macEntitlementsFile="">
-      <executable name="loadUI-Pro-${compiler:version}" type="1" iconSet="true" iconFile="${compiler:resourcedir}/loadUI_icon_win.ico" executableDir="." redirectStderr="true" stderrFile="error.log" stderrMode="overwrite" redirectStdout="false" stdoutFile="output.log" stdoutMode="overwrite" failOnStderrOutput="true" executableMode="1" changeWorkingDirectory="true" workingDirectory="." singleInstance="false" serviceStartType="2" serviceDependencies="" serviceDescription="" jreLocation="" executionLevel="asInvoker" checkConsoleParameter="false" globalSingleInstance="false">
+    <launcher name="LoadUI Pro" id="1014" customizedId="" external="false" excludeFromMenu="false" unixMode="755" menuName="" icnsFile="${compiler:resourcedir}/loadUI_icon_mac.icns" customMacBundleIdentifier="false" macBundleIdentifier="" swtApp="false" fileset="" macBundleBinary="JavaApplicationStub" addMacEntitlements="false" macEntitlementsFile="">
+      <executable name="LoadUI-Pro-${compiler:version}" type="1" iconSet="true" iconFile="${compiler:resourcedir}/loadUI_icon_win.ico" executableDir="." redirectStderr="true" stderrFile="error.log" stderrMode="overwrite" redirectStdout="false" stdoutFile="output.log" stdoutMode="overwrite" failOnStderrOutput="true" executableMode="1" changeWorkingDirectory="true" workingDirectory="." singleInstance="false" serviceStartType="2" serviceDependencies="" serviceDescription="" jreLocation="" executionLevel="asInvoker" checkConsoleParameter="false" globalSingleInstance="false">
         <versionInfo include="false" fileVersion="" fileDescription="" legalCopyright="" internalName="" productName="" />
       </executable>
       <splashScreen show="false" autoOff="true" alwaysOnTop="true" width="0" height="0" bitmapFile="" java6SplashScreen="false">
@@ -638,7 +638,7 @@ Should you have any questions concerning this EULA, or if you desire to contact 
                   <java class="java.beans.XMLDecoder">
                     <object class="com.install4j.runtime.beans.formcomponents.HyperlinkLabelComponent">
                       <void property="hyperlinkText">
-                        <string>Read about how to get started with loadUI Pro</string>
+                        <string>Read about how to get started with LoadUI Pro</string>
                       </void>
                       <void property="url">
                         <string>http://loadui.org/Getting-Started-with-loadUI/your-first-load-test.html</string>
@@ -722,7 +722,7 @@ Should you have any questions concerning this EULA, or if you desire to contact 
               <java class="java.beans.XMLDecoder">
                 <object class="com.install4j.runtime.beans.screens.CustomizableInfoScreen">
                   <void property="displayedText">
-                    <string>A version of loadUI is running, please close it before starting the uninstallation again.</string>
+                    <string>A version of LoadUI is running, please close it before starting the uninstallation again.</string>
                   </void>
                   <void property="textSource">
                     <object class="com.install4j.runtime.beans.screens.components.TextSource" field="DIRECT" />
@@ -943,7 +943,7 @@ return f.exists();</condition>
       <excludedComponents />
       <includedDownloadableComponents />
     </windows>
-    <windows name="Windows 64-bit Installer" id="1293" customizedId="" mediaFileName="loadUI-Pro-${compiler:version}-64bit" installDir="SmartBear/loadUI-Pro-${compiler:version}" overridePrincipalLanguage="false" jreBitType="64" runPostProcessor="true" postProcessor="${compiler:SIGNTOOL_PATH} sign /v /f ${compiler:CERT_PATH} /p ${compiler:CERT_PASS} $EXECUTABLE" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="windows-amd64-1.7.0_09" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" downloadURL="" verifyIntegrity="true">
+    <windows name="Windows 64-bit Installer" id="1293" customizedId="" mediaFileName="LoadUI-Pro-${compiler:version}-64bit" installDir="SmartBear/LoadUI-Pro-${compiler:version}" overridePrincipalLanguage="false" jreBitType="64" runPostProcessor="true" postProcessor="${compiler:SIGNTOOL_PATH} sign /v /f ${compiler:CERT_PATH} /p ${compiler:CERT_PASS} $EXECUTABLE" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="windows-amd64-1.7.0_09" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" downloadURL="" verifyIntegrity="true">
       <excludedLaunchers />
       <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
@@ -956,7 +956,7 @@ return f.exists();</condition>
       <excludedComponents />
       <includedDownloadableComponents />
     </windows>
-    <unixInstaller name="Unix Installer" id="25" customizedId="" mediaFileName="loadUI-Pro-${compiler:version}" installDir="SmartBear/loadUI-Pro-${compiler:version}" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="linux-x86-1.7.0_09" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" downloadURL="">
+    <unixInstaller name="Unix Installer" id="25" customizedId="" mediaFileName="LoadUI-Pro-${compiler:version}" installDir="SmartBear/LoadUI-Pro-${compiler:version}" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="linux-x86-1.7.0_09" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" downloadURL="">
       <excludedLaunchers>
         <launcher id="24" />
         <launcher id="225" />
@@ -980,7 +980,7 @@ return f.exists();</condition>
         <content />
       </installerScript>
     </unixInstaller>
-    <unixInstaller name="Unix 64-bit Installer" id="1239" customizedId="" mediaFileName="loadUI-Pro-${compiler:version}_64bit" installDir="SmartBear/loadUI-Pro-${compiler:version}" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="linux-amd64-1.7.0_09" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" downloadURL="">
+    <unixInstaller name="Unix 64-bit Installer" id="1239" customizedId="" mediaFileName="LoadUI-Pro-${compiler:version}_64bit" installDir="SmartBear/LoadUI-Pro-${compiler:version}" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="linux-amd64-1.7.0_09" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" downloadURL="">
       <excludedLaunchers>
         <launcher id="24" />
         <launcher id="225" />
@@ -1004,7 +1004,7 @@ return f.exists();</condition>
         <content />
       </installerScript>
     </unixInstaller>
-    <macos name="Mac OS X Single Bundle" id="1087" customizedId="" mediaFileName="loadUI-Pro-${compiler:version}" installDir="loadUI Pro ${compiler:version}" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="macosx-amd64-1.7.0_09" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" appleJre="false" customInstallBaseDir="" contentFilesType="1" downloadURL="" signLaunchers="false" launcherId="1014">
+    <macos name="Mac OS X Single Bundle" id="1087" customizedId="" mediaFileName="LoadUI-Pro-${compiler:version}" installDir="LoadUI Pro ${compiler:version}" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="macosx-amd64-1.7.0_09" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" appleJre="false" customInstallBaseDir="" contentFilesType="1" downloadURL="" signLaunchers="false" launcherId="1014">
       <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
       <exclude>

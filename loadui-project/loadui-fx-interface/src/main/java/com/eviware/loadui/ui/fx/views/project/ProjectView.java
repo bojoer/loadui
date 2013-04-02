@@ -1,7 +1,23 @@
+/*
+ * Copyright 2013 SmartBear Software
+ * 
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * http://ec.europa.eu/idabc/eupl
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the Licence for the specific language governing permissions and limitations
+ * under the Licence.
+ */
 package com.eviware.loadui.ui.fx.views.project;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -11,6 +27,8 @@ import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.property.Property;
 import javafx.beans.property.ReadOnlyProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
@@ -45,6 +63,9 @@ import com.eviware.loadui.api.reporting.ReportingManager;
 import com.eviware.loadui.api.statistics.model.StatisticPage;
 import com.eviware.loadui.api.statistics.model.chart.ChartView;
 import com.eviware.loadui.api.statistics.store.Execution;
+import com.eviware.loadui.api.testevents.MessageLevel;
+import com.eviware.loadui.api.testevents.TestEventManager;
+import com.eviware.loadui.ui.fx.api.intent.AbortableTask;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.control.DetachableTab;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
@@ -61,12 +82,16 @@ import com.eviware.loadui.ui.fx.views.workspace.CreateNewProjectDialog;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.projects.ProjectUtils;
 import com.google.common.base.Preconditions;
+import com.sun.javafx.PlatformUtil;
 
 public class ProjectView extends AnchorPane
 {
 	private static final String HELP_PAGE = "http://www.loadui.org/interface/project-view.html";
 
 	private static final Logger log = LoggerFactory.getLogger( ProjectView.class );
+
+	private static final String TOOLBAR_STYLE_WITHOUT_SCENARIO = "-fx-background-color: linear-gradient(to bottom, -base-color-mid 0%, -fx-header-color 75%, #000000 76%, #272727 81%);";
+	private static final String TOOLBAR_STYLE_WITH_SCENARIO = "-fx-background-color: linear-gradient(-base-color-mid 0%, -base-color-mid 74%, #555555 75%, #DDDDDD 76%, -base-color-mid 77%, -base-color-mid 100%);";
 
 	@FXML
 	private DetachableTab designTab;
@@ -81,8 +106,8 @@ public class ProjectView extends AnchorPane
 	private Button summaryButton;
 
 	private ProjectPlaybackPanel playbackPanel;
-	
-	private ToggleButton linkButton; 
+
+	private ToggleButton linkButton;
 
 	private final FxExecutionsInfo executionsInfo;
 
@@ -100,21 +125,40 @@ public class ProjectView extends AnchorPane
 				@Override
 				public void run()
 				{
-					fireEvent( IntentEvent.create( IntentEvent.INTENT_RUN_BLOCKING, new Runnable()
-					{
-						@Override
-						public void run()
-						{
-							try
+					fireEvent( abortableTaskEvent( execution ) );
+				}
+
+				private IntentEvent<AbortableTask> abortableTaskEvent( final TestExecution execution )
+				{
+					return IntentEvent.create( IntentEvent.INTENT_RUN_BLOCKING_ABORTABLE,
+							AbortableTask.onRun( new Runnable()
 							{
-								execution.complete().get(); 
-							}
-							catch( InterruptedException | ExecutionException e )
+								@Override
+								public void run()
+								{
+									try
+									{
+										execution.complete().get();
+									}
+									catch( InterruptedException ie )
+									{
+										log.info( "Aborted running requests, not waiting for execution to complete" );
+									}
+									catch( ExecutionException ee )
+									{
+										log.warn( "There was a problem getting the result of an Execution", ee );
+									}
+								}
+							} ).onAbort( new Runnable()
 							{
-								e.printStackTrace();
-							}
-						}
-					} ) );
+								@Override
+								public void run()
+								{
+									execution.abort( "Aborting running requests..." );
+									project.cancelScenes( false );
+									project.cancelComponents();
+								}
+							} ) );
 				}
 			} );
 		}
@@ -142,10 +186,10 @@ public class ProjectView extends AnchorPane
 		AnchorPane.setTopAnchor( playbackPanel, 7d );
 		AnchorPane.setLeftAnchor( playbackPanel, 440.0 );
 		getChildren().add( playbackPanel );
-				
+
 		menuButton.textProperty().bind( Properties.forLabel( project ) );
-		designTab.setDetachableContent( new ProjectCanvasView( project ) );
-		statsTab.setDetachableContent( new StatisticsView( project, executionsInfo ) );
+		designTab.setDetachableContent( this, new ProjectCanvasView( project ) );
+		statsTab.setDetachableContent( this, new StatisticsView( project, executionsInfo ) );
 		summaryButton.setDisable( true );
 
 		addEventHandler( IntentEvent.ANY, new EventHandler<IntentEvent<? extends Object>>()
@@ -195,35 +239,36 @@ public class ProjectView extends AnchorPane
 						return;
 					}
 				}
-				else if( event.getEventType() == IntentEvent.INTENT_OPEN )
+				else if( event.getEventType() == IntentEvent.INTENT_OPEN && event.getArg() instanceof SceneItem )
 				{
-					final Object arg = event.getArg();
-					Preconditions.checkArgument( arg instanceof SceneItem );
-					SceneItem scenario = ( SceneItem )arg;
-					( ( ToolBar )lookup( ".tool-bar" ) )
-							.setStyle( "-fx-background-color: linear-gradient(-base-color-mid 0%, -base-color-mid 74%, #555555 75%, #DDDDDD 76%, -base-color-mid 77%, -base-color-mid 100%);" );
+					SceneItem scenario = ( SceneItem )event.getArg();
+
+					ToolBar projectToolbar = ( ( ToolBar )lookup( ".tool-bar" ) );
+					projectToolbar.setStyle( TOOLBAR_STYLE_WITH_SCENARIO );
+
 					ScenarioToolbar toolbar = new ScenarioToolbar( scenario );
-					
-					linkButton = ToggleButtonBuilder.create().id( "link-scenario" ).styleClass("styleable-graphic").build();
+
+					linkButton = ToggleButtonBuilder.create().id( "link-scenario" ).styleClass( "styleable-graphic" )
+							.build();
 					Property<Boolean> linkedProperty = Properties.convert( scenario.followProjectProperty() );
 					linkButton.selectedProperty().bindBidirectional( linkedProperty );
+					linkButton.visibleProperty().bind( statsTab.selectedProperty().not() );
 					AnchorPane.setLeftAnchor( linkButton, 473d );
 					AnchorPane.setTopAnchor( linkButton, 55d );
-					ProjectView.this.getChildren().add(linkButton); 
-					
+					ProjectView.this.getChildren().add( linkButton );
+
 					StackPane.setAlignment( toolbar, Pos.TOP_CENTER );
 					CanvasView canvas = new CanvasView( scenario );
 					StackPane.setMargin( canvas, new Insets( 60, 0, 0, 0 ) );
 					StackPane pane = StackPaneBuilder.create().children( canvas, toolbar ).build();
-					designTab.setDetachableContent( pane );
-					
+					designTab.setDetachableContent( ProjectView.this, pane );
+
 					event.consume();
 				}
 				else if( event.getEventType() == IntentEvent.INTENT_CLOSE && event.getArg() instanceof SceneItem )
 				{
-					( ( ToolBar )lookup( ".tool-bar" ) )
-							.setStyle( "-fx-background-color: linear-gradient(to bottom, -base-color-mid 0%, -fx-header-color 75%, #000000 76%, #272727 81%);" );
-					ProjectView.this.getChildren().remove(linkButton);
+					( ( ToolBar )lookup( ".tool-bar" ) ).setStyle( TOOLBAR_STYLE_WITHOUT_SCENARIO );
+					ProjectView.this.getChildren().remove( linkButton );
 
 					Group canvas = ( Group )lookup( ".canvas-layer" );
 					StackPane grid = ( StackPane )lookup( ".grid-pane" );
@@ -242,7 +287,7 @@ public class ProjectView extends AnchorPane
 					SceneItem scenario = ( SceneItem )event.getArg();
 					scenario.setAttribute( "miniature_fx2", base64 );
 
-					designTab.setDetachableContent( new ProjectCanvasView( project ) );
+					designTab.setDetachableContent( ProjectView.this, new ProjectCanvasView( project ) );
 					event.consume();
 				}
 				else if( event.getEventType() == IntentEvent.INTENT_CLONE )
@@ -251,6 +296,37 @@ public class ProjectView extends AnchorPane
 					new CloneProjectDialog( project.getWorkspace(), projectRef, ProjectView.this ).show();
 					event.consume();
 					return;
+				}
+			}
+		} );
+
+		statsTab.selectedProperty().addListener( new ChangeListener<Boolean>()
+		{
+			@Override
+			public void changed( ObservableValue<? extends Boolean> _, Boolean __, Boolean ___ )
+			{
+				if( statsTab.selectedProperty().get() )
+				{
+					( ( ToolBar )lookup( ".tool-bar" ) ).setStyle( TOOLBAR_STYLE_WITH_SCENARIO );
+				}
+			}
+		} );
+
+		designTab.selectedProperty().addListener( new ChangeListener<Boolean>()
+		{
+			@Override
+			public void changed( ObservableValue<? extends Boolean> _, Boolean __, Boolean ___ )
+			{
+				if( designTab.selectedProperty().get() )
+				{
+					if( designTab.getContent().lookup( ".scenario-toolbar" ) != null )
+					{
+						( ( ToolBar )lookup( ".tool-bar" ) ).setStyle( TOOLBAR_STYLE_WITH_SCENARIO );
+					}
+					else
+					{
+						( ( ToolBar )lookup( ".tool-bar" ) ).setStyle( TOOLBAR_STYLE_WITHOUT_SCENARIO );
+					}
 				}
 			}
 		} );
@@ -373,8 +449,20 @@ public class ProjectView extends AnchorPane
 
 		Map<ChartView, Image> images = LineChartUtils.createImages( pages, executionProp, null );
 
-		reportingManager.createReport( project.getLabel(), executionProp.getValue(), pages, images, executionProp
-				.getValue().getSummaryReport() );
+		// Remove the Mac special case when we have switched to JavaFX 8.
+		if( PlatformUtil.isMac() )
+		{
+			File reportFile = new File( "LoadUI_report.pdf" );
+			reportingManager.createReport( project.getLabel(), executionProp.getValue(), pages, images, new File(
+					"LoadUI_report.pdf" ), "PDF", executionProp.getValue().getSummaryReport() );
+			BeanInjector.getBean( TestEventManager.class ).logMessage( MessageLevel.WARNING,
+					"Report saved to " + reportFile.getAbsolutePath() );
+		}
+		else
+		{
+			reportingManager.createReport( project.getLabel(), executionProp.getValue(), pages, images, executionProp
+					.getValue().getSummaryReport() );
+		}
 	}
 
 	private class SaveAndCloseTask extends Task<ProjectRef>

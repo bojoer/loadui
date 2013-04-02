@@ -6,10 +6,18 @@
 	-fx-padding: 5 0 0 0; 
 }
 
-.title {
-	-fx-font-size: 20px;
+.title{
+	-fx-background-insets: 0 15 0 0; 
 }
 
+.title .text{
+	-fx-font-size: 14px;
+}
+
+.title .arrow{
+	-fx-translate-x: -15;
+	-fx-scale-x: 0.5; 
+}
 /**
  * Button-graphics
  */
@@ -89,7 +97,7 @@
 }
 
 .project-view #link-scenario.toggle-button{
-	-fx-translate-x: -22;
+	-fx-translate-x: -25;
 	-fx-translate-y: -20;
 	-fx-translate-z: 1; 
 }

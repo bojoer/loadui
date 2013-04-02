@@ -1,3 +1,18 @@
+/*
+ * Copyright 2013 SmartBear Software
+ * 
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * http://ec.europa.eu/idabc/eupl
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the Licence for the specific language governing permissions and limitations
+ * under the Licence.
+ */
 package com.eviware.loadui.ui.fx.control;
 
 import javafx.beans.property.BooleanProperty;
@@ -11,12 +26,16 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBuilder;
 import javafx.scene.control.Separator;
 import javafx.scene.control.SeparatorBuilder;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 
 import javax.annotation.Nonnull;
 
 import com.sun.javafx.PlatformUtil;
 
+// TODO: This class needs a JavaDoc'd builder.
 public class ConfirmationDialog extends ButtonDialog
 {
 	private final Button confirmButton;
@@ -24,14 +43,14 @@ public class ConfirmationDialog extends ButtonDialog
 
 	public ConfirmationDialog( @Nonnull final Node owner, @Nonnull String header, @Nonnull String actionButtonLabel )
 	{
-		this( owner, header, actionButtonLabel, false );
-		addStyleClass( "confirmation-dialog" );
+		this( owner, header, actionButtonLabel, false, false );
 	}
 
 	public ConfirmationDialog( @Nonnull final Node owner, @Nonnull String header, @Nonnull String actionButtonLabel,
-			boolean separateButtons )
+			boolean separateButtons, boolean forceConfirmOnEnter )
 	{
 		super( owner, header );
+		addStyleClass( "confirmation-dialog" );
 
 		confirmButton = ButtonBuilder.create().text( actionButtonLabel ).id( "default" ).defaultButton( true )
 				.alignment( Pos.BOTTOM_RIGHT ).onAction( new EventHandler<ActionEvent>()
@@ -52,7 +71,7 @@ public class ConfirmationDialog extends ButtonDialog
 						close();
 					}
 				} ).build();
-
+				
 		if( separateButtons )
 		{
 			Separator buttonSeparator = SeparatorBuilder.create().style( "visibility: hidden;" ).maxWidth( 4 )
@@ -64,6 +83,25 @@ public class ConfirmationDialog extends ButtonDialog
 			getButtons().setAll( cancelButton, confirmButton );
 		else
 			getButtons().setAll( confirmButton, cancelButton );
+
+		if( forceConfirmOnEnter )
+			forceConfirmOnEnter();
+	}
+
+	private void forceConfirmOnEnter()
+	{
+		addEventFilter( KeyEvent.ANY, new EventHandler<KeyEvent>()
+		{
+			@Override
+			public void handle( KeyEvent e )
+			{
+				if( e.getCode() == KeyCode.ENTER )
+				{
+					confirm();
+					e.consume();
+				}
+			}
+		} );
 	}
 
 	public ObjectProperty<EventHandler<ActionEvent>> onConfirmProperty()
@@ -114,5 +152,10 @@ public class ConfirmationDialog extends ButtonDialog
 	public StringProperty confirmationTextProperty()
 	{
 		return confirmButton.textProperty();
+	}
+
+	public void confirm()
+	{
+		confirmButton.fire();
 	}
 }

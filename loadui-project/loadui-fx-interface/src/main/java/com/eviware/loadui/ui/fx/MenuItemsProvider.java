@@ -1,11 +1,34 @@
+/*
+ * Copyright 2013 SmartBear Software
+ * 
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * http://ec.europa.eu/idabc/eupl
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the Licence for the specific language governing permissions and limitations
+ * under the Licence.
+ */
 package com.eviware.loadui.ui.fx;
 
-import java.awt.MouseInfo;
+import static com.eviware.loadui.ui.fx.MenuItemsProvider.Group.CLOSE;
+import static com.eviware.loadui.ui.fx.MenuItemsProvider.Group.NEW;
+import static com.eviware.loadui.ui.fx.MenuItemsProvider.Group.NONE;
+import static com.eviware.loadui.ui.fx.MenuItemsProvider.Group.OPEN_REMOVE;
+import static com.eviware.loadui.ui.fx.MenuItemsProvider.Group.PRESENTATION;
+import static com.eviware.loadui.ui.fx.MenuItemsProvider.Group.SAVE;
+import static com.eviware.loadui.ui.fx.MenuItemsProvider.Group.SETTINGS;
+
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
 import javafx.application.Platform;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
@@ -20,10 +43,14 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.WindowEvent;
 
 import com.eviware.loadui.api.traits.Deletable;
+import com.eviware.loadui.api.traits.Labeled;
 import com.eviware.loadui.api.traits.Labeled.Mutable;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
+import com.eviware.loadui.ui.fx.control.ConfirmationDialog;
+import com.eviware.loadui.ui.fx.control.Dialog;
 import com.eviware.loadui.ui.fx.control.SettingsDialog;
 import com.eviware.loadui.ui.fx.control.SettingsTab;
+import com.eviware.loadui.ui.fx.util.NodeUtils;
 import com.eviware.loadui.ui.fx.views.window.MainWindowView;
 import com.google.common.base.Preconditions;
 
@@ -39,59 +66,89 @@ import com.google.common.base.Preconditions;
  */
 public class MenuItemsProvider
 {
-
 	private static final ContextMenuEventHandler ctxMenuHandler = new ContextMenuEventHandler();
+
+	public enum Group
+	{
+		NONE, OPEN_REMOVE, NEW, SAVE, SETTINGS, STATIC_INFO, LICENSE, USER_FEEDBACK, HELP, PRESENTATION, CLOSE
+	}
 
 	public static HasMenuItems createWith( Node eventFirer, Object eventArg, Options options )
 	{
-		return new HasMenuItems( itemsFor( eventArg, eventFirer, options ) );
+		return new HasMenuItems( eventArg, eventFirer, options );
 	}
 
 	private static MenuItem[] itemsFor( Object eventArg, Node firer, Options options )
 	{
-		List<MenuItem> items = new ArrayList<>( 6 );
+		final SimpleObjectProperty<Group> currentGroup = new SimpleObjectProperty<>( NONE );
+		final List<MenuItem> items = new ArrayList<>( 6 );
+
 		if( options.open )
-			items.add( itemFor( "open-item", options.openLabel,
-					eventHandler( IntentEvent.INTENT_OPEN, firer, eventArg, options.openActions ) ) );
-		if( options.rename && eventArg instanceof Mutable )
-			items.add( itemFor( "rename-item", options.renameLabel,
-					eventHandler( IntentEvent.INTENT_RENAME, firer, ( Mutable )eventArg ) ) );
-		if( options.save )
-			items.add( itemFor( "save-item", options.saveLabel, eventHandler( IntentEvent.INTENT_SAVE, firer, eventArg ) ) );
+			maybeAddSeparatorTo( items, OPEN_REMOVE, currentGroup ).add(
+					itemFor( "open-item", options.openLabel,
+							eventHandler( IntentEvent.INTENT_OPEN, firer, eventArg, options.openActions ) ) );
+
 		if( options.clone )
-			items.add( itemFor( "clone-item", options.cloneLabel, eventHandler( IntentEvent.INTENT_CLONE, firer, eventArg ) ) );
+			maybeAddSeparatorTo( items, OPEN_REMOVE, currentGroup ).add(
+					itemFor( "clone-item", options.cloneLabel, eventHandler( IntentEvent.INTENT_CLONE, firer, eventArg ) ) );
+
+		if( options.save )
+			maybeAddSeparatorTo( items, SAVE, currentGroup ).add(
+					itemFor( "save-item", options.saveLabel, eventHandler( IntentEvent.INTENT_SAVE, firer, eventArg ) ) );
+
 		if( options.delete && eventArg instanceof Deletable )
-			items.add( itemFor( "delete-item", options.deleteLabel,
-					eventHandler( IntentEvent.INTENT_DELETE, firer, ( Deletable )eventArg, options.deleteActions ) ) );
-		if( options.close )
-			items.add( itemFor( "close-item", options.closeLabel, eventHandler( IntentEvent.INTENT_CLOSE, firer, eventArg ) ) );
+			maybeAddSeparatorTo( items, OPEN_REMOVE, currentGroup ).add(
+					itemFor( "delete-item", options.deleteData.deleteLabel,
+							deleteHandler( firer, ( Deletable )eventArg, options.deleteData ) ) );
+
+		if( options.rename && eventArg instanceof Mutable )
+			maybeAddSeparatorTo( items, PRESENTATION, currentGroup ).add(
+					itemFor( "rename-item", options.renameLabel,
+							eventHandler( IntentEvent.INTENT_RENAME, firer, ( Mutable )eventArg ) ) );
+
 		if( options.settings )
-			items.add( itemFor( "settings-item", options.settingsData, firer ) );
+			maybeAddSeparatorTo( items, SETTINGS, currentGroup ).add(
+					itemFor( "settings-item", options.settingsData, firer ) );
+
 		if( options.create )
-		{
-			if( items.size() > 2 )
-				items.add( SeparatorMenuItemBuilder.create().build() );
-			items.add( itemFor( "create-item", options.createLabel,
-					eventHandler( IntentEvent.INTENT_CREATE, firer, options.typeToCreate ) ) );
-		}
+			maybeAddSeparatorTo( items, NEW, currentGroup ).add(
+					itemFor( "create-item", options.createLabel,
+							eventHandler( IntentEvent.INTENT_CREATE, firer, options.typeToCreate ) ) );
+
+		if( options.close )
+			maybeAddSeparatorTo( items, CLOSE, currentGroup ).add(
+					itemFor( "close-item", options.closeLabel, eventHandler( IntentEvent.INTENT_CLOSE, firer, eventArg ) ) );
+
 		return items.toArray( new MenuItem[items.size()] );
+	}
+
+	private static List<MenuItem> maybeAddSeparatorTo( List<MenuItem> items, Group itemGroup,
+			SimpleObjectProperty<Group> currentGroup )
+	{
+		if( !items.isEmpty() && itemGroup != currentGroup.get() )
+			items.add( SeparatorMenuItemBuilder.create().build() );
+		currentGroup.set( itemGroup );
+		return items;
 	}
 
 	public static class HasMenuItems
 	{
 
-		private MenuItem[] items;
+		private Object eventArg;
+		private Node eventFirer;
+		private Options options;
 
-		private HasMenuItems( MenuItem[] items )
+		public HasMenuItems( Object eventArg, Node eventFirer, Options options )
 		{
-			this.items = items;
+			this.eventArg = eventArg;
+			this.eventFirer = eventFirer;
+			this.options = options;
 		}
 
 		public MenuItem[] items()
 		{
-			return items;
+			return itemsFor( eventArg, eventFirer, options );
 		}
-
 	}
 
 	private static MenuItem itemFor( String id, String label, EventHandler<ActionEvent> handler )
@@ -130,6 +187,47 @@ public class MenuItemsProvider
 					Platform.runLater( action );
 			}
 		};
+	}
+
+	private static <T> EventHandler<ActionEvent> eventHandler( final EventType<IntentEvent<? extends T>> eventType,
+			final Node firer, final T target, final Dialog dialog, final Runnable... actions )
+	{
+		return new EventHandler<ActionEvent>()
+		{
+			@Override
+			public void handle( ActionEvent _ )
+			{
+				firer.fireEvent( IntentEvent.create( eventType, target ) );
+				for( Runnable action : actions )
+					Platform.runLater( action );
+				dialog.close();
+			}
+		};
+	}
+
+	private static <T> EventHandler<ActionEvent> deleteHandler( final Node firer, final Deletable target,
+			final Options.DeleteData data )
+	{
+		if( data.confirmDelete )
+		{
+			return new EventHandler<ActionEvent>()
+			{
+				@Override
+				public void handle( ActionEvent _ )
+				{
+					String name = ( target instanceof Labeled ) ? "'" + ( ( Labeled )target ).getLabel() + "'" : "this item";
+					ConfirmationDialog dialog = new ConfirmationDialog( firer, "Are you sure you want to delete " + name
+							+ "?", "Delete" );
+					dialog.onConfirmProperty().set(
+							eventHandler( IntentEvent.INTENT_DELETE, firer, target, dialog, data.deleteActions ) );
+					dialog.show();
+				}
+			};
+		}
+		else
+		{
+			return eventHandler( IntentEvent.INTENT_DELETE, firer, target, data.deleteActions );
+		}
 	}
 
 	/**
@@ -171,7 +269,7 @@ public class MenuItemsProvider
 				wholeWindowRec.addEventHandler( MouseEvent.MOUSE_CLICKED, this );
 			}
 
-			Point mouseLocation = MouseInfo.getPointerInfo().getLocation();
+			Point mouseLocation = NodeUtils.getAbsMouseLocation();
 			currentMenu = ctxMenu;
 			ctxMenu.show( owner, mouseLocation.getX(), mouseLocation.getY() );
 			mainWindowView.getChildren().add( wholeWindowRec );
@@ -185,7 +283,6 @@ public class MenuItemsProvider
 				}
 			} );
 		}
-
 	}
 
 	/**
@@ -219,11 +316,17 @@ public class MenuItemsProvider
 		private String createLabel = "Create";
 		private String cloneLabel = "Clone";
 		private String saveLabel = "Save";
+		private final DeleteData deleteData = new DeleteData();
 		private final SettingsData settingsData = new SettingsData();
-		private String renameLabel = "Rename";
-		private String deleteLabel = "Delete";
-		private Runnable[] openActions;
-		private Runnable[] deleteActions;
+		private String renameLabel = "Rename\u2026";
+		private Runnable[] openActions = new Runnable[0];
+
+		private class DeleteData
+		{
+			String deleteLabel = "Delete";
+			Runnable[] deleteActions = new Runnable[0];
+			boolean confirmDelete = true;
+		}
 
 		private class SettingsData
 		{
@@ -333,14 +436,20 @@ public class MenuItemsProvider
 
 		public Options delete( Runnable... actions )
 		{
-			deleteActions = actions;
+			deleteData.deleteActions = actions;
 			return this;
 		}
 
-		public Options delete( String label, Runnable... actions )
+		public Options delete( boolean confirmDelete, Runnable... actions )
 		{
-			deleteLabel = label;
+			deleteData.confirmDelete = confirmDelete;
 			return delete( actions );
+		}
+
+		public Options delete( String label, boolean confirmDelete, Runnable... actions )
+		{
+			deleteData.deleteLabel = label;
+			return delete( confirmDelete, actions );
 		}
 
 	}

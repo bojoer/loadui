@@ -1,3 +1,18 @@
+/*
+ * Copyright 2013 SmartBear Software
+ * 
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * http://ec.europa.eu/idabc/eupl
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the Licence for the specific language governing permissions and limitations
+ * under the Licence.
+ */
 package com.eviware.loadui.ui.fx.control;
 
 import javafx.beans.binding.Bindings;
@@ -8,6 +23,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -23,7 +39,10 @@ import javafx.stage.Stage;
 import javafx.stage.StageBuilder;
 import javafx.stage.WindowEvent;
 
+import com.eviware.loadui.ui.fx.api.LoaduiFXConstants;
+import com.eviware.loadui.ui.fx.api.intent.AbortableBlockingTask;
 import com.eviware.loadui.ui.fx.api.intent.BlockingTask;
+import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 
 public class DetachableTab extends Tab
 {
@@ -57,12 +76,15 @@ public class DetachableTab extends Tab
 		return detachableContentProperty.get();
 	}
 
-	public final void setDetachableContent( Pane detachableContent )
+	public final void setDetachableContent( Node eventFirer, Pane detachableContent )
 	{
 		detachableContentProperty.set( detachableContent );
+		this.eventFirer = eventFirer;
 	}
 
 	private Stage detachedStage;
+	private Scene scene;
+	private Node eventFirer;
 	private final DetachedTabsHolder tabRefs;
 
 	public DetachableTab()
@@ -86,7 +108,7 @@ public class DetachableTab extends Tab
 
 		detachedProperty.addListener( new ChangeListener<Boolean>()
 		{
-			
+
 			@Override
 			public void changed( ObservableValue<? extends Boolean> _, Boolean oldValue, Boolean hasToDetach )
 			{
@@ -109,12 +131,11 @@ public class DetachableTab extends Tab
 		detachButton.visibleProperty().bind( selectedProperty() );
 		setGraphic( detachButton );
 	}
-	
+
 	private void doDetach()
 	{
 		final StackPane detachedTabContainer;
 		final Node detachableContent = getDetachableContent();
-		Scene scene;
 		detachedStage = StageBuilder
 				.create()
 				.icons( ( ( Stage )getTabPane().getScene().getWindow() ).getIcons() )
@@ -127,7 +148,7 @@ public class DetachableTab extends Tab
 								.root(
 										detachedTabContainer = StackPaneBuilder.create().children( detachableContent )
 												.styleClass( "detached-content" ).build() )
-								.stylesheets( "/com/eviware/loadui/ui/fx/loadui-style.css" ).build() ).build();
+								.stylesheets( LoaduiFXConstants.getLoaduiStylesheets() ).build() ).build();
 		detachableContent.setVisible( true );
 		detachedStage.setOnHidden( new EventHandler<WindowEvent>()
 		{
@@ -137,12 +158,26 @@ public class DetachableTab extends Tab
 				setDetached( false );
 			}
 		} );
-		//TODO: Forward all IntentEvents to the parent scene?
+
 		BlockingTask.install( scene );
+		AbortableBlockingTask.install( scene );
 		detachedId = tabRefs.add( detachedTabContainer );
+
+		final EventHandler<Event> intentHandler = new EventHandler<Event>()
+		{
+
+			@Override
+			public void handle( Event event )
+			{
+				if( !event.isConsumed() )
+					eventFirer.fireEvent( event );
+			}
+		};
+		detachedStage.addEventHandler( IntentEvent.ANY, intentHandler );
+
 		detachedStage.show();
 	}
-	
+
 	private void doReattach()
 	{
 		if( detachedStage != null )
@@ -152,6 +187,12 @@ public class DetachableTab extends Tab
 			detachedStage.close();
 			detachedStage = null;
 		}
+		if( scene != null )
+		{
+			BlockingTask.uninstall( scene );
+			AbortableBlockingTask.uninstall( scene );
+			scene = null;
+		}
 	}
-	
+
 }

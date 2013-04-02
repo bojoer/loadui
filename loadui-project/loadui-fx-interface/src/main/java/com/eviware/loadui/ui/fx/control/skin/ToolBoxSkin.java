@@ -1,3 +1,18 @@
+/*
+ * Copyright 2013 SmartBear Software
+ * 
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * http://ec.europa.eu/idabc/eupl
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the Licence for the specific language governing permissions and limitations
+ * under the Licence.
+ */
 package com.eviware.loadui.ui.fx.control.skin;
 
 import java.util.Collections;
@@ -36,9 +51,13 @@ import javafx.scene.layout.VBox;
 import javafx.scene.layout.VBoxBuilder;
 import javafx.stage.WindowEvent;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.eviware.loadui.ui.fx.control.ScrollableList;
 import com.eviware.loadui.ui.fx.control.ToolBox;
 import com.eviware.loadui.ui.fx.control.behavior.ToolBoxBehavior;
+import com.eviware.loadui.ui.fx.views.analysis.linechart.LineChartViewNode;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
 import com.sun.javafx.scene.control.behavior.BehaviorBase;
@@ -46,6 +65,8 @@ import com.sun.javafx.scene.control.skin.SkinBase;
 
 public class ToolBoxSkin<E extends Node> extends SkinBase<ToolBox<E>, BehaviorBase<ToolBox<E>>>
 {
+	protected static final Logger log = LoggerFactory.getLogger( LineChartViewNode.class );
+
 	private final ObservableMap<String, ToolBoxCategory> categories = FXCollections.observableHashMap();
 	private final Comparator<ToolBoxCategory> categoryComparator = new Comparator<ToolBoxCategory>()
 	{
@@ -141,6 +162,13 @@ public class ToolBoxSkin<E extends Node> extends SkinBase<ToolBox<E>, BehaviorBa
 				{
 					for( E removed : change.getRemoved() )
 					{
+
+						if( categories.get( ToolBox.getCategory( removed ) ) == null )
+						{
+							throw new RuntimeException( " Cannot find the category for toolbox item (" + removed
+									+ "), you should probably set the category on creation of this object" );
+						}
+
 						ToolBoxCategory category = categories.get( ToolBox.getCategory( removed ) );
 						category.categoryItems.remove( removed );
 						possiblyEmpty.add( category );

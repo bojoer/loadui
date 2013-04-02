@@ -1,3 +1,18 @@
+/*
+ * Copyright 2013 SmartBear Software
+ * 
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * http://ec.europa.eu/idabc/eupl
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the Licence for the specific language governing permissions and limitations
+ * under the Licence.
+ */
 package com.eviware.loadui.util.statistics;
 
 import java.util.ArrayList;
@@ -12,8 +27,8 @@ import com.google.common.collect.ImmutableList;
 
 public class ChartUtils
 {
-	private static final List<String> colors = ImmutableList.of( "#f9d900", "#a9e200", "#22bad9", "#0181e2", "#2f357f",
-			"#860061", "#c62b00", "#ff5700" );
+	private static final List<String> colors = ImmutableList.of( "#ff7a66", "#ff9533", "#66d466", "#00b2d2", "#ae7dd3",
+			"#df51a5", "#c69c6d", "#c3e166", "#8383db", "#fffb00", "#ffffff", "#66afdb" );
 
 	public final static Logger log = LoggerFactory.getLogger( ChartUtils.class );
 

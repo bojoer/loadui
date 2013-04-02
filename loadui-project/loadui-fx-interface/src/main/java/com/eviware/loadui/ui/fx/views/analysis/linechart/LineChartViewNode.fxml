@@ -22,7 +22,7 @@
 	<HBox minHeight="9" />
 	<HBox alignment="baseline_right">
 		<ZoomMenuButton fx:id="zoomMenuButton" text="Zoom" />
-		<ToggleButton fx:id="followCheckBox" text="follow" /> 
+		<ToggleButton fx:id="followCheckBox" text="Follow" /> 
 	</HBox>
 	<HBox minHeight="9" />	
 </fx:root>

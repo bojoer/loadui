@@ -1,3 +1,18 @@
+/*
+ * Copyright 2013 SmartBear Software
+ * 
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * http://ec.europa.eu/idabc/eupl
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the Licence for the specific language governing permissions and limitations
+ * under the Licence.
+ */
 package com.eviware.loadui.ui.fx.util;
 
 import java.awt.MouseInfo;
@@ -11,6 +26,7 @@ import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.beans.value.ObservableValue;
+import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
@@ -25,6 +41,9 @@ import javax.imageio.ImageIO;
 import org.apache.commons.codec.binary.Base64;
 
 import com.eviware.loadui.api.traits.Releasable;
+import com.sun.glass.ui.Application;
+import com.sun.glass.ui.Robot;
+import com.sun.javafx.PlatformUtil;
 
 public final class NodeUtils
 {
@@ -143,6 +162,7 @@ public final class NodeUtils
 	{
 		if( node instanceof Releasable )
 		{
+			System.out.println( "!!!!! RELEASING " + node );
 			( ( Releasable )node ).release();
 		}
 	}
@@ -154,16 +174,42 @@ public final class NodeUtils
 	 */
 	public static boolean isMouseOn( Node node )
 	{
-		Point mouseLocation = MouseInfo.getPointerInfo().getLocation();
-		double windowX = node.getScene().getWindow().getX();
-		double windowY = node.getScene().getWindow().getY();
-		double sceneX = node.getScene().getX();
-		double sceneY = node.getScene().getY();
+		Point mouseLocation = getAbsMouseLocation();
+		return absoluteBoundsOf( node ).contains( mouseLocation.getX(), mouseLocation.getY() );
+	}
+
+	public static Bounds absoluteBoundsOf( Node node )
+	{
+		double tX = node.getScene().getWindow().getX() + node.getScene().getX();
+		double tY = node.getScene().getWindow().getY() + node.getScene().getY();
 		Bounds boundsInScene = node.localToScene( node.getBoundsInLocal() );
-		Point2D mouseLocationInScene = new Point2D( mouseLocation.getX() - windowX - sceneX, mouseLocation.getY()
-				- windowY - sceneY );
-		boolean result = boundsInScene.contains( mouseLocationInScene );
-		return result;
+		return new BoundingBox( boundsInScene.getMinX() + tX, boundsInScene.getMinY() + tY, boundsInScene.getWidth(),
+				boundsInScene.getHeight() );
+	}
+	
+	/**
+	 * @return mouse absolute location on the screen. This works for Mac and Windows, as
+	 * opposed to AWT MouseInfo.getPointerInfo() which will not work in Mac (due to HeadlessException)
+	 */
+	public static Point getAbsMouseLocation() {
+		return PlatformUtil.isMac() ? getMacMouseLocation() : MouseInfo.getPointerInfo().getLocation();
+	}
+	
+	private static Point getMacMouseLocation() {
+		Robot robot = MacRobotHolder.getRobot();
+		return new Point(robot.getMouseX(), robot.getMouseY());
+	}
+	
+	private static class MacRobotHolder {
+		
+		static Robot robot;
+		
+		static Robot getRobot() {
+			if (robot == null) {
+				robot = Application.GetApplication().createRobot();
+			}
+			return robot;
+		}
 	}
 
 }

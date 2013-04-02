@@ -1,12 +1,12 @@
 /*
- * Copyright 2011 SmartBear Software
+ * Copyright 2013 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  * 
- * http://ec.europa.eu/idabc/eupl5
+ * http://ec.europa.eu/idabc/eupl
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -16,12 +16,16 @@
 package com.eviware.loadui.impl.statistics;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,9 +34,6 @@ import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.addon.Addon;
 import com.eviware.loadui.api.addon.Addon.Context;
 import com.eviware.loadui.api.addon.AddonRegistry;
-import com.eviware.loadui.api.events.BaseEvent;
-import com.eviware.loadui.api.events.CollectionEvent;
-import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.execution.Phase;
 import com.eviware.loadui.api.execution.TestExecution;
 import com.eviware.loadui.api.execution.TestExecutionTask;
@@ -40,7 +41,6 @@ import com.eviware.loadui.api.execution.TestRunner;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.SceneItem;
-import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.model.WorkspaceProvider;
 import com.eviware.loadui.api.reporting.ReportingManager;
 import com.eviware.loadui.api.reporting.SummaryExportUtils;
@@ -52,9 +52,10 @@ import com.eviware.loadui.api.summary.MutableSummary;
 import com.eviware.loadui.api.summary.Summary;
 import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.util.BeanInjector;
-import com.google.common.collect.HashMultimap;
+import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.SetMultimap;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 
 public class ProjectExecutionManagerImpl implements ProjectExecutionManager, Releasable
 {
@@ -63,10 +64,7 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager, Rel
 	private final ExecutionManager executionManager;
 	private final WorkspaceProvider workspaceProvider;
 	private final ReportingManager reportingManager;
-	private final SetMultimap<String, Execution> projectIdToExecutions = HashMultimap.create();
 	private final Set<SummaryTask> summaryAttachers = new HashSet<>();
-	private final WorkspaceProviderListener workspaceProviderListener = new WorkspaceProviderListener();
-	private final CollectionListener collectionListener = new CollectionListener();
 	private final RunningExecutionTask runningExecutionTask = new RunningExecutionTask();
 
 	ProjectExecutionManagerImpl( final ExecutionManager executionManager, final WorkspaceProvider workspaceProvider,
@@ -75,11 +73,6 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager, Rel
 		this.executionManager = executionManager;
 		this.workspaceProvider = workspaceProvider;
 		this.reportingManager = reportingManager;
-
-		workspaceProvider.addEventListener( BaseEvent.class, workspaceProviderListener );
-
-		if( workspaceProvider.isWorkspaceLoaded() )
-			workspaceProvider.getWorkspace().addEventListener( CollectionEvent.class, collectionListener );
 
 		BeanInjector.getBean( AddonRegistry.class ).registerFactory( ExecutionAddon.class,
 				new Addon.Factory<ExecutionAddon>()
@@ -107,10 +100,18 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager, Rel
 	}
 
 	@Override
-	public Set<Execution> getExecutions( ProjectItem project )
+	public Set<Execution> getExecutions( final ProjectItem project )
 	{
-		return projectIdToExecutions.containsKey( project.getId() ) ? projectIdToExecutions.get( project.getId() )
-				: Collections.<Execution> emptySet();
+		return Sets.newHashSet( Iterables.filter( executionManager.getExecutions(), new Predicate<Execution>()
+		{
+
+			@Override
+			public boolean apply( @Nullable Execution input )
+			{
+				return input != null && project.getId().equals( getProjectId( input ) );
+			}
+
+		} ) );
 	}
 
 	@Override
@@ -136,22 +137,7 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager, Rel
 	@Override
 	public void release()
 	{
-		workspaceProvider.removeEventListener( BaseEvent.class, workspaceProviderListener );
-		if( workspaceProvider.isWorkspaceLoaded() )
-		{
-			workspaceProvider.getWorkspace().removeEventListener( CollectionEvent.class, collectionListener );
-		}
 		BeanInjector.getBean( TestRunner.class ).unregisterTask( runningExecutionTask, Phase.values() );
-	}
-
-	private final class WorkspaceProviderListener implements EventHandler<BaseEvent>
-	{
-		@Override
-		public void handleEvent( BaseEvent event )
-		{
-			if( WorkspaceProvider.WORKSPACE_LOADED.equals( event.getKey() ) )
-				workspaceProvider.getWorkspace().addEventListener( CollectionEvent.class, collectionListener );
-		}
 	}
 
 	private class ExecutionAddonImpl implements ExecutionAddon
@@ -177,34 +163,6 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager, Rel
 		}
 	}
 
-	private class CollectionListener implements EventHandler<CollectionEvent>
-	{
-		@Override
-		public void handleEvent( CollectionEvent event )
-		{
-			if( WorkspaceItem.PROJECTS.equals( event.getKey() ) )
-			{
-				ProjectItem project = ( ProjectItem )event.getElement();
-				String projectId = project.getId();
-				if( CollectionEvent.Event.ADDED == event.getEvent() )
-				{
-					// lazily get project->execution mapping from disk if needed
-					for( Execution e : executionManager.getExecutions() )
-					{
-						if( getProjectId( e ).equals( projectId ) )
-						{
-							projectIdToExecutions.put( projectId, e );
-						}
-					}
-				}
-				else
-				{
-					projectIdToExecutions.removeAll( projectId );
-				}
-			}
-		}
-	}
-
 	private class RunningExecutionTask implements TestExecutionTask
 	{
 		@Override
@@ -224,7 +182,7 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager, Rel
 			case POST_STOP :
 				stopExecution( runningProject );
 				break;
-			default:
+			default :
 				break;
 			}
 		}
@@ -251,29 +209,33 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager, Rel
 
 			summaryAttachers.add( new SummaryTask( runningProject, executionManager.getCurrentExecution() ) );
 
-			projectIdToExecutions.put( runningProject.getId(), newExecution );
 		}
 
 		private void stopExecution( ProjectItem runningProject )
 		{
 			executionManager.stopExecution();
-
-			// remove the oldest autosaved execution if needed
-			Set<Execution> executions = getExecutions( runningProject, true, false );
 			long autoSaves = workspaceProvider.getWorkspace().getNumberOfAutosaves();
-			while( executions.size() > autoSaves && autoSaves > 0 )
-			{
-				Execution oldestExecution = executionManager.getCurrentExecution();
-				for( Execution e : executions )
-				{
-					if( e.getStartTime() < oldestExecution.getStartTime() )
-						oldestExecution = e;
-				}
-				oldestExecution.delete();
-				executions.remove( oldestExecution );
 
-				projectIdToExecutions.remove( runningProject.getId(), oldestExecution );
+			List<Execution> executions = new ArrayList<>( getExecutions( runningProject, true, false ) );
+			if( executions.size() > autoSaves )
+			{
+				// sorts list from oldest to newest
+				Collections.sort( executions, new Comparator<Execution>()
+				{
+					@Override
+					public int compare( Execution ex1, Execution ex2 )
+					{
+						return ( int )( ex1.getStartTime() - ex2.getStartTime() );
+					}
+				} );
+				while( executions.size() > autoSaves )
+				{
+					Execution oldest = executions.remove( 0 );
+					log.debug( "Removing oldest Execution: " + oldest.getLabel() );
+					oldest.delete();
+				}
 			}
+
 		}
 	}
 

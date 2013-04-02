@@ -1,3 +1,18 @@
+/*
+ * Copyright 2013 SmartBear Software
+ * 
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * http://ec.europa.eu/idabc/eupl
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the Licence for the specific language governing permissions and limitations
+ * under the Licence.
+ */
 package com.eviware.loadui.ui.fx.views.canvas;
 
 import java.lang.ref.WeakReference;
@@ -81,7 +96,7 @@ public abstract class PlaybackPanel<T extends CounterDisplay, C extends CanvasIt
 
 	protected Button resetButton()
 	{
-		return ButtonBuilder.create().text( "Reset" ).style( "-fx-font-size: 9px;" ).onAction( resetCounters ).build();
+		return ButtonBuilder.create().text( "Reset" ).style( "-fx-font-size: 10px; " ).onAction( resetCounters ).build();
 	}
 
 	protected static Separator separator()
@@ -96,7 +111,8 @@ public abstract class PlaybackPanel<T extends CounterDisplay, C extends CanvasIt
 
 	protected ToggleButton linkScenarioButton( SceneItem scenario )
 	{
-		ToggleButton linkButton = ToggleButtonBuilder.create().id( "link-scenario" ).styleClass( "styleable-graphic" ).build();
+		ToggleButton linkButton = ToggleButtonBuilder.create().id( "link-scenario" ).styleClass( "styleable-graphic" )
+				.build();
 		Property<Boolean> linkedProperty = Properties.convert( scenario.followProjectProperty() );
 		linkButton.selectedProperty().bindBidirectional( linkedProperty );
 		return linkButton;

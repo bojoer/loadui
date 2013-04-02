@@ -1,3 +1,18 @@
+/*
+ * Copyright 2013 SmartBear Software
+ * 
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * http://ec.europa.eu/idabc/eupl
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the Licence for the specific language governing permissions and limitations
+ * under the Licence.
+ */
 package com.eviware.loadui.ui.fx.util;
 
 import static com.eviware.loadui.ui.fx.util.test.TestFX.targetWindow;
@@ -83,7 +98,7 @@ public class AnimationsTest
 			}
 		}, 5 );
 		Animations anime = new Animations( rectangle, false, Duration.millis( 100 ), Duration.millis( 1 ),
-				Duration.millis( 1 ) );
+				Duration.millis( 1 ), Duration.millis( 1 ) );
 		assertFalse( rectangle.isVisible() );
 
 		anime.slideDown();
@@ -120,7 +135,7 @@ public class AnimationsTest
 			}
 		}, 5 );
 		Animations anime = new Animations( rectangle, true, Duration.millis( 1 ), Duration.millis( 100 ),
-				Duration.millis( 1 ) );
+				Duration.millis( 1 ), Duration.millis( 1 ) );
 		assertTrue( rectangle.isVisible() );
 
 		anime.slideUp();
@@ -158,7 +173,7 @@ public class AnimationsTest
 			}
 		}, 5 );
 		Animations anime = new Animations( rectangle, true, Duration.millis( 1 ), Duration.millis( 1 ),
-				Duration.millis( 100 ) );
+				Duration.millis( 1 ), Duration.millis( 100 ) );
 		assertTrue( rectangle.isVisible() );
 		double opacity = rectangle.getOpacity();
 		assertEquals( 1.0, opacity, 0.01 );
@@ -182,6 +197,43 @@ public class AnimationsTest
 	}
 
 	@Test
+	public void testFadeIn() throws Exception
+	{
+		assertNotNull( stage );
+		final Rectangle rectangle = RectangleBuilder.create().width( 50 ).height( 75 ).fill( Color.RED ).id( "rec" )
+				.build();
+		FXTestUtils.invokeAndWait( new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				rootBox.getChildren().clear();
+				rootBox.getChildren().add( rectangle );
+			}
+		}, 5 );
+		Animations anime = new Animations( rectangle, false, Duration.millis( 1 ), Duration.millis( 1 ),
+				Duration.millis( 100 ), Duration.millis( 1 ) );
+		assertFalse( rectangle.isVisible() );
+		
+		anime.fadeIn();
+		Thread.sleep( 50 );
+
+		// somewhere in the middle of the animation
+		double opacity = rectangle.getOpacity();
+		assertTrue( 0.0 < opacity && opacity < 1.0 );
+		assertTrue( rectangle.isVisible() );
+
+		Thread.sleep( 100 );
+
+		// end of animation
+		opacity = rectangle.getOpacity();
+		assertEquals( 1.0, opacity, 0.01 );
+		assertTrue( rectangle.isVisible() );
+
+		assertEquals( 1, TestFX.findAll( "#rec" ).size() );
+	}
+
+	@Test
 	public void testAnimationIsCancelledWhenAnotherStarts() throws Exception
 	{
 		assertNotNull( stage );
@@ -197,7 +249,7 @@ public class AnimationsTest
 			}
 		}, 5 );
 		Animations anime = new Animations( rectangle, true, Duration.millis( 100 ), Duration.millis( 100 ),
-				Duration.millis( 100 ) );
+				Duration.millis( 1 ), Duration.millis( 100 ) );
 
 		anime.fadeAway();
 		Thread.sleep( 25 );
@@ -239,7 +291,7 @@ public class AnimationsTest
 			}
 		}, 5 );
 		Animations anime = new Animations( rectangle, true, Duration.millis( 50 ), Duration.millis( 50 ),
-				Duration.millis( 50 ) );
+				Duration.millis( 1 ), Duration.millis( 50 ) );
 
 		anime.fadeAway();
 		Thread.sleep( 75 );
@@ -281,7 +333,7 @@ public class AnimationsTest
 			}
 		}, 5 );
 		Animations anime = new Animations( rectangle, false, Duration.millis( 100 ), Duration.millis( 1 ),
-				Duration.millis( 1 ) );
+				Duration.millis( 1 ), Duration.millis( 1 ) );
 		assertFalse( rectangle.isVisible() );
 
 		final SettableFuture<Boolean> settableFuture = SettableFuture.create();
@@ -326,7 +378,7 @@ public class AnimationsTest
 			}
 		}, 5 );
 		Animations anime = new Animations( rectangle, false, Duration.millis( 100 ), Duration.millis( 100 ),
-				Duration.millis( 1 ) );
+				Duration.millis( 1 ), Duration.millis( 1 ) );
 		assertFalse( rectangle.isVisible() );
 
 		final SettableFuture<Boolean> settableFuture = SettableFuture.create();
@@ -353,11 +405,11 @@ public class AnimationsTest
 		{
 			// expected
 		}
-		
+
 		rectangle.setVisible( false );
-		
+
 		// Repeating normal slideDown test to make sure it still works after a stopped animation call
-		
+
 		anime.slideDown();
 		Thread.sleep( 50 );
 
@@ -374,9 +426,9 @@ public class AnimationsTest
 		assertTrue( rectangle.isVisible() );
 
 		assertEquals( 1, TestFX.findAll( "#rec" ).size() );
-		
+
 		// Repeating normal slideUp test as well!
-		
+
 		anime.slideUp();
 		Thread.sleep( 50 );
 
@@ -413,7 +465,7 @@ public class AnimationsTest
 			}
 		}, 5 );
 		Animations anime = new Animations( rectangle, false, Duration.millis( 100 ), Duration.millis( 1 ),
-				Duration.millis( 1 ) );
+				Duration.millis( 1 ), Duration.millis( 1 ) );
 		assertFalse( rectangle.isVisible() );
 
 		final SettableFuture<Boolean> settableFuture1 = SettableFuture.create();

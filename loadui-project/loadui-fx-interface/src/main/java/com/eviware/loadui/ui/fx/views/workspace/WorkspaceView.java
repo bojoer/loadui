@@ -1,3 +1,18 @@
+/*
+ * Copyright 2013 SmartBear Software
+ * 
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * http://ec.europa.eu/idabc/eupl
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the Licence for the specific language governing permissions and limitations
+ * under the Licence.
+ */
 package com.eviware.loadui.ui.fx.views.workspace;
 
 import static com.eviware.loadui.ui.fx.util.ObservableLists.bindSorted;
@@ -8,8 +23,9 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import javafx.application.Platform;
+import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
-import javafx.beans.binding.Bindings;
+import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -19,17 +35,19 @@ import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ContextMenuBuilder;
 import javafx.scene.control.Label;
-import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.web.PopupFeatures;
+import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.FileChooserBuilder;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
+import javafx.util.Callback;
 
 import javax.annotation.Nullable;
 
@@ -50,7 +68,6 @@ import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.NodeUtils;
 import com.eviware.loadui.ui.fx.util.ObservableLists;
 import com.eviware.loadui.ui.fx.util.Observables;
-import com.eviware.loadui.ui.fx.util.Properties;
 import com.eviware.loadui.ui.fx.util.UIUtils;
 import com.eviware.loadui.ui.fx.views.projectref.ProjectRefView;
 import com.google.common.base.Function;
@@ -76,9 +93,6 @@ public class WorkspaceView extends StackPane
 	private final ObservableList<ProjectRefView> projectRefViews;
 
 	@FXML
-	private MenuButton workspaceButton;
-
-	@FXML
 	private VBox carouselArea;
 
 	@FXML
@@ -89,7 +103,7 @@ public class WorkspaceView extends StackPane
 
 	@FXML
 	private WebView webView;
-	private ObservableList<Observable> labelProperties;
+	private ObservableList<ReadOnlyStringProperty> labelProperties;
 
 	public WorkspaceView( final WorkspaceItem workspace )
 	{
@@ -139,8 +153,6 @@ public class WorkspaceView extends StackPane
 			}
 		} );
 
-		workspaceButton.textProperty().bind( Bindings.format( "Workspace: %s", Properties.forLabel( workspace ) ) );
-
 		initProjectRefCarousel();
 
 		java.util.Properties props = new java.util.Properties();
@@ -154,6 +166,23 @@ public class WorkspaceView extends StackPane
 			log.warn( "Unable to load resource file 'application.properties!'", e );
 		}
 
+		webView.getEngine().setCreatePopupHandler( new Callback<PopupFeatures, WebEngine>()
+		{
+			@Override
+			public WebEngine call( PopupFeatures pf )
+			{
+				final WebEngine popupWebEngine = new WebEngine();
+				popupWebEngine.locationProperty().addListener( new InvalidationListener()
+				{
+					@Override
+					public void invalidated( Observable _ )
+					{
+						UIUtils.openInExternalBrowser( popupWebEngine.getLocation() );
+					}
+				} );
+				return popupWebEngine;
+			}
+		} );
 		webView.getEngine().load( props.getProperty( "starter.page.url" ) + "?version=" + LoadUI.VERSION );
 
 		initGettingStartedWizard();
@@ -209,7 +238,7 @@ public class WorkspaceView extends StackPane
 
 	private void initProjectRefCarousel()
 	{
-		final Observables.Group group = Observables.group();
+		final Observables.Group<ReadOnlyStringProperty> group = Observables.group( new ReadOnlyStringProperty[0] );
 		final MenuItem[] carouselMenuItems = MenuItemsProvider.createWith( projectRefCarousel, null,
 				Options.are().noDelete().noRename().create( ProjectItem.class, CREATE_PROJECT ) ).items();
 
@@ -235,10 +264,10 @@ public class WorkspaceView extends StackPane
 		bindSorted( projectRefCarousel.getItems(), projectRefViews, Ordering.usingToString(), group );
 
 		labelProperties = ObservableLists.transform( projectRefCarousel.getItems(),
-				new Function<ProjectRefView, Observable>()
+				new Function<ProjectRefView, ReadOnlyStringProperty>()
 				{
 					@Override
-					public Observable apply( ProjectRefView projectRefView )
+					public ReadOnlyStringProperty apply( ProjectRefView projectRefView )
 					{
 						return projectRefView.labelProperty();
 					}

@@ -1,3 +1,18 @@
+/*
+ * Copyright 2013 SmartBear Software
+ * 
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * http://ec.europa.eu/idabc/eupl
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the Licence for the specific language governing permissions and limitations
+ * under the Licence.
+ */
 package com.eviware.loadui.ui.fx.views.analysis.linechart;
 
 import static com.eviware.loadui.ui.fx.util.ObservableLists.fx;
@@ -27,6 +42,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart.Data;
 import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
@@ -36,7 +52,6 @@ import javafx.scene.text.Text;
 
 import javax.annotation.OverridingMethodsMustInvokeSuper;
 
-import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
 import org.slf4j.Logger;
@@ -53,6 +68,7 @@ import com.eviware.loadui.ui.fx.api.analysis.ExecutionChart;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.ManualObservable;
 import com.eviware.loadui.ui.fx.util.ObservableLists;
+import com.eviware.loadui.ui.fx.util.Observables;
 import com.eviware.loadui.util.execution.TestExecutionUtils;
 import com.google.common.base.Function;
 
@@ -61,7 +77,7 @@ public class ScrollableLineChart extends HBox implements ExecutionChart, Releasa
 	protected ObservableValue<Execution> currentExecution;
 
 	protected ObservableList<SegmentView<?>> segmentViews;
-	protected ObservableList<Series<Number, Number>> seriesList;
+	protected ObservableList<Series<Long, Number>> seriesList;
 
 	public static final PeriodFormatter timeFormatter = new PeriodFormatterBuilder().printZeroNever().appendWeeks()
 			.appendSuffix( "w" ).appendSeparator( " " ).appendDays().appendSuffix( "d" ).appendSeparator( " " )
@@ -93,7 +109,7 @@ public class ScrollableLineChart extends HBox implements ExecutionChart, Releasa
 	protected SegmentBox segmentBox;
 
 	@FXML
-	protected LineChart<Number, Number> lineChart;
+	protected LineChart<Long, Number> lineChart;
 
 	@FXML
 	protected NumberAxis xAxis;
@@ -117,7 +133,6 @@ public class ScrollableLineChart extends HBox implements ExecutionChart, Releasa
 				ScrollableLineChart.class.getResource( ScrollableLineChart.class.getSimpleName() + ".fxml" ) );
 	}
 
-	@SuppressWarnings( "unchecked" )
 	@FXML
 	protected void initialize()
 	{
@@ -156,18 +171,15 @@ public class ScrollableLineChart extends HBox implements ExecutionChart, Releasa
 		position.addListener( new InvalidationListener()
 		{
 			@Override
-			public void invalidated( Observable arg0 )
+			public void invalidated( Observable _ )
 			{
 				long millis = ( long )getPosition();
-				Period period = new Period( millis );
-				String formattedTime = timeFormatter.print( period.normalizedStandard() );
-				ellapsedTime.setText( formattedTime );
+				ellapsedTime.setText( millisToTickMark.generatePositionString( millis ) );
 			}
 		} );
 
 		scrollBar.maxProperty().addListener( new InvalidationListener()
 		{
-
 			@Override
 			public void invalidated( Observable _ )
 			{
@@ -181,12 +193,8 @@ public class ScrollableLineChart extends HBox implements ExecutionChart, Releasa
 						setTickMode( tickLevel );
 					}
 				}
-
 			}
-
 		} );
-
-		log.debug( "initializing.. done" );
 	}
 
 	@Override
@@ -233,14 +241,17 @@ public class ScrollableLineChart extends HBox implements ExecutionChart, Releasa
 
 		if( scrollBar.followStateProperty().get() && TestExecutionUtils.isExecutionRunning() )
 		{
-			//setPositionToLeftSide();
 			scrollBar.updateFollow();
 			log.debug( "chart:(" + titleProperty().get() + ") Set position to: " + position.get() + " (following)" );
 		}
 
 		// resets the position after the span has changed
-		position.bind( scrollBar.leftSidePositionProperty() );
 		scrollBar.setLeftSidePosition( prePosition );
+		scrollBar.updateLeftSide();
+
+		position.set( scrollBar.leftSidePositionProperty().longValue() );
+		log.debug( "getPosition() is " + getPosition() );
+		position.bind( scrollBar.leftSidePositionProperty() );
 
 		manualDataUpdate.fireInvalidation();
 
@@ -277,19 +288,39 @@ public class ScrollableLineChart extends HBox implements ExecutionChart, Releasa
 
 		scrollBar.maxProperty().bind( currentExecutionLenght );
 
-		final SegmentToSeriesFunction segmentToSeries = new SegmentToSeriesFunction( currentExecution,
-				javafx.collections.FXCollections.observableArrayList( currentExecution, position, poll,
-						segmentBox.chartUpdate(), manualDataUpdate, currentExecutionLenght ), this );
+		final SegmentViewToSeriesFunction segmentViewToSeries = new SegmentViewToSeriesFunction( currentExecution,
+				Observables.group( javafx.collections.FXCollections.observableArrayList( currentExecution,
+						segmentBox.chartUpdate(), manualDataUpdate, widthProperty() ) ), poll, position, this );
 
 		final ObservableList<Segment> segmentsList = fx( ofCollection( chartView, LineChartView.SEGMENTS, Segment.class,
 				chartView.getSegments() ) );
+		if( chartView == chartView.getChartGroup().getChartView() )
+		{
+			segmentsList.addListener( new ListChangeListener<Segment>()
+			{
+				@Override
+				public void onChanged( javafx.collections.ListChangeListener.Change<? extends Segment> change )
+				{
+					while( change.next() )
+					{
+						for( Segment s : ObservableLists.getActuallyRemoved( change ) )
+						{
+							log.debug( "!!!!!! " + s );
+							( ( Segment.Removable )s ).remove();
+						}
+					}
+				}
+			} );
+		}
 
-		seriesList = transform( segmentsList, segmentToSeries );
+		segmentViews = transform( segmentsList, segmentToView );
+		ObservableLists.releaseElementsWhenRemoved( segmentViews );
 
-		seriesList.addListener( new ListChangeListener<Series>()
+		seriesList = transform( segmentViews, segmentViewToSeries );
+		seriesList.addListener( new ListChangeListener<Series<Long, Number>>()
 		{
 			@Override
-			public void onChanged( javafx.collections.ListChangeListener.Change<? extends Series> c )
+			public void onChanged( javafx.collections.ListChangeListener.Change<? extends Series<Long, Number>> c )
 			{
 				while( c.next() )
 				{
@@ -297,8 +328,6 @@ public class ScrollableLineChart extends HBox implements ExecutionChart, Releasa
 				}
 			}
 		} );
-
-		segmentViews = transform( segmentsList, segmentToView );
 
 		bindContent( getLineChart().getData(), seriesList );
 		bindContent( getSegments().getChildren(), segmentViews );
@@ -309,16 +338,21 @@ public class ScrollableLineChart extends HBox implements ExecutionChart, Releasa
 	@OverridingMethodsMustInvokeSuper
 	public void release()
 	{
-		for( SegmentView segmentView : segmentViews )
-			segmentView.delete();
+		if( chartView == chartView.getChartGroup().getChartView() )
+		{
+			log.debug( "Main chart view removed" );
+			for( SegmentView<?> segmentView : segmentViews )
+				segmentView.delete();
+		}
 		clearSeries( seriesList );
 	}
 
-	private static void clearSeries( Iterable<? extends Series> series )
+	protected static void clearSeries( Iterable<? extends Series<Long, Number>> series )
 	{
-		for( Series s : series )
+		for( Series<Long, Number> s : series )
 		{
-			s.setData( FXCollections.observableArrayList() );
+			log.debug( "!!!!! CLEANING SERIES " + series );
+			s.setData( FXCollections.<Data<Long, Number>> observableArrayList() );
 		}
 	}
 
@@ -345,7 +379,7 @@ public class ScrollableLineChart extends HBox implements ExecutionChart, Releasa
 	}
 
 	@Override
-	public LineChart<Number, Number> getLineChart()
+	public LineChart<Long, Number> getLineChart()
 	{
 		return lineChart;
 	}
@@ -396,6 +430,12 @@ public class ScrollableLineChart extends HBox implements ExecutionChart, Releasa
 	public Color getColor( Segment segment, Execution execution )
 	{
 		return Color.web( segment.getAttribute( SegmentView.COLOR_ATTRIBUTE, "#FFFFFF" ) );
+	}
+
+	@Override
+	public Execution getCurrentExecution()
+	{
+		return currentExecution.getValue();
 	}
 
 }

@@ -1,3 +1,18 @@
+/*
+ * Copyright 2013 SmartBear Software
+ * 
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * http://ec.europa.eu/idabc/eupl
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the Licence for the specific language governing permissions and limitations
+ * under the Licence.
+ */
 package com.eviware.loadui.ui.fx.views.canvas.component;
 
 import javafx.beans.InvalidationListener;
@@ -7,14 +22,16 @@ import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ContextMenuBuilder;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleButtonBuilder;
 import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.layout.HBoxBuilder;
+import javafx.scene.layout.RegionBuilder;
 
 import com.eviware.loadui.api.component.categories.OnOffCategory;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.ui.fx.MenuItemsProvider;
+import com.eviware.loadui.ui.fx.MenuItemsProvider.HasMenuItems;
 import com.eviware.loadui.ui.fx.MenuItemsProvider.Options;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.LayoutContainerUtils;
@@ -35,13 +52,13 @@ public class ComponentView extends CanvasObjectView
 
 		FXMLUtils.load( this, null, ComponentView.class.getResource( ComponentView.class.getSimpleName() + ".fxml" ) );
 
-		MenuItem[] menuItems = MenuItemsProvider.createWith(
+		HasMenuItems hasMenuItems = MenuItemsProvider.createWith(
 				this,
 				getCanvasObject(),
 				Options.are().settings( "Component Settings",
-						LayoutContainerUtils.settingsTabsFromLayoutContainers( getComponent().getSettingsTabs() ) ) ).items();
-		menuButton.getItems().setAll( menuItems );
-		final ContextMenu ctxMenu = ContextMenuBuilder.create().items( menuItems ).build();
+						LayoutContainerUtils.settingsTabsFromLayoutContainers( getComponent().getSettingsTabs() ) ) );
+		menuButton.getItems().setAll( hasMenuItems.items() );
+		final ContextMenu ctxMenu = ContextMenuBuilder.create().items( hasMenuItems.items() ).build();
 
 		setOnContextMenuRequested( new EventHandler<ContextMenuEvent>()
 		{
@@ -57,7 +74,14 @@ public class ComponentView extends CanvasObjectView
 			}
 		} );
 
-		compactModeButton = ToggleButtonBuilder.create().id( "compact" ).text( "C" )
+		compactModeButton = ToggleButtonBuilder
+				.create()
+				.id( "compact" )
+				.graphic(
+						HBoxBuilder
+								.create()
+								.children( RegionBuilder.create().styleClass( "graphic" ).build(),
+										RegionBuilder.create().styleClass( "secondary-graphic" ).build() ).build() )
 				.selected( Boolean.parseBoolean( component.getAttribute( COMPACT_MODE_ATTRIBUTE, "false" ) ) )
 				.onAction( new EventHandler<ActionEvent>()
 				{

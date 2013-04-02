@@ -34,6 +34,11 @@
 	-dropshadow-light: dropshadow( gaussian, #DDDDDD, 6, 0.8, 0, 0 );
 	-innershadow-dark: innershadow( three-pass-box, #EEEEEE, 5, 0.1, 0, 5);
 	-innershadow-light: innershadow( three-pass-box, #111111, 5, 0.1, 0, 5);
+	
+	-menubutton-color-hover: linear-gradient(to bottom, #E7E7E7, #B5B5B5);
+	-menubutton-color-showing: linear-gradient(to bottom, #389DFC, #50C0F1);
+	-menubutton-color-border: #8C8C8C;
+	
 }
 
 
@@ -42,8 +47,33 @@
  */
 .text{
 	-fx-font-family: "lucida sans";
+	-fx-font-size: 12; 
 }
- 
+
+.tooltip {
+   -fx-background-color: snow;
+   -fx-background-radius: 7 7 7 7;
+   -fx-font-family: "lucida sans";
+   -fx-font-size: 10;   
+}
+
+.tooltip .page-corner {
+    -fx-shape: " ";
+}
+
+.context-menu {
+	-fx-padding: 4 5 8 5;
+}
+
+.context-menu .menu-item .label {
+    -fx-text-fill: black;
+}
+
+.context-menu .separator .line {
+	-fx-padding: 0.0005em 0.0em 0.0em 0.0em; /* 0 4 0 4 */
+	-fx-border-style: segments(0.066667em, 0.066667em);
+}
+
 .placeholder {
 	-fx-background-color: #292929;
 	-fx-background-radius: 8;
@@ -84,7 +114,8 @@
 }
 
 .display .label {
-	-fx-text-fill: green;
+	-fx-text-fill: #01f110;
+	-fx-font-size: 10;
 }
 
 .button.styleable-graphic {
@@ -183,6 +214,7 @@
 
 .button .text{
 	-fx-padding: -5 0 0 0;
+	-fx-translate-y: 2; 
 }
 
 .button:hover {
@@ -269,12 +301,9 @@
 	-fx-font-size: 12;
 }
 
-
 /**
  * Regular playback button
  */
-
-
 .play-button .toggle-button{
 	-fx-background-color: linear-gradient(to bottom, #DBDBDB 0%, #757575 100%); 
 	-fx-padding: 0;
@@ -292,7 +321,7 @@
 }
 
 .play-button .toggle-button:pressed{
-	-fx-background-color: linear-gradient(to bottom, #959595 0%, #cdcdcd 100%)
+	-fx-background-color: linear-gradient(to bottom, #959595 0%, #cdcdcd 100%);
 }
 
 .play-button .toggle-button:selected{
@@ -309,7 +338,7 @@
 }
 
 .play-button .toggle-button:selected:hover:pressed{
-	-fx-background-color: linear-gradient(to bottom, #7A7A7A 0%, #898989 100%)
+	-fx-background-color: linear-gradient(to bottom, #7A7A7A 0%, #898989 100%);
 }
 
 .play-button .toggle-button .graphic{
@@ -419,7 +448,6 @@
 	-fx-background-insets: 0;
 }
 
-
 .combo-box{
 	-fx-border-color: #666666; 
 	-fx-border-width: 1; 
@@ -445,6 +473,8 @@
 .combo-box:focused{
 	-fx-border-color: #00AAFF; 
 }
+
+
 
 /**
  * tool-bar (header) styles
@@ -502,10 +532,26 @@
  * MainButton styles
  */
 .main-button {
+	-fx-background-color: transparent; 	
 	-fx-background-radius: 32;
 	-fx-padding: 2 -26 -8 -6;
 }
 
+.main-button:hover{
+	-fx-background-color: transparent;
+}
+
+.main-button:selected{
+	-fx-background-color: transparent; 
+}
+
+.main-button:focused{
+	-fx-background-color: transparent; 
+	-fx-background-insets: 0; 		
+}
+
+
+	
 .main-button *.arrow {
 	-fx-background-color: transparent;
 }
@@ -571,7 +617,7 @@
  
 .tool-box {
 	-fx-skin: "com.eviware.loadui.ui.fx.control.skin.ToolBoxSkin";
-	-fx-background-color: #333333, #707171, #484848, #565656;
+	-fx-background-color: #333333, #707171, #444444, #565656;
 	-fx-background-insets: 0, 1 1 1 0, 3 1 1 0, 20 3 3 0;
 	-fx-background-radius: 0 4 4 0, 0 4 4 0, 0 3 3 0, 0 0 3 0;
 	-fx-padding: 0 0 0 0;
@@ -585,7 +631,7 @@
 .tool-box .title {
 	-fx-padding: 2;
 	-fx-font-size: 12;
-	-fx-text-fill: #303030;
+	-fx-text-fill: #f2f2f2;
 }
 
 .tool-box .scrollable-list {
@@ -599,14 +645,14 @@
 }
 
 .tool-box .item-box {
-	-fx-background-color: #616161, #6d6d6d, #505050, #484848, #565656;
+	-fx-background-color: #616161, #6d6d6d, #505050, #444444, #565656;
 	-fx-background-insets: 3 3 2 1, 2 3 3 1, 2 3 4 1, 3 3 4 1, 3 3 4 1;
 	-fx-padding: 4 0 4 0;
 }
 
 .tool-box .category {
 	-fx-padding: 0 5 0 0;
-	-fx-background-color: #484848, #505050, #6d6d6d, #616161, #565656;
+	-fx-background-color: #444444, #505050, #6d6d6d, #616161, #565656;
 	-fx-background-insets: 0 1 0 1, 1 3 1 1, 0 3 2 1, 1 3 2 1, 2 3 2 1;
 }
 
@@ -623,7 +669,7 @@
 	-fx-scale-y: 0.5; 
 	-fx-scale-x: 0.5; 
 	-fx-background-color: #8B8B8B; 
-	-fx-padding: 12 5 
+	-fx-padding: 12 5;
 }
 
 .tool-box .toolbar-button:hover .expander-button .graphic{
@@ -640,12 +686,12 @@
 }
 
 .item-holder .category-label {
-	-fx-text-fill: #9c9c9c;
+	-fx-text-fill: #f2f2f2;
 }
 
 .item-holder .icon 
 {
-	-fx-text-fill: #9c9c9c;
+	-fx-text-fill: #f2f2f2;
 }
 
 .item-holder > .items {
@@ -747,11 +793,11 @@
 	-fx-background-color: #525252;
 	-fx-border-color: null;
 	-fx-border-style: null;
-	-fx-padding: 1;
+	-fx-padding: 0 0 1 0;
 }
 
 .page-list .separator {
-	-fx-padding: 5 0 -2;
+	-fx-padding: 1 0 0 0;
 }
 
 .page-list .item-box {
@@ -942,6 +988,17 @@
 	-fx-background-color: #6D6D6D; 	
 }
 
+.separator:horizontal .line{
+	-fx-border-width: 0 0 1 0; 
+	-fx-border-style: solid;
+	-fx-border-color: #B4B4B4;
+}
+
+.separator:horizontal{
+	-fx-background-color: #6D6D6D;
+	-fx-padding: 0; 
+}
+
 /**
  * Progress Indicator
  */
@@ -996,6 +1053,6 @@
  */
 
 .tab-content-area .scroll-pane{
- 	-fx-background-color: #252525;
+ 	-fx-background-color: #232323;
  	-fx-background-radius: 5; 
  }

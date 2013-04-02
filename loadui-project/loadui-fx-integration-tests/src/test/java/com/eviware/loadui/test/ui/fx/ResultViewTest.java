@@ -1,3 +1,18 @@
+/*
+ * Copyright 2013 SmartBear Software
+ * 
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * http://ec.europa.eu/idabc/eupl
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the Licence for the specific language governing permissions and limitations
+ * under the Licence.
+ */
 package com.eviware.loadui.test.ui.fx;
 
 import static com.eviware.loadui.ui.fx.util.test.FXTestUtils.failIfExists;
@@ -98,30 +113,30 @@ public class ResultViewTest
 
 		// check recent execution menu's options
 		controller.click( "#result-0 #menuButton" );
-		getOrFail( "#menu-Open" );
-		getOrFail( "#menu-Delete" );
-		failIfExists( "#menu-Rename" );
+		getOrFail( "#open-item" );
+		getOrFail( "#delete-item" );
+		failIfExists( "#rename-item" );
 
 		// check if Open option works
-		controller.click( "#menu-Open" );
+		controller.click( "#open-item" );
 		getOrFail( ".analysis-view" );
-		getOrFail( "#open-execution" );
+		getOrFail( "#statsTab" );
 
-		controller.click( "#open-execution" );
+		controller.click( "#open-execution" ).sleep( 500 );
 
 		// check archive execution menu's options
 		controller.drag( "#result-0" ).to( "#archive-node-list" ).click( "#archive-0 #menuButton" );
-		getOrFail( "#menu-Open" );
-		getOrFail( "#menu-Delete" );
-		getOrFail( "#menu-Rename" );
+		getOrFail( "#open-item" );
+		getOrFail( "#delete-item" );
+		getOrFail( "#rename-item" );
 
 		// test rename function
-		controller.click( "#menu-Rename" ).type( "Renamed Execution" ).type( KeyCode.ENTER );
+		controller.click( "#rename-item" ).type( "Renamed Execution" ).type( KeyCode.ENTER );
 		MenuButton menuButton = ( MenuButton )getOrFail( "#archive-0 #menuButton" );
 		assertEquals( "Renamed Execution", menuButton.textProperty().get() );
 
 		// delete execution
-		controller.click( "#archive-0 #menuButton" ).click( "#menu-Delete" );
+		controller.click( "#archive-0 #menuButton" ).click( "#delete-item" ).click( ".confirmation-dialog #default" );
 		failIfExists( "#archive-0" );
 
 	}

@@ -1,5 +1,21 @@
+/*
+ * Copyright 2013 SmartBear Software
+ * 
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * http://ec.europa.eu/idabc/eupl
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the Licence for the specific language governing permissions and limitations
+ * under the Licence.
+ */
 package com.eviware.loadui.ui.fx.views.canvas.component;
 
+import java.io.File;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -14,6 +30,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBuilder;
 import javafx.scene.control.CheckBox;
@@ -29,6 +46,7 @@ import javafx.scene.control.TooltipBuilder;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBoxBuilder;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.util.Callback;
 
 import org.slf4j.Logger;
@@ -46,6 +64,7 @@ import com.eviware.loadui.api.layout.TableLayoutComponent;
 import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.impl.layout.OptionsProviderImpl;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
+import com.eviware.loadui.ui.fx.control.FilePicker;
 import com.eviware.loadui.ui.fx.control.Knob;
 import com.eviware.loadui.ui.fx.control.OptionsSlider;
 import com.eviware.loadui.ui.fx.input.SelectableImpl;
@@ -73,9 +92,19 @@ public class ComponentLayoutUtils
 				MigPane pane = new MigPane( container.getLayoutConstraints(), container.getColumnConstraints(),
 						container.getRowConstraints() );
 				pane.getStyleClass().add( "display" );
+
+				// TODO: Ugly hack the day before release. Fix!
 				for( LayoutComponent child : container )
 				{
-					pane.add( instantiateLayout( child ), child.getConstraints() );
+					Node node = instantiateLayout( child );
+					if( node instanceof Parent )
+					{
+						for( Node n : ( ( Parent )node ).getChildrenUnmodifiable() )
+						{
+							n.setStyle( "-fx-font-size: 11;" );
+						}
+					}
+					pane.add( node, child.getConstraints() );
 				}
 				return pane;
 			}
@@ -202,9 +231,7 @@ public class ComponentLayoutUtils
 			return new TableView<>();
 		}
 
-		return LabelBuilder.create().text( "Unhandled: " + component )
-				.tooltip( TooltipBuilder.create().text( component.toString() ).build() )
-				.style( "-fx-background-color: red;" ).maxWidth( 80 ).build();
+		return LabelBuilder.create().build();
 	}
 
 	public static Node createPropertyNode( PropertyLayoutComponent<?> propLayoutComp )
@@ -231,11 +258,14 @@ public class ComponentLayoutUtils
 		else if( type == Boolean.class )
 		{
 			return createCheckBox( propLayoutComp );
+
+		}
+		else if( type == File.class )
+		{
+			return createFilePicker( propLayoutComp, propertyLabel );
 		}
 
-		return LabelBuilder.create().text( "Unhandled: " + propLayoutComp )
-				.tooltip( TooltipBuilder.create().text( propLayoutComp.toString() ).build() )
-				.style( "-fx-background-color: red;" ).maxWidth( 80 ).build();
+		return LabelBuilder.create().build();
 	}
 
 	@SuppressWarnings( "unchecked" )
@@ -293,6 +323,33 @@ public class ComponentLayoutUtils
 				.getProperty() );
 		textField.textProperty().bindBidirectional( jfxProp );
 		return nodeWithProperty( VBoxBuilder.create().children( propertyLabel, textField ).build(), jfxProp );
+	}
+
+	@SuppressWarnings( "unchecked" )
+	private static Node createFilePicker( PropertyLayoutComponent<?> propLayoutComp, Label propertyLabel )
+	{
+
+		ExtensionFilter filter = new ExtensionFilter( "Extension", "*" );
+
+		if( propertyLabel.getText().contains( "Geb " ) )
+		{
+			filter = new ExtensionFilter( "Geb script file (*.groovy)", "*.groovy" );
+		}
+		else if( propertyLabel.getText().contains( "Groovy" ) )
+		{
+			filter = new ExtensionFilter( "Groovy Script (*.groovy)", "*.groovy" );
+
+		}
+		else if( propertyLabel.getText().contains( "soapUI" ) )
+		{
+			filter = new ExtensionFilter( "SoapUI Project (*.xml)", "*.xml", "*.XML" );
+		}
+		//Just add more special cases here as we have more needs. 
+		FilePicker filePicker = new FilePicker( propertyLabel.getText(), filter );
+		javafx.beans.property.Property<File> jfxProp = Properties
+				.convert( ( Property<File> )propLayoutComp.getProperty() );
+		filePicker.selectedProperty().bindBidirectional( jfxProp );
+		return nodeWithProperty( VBoxBuilder.create().children( propertyLabel, filePicker ).build(), jfxProp );
 	}
 
 	@SuppressWarnings( "unchecked" )

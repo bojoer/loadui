@@ -1,3 +1,18 @@
+/*
+ * Copyright 2013 SmartBear Software
+ * 
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * http://ec.europa.eu/idabc/eupl
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the Licence for the specific language governing permissions and limitations
+ * under the Licence.
+ */
 package com.eviware.loadui.ui.fx.api.intent;
 
 import javafx.event.Event;
@@ -27,6 +42,9 @@ public class IntentEvent<T> extends Event
 
 	public static final EventType<IntentEvent<? extends Runnable>> INTENT_RUN_BLOCKING = new EventType<>( ANY,
 			"INTENT_RUN_BLOCKING" );
+	
+	public static final EventType<IntentEvent<? extends AbortableTask>> INTENT_RUN_BLOCKING_ABORTABLE = new EventType<>( ANY,
+			"INTENT_RUN_BLOCKING_ABORTABLE" );
 
 	public static final EventType<IntentEvent<? extends Object>> INTENT_SAVE = new EventType<>( ANY, "INTENT_SAVE" );
 

@@ -1,9 +1,26 @@
+/*
+ * Copyright 2013 SmartBear Software
+ * 
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * http://ec.europa.eu/idabc/eupl
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the Licence for the specific language governing permissions and limitations
+ * under the Licence.
+ */
 package com.eviware.loadui.ui.fx.views.analysis;
 
 import static com.eviware.loadui.ui.fx.util.TreeUtils.dummyItem;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javafx.beans.property.BooleanProperty;
@@ -21,6 +38,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.model.AgentItem;
+import com.eviware.loadui.api.model.CanvasItem;
+import com.eviware.loadui.api.model.ComponentItem;
+import com.eviware.loadui.api.model.ProjectItem;
+import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.statistics.Statistic;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticVariable;
@@ -102,24 +123,96 @@ public class StatisticTree extends TreeView<Labeled> implements Validatable
 
 	private void addVariablesToTree( StatisticHolder holder, TreeItem<Labeled> root )
 	{
-		for( String variableName : holder.getStatisticVariableNames() )
-		{
-			StatisticVariable variable = holder.getStatisticVariable( variableName );
-			final TreeItem<Labeled> variableItem = treeItem( variable, root );
+		log.debug( "Adding variables to tree, StatisticHolder: " + holder );
+		TreeCreator creator = ( root.getValue() instanceof CanvasItem || root.getValue() instanceof ComponentItem ) ? new StandardTreeCreator()
+				: new MonitorTreeCreator();
+		creator.createTree( holder, root );
+	}
 
+	private static abstract class TreeCreator
+	{
+		abstract void createTree( StatisticHolder holder, TreeItem<Labeled> root );
+
+		TreeItem<Labeled> treeItem( Labeled value, TreeItem<Labeled> parent )
+		{
+			TreeItem<Labeled> item = new TreeItem<>( value );
+			parent.getChildren().add( item );
+			return item;
+		}
+
+	}
+
+	private class StandardTreeCreator extends TreeCreator
+	{
+		@Override
+		public void createTree( StatisticHolder holder, TreeItem<Labeled> root )
+		{
+			for( String variableName : holder.getStatisticVariableNames() )
+			{
+				StatisticVariable variable = holder.getStatisticVariable( variableName );
+				boolean forceAgentStatistics = holder instanceof SceneItem;
+				TreeItem<Labeled> variableItem = treeItem( variable, root );
+				boolean mayBeInAgents = forceAgentStatistics
+						|| !( variable.getStatisticHolder().getCanvas() instanceof ProjectItem );
+				createSubItems( variable, variableItem, mayBeInAgents );
+			}
+
+		}
+
+		private void createSubItems( StatisticVariable variable, TreeItem<Labeled> variableItem, boolean mayBeInAgents )
+		{
 			for( String statisticName : variable.getStatisticNames() )
 			{
 				Statistic<?> statistic = variable.getStatistic( statisticName, StatisticVariable.MAIN_SOURCE );
-				final TreeItem<Labeled> statisticItem = treeItem( statistic, variableItem );
-				if( !agents.isEmpty() )
+				TreeItem<Labeled> statisticItem = treeItem( statistic, variableItem );
+				if( !agents.isEmpty() && mayBeInAgents )
 				{
 					statisticItem.getChildren().add( dummyItem( AGENT_TOTAL, StatisticVariable.MAIN_SOURCE ) );
+					for( AgentItem agent : agents )
+						treeItem( new LabeledStringValue( agent.getLabel() ), statisticItem );
 				}
-				for( AgentItem agent : agents )
+
+			}
+		}
+	}
+
+	private class MonitorTreeCreator extends TreeCreator
+	{
+		@Override
+		public void createTree( StatisticHolder holder, TreeItem<Labeled> root )
+		{
+
+			for( String variableName : holder.getStatisticVariableNames() )
+			{
+				StatisticVariable variable = holder.getStatisticVariable( variableName );
+				final TreeItem<Labeled> variableItem = treeItem( variable, root );
+				createSubItems( variable, variableItem );
+			}
+
+		}
+
+		private void createSubItems( StatisticVariable variable, final TreeItem<Labeled> variableItem )
+		{
+			for( String statisticName : variable.getStatisticNames() )
+			{
+				Map<String, TreeItem<Labeled>> itemsBySource = new HashMap<>();
+				Map<String, TreeItem<Labeled>> statsByLabel = new HashMap<>();
+
+				for( String source : variable.getSources() )
 				{
-					statisticItem.getChildren().add(
-							new TreeItem<Labeled>( new LabeledStringValue( agent.getLabel(), agent.getLabel() ) ) );
+					Statistic<?> statistic = variable.getStatistic( statisticName, source );
+					TreeItem<Labeled> statItem = statsByLabel.get( statistic.getLabel() );
+					if( statItem == null )
+					{
+						statItem = treeItem( statistic, variableItem );
+						statsByLabel.put( statistic.getLabel(), statItem );
+					}
+					itemsBySource.put( source, statItem );
 				}
+
+				for( String source : variable.getSources() )
+					if( !source.equals( StatisticVariable.MAIN_SOURCE ) )
+						treeItem( new LabeledStringValue( source ), itemsBySource.get( source ) );
 			}
 		}
 	}
@@ -163,13 +256,6 @@ public class StatisticTree extends TreeView<Labeled> implements Validatable
 				selections.add( new Selection( item, isSource( item ) ) );
 		}
 		return selections;
-	}
-
-	private TreeItem<Labeled> treeItem( Labeled value, TreeItem<Labeled> parent )
-	{
-		TreeItem<Labeled> item = new TreeItem<>( value );
-		parent.getChildren().add( item );
-		return item;
 	}
 
 }

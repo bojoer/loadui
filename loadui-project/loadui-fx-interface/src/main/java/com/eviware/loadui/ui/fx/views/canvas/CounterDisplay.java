@@ -1,5 +1,21 @@
+/*
+ * Copyright 2013 SmartBear Software
+ * 
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * http://ec.europa.eu/idabc/eupl
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the Licence for the specific language governing permissions and limitations
+ * under the Licence.
+ */
 package com.eviware.loadui.ui.fx.views.canvas;
 
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.LabelBuilder;
 import javafx.scene.layout.VBox;
@@ -18,16 +34,18 @@ public abstract class CounterDisplay extends VBox
 
 	public static Label label( String name )
 	{
-		return LabelBuilder.create().text( name ).style( "-fx-font-size: 9px;" ).build();
+		return LabelBuilder.create().text( name ).minWidth(25).style( "-fx-font-size: 10px;" ).build();
 	}
 
 	public static Label numberDisplay()
 	{
+		
 		return LabelBuilder
 				.create()
-				.maxWidth( Double.MAX_VALUE )
-				.style(
-						"-fx-background-color: linear-gradient(to bottom, #545454 0%, #000000 50%, #000000 100%); -fx-text-fill: #f2f2f2; -fx-background-radius: 5; -fx-font-size: 9px; -fx-label-padding: 1 7 1 7; -fx-border-width: 2; -fx-border-color: #333333; -fx-border-radius: 4; " )
+				.minWidth( 45 )
+				.prefWidth(50)
+				.style("-fx-text-fill: #f2f2f2; -fx-font-size: 10px; ")
+				.alignment( Pos.CENTER )
 				.build();
 	}
 }

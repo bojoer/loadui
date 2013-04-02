@@ -13,8 +13,8 @@
     
     <osgi:list id="imageResolvers" interface="com.eviware.loadui.ui.fx.api.ImageResolver" cardinality="0..N" />
     
-<!--     <osgi:service ref="eventLogInspector"  interface="com.eviware.loadui.ui.fx.api.Inspector" /> -->
-	<osgi:service ref="systemLogInspector" interface="com.eviware.loadui.ui.fx.api.Inspector" />
+    <osgi:service ref="eventLogInspector"  interface="com.eviware.loadui.ui.fx.api.Inspector" />
+	<!-- <osgi:service ref="systemLogInspector" interface="com.eviware.loadui.ui.fx.api.Inspector" /> -->
 	<osgi:service ref="assertionInspector" interface="com.eviware.loadui.ui.fx.api.Inspector" />
 	<osgi:service ref="executionsInfo" interface="com.eviware.loadui.ui.fx.api.analysis.ExecutionsInfo"/>
 	

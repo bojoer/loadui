@@ -1,6 +1,24 @@
+/*
+ * Copyright 2013 SmartBear Software
+ * 
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * http://ec.europa.eu/idabc/eupl
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the Licence for the specific language governing permissions and limitations
+ * under the Licence.
+ */
 package com.eviware.loadui.util.execution;
 
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.execution.TestExecution;
 import com.eviware.loadui.api.execution.TestRunner;
@@ -11,11 +29,13 @@ import com.google.common.collect.Lists;
 
 public final class TestExecutionUtils
 {
+	private static final Logger log = LoggerFactory.getLogger( TestExecutionUtils.class );
 	public static final String WARN_STOPPING_TEST = "gui.warn_stopping_test";
 	public static final TestRunner testRunner = BeanInjector.getBean( TestRunner.class );
 
 	public static TestExecution startCanvas( CanvasItem canvas )
 	{
+		log.info( "Starting canvas" );
 		TestExecution currentExecution = popCurrentExecution();
 
 		if( currentExecution != null )
@@ -51,6 +71,7 @@ public final class TestExecutionUtils
 			abortAllExecutions();
 			currentExecution.complete();
 		}
+		log.info( "Enqueing new Execution: " + canvas.getDescription() );
 		return testRunner.enqueueExecution( canvas );
 	}
 

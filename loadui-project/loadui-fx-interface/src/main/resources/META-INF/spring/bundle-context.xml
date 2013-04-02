@@ -4,11 +4,11 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans   
        http://www.springframework.org/schema/beans/spring-beans.xsd">
        
-<!-- 	<bean id="eventLogInspector" class="com.eviware.loadui.ui.fx.views.eventlog.EventLogInspector"> -->
-<!-- 		<constructor-arg ref="executionManager" /> -->
-<!-- 		<constructor-arg ref="testEventManager" /> -->
-<!-- 	</bean> -->
-	<bean id="systemLogInspector" class="com.eviware.loadui.ui.fx.views.syslog.SystemLogInspector" />
+	<bean id="eventLogInspector" class="com.eviware.loadui.ui.fx.views.eventlog.EventLogInspector">
+		<constructor-arg ref="executionManager" />
+		<constructor-arg ref="testEventManager" />
+	</bean>
+	<!-- <bean id="systemLogInspector" class="com.eviware.loadui.ui.fx.views.syslog.SystemLogInspector" /> -->
 	<bean id="assertionInspector" class="com.eviware.loadui.ui.fx.views.assertions.AssertionInspector" >
 		<constructor-arg ref="statisticsManager" />
 	</bean>

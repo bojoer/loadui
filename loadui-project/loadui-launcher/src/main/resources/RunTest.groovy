@@ -119,9 +119,9 @@ def project = projectRef.project
 //Get the target
 def target = testCase ? project.getSceneByLabel( testCase ) : project
 if( !target ) {
-	log.error "TestCase '${testCase}' doesn't exist in Project '${project.label}'"
+	log.error "Scenario '${testCase}' doesn't exist in Project '${project.label}'"
 	workspace?.release()
-	return
+	return 1
 }
 
 //Set limits
@@ -133,7 +133,7 @@ if( limits ) {
 		} catch( e ) {
 			log.error( "Error setting limits:", e )
 			workspace?.release()
-			return
+			return 1
 		}
 	}
 }
@@ -159,9 +159,9 @@ if( agents ) {
 			for( tcLabel in tcs ) {
 				def tc = project.getSceneByLabel( tcLabel )
 				if( tc == null ) {
-					log.error "TestCase '${tcLabel}' doesn't exist in Project '${project.label}'"
+					log.error "Scenario '${tcLabel}' doesn't exist in Project '${project.label}'"
 					workspace?.release()
-					return
+					return 1
 				}
 				agentMessageListener[agent] = tc
 				project.assignScene( tc, agent )
@@ -196,7 +196,7 @@ if( !workspace.localMode ) {
 		if( System.currentTimeMillis() > timeout ) {
 			log.error "Agents not connectable: ${notReady}"
 			workspace?.release()
-			return false
+			return 1
 		}
 		sleep 500
 		notReady.removeAll { it.ready }
@@ -205,13 +205,13 @@ if( !workspace.localMode ) {
 
 // wait until all test cases on all agents are ready
 if( !agentMessageListener.testCasesReady ) { 
-	log.info "Awaiting remote TestCase initialization..."
+	log.info "Awaiting remote Scenario initialization..."
 	def timeout = System.currentTimeMillis() + 60000
 	while( !agentMessageListener.testCasesReady ) {
 		if( System.currentTimeMillis() >= timeout ) {
-			log.error "Some TestCases not initialized during timeout period. Program will exit"
+			log.error "Some Scenarios not initialized during timeout period. Program will exit"
 			workspace?.release()
-			return
+			return 1
 		}
 		sleep 500
 	}

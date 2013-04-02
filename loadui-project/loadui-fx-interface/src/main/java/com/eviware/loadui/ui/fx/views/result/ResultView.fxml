@@ -9,33 +9,35 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.shape.Circle?>
 <?import javafx.geometry.Insets?>
+<?import javafx.geometry.*?>
 <?import java.net.URL?>
 <?import com.eviware.loadui.ui.fx.control.PageList?>
 
 <fx:root type="javafx.scene.layout.StackPane" xmlns:fx="http://javafx.com/fxml">
 	<VBox xmlns:fx="http://javafx.com/fxml" styleClass="result-view"
-		spacing="10">
+		spacing="10" maxWidth="830">
 		<stylesheets>
 			<URL value="@ResultView.css" />
 		</stylesheets>
-		<Label styleClass="title" text="Results" />
-
-		<HBox>
-			<PageList fx:id="resultNodeList" id="result-node-list" maxHeight="260"
-				widthPerItem="110" spacing="10">
-				<VBox.margin>
-					<Insets top="10" right="10" bottom="10" left="10" />
-				</VBox.margin>
-			</PageList>
+		<HBox styleClass="results-toolbar" minHeight="45">
+			<padding>
+				<Insets top="10" left="10" bottom="10" right="10"/> 
+			</padding>
+			<Label styleClass="title" text="TEST RUNS" />
 		</HBox>
-
 		<HBox>
-			<PageList fx:id="archiveNodeList" id="archive-node-list" maxHeight="260"
-				text="ARCHIVED RESULTS" widthPerItem="110" spacing="10">
-				<VBox.margin>
-					<Insets top="10" right="10" bottom="10" left="10" />
-				</VBox.margin>
-			</PageList>
+			<padding>
+				<Insets left="10" right="10"/>
+			</padding>
+			<PageList fx:id="resultNodeList" id="result-node-list" minWidth="860" minHeight="250" maxHeight="250"
+				text="RECENT TEST RUNS" widthPerItem="140" spacing="9"/>
+		</HBox>
+		<HBox>
+			<padding>
+				<Insets left="10" right="10"/>
+			</padding>
+			<PageList fx:id="archiveNodeList" id="archive-node-list" minWidth="860" minHeight="250" maxHeight="250"
+				text="ARCHIVED TEST RUNS" widthPerItem="140" spacing="9"/>
 		</HBox>
 	</VBox>
 </fx:root>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="5.1.3" transformSequenceNumber="4">
   <directoryPresets config="${compiler:builddir}" />
-  <application name="loadUI Agent ${compiler:version}" distributionSourceDir="" applicationId="1318-1385-4617-6779" mediaDir="" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}" compression="6" lzmaCompression="false" pack200Compression="false" excludeSignedFromPacking="true" commonExternalFiles="false" createMd5Sums="true" shrinkRuntime="true" shortName="loadUI-Agent" publisher="SmartBear Software" publisherWeb="http://www.smartbear.com" version="${compiler:version}" allPathsRelative="true" backupOnSave="false" autoSave="false" convertDotsToUnderscores="false" macSignature="????" installerName="" javaMinVersion="" javaMaxVersion="" allowBetaVM="false" jdkMode="runtimeJre" jdkName="">
+  <application name="LoadUI Agent ${compiler:version}" distributionSourceDir="" applicationId="1318-1385-4617-6779" mediaDir="" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}" compression="6" lzmaCompression="false" pack200Compression="false" excludeSignedFromPacking="true" commonExternalFiles="false" createMd5Sums="true" shrinkRuntime="true" shortName="LoadUI-Agent" publisher="SmartBear Software" publisherWeb="http://www.smartbear.com" version="${compiler:version}" allPathsRelative="true" backupOnSave="false" autoSave="false" convertDotsToUnderscores="false" macSignature="????" installerName="" javaMinVersion="" javaMaxVersion="" allowBetaVM="false" jdkMode="runtimeJre" jdkName="">
     <languages skipLanguageSelection="false" languageSelectionInPrincipalLanguage="false">
       <principalLanguage id="en" customLocalizationFile="" />
       <additionalLanguages />
@@ -31,8 +31,8 @@
     <components />
   </files>
   <launchers>
-    <launcher name="loadUI-Agent-${compiler:version}" id="562" customizedId="" external="false" excludeFromMenu="false" unixMode="755" menuName="" icnsFile="${compiler:resourcedir}/loadUI_icon_mac.icns" customMacBundleIdentifier="false" macBundleIdentifier="" swtApp="false" fileset="" macBundleBinary="JavaApplicationStub" addMacEntitlements="false" macEntitlementsFile="">
-      <executable name="loadUI-Agent-${compiler:version}" type="1" iconSet="true" iconFile="${compiler:resourcedir}/loadUI_icon_win.ico" executableDir="" redirectStderr="false" stderrFile="error.log" stderrMode="overwrite" redirectStdout="false" stdoutFile="output.log" stdoutMode="overwrite" failOnStderrOutput="true" executableMode="2" changeWorkingDirectory="true" workingDirectory="." singleInstance="false" serviceStartType="2" serviceDependencies="" serviceDescription="" jreLocation="" executionLevel="asInvoker" checkConsoleParameter="false" globalSingleInstance="false">
+    <launcher name="LoadUI-Agent-${compiler:version}" id="562" customizedId="" external="false" excludeFromMenu="false" unixMode="755" menuName="" icnsFile="${compiler:resourcedir}/loadUI_icon_mac.icns" customMacBundleIdentifier="false" macBundleIdentifier="" swtApp="false" fileset="" macBundleBinary="JavaApplicationStub" addMacEntitlements="false" macEntitlementsFile="">
+      <executable name="LoadUI-Agent-${compiler:version}" type="1" iconSet="true" iconFile="${compiler:resourcedir}/loadUI_icon_win.ico" executableDir="" redirectStderr="false" stderrFile="error.log" stderrMode="overwrite" redirectStdout="false" stdoutFile="output.log" stdoutMode="overwrite" failOnStderrOutput="true" executableMode="2" changeWorkingDirectory="true" workingDirectory="." singleInstance="false" serviceStartType="2" serviceDependencies="" serviceDescription="" jreLocation="" executionLevel="asInvoker" checkConsoleParameter="false" globalSingleInstance="false">
         <versionInfo include="false" fileVersion="" fileDescription="" legalCopyright="" internalName="" productName="" />
       </executable>
       <splashScreen show="false" autoOff="true" alwaysOnTop="true" width="0" height="0" bitmapFile="" java6SplashScreen="false">
@@ -669,7 +669,7 @@ Appendix
               <java class="java.beans.XMLDecoder">
                 <object class="com.install4j.runtime.beans.screens.CustomizableInfoScreen">
                   <void property="displayedText">
-                    <string>A loadUI agent is currently running. Please close it beore attempting to uninstall again.</string>
+                    <string>A LoadUI agent is currently running. Please close it beore attempting to uninstall again.</string>
                   </void>
                   <void property="textSource">
                     <object class="com.install4j.runtime.beans.screens.components.TextSource" field="DIRECT" />
@@ -841,7 +841,7 @@ return f.exists();</condition>
     </applications>
   </installerGui>
   <mediaSets>
-    <unixInstaller name="Unix Installer" id="47" customizedId="" mediaFileName="loadUI-Agent-${compiler:version}" installDir="SmartBear/loadUI-Agent-${compiler:version}" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="linux-x86-1.7.0_09" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" downloadURL="">
+    <unixInstaller name="Unix Installer" id="47" customizedId="" mediaFileName="LoadUI-Agent-${compiler:version}" installDir="SmartBear/LoadUI-Agent-${compiler:version}" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="linux-x86-1.7.0_09" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" downloadURL="">
       <excludedLaunchers>
         <launcher id="43" />
       </excludedLaunchers>
@@ -861,7 +861,7 @@ return f.exists();</condition>
         <content />
       </installerScript>
     </unixInstaller>
-    <windows name="Windows" id="50" customizedId="" mediaFileName="loadUI-Agent-${compiler:version}" installDir="SmartBear/loadUI-Agent-${compiler:version}" overridePrincipalLanguage="false" jreBitType="32" runPostProcessor="true" postProcessor="${compiler:SIGNTOOL_PATH} sign /v /f ${compiler:CERT_PATH} /p ${compiler:CERT_PASS} $EXECUTABLE" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="windows-x86-1.7.0_09" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" downloadURL="" verifyIntegrity="true">
+    <windows name="Windows" id="50" customizedId="" mediaFileName="LoadUI-Agent-${compiler:version}" installDir="SmartBear/LoadUI-Agent-${compiler:version}" overridePrincipalLanguage="false" jreBitType="32" runPostProcessor="true" postProcessor="${compiler:SIGNTOOL_PATH} sign /v /f ${compiler:CERT_PATH} /p ${compiler:CERT_PASS} $EXECUTABLE" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="windows-x86-1.7.0_09" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" downloadURL="" verifyIntegrity="true">
       <excludedLaunchers>
         <launcher id="44" />
       </excludedLaunchers>
@@ -881,7 +881,7 @@ return f.exists();</condition>
       <excludedComponents />
       <includedDownloadableComponents />
     </windows>
-    <unixInstaller name="Unix 64-bit Installer" id="1239" customizedId="" mediaFileName="loadUI-Agent-${compiler:version}_64bit" installDir="SmartBear/loadUI-Agent-${compiler:version}" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="linux-amd64-1.7.0_09" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" downloadURL="">
+    <unixInstaller name="Unix 64-bit Installer" id="1239" customizedId="" mediaFileName="LoadUI-Agent-${compiler:version}_64bit" installDir="SmartBear/LoadUI-Agent-${compiler:version}" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="linux-amd64-1.7.0_09" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" downloadURL="">
       <excludedLaunchers>
         <launcher id="24" />
         <launcher id="225" />
@@ -905,7 +905,7 @@ return f.exists();</condition>
         <content />
       </installerScript>
     </unixInstaller>
-    <windowsArchive name="Windows Archive" id="94" customizedId="" mediaFileName="loadUI-Agent-binary-${compiler:version}" installDir="loadUI-Agent-${compiler:version}" overridePrincipalLanguage="false" jreBitType="32" runPostProcessor="true" postProcessor="${compiler:SIGNTOOL_PATH} sign /v /f ${compiler:CERT_PATH} $EXECUTABLE" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="windows-x86-1.7.0_01_ws" manualJREEntry="false">
+    <windowsArchive name="Windows Archive" id="94" customizedId="" mediaFileName="LoadUI-Agent-binary-${compiler:version}" installDir="LoadUI-Agent-${compiler:version}" overridePrincipalLanguage="false" jreBitType="32" runPostProcessor="true" postProcessor="${compiler:SIGNTOOL_PATH} sign /v /f ${compiler:CERT_PATH} $EXECUTABLE" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="windows-x86-1.7.0_01_ws" manualJREEntry="false">
       <excludedLaunchers>
         <launcher id="44" />
         <launcher id="46" />
@@ -921,7 +921,7 @@ return f.exists();</condition>
         <customAttributes />
       </autoUpdate>
     </windowsArchive>
-    <unixArchive name="Unix Archive" id="95" customizedId="" mediaFileName="loadUI-Agent-binary-${compiler:version}" installDir="loadUI-Agent-${compiler:version}" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="linux-x86-1.7.0_01_client_only_ws" manualJREEntry="false">
+    <unixArchive name="Unix Archive" id="95" customizedId="" mediaFileName="LoadUI-Agent-binary-${compiler:version}" installDir="LoadUI-Agent-${compiler:version}" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="linux-x86-1.7.0_01_client_only_ws" manualJREEntry="false">
       <excludedLaunchers>
         <launcher id="43" />
         <launcher id="46" />
@@ -937,7 +937,7 @@ return f.exists();</condition>
         <customAttributes />
       </autoUpdate>
     </unixArchive>
-    <macosFolder name="Mac OS X Folder" id="192" customizedId="" mediaFileName="loadUI-Agent-${compiler:version}" installDir="loadUI-Agent" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="macosx-amd64-1.7.0_09" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" appleJre="false" customInstallBaseDir="" contentFilesType="1" downloadURL="" signLaunchers="false">
+    <macosFolder name="Mac OS X Folder" id="192" customizedId="" mediaFileName="LoadUI-Agent-${compiler:version}" installDir="LoadUI-Agent" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="macosx-amd64-1.7.0_09" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" appleJre="false" customInstallBaseDir="" contentFilesType="1" downloadURL="" signLaunchers="false">
       <excludedLaunchers>
         <launcher id="43" />
         <launcher id="46" />
@@ -953,7 +953,7 @@ return f.exists();</condition>
       <excludedComponents />
       <includedDownloadableComponents />
     </macosFolder>
-    <macosFolderArchive name="Mac OS X Folder Archive" id="193" customizedId="" mediaFileName="loadUI-Agent-binary-${compiler:version}" installDir="loadUI-Agent" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="" manualJREEntry="false" appleJre="true">
+    <macosFolderArchive name="Mac OS X Folder Archive" id="193" customizedId="" mediaFileName="LoadUI-Agent-binary-${compiler:version}" installDir="LoadUI-Agent" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="" manualJREEntry="false" appleJre="true">
       <excludedLaunchers>
         <launcher id="43" />
         <launcher id="46" />

@@ -1,3 +1,18 @@
+/*
+ * Copyright 2013 SmartBear Software
+ * 
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * http://ec.europa.eu/idabc/eupl
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the Licence for the specific language governing permissions and limitations
+ * under the Licence.
+ */
 package com.eviware.loadui.ui.fx.views.inspector;
 
 import java.util.ArrayList;
@@ -26,7 +41,6 @@ import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabBuilder;
@@ -43,7 +57,6 @@ import com.eviware.loadui.ui.fx.api.perspective.PerspectiveEvent;
 import com.eviware.loadui.ui.fx.util.ErrorHandler;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.ObservableLists;
-import com.eviware.loadui.ui.fx.util.UIUtils;
 import com.eviware.loadui.util.collections.SafeExplicitOrdering;
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
@@ -74,9 +87,6 @@ public class InspectorView extends AnchorPane
 
 	@FXML
 	private HBox buttonBar;
-
-	@FXML
-	private Button helpButton;
 
 	private ObservableList<Tab> inspectorTabs;
 
@@ -148,20 +158,7 @@ public class InspectorView extends AnchorPane
 
 		buttonBar.setPrefHeight( tabHeaderArea.prefHeight( -1 ) );
 
-		helpButton.setOnAction( new EventHandler<ActionEvent>()
-		{
-			@Override
-			public void handle( ActionEvent event )
-			{
-				String helpUrl = ( ( Inspector )tabPane.getSelectionModel().getSelectedItem().getUserData() ).getHelpUrl();
-				if( helpUrl != null )
-				{
-					UIUtils.openInExternalBrowser( helpUrl );
-				}
-			}
-		} );
-
-		inspectorTabs = ObservableLists.transform( inspectors, new Function<Inspector, Tab>()
+				inspectorTabs = ObservableLists.transform( inspectors, new Function<Inspector, Tab>()
 		{
 			@Override
 			public Tab apply( Inspector inspector )
@@ -232,7 +229,7 @@ public class InspectorView extends AnchorPane
 			}
 		} );
 
-		setMaxHeight( boundHeight( 26 ) );
+		setMaxHeight( boundHeight( 30 ) );
 	}
 
 	private void refreshTabs()

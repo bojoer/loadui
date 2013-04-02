@@ -1,3 +1,18 @@
+/*
+ * Copyright 2013 SmartBear Software
+ * 
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * http://ec.europa.eu/idabc/eupl
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the Licence for the specific language governing permissions and limitations
+ * under the Licence.
+ */
 package com.eviware.loadui.ui.fx.views.statistics;
 
 import static com.eviware.loadui.ui.fx.util.ObservableLists.filter;
@@ -17,8 +32,12 @@ import javafx.beans.property.ReadOnlyProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.control.ButtonBuilder;
+import javafx.scene.control.LabelBuilder;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 
@@ -29,11 +48,13 @@ import com.eviware.loadui.api.execution.Phase;
 import com.eviware.loadui.api.execution.TestExecution;
 import com.eviware.loadui.api.execution.TestExecutionTask;
 import com.eviware.loadui.api.execution.TestRunner;
+import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.statistics.ProjectExecutionManager;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
+import com.eviware.loadui.ui.fx.control.ButtonDialog;
 import com.eviware.loadui.ui.fx.util.ManualObservable;
 import com.eviware.loadui.ui.fx.views.analysis.AnalysisView;
 import com.eviware.loadui.ui.fx.views.analysis.FxExecutionsInfo;
@@ -53,6 +74,7 @@ public class StatisticsView extends StackPane
 	private final ManualObservable poll = new ManualObservable();
 	private final BooleanProperty isExecutionRunning;
 	private final CurrentExecutionListener execListener;
+	private final ProjectItem project;
 
 	private final TestExecutionTask executionTask = new TestExecutionTask()
 	{
@@ -92,6 +114,7 @@ public class StatisticsView extends StackPane
 
 	public StatisticsView( final ProjectItem project, FxExecutionsInfo executionsInfo )
 	{
+		this.project = project;
 		currentExecution = new SimpleObjectProperty<>( this, "currentExecution" );
 		isExecutionRunning = new SimpleBooleanProperty( TestExecutionUtils.isExecutionRunning() );
 		BeanInjector.getBean( TestRunner.class ).registerTask( executionTask, Phase.START, Phase.POST_STOP );
@@ -135,17 +158,54 @@ public class StatisticsView extends StackPane
 		executionsInfo.setArchivedExecutions( archivedExecutions );
 		executionsInfo.setMenuParent( analysisView.getButtonContainer() );
 
-		addEventHandler( IntentEvent.INTENT_OPEN, new EventHandler<IntentEvent<?>>()
+		addEventFilter( IntentEvent.INTENT_OPEN, new EventHandler<IntentEvent<?>>()
 		{
+
 			@Override
 			public void handle( IntentEvent<?> event )
 			{
 				if( event.getArg() instanceof Execution )
 				{
-					Execution execution = ( Execution )event.getArg();
-					log.debug( "Setting current execution to: " + ( execution == null ? "null" : execution.getLabel() ) );
-					currentExecution.setValue( execution );
-					event.consume();
+
+					final Execution execution = ( Execution )event.getArg();
+
+					if( !TestExecutionUtils.isExecutionRunning() )
+					{
+						log.debug( "loading exec" );
+						fireEvent( IntentEvent.create( IntentEvent.INTENT_RUN_BLOCKING, new LoadAndSetExecutionTask(
+								execution ) ) );
+						log.debug( "loading exec" );
+					}
+					else
+					{
+						log.debug( "Task is running, displaying dialog explaining why you cant open another execution" );
+
+						// displaying explanatory dialog
+
+						// TODO: make dialog have blur effect (caused by another window closing after this has been created
+
+						final ButtonDialog dialog = new ButtonDialog( StatisticsView.this, "Notice" );
+
+						dialog.getButtons().add(
+								ButtonBuilder.create().text( "Ok" ).onAction( new EventHandler<ActionEvent>()
+								{
+
+									@Override
+									public void handle( ActionEvent arg0 )
+									{
+										dialog.close();
+
+									}
+
+								} ).build() );
+						dialog.getItems().add(
+								LabelBuilder.create().text( "Stop the running test before opening another." ).build() );
+
+						dialog.show();
+
+						event.consume();
+					}
+
 				}
 			}
 		} );
@@ -168,6 +228,9 @@ public class StatisticsView extends StackPane
 	public void close()
 	{
 		log.debug( "Closing StatisticView. Removing ExecutionListener" );
+		project.triggerAction( CanvasItem.STOP_ACTION );
+		TestExecutionUtils.stopCanvas( project );
+		execListener.pollTimeline.stop();
 		executionManager.removeExecutionListener( execListener );
 	}
 
@@ -211,6 +274,37 @@ public class StatisticsView extends StackPane
 					pollTimeline.stop();
 				}
 			} );
+		}
+	}
+
+	private class LoadAndSetExecutionTask extends Task<Void>
+	{
+		private Execution execution;
+
+		LoadAndSetExecutionTask( final Execution execution )
+		{
+			this.execution = execution;
+			updateMessage( "Loading execution: " + execution.getLabel() );
+
+			setOnSucceeded( new EventHandler<WorkerStateEvent>()
+			{
+				@Override
+				public void handle( WorkerStateEvent workserStateEvent )
+				{
+					log.debug( "Setting current execution to: " + ( execution == null ? "null" : execution.getLabel() ) );
+					currentExecution.setValue( execution );
+				}
+			} );
+		}
+
+		@Override
+		protected Void call() throws Exception
+		{
+			log.debug( "loading execution" );
+
+			// loading the execution
+			execution.getTestEventCount();
+			return null;
 		}
 	}
 

@@ -1,3 +1,18 @@
+/*
+ * Copyright 2013 SmartBear Software
+ * 
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * http://ec.europa.eu/idabc/eupl
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the Licence for the specific language governing permissions and limitations
+ * under the Licence.
+ */
 package com.eviware.loadui.ui.fx.util;
 
 import static com.google.common.base.Predicates.in;
@@ -581,14 +596,33 @@ public class ObservableLists
 			@Override
 			public void invalidated( Observable arg0 )
 			{
-				try
+				if( Platform.isFxApplicationThread() )
 				{
-					list.setAll( Lists.newArrayList( expression.call() ) );
+					try
+					{
+						list.setAll( Lists.newArrayList( expression.call() ) );
+					}
+					catch( Exception e )
+					{
+						throw new RuntimeException( e );
+					}
 				}
-				catch( Exception e )
-				{
-					throw new RuntimeException( e );
-				}
+				else
+					Platform.runLater( new Runnable()
+					{
+						@Override
+						public void run()
+						{
+							try
+							{
+								list.setAll( Lists.newArrayList( expression.call() ) );
+							}
+							catch( Exception e )
+							{
+								throw new RuntimeException( e );
+							}
+						}
+					} );
 			}
 		};
 
@@ -598,7 +632,7 @@ public class ObservableLists
 		private final ObservableList<E> readOnlyList;
 		private final Callable<? extends Iterable<E>> expression;
 		@SuppressWarnings( "unused" )
-		private final ObservableList<? extends Observable> observables;
+		private ObservableList<? extends Observable> observables; // Needs to be a field to avoid GC.
 
 		private ExpressionList( Callable<? extends Iterable<E>> expression,
 				ObservableList<? extends Observable> observables )

@@ -1,3 +1,18 @@
+/*
+ * Copyright 2013 SmartBear Software
+ * 
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * http://ec.europa.eu/idabc/eupl
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the Licence for the specific language governing permissions and limitations
+ * under the Licence.
+ */
 package com.eviware.loadui.ui.fx.views.window;
 
 import javafx.application.Platform;
@@ -11,9 +26,13 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.MenuButton;
+import javafx.scene.effect.Glow;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.events.BaseEvent;
@@ -65,6 +84,8 @@ public class MainWindowView extends StackPane
 	private final FxExecutionsInfo executionsInfo;
 	private final TestEventManager tem;
 
+	private static final Logger log = LoggerFactory.getLogger( MainWindowView.class );
+
 	public MainWindowView( WorkspaceProvider workspaceProvider, FxExecutionsInfo executionsInfo, TestEventManager tem )
 	{
 		this.workspaceProvider = Preconditions.checkNotNull( workspaceProvider );
@@ -104,6 +125,7 @@ public class MainWindowView extends StackPane
 		{
 			mainButton.setGraphic( new ImageView( LoadUI.relativeFile( "res/logo-button.png" ).toURI().toURL()
 					.toExternalForm() ) );
+			mainButton.effectProperty().bind(Bindings.when( Bindings.or( mainButton.hoverProperty(), mainButton.showingProperty() ) ).then( new Glow(0.4d) ).otherwise( new Glow( 0d ) ) );
 			SelectableImpl.installDeleteKeyHandler( this );
 
 			initIntentEventHanding();
@@ -219,6 +241,11 @@ public class MainWindowView extends StackPane
 					//Handled by BlockingTask.
 					return;
 				}
+				else if( event.getEventType() == IntentEvent.INTENT_RUN_BLOCKING_ABORTABLE )
+				{
+					//Handled by AbortableBlockingTask.
+					return;
+				}
 				else if( event.getEventType() == IntentEvent.INTENT_DELETE )
 				{
 					//Handled by DeleteTask.
@@ -246,9 +273,12 @@ public class MainWindowView extends StackPane
 	{
 		if( container != null && container.getChildren().isEmpty() == false )
 		{
-			Node childView = container.getChildren().get( 0 );
-			if( expectedClass.isInstance( childView ) )
-				return ( T )childView;
+			log.debug( "contains: " + container.getChildren().size() + ": " + container.getChildren() );
+			for( Node childView : container.getChildren() )
+			{
+				if( expectedClass.isInstance( childView ) )
+					return ( T )childView;
+			}
 		}
 		throw new IllegalStateException( MainWindowView.class.getName() + " does not hold a view of class "
 				+ expectedClass );

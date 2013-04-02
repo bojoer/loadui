@@ -23,7 +23,7 @@
 			<HBox spacing="4" alignment="top_right">
 				<Label style="-fx-text-fill: white; -fx-font-weight: bold;"
 					text="LoadUI Pro" />
-				<Label style="-fx-text-fill: white;" text="2.5.0" />
+				<Label style="-fx-text-fill: white;" text="2.5.1" />
 			</HBox>
 			<Label style="-fx-text-fill: white; -fx-text-alignment: right" text="Copyright SmartBear Software&#10;&#10;www.loadui.org&#10;www.smartbear.com" />
 		</VBox>

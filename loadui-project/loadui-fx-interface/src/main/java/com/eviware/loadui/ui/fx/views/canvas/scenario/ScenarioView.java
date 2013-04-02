@@ -1,10 +1,24 @@
+/*
+ * Copyright 2013 SmartBear Software
+ * 
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * http://ec.europa.eu/idabc/eupl
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the Licence for the specific language governing permissions and limitations
+ * under the Licence.
+ */
 package com.eviware.loadui.ui.fx.views.canvas.scenario;
 
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ContextMenuBuilder;
-import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.ContextMenuEvent;
@@ -14,6 +28,7 @@ import javafx.scene.layout.VBox;
 
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.ui.fx.MenuItemsProvider;
+import com.eviware.loadui.ui.fx.MenuItemsProvider.HasMenuItems;
 import com.eviware.loadui.ui.fx.MenuItemsProvider.Options;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
@@ -34,9 +49,9 @@ public class ScenarioView extends CanvasObjectView
 		FXMLUtils.load( content, new Controller(),
 				ScenarioView.class.getResource( ScenarioView.class.getSimpleName() + ".fxml" ) );
 
-		MenuItem[] menuItems = MenuItemsProvider.createWith( this, getCanvasObject(), MENU_ITEM_OPTIONS ).items();
-		menuButton.getItems().setAll( menuItems );
-		final ContextMenu ctxMenu = ContextMenuBuilder.create().items( menuItems ).build();
+		HasMenuItems hasMenuItems = MenuItemsProvider.createWith( this, getCanvasObject(), MENU_ITEM_OPTIONS );
+		menuButton.getItems().setAll( hasMenuItems.items() );
+		final ContextMenu ctxMenu = ContextMenuBuilder.create().items( hasMenuItems.items() ).build();
 
 		setOnContextMenuRequested( new EventHandler<ContextMenuEvent>()
 		{
@@ -51,7 +66,6 @@ public class ScenarioView extends CanvasObjectView
 				}
 			}
 		} );
-
 	}
 
 	public SceneItem getScenario()
@@ -62,7 +76,7 @@ public class ScenarioView extends CanvasObjectView
 	@Override
 	public void delete()
 	{
-		//TODO onClose
+		super.delete();
 	}
 
 	private final class Controller

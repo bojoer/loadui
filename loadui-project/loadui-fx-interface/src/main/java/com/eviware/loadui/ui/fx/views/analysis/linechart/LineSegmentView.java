@@ -1,3 +1,18 @@
+/*
+ * Copyright 2013 SmartBear Software
+ * 
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * http://ec.europa.eu/idabc/eupl
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the Licence for the specific language governing permissions and limitations
+ * under the Licence.
+ */
 package com.eviware.loadui.ui.fx.views.analysis.linechart;
 
 import static javafx.beans.binding.Bindings.when;
@@ -9,9 +24,13 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.ListChangeListener;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.MenuButton;
+import javafx.scene.control.MenuItemBuilder;
+import javafx.scene.control.SeparatorMenuItemBuilder;
 import javafx.scene.control.Slider;
 import javafx.scene.control.SliderBuilder;
 import javafx.scene.layout.Region;
@@ -26,6 +45,7 @@ import com.eviware.loadui.api.statistics.model.chart.line.LineSegment;
 import com.eviware.loadui.ui.fx.control.skin.StyleableGraphicSlider;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.views.analysis.ShortName;
+import com.eviware.loadui.util.statistics.StatisticNameFormatter;
 
 public class LineSegmentView extends SegmentView<LineSegment>
 {
@@ -72,12 +92,12 @@ public class LineSegmentView extends SegmentView<LineSegment>
 		{
 			fullName = ( StatisticVariable.MAIN_SOURCE.equals( segment.getSource() ) ? "Total" : segment.getSource() )
 					+ " " + segment.getStatisticHolder().getLabel() + " " + segment.getVariableName() + " "
-					+ segment.getStatisticName();
+					+ StatisticNameFormatter.format( segment.getStatisticName() );
 		}
 		else
 		{
 			fullName = segment.getStatisticHolder().getLabel() + " " + segment.getVariableName() + " "
-					+ segment.getStatisticName();
+					+ StatisticNameFormatter.format( segment.getStatisticName() );
 		}
 
 		log.debug( "fullName: {}", fullName );
@@ -95,6 +115,7 @@ public class LineSegmentView extends SegmentView<LineSegment>
 			{
 				if( scaling.get() )
 				{
+					log.debug( "Started scaling chart" );
 					menuButton.setDisable( true );
 					getChildren().addAll( slider );
 					getStyleClass().addAll( scalingStyleClass );
@@ -106,7 +127,9 @@ public class LineSegmentView extends SegmentView<LineSegment>
 				}
 				else
 				{
+					log.debug( "Finished scaling chart" );
 					menuButton.setDisable( false );
+					menuButton.setVisible( true );
 					getChildren().removeAll( slider );
 					getStyleClass().removeAll( scalingStyleClass );
 				}
@@ -118,9 +141,9 @@ public class LineSegmentView extends SegmentView<LineSegment>
 		slider.valueProperty().addListener( new InvalidationListener()
 		{
 			@Override
-			public void invalidated( Observable arg0 )
+			public void invalidated( Observable _ )
 			{
-				int snappedZoom = ( int )Math.round( slider.valueProperty().doubleValue() );
+				int snappedZoom = ( int )Math.round( slider.getValue() );
 
 				if( scale != snappedZoom )
 				{
@@ -148,6 +171,24 @@ public class LineSegmentView extends SegmentView<LineSegment>
 				}
 			}
 		} );
+
+		setMenuItemsFor( menuButton );
+		menuButton.getItems().addAll( SeparatorMenuItemBuilder.create().build(),
+				MenuItemBuilder.create().id( "scale-item" ).text( "Scale" ).onAction( scaleHandler() ).build() );
+
+	}
+
+	private EventHandler<ActionEvent> scaleHandler()
+	{
+		return new EventHandler<ActionEvent>()
+		{
+			@Override
+			public void handle( ActionEvent event )
+			{
+				enableParentScaling();
+				event.consume();
+			}
+		};
 	}
 
 	private void loadNob( final Node node )
@@ -157,7 +198,7 @@ public class LineSegmentView extends SegmentView<LineSegment>
 			public void run()
 			{
 				Node nob = node.lookup( ".graphic" );
-				if( nob instanceof Region && nob != null )
+				if( nob != null && nob instanceof Region )
 				{
 					sliderNob = ( Region )nob;
 					sliderNob.setStyle( "-fx-background-color: " + color + ";" );
@@ -199,8 +240,7 @@ public class LineSegmentView extends SegmentView<LineSegment>
 		parent = segmentBox;
 	}
 
-	@FXML
-	public void enableScaling()
+	private void enableParentScaling()
 	{
 		if( parent != null )
 		{
