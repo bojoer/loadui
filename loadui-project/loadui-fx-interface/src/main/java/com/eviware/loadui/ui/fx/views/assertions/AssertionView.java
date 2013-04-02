@@ -20,7 +20,6 @@ import java.util.Set;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
-import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ContextMenuBuilder;
@@ -58,7 +57,7 @@ public class AssertionView extends VBox implements Deletable
 	protected static final Logger log = LoggerFactory.getLogger( AssertionView.class );
 
 	private final AssertionItem<?> assertion;
-	private final ObservableList<? extends AssertionView> assertionList;
+	private final AssertionInspectorView assertionInspView;
 
 	private final Runnable deleteAction = new Runnable()
 	{
@@ -77,7 +76,7 @@ public class AssertionView extends VBox implements Deletable
 		{
 			String attemptedName = assertion.getLabel();
 			log.debug( "Assertion renamed to '" + attemptedName + "'" );
-			Set<String> assertionLabels = Sets.newHashSet( Lists.transform( assertionList,
+			Set<String> assertionLabels = Sets.newHashSet( Lists.transform( assertionInspView.getAssertions(),
 					new Function<AssertionView, String>()
 					{
 						@Override
@@ -97,11 +96,11 @@ public class AssertionView extends VBox implements Deletable
 
 	};
 
-	public AssertionView( final AssertionItem<?> assertion, ObservableList<AssertionView> assertionList )
+	public AssertionView( final AssertionItem<?> assertion, AssertionInspectorView assertionInspView )
 	{
 		getStyleClass().add( "assertion-view" );
 		this.assertion = assertion;
-		this.assertionList = assertionList;
+		this.assertionInspView = assertionInspView;
 
 		HasMenuItems hasMenuItems = MenuItemsProvider.createWith( this, assertion, Options.are().delete( deleteAction ) );
 

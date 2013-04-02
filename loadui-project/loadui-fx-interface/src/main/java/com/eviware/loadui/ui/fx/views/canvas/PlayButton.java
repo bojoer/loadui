@@ -90,6 +90,7 @@ public class PlayButton extends StackPane
 		@Override
 		public void changed( ObservableValue<? extends Boolean> observable, Boolean wasPlaying, Boolean isPlaying )
 		{
+			log.debug( "Play Button state changed, isPlaying? " + isPlaying + ", isCanvasRunning? " + canvas.isRunning() );
 			if( isPlaying && !canvas.isRunning() )
 			{
 				canvas.triggerAction( CanvasItem.COUNTER_RESET_ACTION );

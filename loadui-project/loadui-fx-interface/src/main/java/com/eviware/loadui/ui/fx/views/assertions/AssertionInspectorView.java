@@ -65,7 +65,17 @@ public class AssertionInspectorView extends HBox
 	@FXML
 	private ScrollableList<AssertionView> assertionList;
 
-	private final ObservableList<AssertionView> assertions = FXCollections.observableArrayList();
+	private ObservableList<AssertionView> assertions = FXCollections.observableArrayList();
+
+	private final Function<AssertionItem, AssertionView> ASSERTION_TO_VIEW = new Function<AssertionItem, AssertionView>()
+	{
+		@Override
+		public AssertionView apply( AssertionItem assertion )
+		{
+			log.debug( "Creating AssertionView for " + assertion.getLabel() );
+			return new AssertionView( assertion, AssertionInspectorView.this );
+		}
+	};
 
 	public AssertionInspectorView()
 	{
@@ -75,14 +85,6 @@ public class AssertionInspectorView extends HBox
 	@FXML
 	private void initialize()
 	{
-		final Function<AssertionItem, AssertionView> ASSERTION_TO_VIEW = new Function<AssertionItem, AssertionView>()
-		{
-			@Override
-			public AssertionView apply( AssertionItem assertion )
-			{
-				return new AssertionView( assertion, assertions );
-			}
-		};
 
 		projectProperty.addListener( new ChangeListener<ProjectItem>()
 		{
@@ -96,8 +98,8 @@ public class AssertionInspectorView extends HBox
 				}
 				if( newValue != null )
 				{
-					assertions.setAll( ObservableLists.transform(
-							ObservableLists.fx( AssertionUtils.assertions( newValue ) ), ASSERTION_TO_VIEW ) );
+					assertions = ObservableLists.transform( ObservableLists.fx( AssertionUtils.assertions( newValue ) ),
+							ASSERTION_TO_VIEW );
 					Bindings.bindContent( assertionList.getItems(), assertions );
 				}
 			}
@@ -153,6 +155,11 @@ public class AssertionInspectorView extends HBox
 
 		} );
 		dialog.show();
+	}
+
+	ObservableList<AssertionView> getAssertions()
+	{
+		return assertions;
 	}
 
 	public ObjectProperty<ProjectItem> projectProperty()
