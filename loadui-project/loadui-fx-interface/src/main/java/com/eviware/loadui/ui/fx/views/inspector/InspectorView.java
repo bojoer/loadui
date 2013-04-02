@@ -45,6 +45,7 @@ import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabBuilder;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -88,6 +89,9 @@ public class InspectorView extends AnchorPane
 	@FXML
 	private HBox buttonBar;
 
+	@FXML
+	private ToggleButton toggleInspectorButton; 
+	
 	private ObservableList<Tab> inspectorTabs;
 
 	private final DragBehavior dragBehavior = new DragBehavior();
@@ -294,6 +298,11 @@ public class InspectorView extends AnchorPane
 
 		return Math.max( headerHeight, desiredHeight );
 	}
+	
+	@FXML
+	protected void toggleMinimized(){
+		dragBehavior.toggleMinimized();
+	}
 
 	private final class DragBehavior implements EventHandler<MouseEvent>
 	{
@@ -321,6 +330,8 @@ public class InspectorView extends AnchorPane
 			{
 				dragging = true;
 				minimizedProperty.set( false );
+				toggleInspectorButton.selectedProperty().set( true );
+
 			}
 			else if( event.getEventType() == MouseEvent.MOUSE_DRAGGED )
 			{
@@ -335,6 +346,7 @@ public class InspectorView extends AnchorPane
 				if( getMaxHeight() <= boundHeight( 0 ) )
 				{
 					minimizedProperty.set( true );
+					toggleInspectorButton.selectedProperty().set( false );
 				}
 				else
 				{

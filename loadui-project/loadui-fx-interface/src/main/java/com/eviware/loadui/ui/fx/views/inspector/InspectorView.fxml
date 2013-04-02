@@ -2,10 +2,11 @@
 
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.Tab?>
-<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.geometry.Insets?>
 <?import java.net.URL?>
 
@@ -13,10 +14,16 @@
 	<stylesheets>
 		<URL value="@InspectorView.css" />
 	</stylesheets>
-	<TabPane fx:id="tabPane" id="tabPane" tabClosingPolicy="unavailable" AnchorPane.topAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" />
-	<HBox fx:id="buttonBar" styleClass="button-bar" alignment="CENTER_RIGHT" AnchorPane.topAnchor="0" AnchorPane.rightAnchor="0">
+	<HBox styleClass="inspector-bar" alignment="CENTER" AnchorPane.topAnchor="10" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
+		<Region id="grip" minHeight="10" minWidth="30"/>
+	</HBox>
+	<TabPane fx:id="tabPane" id="tabPane" tabClosingPolicy="unavailable" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" />
+	<HBox fx:id="buttonBar" styleClass="button-bar" alignment="CENTER_RIGHT" AnchorPane.rightAnchor="0">
 		<padding>
 			<Insets right="4" />
 		</padding>
-	</HBox>
+	</HBox>	
+	<VBox id="arrow-graphics" AnchorPane.leftAnchor="6" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0">
+		<ToggleButton fx:id="toggleInspectorButton" id="toggleInspector" onAction="#toggleMinimized" styleClass="styleable-graphic, toolbar-button"/>		
+	</VBox>
 </fx:root>
