@@ -905,7 +905,7 @@ return f.exists();</condition>
         <content />
       </installerScript>
     </unixInstaller>
-    <windowsArchive name="Windows Archive" id="94" customizedId="" mediaFileName="LoadUI-Agent-binary-${compiler:version}" installDir="LoadUI-Agent-${compiler:version}" overridePrincipalLanguage="false" jreBitType="32" runPostProcessor="true" postProcessor="${compiler:SIGNTOOL_PATH} sign /v /f ${compiler:CERT_PATH} $EXECUTABLE" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="windows-x86-1.7.0_01_ws" manualJREEntry="false">
+    <windowsArchive name="Windows Archive" id="94" customizedId="" mediaFileName="LoadUI-Agent-binary-${compiler:version}" installDir="LoadUI-Agent-${compiler:version}" overridePrincipalLanguage="false" jreBitType="32" runPostProcessor="true" postProcessor="${compiler:SIGNTOOL_PATH} sign /v /f ${compiler:CERT_PATH} $EXECUTABLE" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="windows-x86-1.7.0_15" manualJREEntry="false">
       <excludedLaunchers>
         <launcher id="44" />
         <launcher id="46" />
@@ -921,7 +921,7 @@ return f.exists();</condition>
         <customAttributes />
       </autoUpdate>
     </windowsArchive>
-    <unixArchive name="Unix Archive" id="95" customizedId="" mediaFileName="LoadUI-Agent-binary-${compiler:version}" installDir="LoadUI-Agent-${compiler:version}" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="linux-x86-1.7.0_01_client_only_ws" manualJREEntry="false">
+    <unixArchive name="Unix Archive" id="95" customizedId="" mediaFileName="LoadUI-Agent-binary-${compiler:version}" installDir="LoadUI-Agent-${compiler:version}" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="linux-x86-1.7.0_15" manualJREEntry="false">
       <excludedLaunchers>
         <launcher id="43" />
         <launcher id="46" />
