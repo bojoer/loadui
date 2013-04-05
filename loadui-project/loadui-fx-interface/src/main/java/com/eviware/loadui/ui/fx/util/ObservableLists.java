@@ -553,14 +553,6 @@ public class ObservableLists
 
 			return this;
 		}
-
-		public ListeningList<F, T> addListener( ListChangeListener<F> listener )
-		{
-			originalList.addListener( new WeakListChangeListener<>( listener ) );
-			hardrefs.add( listener );
-
-			return this;
-		}
 	}
 
 	@SuppressWarnings( "serial" )
@@ -598,7 +590,7 @@ public class ObservableLists
 				}
 				catch( Exception e )
 				{
-					throw new RuntimeException( e );
+					log.warn( "Invalidated ObservableList could not be updated!", e );
 				}
 			}
 		};
