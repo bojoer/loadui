@@ -31,7 +31,6 @@ import javafx.scene.Node;
 import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 
-import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Ordering;
 
@@ -52,14 +51,16 @@ public class ToolBox<E extends Node> extends Control
 	 */
 	public static void setCategory( Node node, String category )
 	{
-		Object oldCategory = node.getProperties().put( CATEGORY_PROPERTY, category );
+		Object oldCategory = node.getProperties().get( CATEGORY_PROPERTY );
 		@SuppressWarnings( "unchecked" )
 		ToolBox<Node> toolBox = ( ToolBox<Node> )node.getProperties().get( TOOL_BOX_PROPERTY );
-		if( !Objects.equal( category, oldCategory ) && toolBox != null )
-		{
+
+		if( toolBox != null && oldCategory != null )
 			toolBox.getItems().remove( node );
+
+		node.getProperties().put( CATEGORY_PROPERTY, category );
+		if( toolBox != null && !toolBox.getItems().contains( node ) )
 			toolBox.getItems().add( node );
-		}
 	}
 
 	/**
@@ -120,7 +121,7 @@ public class ToolBox<E extends Node> extends Control
 
 					for( E node : change.getAddedSubList() )
 					{
-						node.getProperties().put( TOOL_BOX_PROPERTY, this );
+						node.getProperties().put( TOOL_BOX_PROPERTY, ToolBox.this );
 					}
 				}
 			}

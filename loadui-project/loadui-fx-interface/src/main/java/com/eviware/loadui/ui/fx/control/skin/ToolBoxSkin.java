@@ -67,7 +67,7 @@ public class ToolBoxSkin<E extends Node> extends SkinBase<ToolBox<E>, BehaviorBa
 {
 	protected static final Logger log = LoggerFactory.getLogger( LineChartViewNode.class );
 
-	private final ObservableMap<String, ToolBoxCategory> categories = FXCollections.observableHashMap();
+	private final ObservableMap<String, ToolBoxCategory> categoriesByName = FXCollections.observableHashMap();
 	private final Comparator<ToolBoxCategory> categoryComparator = new Comparator<ToolBoxCategory>()
 	{
 		@Override
@@ -96,7 +96,7 @@ public class ToolBoxSkin<E extends Node> extends SkinBase<ToolBox<E>, BehaviorBa
 		categoryList.sizePerItemProperty().bind( toolBox.heightPerItemProperty() );
 
 		//Keep pager items synchronized with the categories.
-		categories.addListener( new MapChangeListener<String, ToolBoxCategory>()
+		categoriesByName.addListener( new MapChangeListener<String, ToolBoxCategory>()
 		{
 			@Override
 			public void onChanged( MapChangeListener.Change<? extends String, ? extends ToolBoxCategory> change )
@@ -134,14 +134,14 @@ public class ToolBoxSkin<E extends Node> extends SkinBase<ToolBox<E>, BehaviorBa
 				String categoryName = change.getKey();
 				if( categoryName == null )
 				{
-					for( ToolBoxCategory category : categories.values() )
+					for( ToolBoxCategory category : categoriesByName.values() )
 					{
 						FXCollections.sort( category.categoryItems, toolBox.getComparator( category.category ) );
 					}
 				}
 				else
 				{
-					ToolBoxCategory category = categories.get( categoryName );
+					ToolBoxCategory category = categoriesByName.get( categoryName );
 					if( category != null )
 					{
 						FXCollections.sort( category.categoryItems, toolBox.getComparator( categoryName ) );
@@ -162,25 +162,29 @@ public class ToolBoxSkin<E extends Node> extends SkinBase<ToolBox<E>, BehaviorBa
 				{
 					for( E removed : change.getRemoved() )
 					{
-
-						if( categories.get( ToolBox.getCategory( removed ) ) == null )
+						if( categoriesByName.get( ToolBox.getCategory( removed ) ) == null )
 						{
 							throw new RuntimeException( " Cannot find the category for toolbox item (" + removed
 									+ "), you should probably set the category on creation of this object" );
 						}
 
-						ToolBoxCategory category = categories.get( ToolBox.getCategory( removed ) );
+						ToolBoxCategory category = categoriesByName.get( ToolBox.getCategory( removed ) );
 						category.categoryItems.remove( removed );
+
+						if( category.categoryItems.isEmpty() )
+						{
+							categoryList.getItems().remove( category );
+						}
 						possiblyEmpty.add( category );
 					}
 
 					for( E added : change.getAddedSubList() )
 					{
 						String categoryName = ToolBox.getCategory( added );
-						ToolBoxCategory category = categories.get( categoryName );
+						ToolBoxCategory category = categoriesByName.get( categoryName );
 						if( category == null )
 						{
-							categories.put( categoryName, category = new ToolBoxCategory( categoryName ) );
+							categoriesByName.put( categoryName, category = new ToolBoxCategory( categoryName ) );
 						}
 						int index = Math.max( 0, -Collections.binarySearch( category.categoryItems, added,
 								toolBox.getComparator( categoryName ) ) - 1 );
@@ -193,7 +197,7 @@ public class ToolBoxSkin<E extends Node> extends SkinBase<ToolBox<E>, BehaviorBa
 				{
 					if( category.categoryItems.isEmpty() )
 					{
-						categories.remove( category.category );
+						categoriesByName.remove( category.category );
 					}
 				}
 			}
@@ -204,15 +208,15 @@ public class ToolBoxSkin<E extends Node> extends SkinBase<ToolBox<E>, BehaviorBa
 		for( E item : toolBox.getItems() )
 		{
 			String categoryName = ToolBox.getCategory( item );
-			ToolBoxCategory category = categories.get( categoryName );
+			ToolBoxCategory category = categoriesByName.get( categoryName );
 			if( category == null )
 			{
-				categories.put( categoryName, category = new ToolBoxCategory( categoryName ) );
+				categoriesByName.put( categoryName, category = new ToolBoxCategory( categoryName ) );
 			}
 			category.categoryItems.add( item );
 		}
 
-		for( ToolBoxCategory category : categories.values() )
+		for( ToolBoxCategory category : categoriesByName.values() )
 		{
 			FXCollections.sort( category.categoryItems, toolBox.getComparator( category.category ) );
 		}
