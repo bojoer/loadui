@@ -34,8 +34,10 @@ import java.util.concurrent.TimeUnit;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
+import javafx.scene.Node;
 import javafx.scene.SceneBuilder;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.PopupControl;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
@@ -54,7 +56,6 @@ import com.eviware.loadui.ui.fx.util.test.FXTestUtils;
 import com.eviware.loadui.ui.fx.util.test.TestFX;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedListMultimap;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Ordering;
 import com.google.common.util.concurrent.SettableFuture;
@@ -68,6 +69,10 @@ public class ToolBoxTest
 	private static Stage stage;
 	private static TestFX controller;
 	static ToolBox<Rectangle> toolbox;
+	static final List<Rectangle> allRects = Arrays.asList( buildRect( Color.RED ), buildRect( Color.RED ),
+			buildRect( Color.BLUE ), buildRect( Color.GREEN ), buildRect( Color.RED ), buildRect( Color.YELLOW ),
+			buildRect( Color.BLUE ), buildRect( Color.ORANGE ) );
+	static final List<Rectangle> rectsToAdd = Arrays.asList( RectangleBuilder.create().fill( Color.AQUA ).build() );
 
 	public static class ToolboxTestApp extends Application
 	{
@@ -75,14 +80,11 @@ public class ToolBoxTest
 		public void start( Stage primaryStage ) throws Exception
 		{
 			toolbox = new ToolBox<>( "ToolBox" );
-			toolbox.getItems().setAll( buildRect( Color.RED ), buildRect( Color.RED ), buildRect( Color.BLUE ),
-					buildRect( Color.GREEN ), buildRect( Color.RED ), buildRect( Color.YELLOW ), buildRect( Color.BLUE ),
-					buildRect( Color.ORANGE ) );
-
-			toolbox.setComparator( Ordering.explicit( Lists.newArrayList( rectangles.values() ) ) );
+			List<Rectangle> everything = new ArrayList<Rectangle>( allRects );
+			everything.addAll( rectsToAdd );
+			toolbox.setComparator( Ordering.explicit( everything ) );
 			toolbox.setCategoryComparator( Ordering.explicit( Color.RED.toString(), Color.BLUE.toString(),
-					Color.GREEN.toString(), Color.YELLOW.toString(), Color.ORANGE.toString() ) );
-
+					Color.GREEN.toString(), Color.YELLOW.toString(), Color.ORANGE.toString(), "Renamed" ) );
 			primaryStage.setScene( SceneBuilder.create().stylesheets( "/com/eviware/loadui/ui/fx/loadui-style.css" )
 					.width( 100 ).height( 350 ).root( toolbox ).build() );
 
@@ -91,23 +93,6 @@ public class ToolBoxTest
 			stageFuture.set( primaryStage );
 		}
 
-		private static Rectangle buildRect( Color color )
-		{
-			final Rectangle rectangle = RectangleBuilder.create().width( 50 ).height( 75 ).fill( color ).build();
-			ToolBox.setCategory( rectangle, color.toString() );
-
-			rectangles.put( color, rectangle );
-			rectangle.addEventHandler( MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>()
-			{
-				@Override
-				public void handle( MouseEvent event )
-				{
-					clicked.add( rectangle );
-				}
-			} );
-
-			return rectangle;
-		}
 	}
 
 	@BeforeClass
@@ -120,10 +105,30 @@ public class ToolBoxTest
 	}
 
 	@Before
-	public void setup()
+	public void setup() throws Exception
 	{
 		clicked.clear();
+		rectangles.clear();
+		for( Rectangle r : allRects )
+		{
+			rectangles.put( ( Color )r.getFill(), r );
+		}
+
+		final SettableFuture<Boolean> future = SettableFuture.create();
+		Platform.runLater( new Runnable()
+		{
+
+			@Override
+			public void run()
+			{
+				toolbox.getItems().clear();
+				toolbox.getItems().setAll( allRects );
+				future.set( true );
+			}
+		} );
+
 		targetWindow( stage );
+		future.get( 5, TimeUnit.SECONDS );
 	}
 
 	@Test
@@ -260,39 +265,109 @@ public class ToolBoxTest
 				toolbox.getItems().add( green );
 			}
 		}, results.addItemTest );
-		
-		Object clearTest = results.clearTest.get( 1, TimeUnit.SECONDS );
-		Object addTwoItemsTest = results.addTwoItemsTest.get( 1, TimeUnit.SECONDS );
-		Object addItemTest = results.addItemTest.get( 1, TimeUnit.SECONDS );
-		
+
+		Object clearTest = results.clearTest.get( 2, TimeUnit.SECONDS );
+		Object addTwoItemsTest = results.addTwoItemsTest.get( 2, TimeUnit.SECONDS );
+		Object addItemTest = results.addItemTest.get( 2, TimeUnit.SECONDS );
+
 		assertFalse( clearTest instanceof Exception );
 		assertFalse( addTwoItemsTest instanceof Exception );
 		assertFalse( addItemTest instanceof Exception );
-		
+
 		assertTrue( ( ( Set<?> )clearTest ).isEmpty() );
 		assertTrue( ( ( Set<?> )addTwoItemsTest ).containsAll( Arrays.asList( red, blue ) ) );
 		assertTrue( ( ( Set<?> )addItemTest ).containsAll( Arrays.asList( red, blue ) ) ); // no change until clicking scroll button
-		
+
 		controller.click( ".nav.down" );
-		
+
 		runLaterSettingRectangles( new Runnable()
 		{
 			@Override
 			public void run()
 			{
-				
+
 			}
 		}, results.afterScrollingTest );
 
 		Object afterScrollingTest = results.afterScrollingTest.get( 1, TimeUnit.SECONDS );
-		
+
 		assertFalse( afterScrollingTest instanceof Exception );
 		assertTrue( ( ( Set<?> )afterScrollingTest ).containsAll( Arrays.asList( blue, green ) ) );
 
 	}
 
-	private void runLaterSettingRectangles( final Runnable runnable, final SettableFuture<Object> future )
+	@Test
+	public void shouldChangeWhenRemovingItemsAtRuntime() throws Exception
 	{
+		final Rectangle orange = Iterables.get( rectangles.get( Color.ORANGE ), 0 );
+
+		Button nextButton = find( ".nav.down" );
+		for( int i = 0; i < 5; i++ )
+			controller.click( nextButton );
+
+		assertThat( orange.getScene(), notNullValue() );
+
+		final SettableFuture<Boolean> future = SettableFuture.create();
+
+		Platform.runLater( new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				toolbox.getItems().remove( orange );
+				future.set( true );
+			}
+		} );
+
+		assertTrue( future.get( 1, TimeUnit.SECONDS ) );
+		assertThat( orange.getScene(), nullValue() );
+
+	}
+
+	@Test
+	public void shouldChangeWhenRenamingCategory() throws Exception
+	{
+		final Rectangle orange = Iterables.get( rectangles.get( Color.ORANGE ), 0 );
+
+		Button nextButton = find( ".nav.down" );
+		for( int i = 0; i < 5; i++ )
+			controller.click( nextButton );
+
+		assertThat( orange.getScene(), notNullValue() );
+
+		final SettableFuture<Boolean> future = SettableFuture.create();
+
+		Platform.runLater( new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				ToolBox.setCategory( orange, "Renamed" );
+				future.set( true );
+			}
+		} );
+
+		assertTrue( future.get( 1, TimeUnit.SECONDS ) );
+		controller.sleep( 500 ).click( nextButton );
+
+		boolean foundRenamed = false;
+		for( Node holder : TestFX.findAll( "Label" ) )
+		{
+			if( ( ( Label )holder ).getText().equals( "Renamed" ) )
+			{
+				foundRenamed = true;
+				break;
+			}
+		}
+
+		assertTrue( foundRenamed );
+
+	}
+
+	private void runLaterSettingRectangles( final Runnable runnable, final SettableFuture<Object> future )
+			throws Exception
+	{
+		final SettableFuture<Boolean> runnableDone = SettableFuture.create();
 		Platform.runLater( new Runnable()
 		{
 			@Override
@@ -301,7 +376,8 @@ public class ToolBoxTest
 				try
 				{
 					runnable.run();
-					future.set( TestFX.findAll( "Rectangle" ) );
+					System.out.println( "Runnable done" );
+					runnableDone.set( true );
 				}
 				catch( Exception e )
 				{
@@ -310,6 +386,28 @@ public class ToolBoxTest
 			}
 		} );
 
+		runnableDone.get( 5, TimeUnit.SECONDS );
+		Thread.sleep( 500 ); // really necessary, JavaFX seems to delay to update the graphics sometimes!!
+		future.set( TestFX.findAll( "Rectangle" ) );
+		System.out.println( "Set the future rectangles" );
+
+	}
+
+	private static Rectangle buildRect( Color color )
+	{
+		final Rectangle rectangle = RectangleBuilder.create().width( 50 ).height( 75 ).fill( color ).build();
+		ToolBox.setCategory( rectangle, color.toString() );
+
+		rectangle.addEventHandler( MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>()
+		{
+			@Override
+			public void handle( MouseEvent event )
+			{
+				clicked.add( rectangle );
+			}
+		} );
+
+		return rectangle;
 	}
 
 }
