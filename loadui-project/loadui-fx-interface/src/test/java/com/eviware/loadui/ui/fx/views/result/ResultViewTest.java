@@ -73,6 +73,7 @@ public class ResultViewTest
 		{
 
 			System.out.println( "Setting up app" );
+			primaryStage.setWidth( 1000 );
 			firer = mock( ExecutionManager.class );
 
 			res0 = mock( Execution.class );
