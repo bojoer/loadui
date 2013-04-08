@@ -94,7 +94,6 @@ public class StatisticVariableImpl implements StatisticVariable.Mutable, Releasa
 
 	public void addStatisticsWriter( @Nonnull StatisticsWriter writer )
 	{
-		System.out.println( "ADDING STATISTIC WRITER!!!" );
 		if( writers.add( writer ) )
 		{
 			TrackDescriptor descriptor = writer.getTrackDescriptor();

@@ -39,7 +39,6 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.WeakListChangeListener;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
@@ -55,11 +54,8 @@ import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.events.EventFirer;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.WeakEventHandler;
-import com.eviware.loadui.api.statistics.model.chart.line.Segment;
-import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.ui.fx.views.projectref.ProjectRefView;
 import com.eviware.loadui.util.BeanInjector;
-import com.eviware.loadui.util.ReleasableUtils;
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
@@ -557,14 +553,6 @@ public class ObservableLists
 
 			return this;
 		}
-
-		public ListeningList<F, T> addListener( ListChangeListener<F> listener )
-		{
-			originalList.addListener( new WeakListChangeListener<>( listener ) );
-			hardrefs.add( listener );
-
-			return this;
-		}
 	}
 
 	@SuppressWarnings( "serial" )
@@ -596,33 +584,14 @@ public class ObservableLists
 			@Override
 			public void invalidated( Observable arg0 )
 			{
-				if( Platform.isFxApplicationThread() )
+				try
 				{
-					try
-					{
-						list.setAll( Lists.newArrayList( expression.call() ) );
-					}
-					catch( Exception e )
-					{
-						throw new RuntimeException( e );
-					}
+					list.setAll( Lists.newArrayList( expression.call() ) );
 				}
-				else
-					Platform.runLater( new Runnable()
-					{
-						@Override
-						public void run()
-						{
-							try
-							{
-								list.setAll( Lists.newArrayList( expression.call() ) );
-							}
-							catch( Exception e )
-							{
-								throw new RuntimeException( e );
-							}
-						}
-					} );
+				catch( Exception e )
+				{
+					log.warn( "Invalidated ObservableList could not be updated!", e );
+				}
 			}
 		};
 

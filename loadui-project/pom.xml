@@ -4,7 +4,7 @@
 	<groupId>com.eviware.loadui</groupId>
 	<artifactId>loadui-project</artifactId>
 	<packaging>pom</packaging>
-	<version>2.5.1-SNAPSHOT</version>
+	<version>2.5.2-SNAPSHOT</version>
 	<name>loadUI Project</name>
 	<url>http://www.loadui.org</url>
 	<properties>
