@@ -23,7 +23,7 @@
 			<Insets right="4" />
 		</padding>
 	</HBox>	
-	<VBox id="arrow-graphics" AnchorPane.leftAnchor="6" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0">
+	<VBox id="arrow-graphics" AnchorPane.leftAnchor="6" AnchorPane.topAnchor="0">
 		<ToggleButton fx:id="toggleInspectorButton" id="toggleInspector" onAction="#toggleMinimized" styleClass="styleable-graphic, toolbar-button"/>		
 	</VBox>
 </fx:root>
