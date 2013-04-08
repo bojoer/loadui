@@ -50,6 +50,7 @@ import javafx.scene.effect.Effect;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.PaneBuilder;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.RegionBuilder;
 import javafx.scene.layout.StackPane;
@@ -314,7 +315,7 @@ public class CanvasView extends StackPane
 
 		Bindings.bindContent( descriptors.getItems(), createToolBoxContent() );
 
-		Pane componentWrapper = new Pane();
+		Pane componentWrapper = PaneBuilder.create().styleClass( "pane" ).build();
 		Rectangle clipRect = new Rectangle();
 		clipRect.widthProperty().bind( componentWrapper.widthProperty() );
 		clipRect.heightProperty().bind( componentWrapper.heightProperty() );
@@ -423,8 +424,7 @@ public class CanvasView extends StackPane
 				enforceCanvasBounds();
 			}
 		} );
-		
-		
+
 	}
 
 	private void enforceCanvasBounds()
@@ -489,7 +489,7 @@ public class CanvasView extends StackPane
 				canvasLayer.setLayoutY( maxY );
 			}
 		}
-		
+
 	}
 
 	public CanvasItem getCanvas()
