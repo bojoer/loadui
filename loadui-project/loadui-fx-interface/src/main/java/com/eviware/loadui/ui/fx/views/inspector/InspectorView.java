@@ -357,7 +357,8 @@ public class InspectorView extends AnchorPane
 			{
 				if( event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2 )
 				{
-					toggleMinimized();
+                    toggleInspectorButton.selectedProperty().set(toggleInspectorButton.selectedProperty().not().get());
+                    toggleMinimized();
 				}
 			}
 		}
