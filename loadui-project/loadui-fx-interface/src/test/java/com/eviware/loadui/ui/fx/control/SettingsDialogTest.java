@@ -18,6 +18,9 @@ package com.eviware.loadui.ui.fx.control;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
@@ -26,6 +29,7 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.GroupBuilder;
+import javafx.scene.Node;
 import javafx.scene.SceneBuilder;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
@@ -93,6 +97,8 @@ public class SettingsDialogTest
 
 	}
 
+	private static ArrayList<SettingsTab> tabList;
+
 	@Before
 	public void setUp() throws Exception
 	{
@@ -103,6 +109,36 @@ public class SettingsDialogTest
 		generalTab = Builder.create( "General" ).id( "general-tab" ).field( "My string", stringProperty )
 				.field( "My boolean", booleanProperty ).build();
 
+		generateTabs();
+
+		FXTestUtils.invokeAndWait( new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				settingsDialog = new SettingsDialog( openDialogButton, "Hej", tabList );
+			}
+		}, 1000 );
+
+		FXTestUtils.invokeAndWait( new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				generalTab.getTabPane().getSelectionModel().select( generalTab );
+			}
+		}, 1000 );
+
+		StylingUtils.applyLoaduiStyling( settingsDialog.getScene() );
+
+		controller.click( openDialogButton );
+
+		generalTab.getTabPane().getSelectionModel().select( generalTab );
+		controller.click( "#general-tab" );
+	}
+
+	private void generateTabs()
+	{
 		final Callable<String> statusCallback = new Callable<String>()
 		{
 			private boolean tested = false;
@@ -140,30 +176,7 @@ public class SettingsDialogTest
 									}
 								} ).put( "status", statusCallback ).build() ) ).build();
 
-		FXTestUtils.invokeAndWait( new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				settingsDialog = new SettingsDialog( openDialogButton, "Hej", Lists.newArrayList( generalTab, otherTab ) );
-			}
-		}, 1000 );
-
-		FXTestUtils.invokeAndWait( new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				generalTab.getTabPane().getSelectionModel().select( generalTab );
-			}
-		}, 1000 );
-
-		StylingUtils.applyLoaduiStyling( settingsDialog.getScene() );
-
-		controller.click( openDialogButton );
-
-		generalTab.getTabPane().getSelectionModel().select( generalTab );
-		controller.click( "#general-tab" );
+		tabList = Lists.newArrayList( generalTab, otherTab );
 	}
 
 	@Test
@@ -268,7 +281,16 @@ public class SettingsDialogTest
 				@Override
 				public void handle( ActionEvent arg0 )
 				{
+					settingsDialog = new SettingsDialog( openDialogButton, "Hej", tabList );
 					settingsDialog.show();
+					try
+					{
+						StylingUtils.applyLoaduiStyling( settingsDialog.getScene() );
+					}
+					catch( IOException e )
+					{
+						e.printStackTrace();
+					}
 				}
 			} );
 
