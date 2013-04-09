@@ -10,3 +10,4 @@ bin/
 #IDEA stuff:
 *.iml
 .idea/
+lib/
