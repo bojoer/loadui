@@ -23,6 +23,7 @@
 				<artifactId>maven-failsafe-plugin</artifactId>
 				<configuration>
 					<groups>com.eviware.loadui.test.categories.IntegrationTest</groups>
+                    <argLine>-Xms256m -Xmx1024m -XX:MaxPermSize=128M</argLine>
 				</configuration>
 			</plugin>
 			<plugin>

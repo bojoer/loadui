@@ -22,6 +22,7 @@ import java.io.File;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.eviware.loadui.api.component.ComponentCreationException;
@@ -32,6 +33,7 @@ import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.groovy.util.GroovyComponentTestUtils;
 import com.google.common.base.Joiner;
 
+@Ignore( "Component temporarily removed from LoadUI distribution" )
 public class HtmlRunnerTest
 {
 	private ComponentItem component;

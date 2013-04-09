@@ -63,6 +63,8 @@ public class WireTest
 
 		controller = GUI.getController();
 
+		controller.drag( "#Assertions" ).by( 0, 250 ).drop();
+
 		System.out.println( "Create Component 1" );
 		controller.click( "#Flow.category .expander-button" ).drag( CONDITION_COMPONENT ).by( 100, -400 ).drop();
 		TestUtils.awaitCondition( new Callable<Boolean>()
