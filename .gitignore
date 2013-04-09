@@ -1,6 +1,6 @@
-
 #Build artifacts:
 target/
+bin/
 
 #Eclipse stuff:
 .settings/
