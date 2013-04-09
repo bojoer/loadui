@@ -72,8 +72,11 @@ public class TestingProperty<T> implements Property<T>
 	@Override
 	public void setValue( Object value )
 	{
-		this.value = type.isInstance( value ) ? type.cast( value ) : BeanInjector.getBean( ConversionService.class )
-				.convert( value, type );
+		if( value == null )
+			this.value = null;
+		else
+			this.value = type.isInstance( value ) ? type.cast( value ) : BeanInjector.getBean( ConversionService.class )
+					.convert( value, type );
 	}
 
 	@Override

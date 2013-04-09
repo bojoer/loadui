@@ -16,6 +16,7 @@
 package com.eviware.loadui.ui.fx.control;
 
 import static org.junit.Assert.assertEquals;
+import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertFalse;
 
 import java.io.IOException;
@@ -43,8 +44,11 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import static org.hamcrest.MatcherAssert.assertThat;
+import org.mockito.Matchers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.NullValueInNestedPathException;
 
 import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.impl.layout.ActionLayoutComponentImpl;
@@ -182,9 +186,6 @@ public class SettingsDialogTest
 	@Test
 	public void changedFieldsInAllTabs_should_updateProperties_onSave() throws Exception
 	{
-		System.out.println( "generalTab.getTabPane().getSelectionModel().getSelectedItem().getText(): "
-				+ generalTab.getTabPane().getSelectionModel().getSelectedItem().getText() );
-
 		controller.click( "#my-string" ).press( KeyCode.CONTROL, KeyCode.A ).release( KeyCode.CONTROL, KeyCode.A )
 				.sleep( 100 );
 		controller.type( "New value" ).click( "#my-boolean" );
@@ -197,6 +198,15 @@ public class SettingsDialogTest
 		assertEquals( "New value", stringProperty.getValue() );
 		assertEquals( true, booleanProperty.getValue() );
 		assertEquals( Long.valueOf( 4711 ), longProperty.getValue() );
+	}
+
+	@Test
+	public void emptyLongFields_should_beSavedAsNull() throws Exception
+	{
+		controller.click( "#other-tab" ).click( "#my-long" ).press( KeyCode.CONTROL, KeyCode.A )
+				.release( KeyCode.CONTROL, KeyCode.A ).sleep( 100 ).type( KeyCode.DELETE ).click( "#default" );
+
+		assertThat( longProperty.getValue(), nullValue( Long.class ) );
 	}
 
 	@Test
