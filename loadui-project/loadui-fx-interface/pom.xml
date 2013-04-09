@@ -25,7 +25,7 @@
 				<configuration>
 					<forkMode>always</forkMode>
 					<groups>com.eviware.loadui.test.categories.GUITest</groups>
-					<failIfNoTests>true</failIfNoTests>
+					<failIfNoTests>false</failIfNoTests>
 					<testFailureIgnore>false</testFailureIgnore>
 				</configuration>
 			</plugin>
