@@ -280,7 +280,7 @@ public class SoapUISamplerComponent extends RunnerBase
 		boolean isHeadless = GraphicsEnvironment.isHeadless();
 		if( isHeadless )
 		{
-			log.debug( "Skipping creation of soapUI Runner's TestStepsTable, since in headless mode." );
+			log.debug( "Skipping creation of SoapUI Runner's TestStepsTable, since in headless mode." );
 		}
 		else
 		{
