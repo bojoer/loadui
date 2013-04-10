@@ -47,6 +47,7 @@ import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.PropertyEvent;
 import com.eviware.loadui.api.events.WeakEventHandler;
 import com.eviware.loadui.api.layout.LayoutContainer;
+import com.eviware.loadui.api.layout.SettingsLayoutContainer;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.property.Property;
@@ -361,6 +362,8 @@ public class SoapUISamplerComponent extends RunnerBase
 		testCasePropertiesTableModel.loadOverridingProperties( getContext().getProperties() );
 
 		context.addSettingsTab( settingsTestCaseTab );
+		SettingsLayoutContainer advancedSettings = generateAdvancedTab();
+		context.addSettingsTab( advancedSettings );
 		context.setLayout( layout );
 
 		executor = Executors.newSingleThreadScheduledExecutor( new ThreadFactoryBuilder().setDaemon( true )
@@ -390,6 +393,20 @@ public class SoapUISamplerComponent extends RunnerBase
 				}
 			}
 		} );
+	}
+
+	private SettingsLayoutContainer generateAdvancedTab()
+	{
+		SettingsLayoutContainer advancedSettings = new SettingsLayoutContainerImpl( "Advanced", "", "", "align top", "" );
+		advancedSettings.add( new PropertyLayoutComponentImpl<String>( ImmutableMap.<String, Object> builder() //
+				.put( PropertyLayoutComponentImpl.PROPERTY, concurrentSamplesProperty ) //
+				.put( PropertyLayoutComponentImpl.LABEL, "Max concurrent requests" ) //
+				.build() ) );
+		advancedSettings.add( new PropertyLayoutComponentImpl<String>( ImmutableMap.<String, Object> builder() //
+				.put( PropertyLayoutComponentImpl.PROPERTY, maxQueueSizeProperty ) //
+				.put( PropertyLayoutComponentImpl.LABEL, "Max queue size" ) //
+				.build() ) );
+		return advancedSettings;
 	}
 
 	boolean isOnRunningCanvas()
