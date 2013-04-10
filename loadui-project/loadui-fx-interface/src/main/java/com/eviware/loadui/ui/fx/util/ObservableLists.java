@@ -45,8 +45,6 @@ import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceEvent;
 import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceReference;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.base.OrderedCollection;
 import com.eviware.loadui.api.events.BaseEvent;
@@ -78,8 +76,6 @@ import com.google.common.collect.Sets;
  */
 public class ObservableLists
 {
-	protected static final Logger log = LoggerFactory.getLogger( ObservableLists.class );
-
 	/**
 	 * Creates a readonly ObservableList containing all OSGi published services
 	 * for the given Class type. The list is dynamically updated to reflect

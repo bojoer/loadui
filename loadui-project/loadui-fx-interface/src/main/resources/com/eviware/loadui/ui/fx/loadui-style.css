@@ -46,14 +46,12 @@
  * Text 
  */
 .text{
-	-fx-font-family: "helvetica";
 	-fx-font-size: 12; 
 }
 
 .tooltip {
    -fx-background-color: snow;
    -fx-background-radius: 7 7 7 7;
-   -fx-font-family: "lucida sans";
    -fx-font-size: 10;   
 }
 
