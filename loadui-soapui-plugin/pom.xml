@@ -8,6 +8,7 @@
 	<packaging>bundle</packaging>
 	<name>loadUI soapUI Plugin</name>
 	<version>2.5.2-SNAPSHOT</version>
+>>>>>>> master
 	<description>Allows loadUI to run soapUI tests.</description>
 	<properties>
 		<loadUIVersion>${project.version}</loadUIVersion>

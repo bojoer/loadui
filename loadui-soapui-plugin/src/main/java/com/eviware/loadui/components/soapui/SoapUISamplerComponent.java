@@ -929,8 +929,11 @@ public class SoapUISamplerComponent extends RunnerBase
 
 		private synchronized void setTestCase( @CheckForNull final String testCaseName )
 		{
+			log.debug( "setting testcase: {}", testCaseName );
 			if( testSuite == null || testCaseName == null )
 			{
+				testCasePool.clear();
+				testStepsTableModel.clearTestCase();
 				projectSelector.setTestCases( new String[0] );
 				return;
 			}

@@ -4,6 +4,7 @@
 		<artifactId>loadui-project</artifactId>
 		<groupId>com.eviware.loadui</groupId>
 		<version>2.5.2-SNAPSHOT</version>
+>>>>>>> master
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>loadui-groovy-component</artifactId>

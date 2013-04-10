@@ -41,23 +41,28 @@ public class SettingsDialog extends ConfirmationDialog
 
 	public final ObservableBooleanValue hasExactlyOneTab;
 
-	public SettingsDialog( @Nonnull Node owner, @Nonnull String title, @Nonnull List<? extends SettingsTab> tabs )
+	public SettingsDialog( @Nonnull Node owner, @Nonnull String title, @Nonnull final List<? extends SettingsTab> tabs )
 	{
 		super( owner, title, "Save" );
 		this.tabs = tabs;
 
-		for( SettingsTab tab : tabs )
-		{
-			tab.refreshFields();
-		}
-
-		tabPane.getTabs().addAll( tabs );
+		refereshTabs( tabs );
 		getItems().add( tabPane );
+
 		setOnConfirm( new OnSaveHandler() );
 		addStyleClass( "settings-dialog" );
 
 		hasExactlyOneTab = size( tabPane.getTabs() ).isEqualTo( 1 );
 		bindStyleClass( tabPane, "single-tab", hasExactlyOneTab );
+
+		setOnShowing( new EventHandler<WindowEvent>()
+		{
+			@Override
+			public void handle( WindowEvent arg0 )
+			{
+				refereshTabs( tabs );
+			}
+		} );
 
 		setOnShown( new EventHandler<WindowEvent>()
 		{
@@ -71,10 +76,20 @@ public class SettingsDialog extends ConfirmationDialog
 				{
 					SettingsDialog.this.setHeight( SettingsDialog.this.getHeight() - headerHeight );
 					tabHeader.setPrefHeight( 0.0 );
-
 				}
 			}
 		} );
+	}
+
+	private void refereshTabs( List<? extends SettingsTab> tabs )
+	{
+		for( SettingsTab tab : tabs )
+		{
+			tab.refreshFields();
+		}
+
+		tabPane.getTabs().clear();
+		tabPane.getTabs().addAll( tabs );
 	}
 
 	public class OnSaveHandler implements EventHandler<ActionEvent>

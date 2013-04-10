@@ -47,6 +47,7 @@ import com.eviware.loadui.ui.fx.control.fields.ValidatableStringField;
 import com.eviware.loadui.ui.fx.control.fields.ValidatableTextField;
 import com.eviware.loadui.ui.fx.util.UIUtils;
 import com.google.common.base.Objects;
+import com.google.common.base.Predicates;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Iterables;
@@ -97,7 +98,7 @@ public class SettingsTab extends Tab
 			{
 				e.printStackTrace();
 			}
-			
+
 			ValidatableComboBoxField combo = new ValidatableComboBoxField();
 			combo.setItems( FXCollections.observableArrayList( enumValues ) );
 			combo.getSelectionModel().select( property.getValue() );
@@ -112,7 +113,11 @@ public class SettingsTab extends Tab
 
 			if( property.getType().equals( Long.class ) )
 			{
-				textField = ValidatableLongField.Builder.create()
+				textField = ValidatableLongField.Builder
+						.create()
+						.convertFunction( ValidatableLongField.EMPTY_TO_NULL )
+						.stringConstraint(
+								Predicates.or( ValidatableLongField.IS_EMPTY, ValidatableLongField.CONVERTABLE_TO_LONG ) )
 						.text( Objects.firstNonNull( property.getValue(), "" ).toString() ).build();
 			}
 			else
@@ -257,43 +262,54 @@ public class SettingsTab extends Tab
 			throw new UnsupportedOperationException( "This operation is not yet available for label " + action.getLabel() );
 		}
 	}
-	
+
 	@SuppressWarnings( "unchecked" )
-	public void refreshFields(){
-		for(Property<?> prop : fieldToLoaduiProperty.values()){
-			if(prop.getType().equals( Boolean.class )){
-				ValidatableCheckBox checkBox = (ValidatableCheckBox) getFieldFor( prop );			
+	public void refreshFields()
+	{
+		for( Property<?> prop : fieldToLoaduiProperty.values() )
+		{
+			if( prop.getType().equals( Boolean.class ) )
+			{
+				ValidatableCheckBox checkBox = ( ValidatableCheckBox )getFieldFor( prop );
 				checkBox.setSelected( Boolean.parseBoolean( prop.getStringValue() ) );
-			}else if(prop.getType().isEnum() ){
-				ValidatableComboBoxField comboBox = (ValidatableComboBoxField) getFieldFor( prop );
-				
+			}
+			else if( prop.getType().isEnum() )
+			{
+				ValidatableComboBoxField comboBox = ( ValidatableComboBoxField )getFieldFor( prop );
+
 				Object[] enumValues = new Object[0];
-				
+
 				try
 				{
 					enumValues = ( Object[] )prop.getType().getMethod( "values" ).invoke( null );
 				}
-				catch( IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
-						| SecurityException e )
+				catch( IllegalAccessException | IllegalArgumentException | InvocationTargetException
+						| NoSuchMethodException | SecurityException e )
 				{
 					e.printStackTrace();
 				}
-				
-				comboBox.setItems( FXCollections.observableArrayList( enumValues ));
+
+				comboBox.setItems( FXCollections.observableArrayList( enumValues ) );
 				comboBox.getSelectionModel().select( prop.getValue() );
-					
-			}else if(prop.getType().equals( Long.class )){
-				ValidatableLongField field = (ValidatableLongField) getFieldFor( prop );
-				field.setText( Objects.firstNonNull( prop.getValue(), "" ).toString());
-			}else if(prop.getType().equals( String.class )){
-				ValidatableStringField field = (ValidatableStringField) getFieldFor( prop );
-				field.setText( Objects.firstNonNull( prop.getValue(), "" ).toString());
-			}else{
+
+			}
+			else if( prop.getType().equals( Long.class ) )
+			{
+				ValidatableLongField field = ( ValidatableLongField )getFieldFor( prop );
+				field.setText( Objects.firstNonNull( prop.getValue(), "" ).toString() );
+			}
+			else if( prop.getType().equals( String.class ) )
+			{
+				ValidatableStringField field = ( ValidatableStringField )getFieldFor( prop );
+				field.setText( Objects.firstNonNull( prop.getValue(), "" ).toString() );
+			}
+			else
+			{
 				//do nothing.
 			}
 		}
 	}
-	
+
 	private void backupCurrentSettings()
 	{
 		ObservableList<Tab> tabList = getTabPane().getTabs();
@@ -324,6 +340,7 @@ public class SettingsTab extends Tab
 	}
 
 	private Map<Field<?>, Object> settingsStore = new HashMap<>();
+
 	private void pushValueByField()
 	{
 		for( Entry<Field<?>, Property<?>> entry : fieldToLoaduiProperty.entrySet() )
