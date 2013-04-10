@@ -84,7 +84,6 @@ public abstract class LoadUILauncher
 	{
 		for( String arg : args )
 		{
-			System.out.println( "LoadUILauncher arg: " + arg );
 			if( arg.contains( "cmd" ) )
 			{
 				List<String> argList = new ArrayList<>( Arrays.asList( args ) );
@@ -96,16 +95,6 @@ public abstract class LoadUILauncher
 		}
 
 		Application.launch( FXApplication.class, args );
-
-		// Is the below just old legacy code from JavaFX 1?
-
-		//		System.setSecurityManager( null );
-		//
-		//		LoadUILauncher launcher = new LoadUILauncher( args );
-		//		launcher.init();
-		//		launcher.start();
-		//
-		//		new Thread( new LauncherWatchdog( launcher.framework, 20000 ), "loadUI Launcher Watchdog" ).start();
 	}
 
 	private static void loadPropertiesFile()
