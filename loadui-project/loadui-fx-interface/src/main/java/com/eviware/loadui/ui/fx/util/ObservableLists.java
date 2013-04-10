@@ -39,7 +39,6 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.WeakListChangeListener;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
@@ -55,11 +54,7 @@ import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.events.EventFirer;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.WeakEventHandler;
-import com.eviware.loadui.api.statistics.model.chart.line.Segment;
-import com.eviware.loadui.api.traits.Releasable;
-import com.eviware.loadui.ui.fx.views.projectref.ProjectRefView;
 import com.eviware.loadui.util.BeanInjector;
-import com.eviware.loadui.util.ReleasableUtils;
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
@@ -79,6 +74,7 @@ import com.google.common.collect.Sets;
  * Utility class for dealing with JavaFX ObservableLists.
  * 
  * @author dain.nilsson
+ * @author henrik.olsson
  */
 public class ObservableLists
 {
@@ -176,24 +172,6 @@ public class ObservableLists
 			@Override
 			public void invalidated( Observable _ )
 			{
-				if( !original.isEmpty() )
-				{
-					if( original.get( 0 ) instanceof ProjectRefView )
-					{
-						System.out.println( "transform UPDATING" );
-						System.out.println( "original.size(): " + original.size() );
-						System.out.println( "listeningList.list.size(): " + listeningList.list.size() );
-					}
-				}
-				else if( !listeningList.list.isEmpty() )
-				{
-					if( listeningList.list.get( 0 ) instanceof Observable )
-					{
-						System.out.println( "transform UPDATING" );
-						System.out.println( "original.size(): " + original.size() );
-						System.out.println( "listeningList.list.size(): " + listeningList.list.size() );
-					}
-				}
 				listeningList.list.setAll( Lists.newArrayList( Iterables.transform( original, cache ) ) );
 			}
 		};
