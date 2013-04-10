@@ -21,7 +21,7 @@
  * @category runners
  * @id com.eviware.GebRunner
  * @dependency net.sourceforge.htmlunit:htmlunit:2.9
- * @dependency org.codehaus.geb:geb-core:latest.release
+ * @dependency org.codehaus.geb:geb-core:0.7.2
  * @dependency org.seleniumhq.selenium:selenium-htmlunit-driver:2.4.0
  */
  
