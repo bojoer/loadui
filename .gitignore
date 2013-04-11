@@ -1,6 +1,6 @@
-
 #Build artifacts:
 target/
+bin/
 
 #Eclipse stuff:
 .settings/
@@ -10,3 +10,4 @@ target/
 #IDEA stuff:
 *.iml
 .idea/
+lib/

@@ -15,13 +15,13 @@
  */
 package com.eviware.loadui.components.soapui.layout;
 
-import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.util.concurrent.CountDownLatch;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.geometry.HPos;
+import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
@@ -67,14 +67,17 @@ public class SoapUiProjectSelector
 
 	private static final Logger log = LoggerFactory.getLogger( SoapUiProjectSelector.class );
 
-	private final Property<File> projectFile;
-	private final Property<String> testSuite;
-	private final Property<String> testCase;
+	private final com.eviware.loadui.api.property.Property<File> projectFile;
+	private final com.eviware.loadui.api.property.Property<String> testSuite;
+	private final com.eviware.loadui.api.property.Property<String> testCase;
+	private final javafx.beans.property.Property<String> convertedTestSuite;
+	private final javafx.beans.property.Property<String> convertedTestCase;
 
 	private CountDownLatch testCaseLatch = new CountDownLatch( 0 );
 
 	private final ComboBox<String> testSuiteCombo = ComboBoxBuilder.<String> create().maxHeight( Double.MAX_VALUE )
 			.maxWidth( Double.MAX_VALUE ).build();
+
 	private final ComboBox<String> testCaseCombo = ComboBoxBuilder.<String> create().maxHeight( Double.MAX_VALUE )
 			.maxWidth( Double.MAX_VALUE ).build();
 
@@ -91,6 +94,8 @@ public class SoapUiProjectSelector
 		projectFile = context.createProperty( "projectFile", File.class, null, false );
 		testSuite = context.createProperty( "testSuite", String.class );
 		testCase = context.createProperty( TEST_CASE, String.class );
+		convertedTestSuite = Properties.convert( testSuite );
+		convertedTestCase = Properties.convert( testCase );
 	}
 
 	public LayoutComponent buildLayout()
@@ -103,9 +108,9 @@ public class SoapUiProjectSelector
 	public Node buildNode()
 	{
 		SelectionModelUtils.writableSelectedItemProperty( testSuiteCombo.getSelectionModel(), true ).bindBidirectional(
-				Properties.convert( testSuite ) );
+				convertedTestSuite );
 		SelectionModelUtils.writableSelectedItemProperty( testCaseCombo.getSelectionModel(), true ).bindBidirectional(
-				Properties.convert( testCase ) );
+				convertedTestCase );
 
 		GridPane grid = GridPaneBuilder.create().rowConstraints( new RowConstraints( 18 ) )
 				.columnConstraints( new ColumnConstraints( 70, 70, 70 ) ).hgap( 28 ).build();
@@ -143,9 +148,9 @@ public class SoapUiProjectSelector
 		} );
 		final Label testSuiteLabel = LabelBuilder.create().build();
 
-		testSuiteLabel.textProperty().bind( Properties.convert( testSuite ) );
+		testSuiteLabel.textProperty().bind( convertedTestSuite );
 		final Label testCaseLabel = new Label();
-		testCaseLabel.textProperty().bind( Properties.convert( testCase ) );
+		testCaseLabel.textProperty().bind( convertedTestCase );
 
 		VBox projectVBox = VBoxBuilder.create().minWidth( 140 ).minHeight( 18 ).children( menuButton, projectLabel )
 				.build();
@@ -244,21 +249,39 @@ public class SoapUiProjectSelector
 		if( LoadUI.isHeadless() )
 			return;
 
-		testCaseLatch = new CountDownLatch( 1 );
-
-		Platform.runLater( new Runnable()
+		if( testCases.length > 0 )
 		{
-			@Override
-			public void run()
+			testCaseLatch = new CountDownLatch( 1 );
+			Platform.runLater( new Runnable()
 			{
-				if( testCases.length > 0 )
+				@Override
+				public void run()
 				{
 					testCaseCombo.setItems( FXCollections.observableArrayList( testCases ) );
-					testCase.setValue( testCases[0] );
+					testCase.setValue( findSelection( testCases ) );
+					testCaseLatch.countDown();
 				}
-				testCaseLatch.countDown();
-			}
-		} );
+			} );
+		} 
+	}
+
+	private String findSelection( String[] testCases )
+	{
+		if( testCase.getValue() == null )
+			return testCases[0];
+
+		int selector = 0;
+		for( String test : testCases )
+		{
+			if( testCase.getValue().equals( test ) )
+				break;
+			selector++ ;
+		}
+
+		if( selector < testCases.length )
+			return testCases[selector];
+		else
+			return testCases[0];
 	}
 
 	private class ProjectSelector extends PopupControl
@@ -282,6 +305,8 @@ public class SoapUiProjectSelector
 					.fillWidth( true )
 					.prefHeight( 325 )
 					.prefHeight( 160 )
+					.spacing( 10 )
+					.padding( new Insets( 10 ) )
 					.style( "-fx-background-color: #f4f4f4;" )
 					.children( new Label( "SoapUI Project" ), picker, new Label( "TestSuite" ), testSuiteCombo,
 							new Label( "TestCase" ), testCaseCombo ).build();

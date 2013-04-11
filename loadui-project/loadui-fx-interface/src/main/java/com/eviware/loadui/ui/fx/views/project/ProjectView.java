@@ -35,7 +35,6 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.SceneBuilder;
 import javafx.scene.control.Button;
@@ -45,6 +44,8 @@ import javafx.scene.control.ToggleButtonBuilder;
 import javafx.scene.control.ToolBar;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.RegionBuilder;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.StackPaneBuilder;
 
@@ -270,14 +271,21 @@ public class ProjectView extends AnchorPane
 					( ( ToolBar )lookup( ".tool-bar" ) ).setStyle( TOOLBAR_STYLE_WITHOUT_SCENARIO );
 					ProjectView.this.getChildren().remove( linkButton );
 
-					Group canvas = ( Group )lookup( ".canvas-layer" );
-					StackPane grid = ( StackPane )lookup( ".grid-pane" );
+					javafx.scene.layout.Pane canvas = ( javafx.scene.layout.Pane )lookup( ".pane" );
+					javafx.scene.layout.Region grid = ( javafx.scene.layout.Region )lookup( ".grid" );
 					StackPane parent = ( StackPane )grid.getParent();
 					parent.getChildren().remove( grid );
 					parent.getChildren().remove( canvas );
 
-					StackPane completeCanvas = StackPaneBuilder.create().children( grid, canvas ).build();
-					SceneBuilder.create().root( completeCanvas ).width( 996 ).height( 525 ).build();
+					Region gridRegion = RegionBuilder.create().styleClass( "grid" ).style( "-fx-background-repeat: repeat;" )
+							.build();
+					//Hack for setting CSS resources within an OSGi framework
+					String gridUrl = CanvasView.class.getResource( "grid-box.png" ).toExternalForm();
+					gridRegion.setStyle( "-fx-background-image: url('" + gridUrl + "');" );
+
+					StackPane completeCanvas = StackPaneBuilder.create().children( gridRegion, canvas ).build();
+					SceneBuilder.create().root( completeCanvas ).width( canvas.getWidth() ).height( canvas.getHeight() )
+							.build();
 
 					WritableImage fxImage = completeCanvas.snapshot( null, null );
 					BufferedImage bimg = SwingFXUtils.fromFXImage( fxImage, null );

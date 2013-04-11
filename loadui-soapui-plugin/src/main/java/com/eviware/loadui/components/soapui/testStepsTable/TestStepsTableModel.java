@@ -146,6 +146,12 @@ public class TestStepsTableModel
 		table.setItems( FXCollections.observableArrayList( testCase.getTestStepList() ) );
 	}
 
+	public void clearTestCase()
+	{
+		invocationCounts.invalidateAll();
+		table.getItems().clear();
+	}
+
 	private final static class LabelCellFactory implements
 			Callback<CellDataFeatures<TestStep, Label>, ObservableValue<Label>>
 	{
