@@ -15,12 +15,15 @@
  */
 package com.eviware.loadui.ui.fx.views.inspector;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.regex.Pattern;
-
+import com.eviware.loadui.ui.fx.api.Inspector;
+import com.eviware.loadui.ui.fx.api.perspective.PerspectiveEvent;
+import com.eviware.loadui.ui.fx.util.ErrorHandler;
+import com.eviware.loadui.ui.fx.util.FXMLUtils;
+import com.eviware.loadui.ui.fx.util.ObservableLists;
+import com.eviware.loadui.util.collections.SafeExplicitOrdering;
+import com.google.common.base.Function;
+import com.google.common.base.Objects;
+import com.google.common.collect.Ordering;
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -41,11 +44,7 @@ import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.SingleSelectionModel;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabBuilder;
-import javafx.scene.control.TabPane;
-import javafx.scene.control.ToggleButton;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -53,15 +52,11 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 
-import com.eviware.loadui.ui.fx.api.Inspector;
-import com.eviware.loadui.ui.fx.api.perspective.PerspectiveEvent;
-import com.eviware.loadui.ui.fx.util.ErrorHandler;
-import com.eviware.loadui.ui.fx.util.FXMLUtils;
-import com.eviware.loadui.ui.fx.util.ObservableLists;
-import com.eviware.loadui.util.collections.SafeExplicitOrdering;
-import com.google.common.base.Function;
-import com.google.common.base.Objects;
-import com.google.common.collect.Ordering;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.regex.Pattern;
 
 public class InspectorView extends AnchorPane
 {
@@ -90,8 +85,8 @@ public class InspectorView extends AnchorPane
 	private HBox buttonBar;
 
 	@FXML
-	private ToggleButton toggleInspectorButton; 
-	
+	private ToggleButton toggleInspectorButton;
+
 	private ObservableList<Tab> inspectorTabs;
 
 	private final DragBehavior dragBehavior = new DragBehavior();
@@ -162,7 +157,7 @@ public class InspectorView extends AnchorPane
 
 		buttonBar.setPrefHeight( tabHeaderArea.prefHeight( -1 ) );
 
-				inspectorTabs = ObservableLists.transform( inspectors, new Function<Inspector, Tab>()
+		inspectorTabs = ObservableLists.transform( inspectors, new Function<Inspector, Tab>()
 		{
 			@Override
 			public Tab apply( Inspector inspector )
@@ -298,9 +293,10 @@ public class InspectorView extends AnchorPane
 
 		return Math.max( headerHeight, desiredHeight );
 	}
-	
+
 	@FXML
-	protected void toggleMinimized(){
+	protected void toggleMinimized()
+	{
 		dragBehavior.toggleMinimized();
 	}
 
@@ -357,8 +353,8 @@ public class InspectorView extends AnchorPane
 			{
 				if( event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2 )
 				{
-                    toggleInspectorButton.selectedProperty().set(toggleInspectorButton.selectedProperty().not().get());
-                    toggleMinimized();
+					toggleInspectorButton.selectedProperty().set( toggleInspectorButton.selectedProperty().not().get() );
+					toggleMinimized();
 				}
 			}
 		}

@@ -18,6 +18,7 @@ package com.eviware.loadui.ui.fx.views.scenario;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.control.LabelBuilder;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -27,18 +28,18 @@ import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.control.DragNode;
 import com.eviware.loadui.ui.fx.util.UIUtils;
+import javafx.scene.layout.VBox;
+import javafx.scene.layout.VBoxBuilder;
 
 public class NewScenarioIcon extends Label
 {
+	private final VBox vbox;
 	public NewScenarioIcon()
 	{
+		vbox = VBoxBuilder.create().maxHeight( 68 ).minHeight( 68 ).spacing( 6 ).children( createIcon(), LabelBuilder.create().id("component").text("VU Scenario").build() ).build();
+
 		getStyleClass().add( "icon" );
-
-		setGraphic( createIcon() );
-		setText( "VU Scenario" );
-
-		setMaxHeight( 80 );
-		setMinHeight( 80 );
+		setGraphic( vbox );
 
 		addEventFilter( MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>()
 		{
@@ -52,12 +53,16 @@ public class NewScenarioIcon extends Label
 			}
 		} );
 
-		DragNode.install( this, createIcon() ).setData( this );
+		DragNode.install( vbox, createIcon() ).setData( this );
 	}
 
 	private static Node createIcon()
 	{
-		return new ImageView( UIUtils.getImageFor( SceneItem.class ) );
+		ImageView icon = new ImageView( UIUtils.getImageFor( SceneItem.class ) );
+		icon.maxHeight( 54 );
+		icon.setFitWidth( 72 );
+		icon.setPreserveRatio( true );
+		return icon;
 	}
 
 	@Override

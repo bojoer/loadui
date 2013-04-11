@@ -157,7 +157,6 @@ public class ToolBoxSkin<E extends Node> extends SkinBase<ToolBox<E>, BehaviorBa
 			public void onChanged( ListChangeListener.Change<? extends E> change )
 			{
 				Set<ToolBoxCategory> possiblyEmpty = Sets.newHashSet();
-
 				while( change.next() )
 				{
 					for( E removed : change.getRemoved() )
@@ -207,7 +206,9 @@ public class ToolBoxSkin<E extends Node> extends SkinBase<ToolBox<E>, BehaviorBa
 
 		for( E item : toolBox.getItems() )
 		{
+			 
 			String categoryName = ToolBox.getCategory( item );
+									
 			ToolBoxCategory category = categoriesByName.get( categoryName );
 			if( category == null )
 			{
@@ -290,8 +291,10 @@ public class ToolBoxSkin<E extends Node> extends SkinBase<ToolBox<E>, BehaviorBa
 
 		public ItemHolder( String category )
 		{
+			setAlignment( Pos.CENTER_LEFT );
+			this.setAlignment( Pos.TOP_LEFT );
 			getStyleClass().setAll( "item-holder" );
-			HBox hbox = HBoxBuilder.create().styleClass( "items" ).build();
+			HBox hbox = HBoxBuilder.create().styleClass( "items" ).alignment( Pos.TOP_LEFT ).build();
 			Bindings.bindContent( hbox.getChildren(), items );
 			getChildren().setAll( LabelBuilder.create().text( category ).styleClass( "category-label" ).build(), hbox );
 		}
@@ -307,13 +310,13 @@ public class ToolBoxSkin<E extends Node> extends SkinBase<ToolBox<E>, BehaviorBa
 			getStyleClass().setAll( "tool-box-expander" );
 			setAutoFix( false );
 			setAutoHide( true );
-
 			setOnHidden( new EventHandler<WindowEvent>()
 			{
 				@Override
 				public void handle( WindowEvent event )
 				{
 					expandedCategory.set( null );
+					
 				}
 			} );
 		}
@@ -321,16 +324,18 @@ public class ToolBoxSkin<E extends Node> extends SkinBase<ToolBox<E>, BehaviorBa
 		public void show( ToolBoxCategory category )
 		{
 			expandedCategory.set( category );
-
+			
 			ItemHolder itemHolder = new ItemHolder( category.category );
-			itemHolder.setMinWidth( ToolBoxSkin.this.getWidth() );
-			itemHolder.setMinHeight( category.itemHolder.getHeight() );
+			itemHolder.setMinWidth( ToolBoxSkin.this.getMinWidth() );
+			itemHolder.setMinHeight( category.itemHolder.getMinHeight() );
 			itemHolder.items.setAll( category.categoryItems );
-
+			
+			
+			
 			//The padding here allows the ItemHolder to grow beyond its usual size using negative insets, while still remaining in its correct position.
 			StackPane pane = new StackPane();
-			double padding = 10;
-			pane.setPadding( new Insets( padding ) );
+			double padding = 6;
+			pane.setPadding( new Insets( padding, padding, padding, 0 ) );
 			pane.getChildren().setAll( itemHolder );
 
 			bridge.getChildren().setAll( pane );

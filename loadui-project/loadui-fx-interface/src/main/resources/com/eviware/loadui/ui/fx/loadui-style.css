@@ -621,7 +621,7 @@
 	-fx-background-insets: 0, 1 1 1 0, 3 1 1 0, 20 3 3 0;
 	-fx-background-radius: 0 4 4 0, 0 4 4 0, 0 3 3 0, 0 0 3 0;
 	-fx-padding: 0 0 0 0;
-	-fx-alignment: center;
+	-fx-alignment: center_left;
 }
 .tool-box .nav {
 	/* changes size for nav buttons */
@@ -629,7 +629,7 @@
 }
 
 .tool-box .title {
-	-fx-padding: 2;
+	-fx-padding: 2 2 2 9;
 	-fx-font-size: 12;
 	-fx-text-fill: #f2f2f2;
 }
@@ -641,7 +641,7 @@
 
 .tool-box .scrollable-list .box {
 	/* spacing for nav buttons */
-	-fx-spacing: 8;
+	-fx-spacing: 9;
 }
 
 .tool-box .item-box {
@@ -669,7 +669,7 @@
 	-fx-scale-y: 0.5; 
 	-fx-scale-x: 0.5; 
 	-fx-background-color: #8B8B8B; 
-	-fx-padding: 12 5;
+	-fx-padding: 10 5;
 }
 
 .tool-box .toolbar-button:hover .expander-button .graphic{
@@ -681,17 +681,23 @@
 }
 
 .item-holder {
-	-fx-padding: 5;
-	-fx-spacing: 5;
+	-fx-alignment: center_left;
+	-fx-padding: 9;
+	-fx-spacing: 9;
 }
 
 .item-holder .category-label {
 	-fx-text-fill: #f2f2f2;
 }
 
-.item-holder .icon 
-{
-	-fx-text-fill: #f2f2f2;
+.item-holder .icon .text{
+	-fx-fill: #f2f2f2;
+	visibility: hidden;
+}
+
+.item-holder .icon #component.label .text{
+	-fx-fill: #f2f2f2;
+	visibility: visible;
 }
 
 .item-holder > .items {
