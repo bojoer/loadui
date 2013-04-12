@@ -59,8 +59,8 @@ public class NewScenarioIcon extends Label
 	private static Node createIcon()
 	{
 		ImageView icon = new ImageView( UIUtils.getImageFor( SceneItem.class ) );
-		icon.maxHeight( 54 );
-		icon.setFitWidth( 72 );
+		icon.setFitWidth( 70 );
+		icon.autosize();
 		icon.setPreserveRatio( true );
 		return icon;
 	}

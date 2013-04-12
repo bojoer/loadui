@@ -18,8 +18,6 @@ package com.eviware.loadui.ui.fx.util.test;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.util.Arrays;
-import java.util.List;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -31,25 +29,21 @@ import javafx.scene.Node;
 import javafx.scene.SceneBuilder;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBuilder;
-import javafx.scene.control.Label;
-import javafx.scene.control.MenuButton;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.control.SeparatorMenuItemBuilder;
 import javafx.scene.control.SplitPaneBuilder;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextAreaBuilder;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.Pane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBoxBuilder;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.VBoxBuilder;
+import javafx.scene.text.TextBuilder;
 import javafx.stage.Stage;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
-
 //import com.javafx.experiments.scenicview.ScenicView;
 
 public class StyleTester extends Application
@@ -57,23 +51,12 @@ public class StyleTester extends Application
 
 	protected Node createTestNode()
 	{
-		final Pane container = new FlowPane();
-		container.getStyleClass().add( "container" );
 
-		SeparatorMenuItem separator = SeparatorMenuItemBuilder.create().build();
-		System.out.println( separator.getStyleClass() );
+		Image image = new Image("287.jpg", 500, 0, true, true);
+		ImageView iview = new ImageView(image);
 
-		List<MenuItem> items = Arrays.asList(
-
-		new MenuItem( "Item 1" ), separator, new MenuItem( "Item 2" ) );
-		MenuButton button = new MenuButton( "Press this" );
-		//button.getContextMenu()
-		button.getItems().setAll( items );
-
-		container.getChildren().addAll( new Label( "hej varlden" ), button );
-
-		return container;
-
+		iview.setPreserveRatio( true );
+		return HBoxBuilder.create().children( iview, TextBuilder.create().text( "hello" ).build() ).build();
 	}
 
 	protected String[] getAdditionalStyleSheets() throws MalformedURLException
@@ -81,10 +64,8 @@ public class StyleTester extends Application
 		String[] styleSheets = { new File(
 				"../loadui-fx-interface/src/main/resources/com/eviware/loadui/ui/fx/loadui-style.css" ).toURI().toURL()
 				.toExternalForm() };
-
 		return styleSheets;
-
-	}
+  	}
 
 	@Override
 	public void start( final Stage primaryStage ) throws Exception
@@ -173,7 +154,7 @@ public class StyleTester extends Application
 		//		final Wizard dialog = new Wizard( panel, "sdad", tabs );
 		//		dialog.show();
 
-		//ScenicView.show( primaryStage.getScene() );
+		// ScenicView.show( primaryStage.getScene() );
 	}
 
 	public static void main( String[] args )

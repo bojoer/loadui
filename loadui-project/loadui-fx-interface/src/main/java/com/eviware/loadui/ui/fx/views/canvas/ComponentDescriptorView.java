@@ -19,6 +19,7 @@ import java.net.MalformedURLException;
 
 import javafx.scene.control.Label;
 import javafx.scene.control.LabelBuilder;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.VBoxBuilder;
@@ -36,18 +37,20 @@ public class ComponentDescriptorView extends Label
 	public ComponentDescriptorView( ComponentDescriptor descriptor )
 	{
 		this.descriptor = descriptor;
-		vbox = VBoxBuilder.create().spacing( 6 ).maxWidth( 85 ).maxHeight( 68 ).minHeight( 68 ).build();
+		vbox = VBoxBuilder.create().spacing( 6 ).maxHeight( 68 ).minHeight( 68 ).build();
 		getStyleClass().add( "icon" );
-
-		ImageView icon;
+		
 		try
 		{
-			icon = new ImageView( descriptor.getIcon().toURL().toString() );
-  			icon.setPreserveRatio( true );
-			icon.maxHeight( 54 );
-			icon.setFitWidth( 72 );
+			Image image = new Image( descriptor.getIcon().toURL().toString(), 72, 0, true, true );
+			
+			ImageView icon = new ImageView( image );
+			
+			
 			DragNode dragNode = DragNode.install( vbox, new ImageView( icon.getImage() ) );
 			dragNode.setData( descriptor );
+			
+			
 			vbox.getChildren().add( icon );
 		}
 		catch( MalformedURLException e )
@@ -59,7 +62,7 @@ public class ComponentDescriptorView extends Label
 		label = LabelBuilder.create().id( "component" ).build();
 		label.textProperty().bind( Properties.forLabel( descriptor ) );
    	label.setWrapText( true );
-		label.maxWidth( 85 );
+		label.maxWidth( 80 );
 
 		vbox.getChildren().add(label);
 		this.setGraphic( vbox );
