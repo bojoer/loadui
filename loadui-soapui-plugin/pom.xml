@@ -234,7 +234,6 @@
 			<groupId>com.eviware.loadui</groupId>
 			<artifactId>loadui-fx-interface</artifactId>
 			<version>${loadUIVersion}</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.eviware.loadui</groupId>
