@@ -25,6 +25,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBuilder;
 import javafx.scene.control.Label;
@@ -263,6 +264,11 @@ public class SettingsTab extends Tab
 		}
 	}
 
+	public void addNode( Node node )
+	{
+		vBox.getChildren().add( node );
+	}
+
 	@SuppressWarnings( "unchecked" )
 	public void refreshFields()
 	{
@@ -434,6 +440,12 @@ public class SettingsTab extends Tab
 			return this;
 		}
 
+		public Builder node( Node node )
+		{
+			tab.addNode( node );
+			return this;
+		}
+
 		public Builder id( String id )
 		{
 			tab.setId( id );
@@ -446,4 +458,5 @@ public class SettingsTab extends Tab
 			return tab;
 		}
 	}
+
 }
