@@ -15,41 +15,42 @@
  */
 package com.eviware.loadui.impl.layout;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Map;
 
-import javax.swing.table.TableModel;
-
-import com.eviware.loadui.api.layout.TableLayoutComponent;
+import com.eviware.loadui.api.layout.PropertyTableLayoutComponent;
+import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.util.MapUtils;
 import com.google.common.collect.ImmutableMap;
 
-public class TableLayoutComponentImpl extends LayoutComponentImpl implements TableLayoutComponent
+public class PropertyTableLayoutComponentImpl extends LayoutComponentImpl implements PropertyTableLayoutComponent
 {
-	public final static String TABLE_MODEL = "tableModel";
+	public final static String TABLE_COLLECTION = "tableModel";
 	public final static String LABEL = "label";
 
-	public TableLayoutComponentImpl( Map<String, ?> args )
+	public PropertyTableLayoutComponentImpl( Map<String, ?> args )
 	{
 		super( args );
 
-		if( !( properties.get( TABLE_MODEL ) instanceof TableModel ) )
+		if( !( properties.get( TABLE_COLLECTION ) instanceof Collection ) )
 			throw new IllegalArgumentException( "Illegal arguments: " + args );
 	}
 
-	public TableLayoutComponentImpl( TableModel tableModel, String label, String constraints )
+	public PropertyTableLayoutComponentImpl( Collection<Property<String>> tableRows, String label, String constraints )
 	{
-		this( ImmutableMap.of( TABLE_MODEL, tableModel, LABEL, label, CONSTRAINTS, constraints ) );
-	}
-
-	@Override
-	public TableModel getTableModel()
-	{
-		return ( TableModel )properties.get( TABLE_MODEL );
+		this( ImmutableMap.of( TABLE_COLLECTION, tableRows, LABEL, label, CONSTRAINTS, constraints ) );
 	}
 
 	@Override
 	public String getLabel()
 	{
 		return MapUtils.getOr( properties, LABEL, "" );
+	}
+
+	@Override
+	public Collection<Property<String>> getRows()
+	{
+		return MapUtils.getOr( properties, TABLE_COLLECTION, new ArrayList<Property<String>>() );
 	}
 }

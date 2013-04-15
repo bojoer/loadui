@@ -163,25 +163,6 @@ final public class TestCasePropertiesNode extends VBox
 		table.setList( context.getProperties() );
 	}
 
-	//	@Override
-	//	public boolean isCellEditable( int rowIndex, int columnIndex )
-	//	{
-	//		return columnIndex == 1;
-	//
-	//	}
-
-	//	private boolean propertyAlreadyExists( String name )
-	//	{
-	//		for( Property<?> p : data )
-	//		{
-	//			if( p.getKey().equals( name ) )
-	//			{
-	//				return true;
-	//			}
-	//		}
-	//		return false;
-	//	}
-
 	/*
 	 * Synchronizes with Context because the context´s properties are saved.
 	 */
@@ -202,10 +183,7 @@ final public class TestCasePropertiesNode extends VBox
 			Object valueToSet = value;
 			contextProperty.setValue( Objects.firstNonNull( valueToSet.toString(), "" ) );
 			return contextProperty;
-
 		}
-
-		//( Property<?> )new SimpleStringProperty( null, key, value );
 
 	}
 
@@ -222,46 +200,6 @@ final public class TestCasePropertiesNode extends VBox
 		}
 		return null;
 	}
-
-	//	private class PropertiesTableListener implements TableModelListener
-	//	{ 
-	//		private final ComponentContext context;
-	//
-	//		public PropertiesTableListener( ComponentContext context )
-	//		{
-	//			this.context = context;
-	//		}
-	//
-	//		@Override
-	//		public void tableChanged( TableModelEvent e )
-	//		{
-	//			// Synchronizes this class data to the context properties
-	//
-	//			for( int i = 0; i < getRowCount(); i++ )
-	//			{
-	//				// check if property for overridden value already exists
-	//				boolean properyExisted = false;
-	//				for( Property<?> p : context.getProperties() )
-	//				{
-	//					if( p.getKey().equals( "_valueToOverride_" + getValueAt( i, 0 ) ) )
-	//					{
-	//						p.setValue( getValueAt( i, 1 ) );
-	//						properyExisted = true;
-	//						break;
-	//					}
-	//				}
-	//
-	//				if( !properyExisted )
-	//				{
-	//					Property<?> p = context.createProperty( "_valueToOverride_" + getValueAt( i, 0 ).toString(),
-	//							String.class );
-	//					Object value = getValueAt( i, 1 );
-	//					p.setValue( Objects.firstNonNull( value.toString(), "" ) );
-	//				}
-	//			}
-	//
-	//		}
-	//	}
 
 	public int size()
 	{

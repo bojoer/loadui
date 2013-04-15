@@ -42,7 +42,6 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.Separator;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TooltipBuilder;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBoxBuilder;
@@ -60,7 +59,7 @@ import com.eviware.loadui.api.layout.LayoutContainer;
 import com.eviware.loadui.api.layout.OptionsProvider;
 import com.eviware.loadui.api.layout.PropertyLayoutComponent;
 import com.eviware.loadui.api.layout.SeparatorLayoutComponent;
-import com.eviware.loadui.api.layout.TableLayoutComponent;
+import com.eviware.loadui.api.layout.PropertyTableLayoutComponent;
 import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.impl.layout.OptionsProviderImpl;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
@@ -74,6 +73,14 @@ import com.eviware.loadui.util.layout.FormattedString;
 import com.google.common.base.Objects;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+
+/**
+ * Used to generate the component UI widgets (such as knobs and textfields) from
+ * LayoutComponents.
+ * 
+ * @author maximilian.skog
+ * 
+ */
 
 public class ComponentLayoutUtils
 {
@@ -225,7 +232,7 @@ public class ComponentLayoutUtils
 			SeparatorLayoutComponent separator = ( SeparatorLayoutComponent )component;
 			return new Separator( separator.isVertical() ? Orientation.VERTICAL : Orientation.HORIZONTAL );
 		}
-		else if( component instanceof TableLayoutComponent )
+		else if( component instanceof PropertyTableLayoutComponent )
 		{
 			//TODO: Table stuff
 			return new TableView<>();
