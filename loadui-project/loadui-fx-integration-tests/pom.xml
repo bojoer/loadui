@@ -18,6 +18,7 @@
                 <plugins>
                     <plugin>
                         <artifactId>maven-failsafe-plugin</artifactId>
+                        <version>2.14.1</version>
                         <configuration>
                             <groups>com.eviware.loadui.test.categories.IntegrationTest</groups>
                             <argLine>-Xms256m -Xmx1024m -XX:MaxPermSize=128M</argLine>
@@ -33,6 +34,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.14.1</version>
                 <configuration>
                     <excludedGroups>com.eviware.loadui.test.categories.IntegrationTest</excludedGroups>
                 </configuration>

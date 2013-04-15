@@ -20,6 +20,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.mockito.Mockito.mock;
+
+import com.eviware.loadui.test.categories.GUITest;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -33,7 +35,9 @@ import org.junit.Test;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.ui.fx.api.analysis.ExecutionsInfo;
 import com.eviware.loadui.ui.fx.api.analysis.ExecutionsInfo.Data;
+import org.junit.experimental.categories.Category;
 
+@Category( GUITest.class )
 public class FXExecutionsInfoTest
 {
 
