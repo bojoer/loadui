@@ -19,17 +19,17 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
-import com.eviware.loadui.api.layout.PropertyTableLayoutComponent;
+import com.eviware.loadui.api.layout.TableLayoutComponent;
 import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.util.MapUtils;
 import com.google.common.collect.ImmutableMap;
 
-public class PropertyTableLayoutComponentImpl extends LayoutComponentImpl implements PropertyTableLayoutComponent
+public class TableLayoutComponentImpl extends LayoutComponentImpl implements TableLayoutComponent
 {
 	public final static String TABLE_COLLECTION = "tableModel";
 	public final static String LABEL = "label";
 
-	public PropertyTableLayoutComponentImpl( Map<String, ?> args )
+	public TableLayoutComponentImpl( Map<String, ?> args )
 	{
 		super( args );
 
@@ -37,7 +37,7 @@ public class PropertyTableLayoutComponentImpl extends LayoutComponentImpl implem
 			throw new IllegalArgumentException( "Illegal arguments: " + args );
 	}
 
-	public PropertyTableLayoutComponentImpl( Collection<Property<String>> tableRows, String label, String constraints )
+	public TableLayoutComponentImpl( Collection<Property<String>> tableRows, String label, String constraints )
 	{
 		this( ImmutableMap.of( TABLE_COLLECTION, tableRows, LABEL, label, CONSTRAINTS, constraints ) );
 	}

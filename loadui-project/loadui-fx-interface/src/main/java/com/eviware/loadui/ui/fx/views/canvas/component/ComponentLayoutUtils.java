@@ -59,7 +59,7 @@ import com.eviware.loadui.api.layout.LayoutContainer;
 import com.eviware.loadui.api.layout.OptionsProvider;
 import com.eviware.loadui.api.layout.PropertyLayoutComponent;
 import com.eviware.loadui.api.layout.SeparatorLayoutComponent;
-import com.eviware.loadui.api.layout.PropertyTableLayoutComponent;
+import com.eviware.loadui.api.layout.TableLayoutComponent;
 import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.impl.layout.OptionsProviderImpl;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
@@ -232,7 +232,7 @@ public class ComponentLayoutUtils
 			SeparatorLayoutComponent separator = ( SeparatorLayoutComponent )component;
 			return new Separator( separator.isVertical() ? Orientation.VERTICAL : Orientation.HORIZONTAL );
 		}
-		else if( component instanceof PropertyTableLayoutComponent )
+		else if( component instanceof TableLayoutComponent )
 		{
 			//TODO: Table stuff
 			return new TableView<>();

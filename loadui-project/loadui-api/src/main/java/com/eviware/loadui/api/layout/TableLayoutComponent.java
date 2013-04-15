@@ -25,7 +25,7 @@ import com.eviware.loadui.api.property.Property;
  * 
  * @author dain.nilsson
  */
-public interface PropertyTableLayoutComponent extends LayoutComponent
+public interface TableLayoutComponent extends LayoutComponent
 {
 	/**
 	 * Each TableLayoutComponent may optionally have a label attached to it. If
