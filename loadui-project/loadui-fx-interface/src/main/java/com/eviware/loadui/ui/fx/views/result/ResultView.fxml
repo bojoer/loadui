@@ -19,12 +19,6 @@
 		<stylesheets>
 			<URL value="@ResultView.css" />
 		</stylesheets>
-		<HBox styleClass="results-toolbar" minHeight="45">
-			<padding>
-				<Insets top="10" left="10" bottom="10" right="10"/> 
-			</padding>
-			<Label styleClass="title" text="TEST RUNS" />
-		</HBox>
 		<HBox>
 			<padding>
 				<Insets left="10" right="10"/>

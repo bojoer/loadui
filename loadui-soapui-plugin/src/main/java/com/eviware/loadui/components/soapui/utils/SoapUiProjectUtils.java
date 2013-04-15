@@ -30,11 +30,21 @@ import com.eviware.soapui.SoapUIExtensionClassLoader.SoapUIClassLoaderState;
 import com.eviware.soapui.impl.wsdl.WsdlProject;
 import com.eviware.soapui.impl.wsdl.WsdlProjectPro;
 import com.eviware.soapui.impl.wsdl.testcase.WsdlTestCase;
+import com.eviware.soapui.impl.wsdl.teststeps.AMFRequestTestStep;
+import com.eviware.soapui.impl.wsdl.teststeps.HttpTestRequest;
+import com.eviware.soapui.impl.wsdl.teststeps.HttpTestRequestStep;
+import com.eviware.soapui.impl.wsdl.teststeps.JdbcRequestTestStep;
+import com.eviware.soapui.impl.wsdl.teststeps.RestTestRequest;
+import com.eviware.soapui.impl.wsdl.teststeps.RestTestRequestStep;
 import com.eviware.soapui.impl.wsdl.teststeps.WsdlDataSourceTestStep;
 import com.eviware.soapui.impl.wsdl.teststeps.WsdlMessageAssertion;
+import com.eviware.soapui.impl.wsdl.teststeps.WsdlTestRequest;
+import com.eviware.soapui.impl.wsdl.teststeps.WsdlTestRequestStep;
+import com.eviware.soapui.impl.wsdl.teststeps.WsdlTestStep;
 import com.eviware.soapui.model.testsuite.Assertable;
 import com.eviware.soapui.model.testsuite.TestAssertion;
 import com.eviware.soapui.model.testsuite.TestCase;
+import com.eviware.soapui.model.testsuite.TestStep;
 import com.eviware.soapui.support.GroovyUtils;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
@@ -117,6 +127,23 @@ public class SoapUiProjectUtils
 	{
 		for( WsdlDataSourceTestStep s : testCase.getTestStepsOfType( WsdlDataSourceTestStep.class ) )
 			s.setShared( true );
+	}
+
+	public static void enableResponseDiscarding( @Nonnull WsdlTestCase testCase )
+	{
+		for( TestStep s : testCase.getTestStepList() )
+		{
+			if( s instanceof AMFRequestTestStep )
+				( ( AMFRequestTestStep )s ).setDiscardResponse( true );
+			else if( s instanceof HttpTestRequestStep )
+				( ( HttpTestRequestStep )s ).getTestRequest().setDiscardResponse( true );
+			else if( s instanceof JdbcRequestTestStep )
+				( ( JdbcRequestTestStep )s ).setDiscardResponse( true );
+			else if( s instanceof RestTestRequestStep )
+				( ( RestTestRequestStep )s ).getTestRequest().setDiscardResponse( true );
+			else if( s instanceof WsdlTestRequestStep )
+				( ( WsdlTestRequestStep )s ).getTestRequest().setDiscardResponse( true );
+		}
 	}
 
 	public static void registerJdbcDrivers()

@@ -69,7 +69,7 @@ public class LoadUIIntegrator
 	private static final String LOADUI_TEST_CASE_NAME = "loaduiTestCaseName";
 	private static final String LOADUI_PROJECT_NAME = "loaduiProjectName";
 	private static final String MOCKSERVICE_RUNNER_LABEL = "mockRunnerLabel";
-	public static final String SOAPUI_RUNNER_BASE_NAME = "soapUI Runner";
+	public static final String SOAPUI_RUNNER_BASE_NAME = "SoapUI Runner";
 	public static final String MOCK_RUNNER_BASE_NAME = "soapUI MockService";
 
 	private static final String TRIGGER_LABEL = "triggerLabel";

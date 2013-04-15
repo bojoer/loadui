@@ -518,7 +518,7 @@ public class CanvasView extends StackPane
 		descriptors.setComparator( GeneratorCategory.CATEGORY,
 				order( "Fixed Rate", "Variance", "Random", "Ramp Sequence", "Ramp", "Usage", "Fixed Load" ) );
 		descriptors.setComparator( RunnerCategory.CATEGORY,
-				order( "soapUI Runner", "Web Page Runner", "Script Runner", "Process Runner" ) );
+				order( "SoapUI Runner", "Web Page Runner", "Script Runner", "Process Runner" ) );
 		descriptors.setComparator( FlowCategory.CATEGORY, order( "Splitter", "Delay", "Condition", "Loop" ) );
 		descriptors.setComparator( SchedulerCategory.CATEGORY, order( "Interval", "Scheduler" ) );
 		descriptors.setComparator( OutputCategory.CATEGORY, order( "Table Log" ) );
