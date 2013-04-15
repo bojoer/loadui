@@ -307,9 +307,9 @@ public class CanvasView extends StackPane
 
 		descriptors.setMaxWidth( 120 );
 		descriptors.setMinWidth( 110 );
-		
+
 		descriptors.setHeightPerItem( 128 );
-		
+
 		StackPane.setAlignment( descriptors, Pos.CENTER_LEFT );
 		StackPane.setMargin( descriptors, new Insets( 17, 0, 57, 0 ) );
 		descriptors.maxHeightProperty().bind( descriptors.prefHeightProperty() );
@@ -425,8 +425,7 @@ public class CanvasView extends StackPane
 				enforceCanvasBounds();
 			}
 		} );
-		
-		
+
 	}
 
 	private void enforceCanvasBounds()
@@ -491,7 +490,7 @@ public class CanvasView extends StackPane
 				canvasLayer.setLayoutY( maxY );
 			}
 		}
-		
+
 	}
 
 	public CanvasItem getCanvas()

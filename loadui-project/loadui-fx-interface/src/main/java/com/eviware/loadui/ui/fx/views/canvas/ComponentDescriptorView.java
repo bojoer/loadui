@@ -40,13 +40,13 @@ public class ComponentDescriptorView extends Label
 		this.descriptor = descriptor;
 		vbox = VBoxBuilder.create().spacing( 6 ).maxWidth( 85 ).alignment( Pos.TOP_LEFT ).build();
 		getStyleClass().add( "icon" );
-		
+
 		try
 		{
 			Image image = new Image( descriptor.getIcon().toURL().toString(), 72, 0, true, true );
-			
+
 			ImageView icon = new ImageView( image );
-			
+
 			DragNode dragNode = DragNode.install( vbox, new ImageView( icon.getImage() ) );
 			dragNode.setData( descriptor );
 
@@ -60,10 +60,10 @@ public class ComponentDescriptorView extends Label
 		textProperty().bind( Properties.forLabel( descriptor ) );
 		label = LabelBuilder.create().id( "component" ).alignment( Pos.TOP_LEFT ).build();
 		label.textProperty().bind( Properties.forLabel( descriptor ) );
-   	label.setWrapText( true );
+		label.setWrapText( true );
 		label.maxWidth( 80 );
 
-		vbox.getChildren().add(label);
+		vbox.getChildren().add( label );
 		this.setGraphic( vbox );
 	}
 
