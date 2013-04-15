@@ -19,7 +19,6 @@
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.SeparatorMenuItem?>
 
-
 <fx:root type="javafx.scene.layout.AnchorPane" styleClass="project-view"
 	xmlns:fx="http://javafx.com/fxml">
 	<stylesheets>

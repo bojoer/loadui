@@ -244,8 +244,7 @@ public class ToolBoxSkin<E extends Node> extends SkinBase<ToolBox<E>, BehaviorBa
 			this.category = category;
 
 			itemHolder = new ItemHolder( category );
-			
-			
+						
 			shownElement.addListener( new ChangeListener<E>()
 			{
 				@Override
@@ -310,16 +309,19 @@ public class ToolBoxSkin<E extends Node> extends SkinBase<ToolBox<E>, BehaviorBa
 		private final ObservableList<E> items = FXCollections.observableArrayList();
 
 		private final Label category;
-		
+		private final HBox itemsBox; 
 		public ItemHolder( String category )
 		{
 			this.category = LabelBuilder.create().text( category ).styleClass( "category-label" ).build(); 
-			setAlignment( Pos.CENTER_LEFT );
-			this.setAlignment( Pos.TOP_LEFT );
+			setAlignment( Pos.TOP_LEFT );
 			getStyleClass().setAll( "item-holder" );
-			HBox hbox = HBoxBuilder.create().styleClass( "items" ).alignment( Pos.TOP_LEFT ).build();
-			Bindings.bindContent( hbox.getChildren(), items );
-			getChildren().setAll( this.category, hbox );
+			itemsBox = HBoxBuilder.create().styleClass( "items" ).alignment( Pos.TOP_LEFT ).build();
+			Bindings.bindContent( itemsBox.getChildren(), items );
+			getChildren().setAll( this.category, itemsBox );
+		}
+		
+		public HBox getItemsBox(){
+			return itemsBox; 
 		}
 		
 		public Label getCategory(){
@@ -337,6 +339,8 @@ public class ToolBoxSkin<E extends Node> extends SkinBase<ToolBox<E>, BehaviorBa
 			getStyleClass().setAll( "tool-box-expander" );
 			setAutoFix( false );
 			setAutoHide( true );
+			setAlignment( Pos.BOTTOM_LEFT );			
+			
 			setOnHidden( new EventHandler<WindowEvent>()
 			{
 				@Override
@@ -352,14 +356,23 @@ public class ToolBoxSkin<E extends Node> extends SkinBase<ToolBox<E>, BehaviorBa
 			expandedCategory.set( category );
 			
 			ItemHolder itemHolder = new ItemHolder( category.category );
+			
+			itemHolder.setAlignment( Pos.BOTTOM_LEFT );
 			itemHolder.setMinWidth( ToolBoxSkin.this.getMinWidth() );
-			itemHolder.setMinHeight( category.itemHolder.getMinHeight() );
+			itemHolder.setMinHeight( category.getMinHeight() ); 
+			itemHolder.setMaxHeight( category.getMaxHeight() );
+			itemHolder.setPrefHeight( category.getPrefHeight() );
+								
 			itemHolder.items.setAll( category.categoryItems );
+						
+			itemHolder.setAlignment( Pos.BOTTOM_LEFT );
+			itemHolder.getItemsBox().setAlignment( Pos.BOTTOM_LEFT ); 
 						
 			//The padding here allows the ItemHolder to grow beyond its usual size using negative insets, while still remaining in its correct position.
 			StackPane pane = new StackPane();
 			double padding = 12;
 			pane.setPadding( new Insets( padding, 0, 0, 12 ) );
+			pane.setAlignment( Pos.BOTTOM_LEFT );
 			pane.getChildren().setAll( itemHolder );
 
 			bridge.getChildren().setAll( pane );

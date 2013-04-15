@@ -15,5 +15,5 @@
 		<Insets top="10" right="10" bottom="10" />
 	</padding>
 	<StatisticHolderToolBox fx:id="componentToolBox" text="Assertables" heightPerItem="126" minWidth="120" maxWidth="120"/>
-	<ScrollableList fx:id="assertionList" spacing="10" sizePerItem="75" HBox.hgrow="ALWAYS" />
+	<ScrollableList fx:id="assertionList" spacing="10" sizePerItem="65" HBox.hgrow="ALWAYS" />
 </fx:root>

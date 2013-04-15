@@ -17,6 +17,7 @@ package com.eviware.loadui.ui.fx.views.workspace;
 
 import com.eviware.loadui.api.model.ProjectItem;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.LabelBuilder;
@@ -36,7 +37,7 @@ public class NewAgentIcon extends Label
 	private VBox vbox;
 	public NewAgentIcon()
 	{
-		vbox = VBoxBuilder.create().spacing( 6 ).maxHeight( 68 ).minHeight( 68 ).children( createIcon(), LabelBuilder.create().id( "component" ).text( "Create Agent" ).build() ).build();
+		vbox = VBoxBuilder.create().spacing( 6 ).maxWidth( 85 ).alignment( Pos.TOP_LEFT ).children( createIcon(), LabelBuilder.create().id( "component" ).alignment( Pos.TOP_LEFT ).text( "Create Agent" ).build() ).build();
 
 		getStyleClass().add( "icon" );
 		setText( "Create Agent" );

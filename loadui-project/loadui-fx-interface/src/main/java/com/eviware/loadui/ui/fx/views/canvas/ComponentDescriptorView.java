@@ -17,6 +17,7 @@ package com.eviware.loadui.ui.fx.views.canvas;
 
 import java.net.MalformedURLException;
 
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.LabelBuilder;
 import javafx.scene.image.Image;
@@ -37,7 +38,7 @@ public class ComponentDescriptorView extends Label
 	public ComponentDescriptorView( ComponentDescriptor descriptor )
 	{
 		this.descriptor = descriptor;
-		vbox = VBoxBuilder.create().spacing( 6 ).maxHeight( 68 ).minHeight( 68 ).build();
+		vbox = VBoxBuilder.create().spacing( 6 ).maxWidth( 85 ).alignment( Pos.TOP_LEFT ).build();
 		getStyleClass().add( "icon" );
 		
 		try
@@ -46,11 +47,9 @@ public class ComponentDescriptorView extends Label
 			
 			ImageView icon = new ImageView( image );
 			
-			
 			DragNode dragNode = DragNode.install( vbox, new ImageView( icon.getImage() ) );
 			dragNode.setData( descriptor );
-			
-			
+
 			vbox.getChildren().add( icon );
 		}
 		catch( MalformedURLException e )
@@ -59,7 +58,7 @@ public class ComponentDescriptorView extends Label
 		}
 
 		textProperty().bind( Properties.forLabel( descriptor ) );
-		label = LabelBuilder.create().id( "component" ).build();
+		label = LabelBuilder.create().id( "component" ).alignment( Pos.TOP_LEFT ).build();
 		label.textProperty().bind( Properties.forLabel( descriptor ) );
    	label.setWrapText( true );
 		label.maxWidth( 80 );

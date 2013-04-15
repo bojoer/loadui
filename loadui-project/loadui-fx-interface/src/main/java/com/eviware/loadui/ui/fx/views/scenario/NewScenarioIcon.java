@@ -16,6 +16,7 @@
 package com.eviware.loadui.ui.fx.views.scenario;
 
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.LabelBuilder;
@@ -36,7 +37,7 @@ public class NewScenarioIcon extends Label
 	private final VBox vbox;
 	public NewScenarioIcon()
 	{
-		vbox = VBoxBuilder.create().maxHeight( 68 ).minHeight( 68 ).spacing( 6 ).children( createIcon(), LabelBuilder.create().id("component").text("VU Scenario").build() ).build();
+		vbox = VBoxBuilder.create().spacing( 6 ).maxWidth( 85 ).alignment( Pos.TOP_LEFT ).children( createIcon(), LabelBuilder.create().alignment( Pos.TOP_LEFT ).id("component").text("VU Scenario").build() ).build();
 
 		getStyleClass().add( "icon" );
 		setGraphic( vbox );
@@ -59,7 +60,7 @@ public class NewScenarioIcon extends Label
 	private static Node createIcon()
 	{
 		ImageView icon = new ImageView( UIUtils.getImageFor( SceneItem.class ) );
-		icon.setFitWidth( 70 );
+		icon.setFitWidth( 72 );
 		icon.autosize();
 		icon.setPreserveRatio( true );
 		return icon;

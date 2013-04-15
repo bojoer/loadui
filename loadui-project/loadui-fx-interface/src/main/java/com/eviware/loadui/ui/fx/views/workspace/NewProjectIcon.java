@@ -17,6 +17,7 @@ package com.eviware.loadui.ui.fx.views.workspace;
 
 import com.eviware.loadui.api.model.SceneItem;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.LabelBuilder;
@@ -36,11 +37,10 @@ public class NewProjectIcon extends Label
 	private final VBox vbox;
 	public NewProjectIcon()
 	{
-		vbox = VBoxBuilder.create().spacing( 6 ).maxHeight( 68 ).minHeight( 68 ).children( createIcon(), LabelBuilder.create().id( "component" ).text( "Create Project" ).build() ).build();
+		vbox = VBoxBuilder.create().spacing( 6 ).maxWidth( 85 ).alignment( Pos.TOP_LEFT ).children( createIcon(), LabelBuilder.create().id( "component" ).text( "Create Project" ).build() ).build();
 
 		getStyleClass().add( "icon" );
 
-		setGraphic( vbox );
 		setText("Create Project");
 
 		addEventFilter( MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>()
@@ -56,6 +56,8 @@ public class NewProjectIcon extends Label
 		} );
 
 		DragNode.install( vbox, createIcon() ).setData( this );
+
+		setGraphic( vbox );		
 	}
 
 	private static Node createIcon()

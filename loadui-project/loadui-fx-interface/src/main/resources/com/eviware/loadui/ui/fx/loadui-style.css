@@ -621,7 +621,7 @@
 	-fx-background-insets: 0, 1 1 1 0, 3 1 1 0, 20 3 3 0;
 	-fx-background-radius: 0 4 4 0, 0 4 4 0, 0 3 3 0, 0 0 3 0;
 	-fx-padding: 0 0 0 0;
-	-fx-alignment: center_left;
+	-fx-alignment: top_left;
 }
 .tool-box .nav {
 	/* changes size for nav buttons */
@@ -681,7 +681,6 @@
 }
 
 .item-holder {
-	-fx-alignment: center_left;
 	-fx-padding: 9;
 	-fx-spacing: 6;
 }
@@ -705,6 +704,7 @@
 }
 
 .tool-box-expander .item-holder {
+	-fx-alignment: top-left;  
 	-fx-backgroundFill: rgb(68,68,68,0.8);
 	-fx-borderFill: rgb(38,38,38,0.8);
 	
