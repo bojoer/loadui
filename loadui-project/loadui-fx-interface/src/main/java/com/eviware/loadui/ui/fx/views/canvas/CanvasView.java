@@ -308,7 +308,9 @@ public class CanvasView extends StackPane
 
 		descriptors.setMaxWidth( 120 );
 		descriptors.setMinWidth( 110 );
-		descriptors.setHeightPerItem( 120 );
+
+		descriptors.setHeightPerItem( 128 );
+
 		StackPane.setAlignment( descriptors, Pos.CENTER_LEFT );
 		StackPane.setMargin( descriptors, new Insets( 17, 0, 57, 0 ) );
 		descriptors.maxHeightProperty().bind( descriptors.prefHeightProperty() );
@@ -518,8 +520,8 @@ public class CanvasView extends StackPane
 		descriptors.setComparator( GeneratorCategory.CATEGORY,
 				order( "Fixed Rate", "Variance", "Random", "Ramp Sequence", "Ramp", "Usage", "Fixed Load" ) );
 		descriptors.setComparator( RunnerCategory.CATEGORY,
-				order( "SoapUI Runner", "Web Page Runner", "Script Runner", "Process Runner" ) );
-		descriptors.setComparator( FlowCategory.CATEGORY, order( "Splitter", "Delay", "Condition", "Loop" ) );
+				order( "soapUI Runner", "Web Page Runner", "Script Runner", "Process Runner" ) );
+		descriptors.setComparator( FlowCategory.CATEGORY, order( "Loop", "Splitter", "Delay", "Condition" ) );
 		descriptors.setComparator( SchedulerCategory.CATEGORY, order( "Interval", "Scheduler" ) );
 		descriptors.setComparator( OutputCategory.CATEGORY, order( "Table Log" ) );
 		descriptors.setComparator( AnalysisCategory.CATEGORY, order( "Assertion", "Statistics" ) );

@@ -77,7 +77,7 @@ public class PageListTest
 					buildRect( Color.GREEN ), buildRect( Color.BLUE ), buildRect( Color.INDIGO ), buildRect( Color.VIOLET ) );
 
 			primaryStage.setScene( SceneBuilder.create().stylesheets( "/com/eviware/loadui/ui/fx/loadui-style.css" )
-					.width( 350 ).height( 150 ).root( pageList ).build() );
+					.width( 370 ).height( 150 ).root( pageList ).build() );
 			primaryStage.show();
 
 			stageFuture.set( primaryStage );

@@ -29,7 +29,6 @@ import static org.mockito.Mockito.when;
 
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Set;
 
 import javafx.collections.FXCollections;
@@ -55,6 +54,7 @@ public class ObservableListsTest
 	@Test
 	public void getActuallyRemoved_test()
 	{
+		@SuppressWarnings( "unchecked" )
 		ListChangeListener.Change<Integer> change = mock( ListChangeListener.Change.class );
 		when( change.getRemoved() ).thenReturn( ImmutableList.of( 1, 2, 3 ) );
 		when( change.getAddedSubList() ).thenReturn( ImmutableList.of( 3, 4 ) );

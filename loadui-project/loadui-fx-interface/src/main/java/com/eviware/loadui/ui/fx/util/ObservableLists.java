@@ -68,6 +68,9 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Utility class for dealing with JavaFX ObservableLists.
  * 
@@ -76,7 +79,9 @@ import com.google.common.collect.Sets;
  */
 public class ObservableLists
 {
-	/**
+	protected static final Logger log = LoggerFactory.getLogger( ObservableLists.class );
+	
+	/* *
 	 * Creates a readonly ObservableList containing all OSGi published services
 	 * for the given Class type. The list is dynamically updated to reflect
 	 * changes in the services.
@@ -531,14 +536,6 @@ public class ObservableLists
 
 			return this;
 		}
-
-		public ListeningList<F, T> addListener( ListChangeListener<F> listener )
-		{
-			originalList.addListener( new WeakListChangeListener<>( listener ) );
-			hardrefs.add( listener );
-
-			return this;
-		}
 	}
 
 	@SuppressWarnings( "serial" )
@@ -570,33 +567,14 @@ public class ObservableLists
 			@Override
 			public void invalidated( Observable arg0 )
 			{
-				if( Platform.isFxApplicationThread() )
+				try
 				{
-					try
-					{
-						list.setAll( Lists.newArrayList( expression.call() ) );
-					}
-					catch( Exception e )
-					{
-						throw new RuntimeException( e );
-					}
+					list.setAll( Lists.newArrayList( expression.call() ) );
 				}
-				else
-					Platform.runLater( new Runnable()
-					{
-						@Override
-						public void run()
-						{
-							try
-							{
-								list.setAll( Lists.newArrayList( expression.call() ) );
-							}
-							catch( Exception e )
-							{
-								throw new RuntimeException( e );
-							}
-						}
-					} );
+				catch( Exception e )
+				{
+					log.warn( "Invalidated ObservableList could not be updated!", e );
+				}
 			}
 		};
 
