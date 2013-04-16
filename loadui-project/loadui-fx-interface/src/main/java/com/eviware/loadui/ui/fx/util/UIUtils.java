@@ -124,7 +124,7 @@ public class UIUtils
 
 		return scaledImage;
 	}
-
+	
 	public static void openInExternalBrowser( final String url )
 	{
 		if( !PlatformUtil.isMac() )

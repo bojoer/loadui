@@ -16,8 +16,11 @@
 package com.eviware.loadui.ui.fx.views.assertions;
 
 import javafx.scene.control.Label;
+import javafx.scene.control.LabelBuilder;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.VBox;
+import javafx.scene.layout.VBoxBuilder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,37 +29,40 @@ import com.eviware.loadui.api.assertion.AssertionItem;
 import com.eviware.loadui.ui.fx.control.DragNode;
 import com.eviware.loadui.ui.fx.util.Properties;
 import com.eviware.loadui.ui.fx.util.UIUtils;
-import com.eviware.loadui.ui.fx.views.canvas.CanvasView;
 
 public class AssertionToolboxItem extends Label
 {
 	protected static final Logger log = LoggerFactory.getLogger( AssertionToolboxItem.class );
 
 	private final AssertionItem<?> assertion;
-
+	private final VBox vbox; 
+	
 	public AssertionToolboxItem( final AssertionItem<?> assertion )
 	{
 		this.assertion = assertion;
-
+		final Label label = LabelBuilder.create().id( "component" ).build();
+		vbox = VBoxBuilder.create().spacing( 6 ).maxHeight( 68 ).minHeight( 68 ).children( createIcon( assertion ), label ).build();
+		
 		getStyleClass().add( "icon" );
 
-		setMaxHeight( 80 );
-		setMinHeight( 80 );
-
 		textProperty().bind( Properties.forLabel( assertion ) );
+		
+		label.textProperty().bind( Properties.forLabel( assertion ) );
 
-		final ImageView icon;
-		Image image = UIUtils.getImageFor( assertion );
-		if( image == null )
-			log.debug( "No image found for holder " + assertion );
-		icon = new ImageView( image );
-
-		DragNode dragNode = DragNode.install( AssertionToolboxItem.this, new ImageView( icon.getImage() ) );
+		DragNode dragNode = DragNode.install( vbox, createIcon( assertion ) );
 		dragNode.setData( assertion );
 
-		setGraphic( icon );
+		setGraphic( vbox );
 	}
 
+	private ImageView createIcon( final AssertionItem<?> assertion){
+		Image image = UIUtils.getImageFor( assertion );
+		ImageView icon = new ImageView( image );
+		icon.setPreserveRatio( true );
+		icon.setFitHeight( 54 );
+		return icon; 
+	}
+	
 	public AssertionItem<?> getHolder()
 	{
 		return assertion;
