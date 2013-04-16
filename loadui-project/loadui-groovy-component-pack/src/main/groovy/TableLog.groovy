@@ -215,15 +215,15 @@ refreshLayout = {
 		} )
 		property( property: enabledInDistMode, label: 'Enabled in distributed mode', constraints: 'aligny center, alignx right' )
 	}
+	compactLayout {
+		box( widget: 'display' ) {
+			node( label: 'Rows', content: { table.items.size() } )
+			node( label: 'Output File', content: { saveFileName ?: '-' } )
+		}
+	}
 }
 if( controller ) refreshLayout()
 
-compactLayout {
-	box( widget: 'display' ) {
-		node( label: 'Rows', content: { table.items.size() } )
-		node( label: 'Output File', content: { saveFileName ?: '-' } )
-	}
-}
 
 settings( label: "General" ) {
 	box {
