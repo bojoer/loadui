@@ -11,7 +11,7 @@
 	<description>Allows loadUI to run soapUI tests.</description>
 	<properties>
 		<loadUIVersion>${project.version}</loadUIVersion>
-		<soapUIVersion>4.5.2-SNAPSHOT</soapUIVersion>
+		<soapUIVersion>4.5.2-SOAP165</soapUIVersion>
 	</properties>
 	<repositories>
 		<repository>
@@ -256,7 +256,7 @@
 		<dependency>
 			<groupId>com.smartbear.soapui</groupId>
 			<artifactId>soapui-pro</artifactId>
-			<version>${soapUIVersion}</version>
+			<version>4.5.2-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
