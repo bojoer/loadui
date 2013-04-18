@@ -15,13 +15,18 @@
  */
 package com.eviware.loadui.ui.fx.views.analysis.linechart;
 
+import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
+import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
+import javafx.scene.control.Label;
+import javafx.scene.control.LabelBuilder;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
@@ -83,10 +88,13 @@ public class LineChartViewNode extends VBox
 	@FXML
 	private ToggleButton followCheckBox;
 
-	public LineChartViewNode( final ObservableValue<Execution> currentExecution, LineChartView chartView, Observable poll )
+	@FXML
+	private HBox titleBox; 
+	
+	public LineChartViewNode( final ObservableValue<Execution> currentExecution, final LineChartView chartView, Observable poll )
 	{
 		log.debug( "new LineChartViewNode created! " );
-
+		
 		NonSingletonFactory nonSingletonFactory = getNonSingletonFactory();
 		executionChart = nonSingletonFactory.createExecutionChart( chartView );
 
@@ -115,10 +123,24 @@ public class LineChartViewNode extends VBox
 
 		loadAttributes();
 
+		Platform.runLater( new Runnable(){
+			@Override
+			public void run()
+			{
+				for(String styleClass : getParent().getStyleClass()){
+					if(styleClass.compareTo( "sub-chart-group" ) == 0){
+						Label title = LabelBuilder.create().build();
+						title.textProperty().bind( Properties.forLabel( chartView ) ); 
+						titleBox.getChildren().add( title );	
+					}
+				}
+			}
+		});
+		
 		chartContainer.getChildren().add( executionChart.getNode() );
 
 		executionChart.setChartProperties( currentExecution, poll );
-
+	
 		executionChart.titleProperty().bind( Properties.forLabel( chartView ) );
 
 		zoomMenuButton.selectedProperty().addListener( new ChangeListener<ZoomLevel>()

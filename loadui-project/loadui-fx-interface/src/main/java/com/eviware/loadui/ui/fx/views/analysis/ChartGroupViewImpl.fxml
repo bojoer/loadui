@@ -15,7 +15,9 @@
 		</stylesheets>	
 		<VBox fx:id="mainChartGroup" styleClass="main-chart-group">
 			<AnchorPane fx:id="componentGroupAnchor">
-				<MenuButton fx:id="menuButton" AnchorPane.topAnchor="0" AnchorPane.leftAnchor="0" />
+				<HBox styleClass="title" AnchorPane.topAnchor="0" AnchorPane.leftAnchor="0">
+					<MenuButton fx:id="menuButton" id="titleMenuButton" AnchorPane.topAnchor="0" AnchorPane.leftAnchor="0" />
+				</HBox>
 				<StackPane fx:id="chartView" HBox.hgrow="ALWAYS" AnchorPane.leftAnchor="0" AnchorPane.topAnchor="25" AnchorPane.rightAnchor="0"/>
 				<StackPane minHeight="12" />
 				<HBox fx:id="buttonBar" AnchorPane.bottomAnchor="9" AnchorPane.leftAnchor="0"> 

@@ -432,12 +432,12 @@ public class SoapUISamplerComponent extends RunnerBase
 		}
 		else if( !projectFile.exists() )
 		{
-			showMessage( "Specified soapUI project file " + projectFile.getAbsolutePath()
+			showMessage( "Specified SoapUI project file " + projectFile.getAbsolutePath()
 					+ " does not exist. File may have been moved, renamed or deleted." );
 			return;
 		}
 
-		log.debug( "Setting soapUI project to {}", projectFile );
+		log.debug( "Setting SoapUI project to {}", projectFile );
 		runner.reloadProject( projectFile );
 	}
 
