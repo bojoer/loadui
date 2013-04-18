@@ -73,11 +73,6 @@ public class GeneralSettings
 
 	private GeneralSettings( ComponentContext context, SoapUITestCaseRunner testCaseRunner )
 	{
-		for( Property<?> p : context.getProperties() )
-		{
-			log.debug( p + "" );
-		}
-
 		settingsFile = context.createProperty( SETTINGS_FILE, File.class );
 		projectPassword = context.createProperty( PROJECT_PASSWORD, String.class );
 		useProjectRelativePath = context.createProperty( USE_PROJECT_RELATIVE_PATH, Boolean.class, false );
@@ -86,7 +81,7 @@ public class GeneralSettings
 		outputLevel = context.createProperty( OUTPUT_LEVEL, String.class, TEST_CASE_ONLY );
 		closeConnections = context.createProperty( CLOSE_CONNECTIONS_AFTER_REQUEST, Boolean.class, false );
 		disableSoapUIAssertions = context.createProperty( DISABLE_SOAPUI_ASSERTIONS, Boolean.class, false );
-		maxConcurrentConnections = context.createProperty( MAX_CONCURRENT_CONNECTIONS, Integer.class, false );
+		maxConcurrentConnections = context.createProperty( MAX_CONCURRENT_CONNECTIONS, Integer.class, 100 );
 		context.addEventListener( PropertyEvent.class, new PropertyChangedHandler( testCaseRunner ) );
 	}
 

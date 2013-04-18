@@ -15,9 +15,15 @@
  */
 package com.eviware.loadui.components.soapui;
 
+import static com.eviware.loadui.util.property.PropertyUtils.keyEquals;
+import static com.google.common.collect.Iterables.any;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.NoSuchElementException;
+
+import javax.annotation.Nonnull;
 
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleStringProperty;
@@ -41,17 +47,22 @@ import org.slf4j.LoggerFactory;
 import com.eviware.loadui.api.component.ComponentContext;
 import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.api.terminal.TerminalMessage;
+import com.eviware.loadui.util.property.PropertyUtils;
 import com.eviware.soapui.impl.wsdl.testcase.WsdlTestCase;
 import com.eviware.soapui.model.testsuite.TestProperty;
 import com.google.common.base.Objects;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Iterables;
 
 final public class TestCasePropertiesNode extends VBox
 {
+	public static final String OVERRIDING_VALUE_PREFIX = "_valueToOverride_";
+
 	protected static final Logger log = LoggerFactory.getLogger( TestCasePropertiesNode.class );
 
 	ComponentContext context;
-	ArrayList<Property<?>> customProperties = new ArrayList<>();
 	PropertiesTableView table;
+	WsdlTestCase testCase;
 
 	//	public static TestCaseProperties newInstance( ComponentContext context )
 	//	{
@@ -60,12 +71,13 @@ final public class TestCasePropertiesNode extends VBox
 	//		return t;
 	//	}
 
-	public TestCasePropertiesNode( String label, ComponentContext context )
+	public TestCasePropertiesNode( String label, ComponentContext context, WsdlTestCase testCase )
 	{
 		this.context = context;
+		this.testCase = testCase;
 		table = new PropertiesTableView();
 
-		table.setList( context.getProperties() );
+		table.getItems().setAll( testCase.getPropertyList() );
 
 		this.getChildren().addAll( new Label( label ), table );
 
@@ -82,200 +94,175 @@ final public class TestCasePropertiesNode extends VBox
 	//		return loadUiProperties;
 	//	}
 
-	public void putTestCaseProperties( List<TestProperty> soapUiTestCaseProperties )
-	{
+	//	public void putTestCaseProperties( List<TestProperty> soapUiTestCaseProperties )
+	//	{
+	//		transformedProperties.clear();
+	//
+	//		for( Property<?> p : context.getProperties() )
+	//		{
+	//			System.out.println( "context has before:" + p.getKey() + ", " + p.getValue() );
+	//		}
+	//
+	//		System.out.println( "properties should be cleared: " + transformedProperties.size() );
+	//		for( TestProperty tp : soapUiTestCaseProperties )
+	//		{
+	//			System.out.println( "adding testcaseproperty: " + tp.getName() + ", " + tp.getValue() );
+	//			Property<?> property = setOrCreateContextProperty( tp.getName(), tp.getValue() );
+	//			System.out.println( "Created property: " + property.getKey() );
+	//			transformedProperties.add( property );
+	//		}
+	//
+	//		for( Property<?> p : context.getProperties() )
+	//		{
+	//			System.out.println( "context has after:" + p.getKey() + ", " + p.getValue() );
+	//		}
+	//
+	//		table.setList( context.getProperties() );
+	//
+	//	}
 
-		customProperties.clear();
-
-		for( Property<?> p : context.getProperties() )
-		{
-			log.debug( "context has before:" + p.getKey() + ", " + p.getValue() );
-		}
-
-		log.debug( "properties should be cleared: " + customProperties.size() );
-		for( TestProperty tp : soapUiTestCaseProperties )
-		{
-			log.debug( "adding testcaseproperty: " + tp.getName() + ", " + tp.getValue() );
-			customProperties.add( setOrCreateContextProperty( tp.getName(), tp.getValue() ) );
-		}
-
-		for( Property<?> p : context.getProperties() )
-		{
-			log.debug( "context has after:" + p.getKey() + ", " + p.getValue() );
-		}
-
-		table.setList( context.getProperties() );
-
-	}
-
-	/**
-	 * Applies properties to a TestCase from an incoming message.
-	 * 
-	 * @param testCase
-	 * @param triggerMessage
-	 */
-
-	public void overrideTestCaseProperties( WsdlTestCase testCase, TerminalMessage triggerMessage )
-	{
-		log.debug( "overidingTestCaseProperties({})", customProperties.size() );
-		for( Property<?> p : customProperties )
-		{
-			log.debug( "setting property:" + p.getKey() + ", " + p.getValue() );
-			testCase.setPropertyValue( p.getKey().replaceFirst( "_valueToOverride_", "" ), p.getValue() + "" );
-		}
-
-		for( String name : testCase.getPropertyNames() )
-		{
-			if( triggerMessage.containsKey( name ) )
-				testCase.setPropertyValue( name, String.valueOf( triggerMessage.get( name ) ) );
-		}
-	}
+	//	/**
+	//	 * Applies properties to a TestCase from an incoming message.
+	//	 * 
+	//	 * @param testCase
+	//	 * @param triggerMessage
+	//	 */
+	//
+	//	public void overrideTestCaseProperties( WsdlTestCase testCase, TerminalMessage triggerMessage )
+	//	{
+	//		log.debug( "overidingTestCaseProperties({})", transformedProperties.size() );
+	//		for( Property<?> p : transformedProperties )
+	//		{
+	//			log.debug( "setting property:" + p.getKey() + ", " + p.getValue() );
+	//			testCase.setPropertyValue( p.getKey().replaceFirst( OVERRIDING_VALUE_PREFIX, "" ), p.getValue() + "" );
+	//		}
+	//
+	//		for( String name : testCase.getPropertyNames() )
+	//		{
+	//			if( triggerMessage.containsKey( name ) )
+	//				testCase.setPropertyValue( name, String.valueOf( triggerMessage.get( name ) ) );
+	//		}
+	//	}
 
 	/**
 	 * Updates the table, replacing the default TestCase Property values with the
 	 * overriding (user-defined) values.
 	 * 
-	 * @param properties
+	 * @param overridingValues
 	 */
 
-	public void loadOverridingProperties( Collection<Property<?>> properties )
+	public void loadOverridingProperties( WsdlTestCase targetTestCase, Collection<Property<?>> overridingValues )
 	{
-		System.out.println( "loadOverridingProperties: " + properties.size() );
-		for( Property<?> p : context.getProperties() )
+		for( TestProperty suiProperty : targetTestCase.getPropertyList() )
 		{
-			System.out.println( "ovveriding properties:" + p.getKey() + ", " + p.getValue() );
-		}
-
-		// fetch overriding values for testcase properties
-		for( Property<?> p : customProperties ) // ["ny", 400]
-		{
-			// check if property for overridden value already exists
-			for( Property<?> inP : properties )
+			for( Property<?> overridingValue : overridingValues )
 			{
-				if( inP.getKey().equals( p.getKey() ) ) // _valueToOverride_ny
+				if( isOverriding( suiProperty, overridingValue ) )
 				{
-					p.setValue( inP.getValue() != null ? inP.getValue().toString() : "" );
-					setOrCreateContextProperty( p.getKey(), p.getStringValue() );
-
+					suiProperty.setValue( overridingValue.getValue().toString() );
 				}
 			}
 		}
-		table.setList( context.getProperties() );
 	}
 
-	/*
-	 * Synchronizes with Context because the context´s properties are saved.
-	 */
+	private static boolean isOverriding( TestProperty suiProperty, Property<?> overridingValue )
+	{
+		System.out.println( overridingValue.getKey() + " = " + OVERRIDING_VALUE_PREFIX + suiProperty.getName() );
+		return overridingValue.getKey().equals( OVERRIDING_VALUE_PREFIX + suiProperty.getName() );
+	}
+
+	@Nonnull
 	private Property<?> setOrCreateContextProperty( String key, String value )
 	{
+		System.out.println( "setting property to context: " + key + " = " + value );
 
-		log.info( "setting property to context: {}, {}", key, value );
-
-		Property<?> contextProperty = setContextProperty( key, value );
-
-		if( contextProperty != null )
+		if( hasContextProperty( key ) )
 		{
-			return contextProperty;
+			return setContextProperty( key, value );
 		}
 		else
 		{
-			contextProperty = context.createProperty( "_valueToOverride_" + key, String.class );
-			Object valueToSet = value;
-			contextProperty.setValue( Objects.firstNonNull( valueToSet.toString(), "" ) );
-			return contextProperty;
+			return context.createProperty( OVERRIDING_VALUE_PREFIX + key, String.class, value );
 		}
+	}
 
+	private boolean hasContextProperty( String key )
+	{
+		return any( context.getProperties(), keyEquals( OVERRIDING_VALUE_PREFIX + key ) );
 	}
 
 	private Property<?> setContextProperty( String key, String value )
 	{
-
 		for( Property<?> p : context.getProperties() )
 		{
-			if( p.getKey().equals( "_valueToOverride_" + key ) )
+			if( p.getKey().equals( OVERRIDING_VALUE_PREFIX + key ) )
 			{
 				p.setValue( value );
 				return p;
 			}
 		}
-		return null;
+		throw new NoSuchElementException();
 	}
 
-	public int size()
-	{
-		return customProperties.size();
-	}
-
-	public Collection<Property<?>> getData()
-	{
-		return customProperties;
-	}
-
-	private class PropertiesTableView extends TableView<javafx.beans.property.Property<String>>
+	private class PropertiesTableView extends TableView<TestProperty>
 	{
 		public PropertiesTableView()
 		{
 			this.setEditable( true );
 
-			TableColumn<javafx.beans.property.Property<String>, String> keyColumn = new TableColumn<>( "Property" );
-			TableColumn<javafx.beans.property.Property<String>, String> valueColumn = new TableColumn<>( "Value" );
+			TableColumn<TestProperty, String> keyColumn = new TableColumn<>( "Property" );
+			TableColumn<TestProperty, String> valueColumn = new TableColumn<>( "Value" );
 
 			keyColumn
-					.setCellValueFactory( new Callback<TableColumn.CellDataFeatures<javafx.beans.property.Property<String>, String>, ObservableValue<String>>()
+					.setCellValueFactory( new Callback<TableColumn.CellDataFeatures<TestProperty, String>, ObservableValue<String>>()
 					{
 
 						@Override
-						public ObservableValue<String> call(
-								CellDataFeatures<javafx.beans.property.Property<String>, String> data )
+						public ObservableValue<String> call( CellDataFeatures<TestProperty, String> data )
 						{
 							return new ReadOnlyStringWrapper( data.getValue().getName() );
 						}
 					} );
 
 			valueColumn
-					.setCellValueFactory( new Callback<TableColumn.CellDataFeatures<javafx.beans.property.Property<String>, String>, ObservableValue<String>>()
+					.setCellValueFactory( new Callback<TableColumn.CellDataFeatures<TestProperty, String>, ObservableValue<String>>()
 					{
 
 						@Override
-						public ObservableValue<String> call(
-								CellDataFeatures<javafx.beans.property.Property<String>, String> data )
+						public ObservableValue<String> call( CellDataFeatures<TestProperty, String> data )
 						{
 
-							return data.getValue();
+							return new ReadOnlyStringWrapper( data.getValue().getValue() );
 						}
 					} );
 
-			valueColumn
-					.setCellFactory( new Callback<TableColumn<javafx.beans.property.Property<String>, String>, TableCell<javafx.beans.property.Property<String>, String>>()
-					{
+			valueColumn.setCellFactory( new Callback<TableColumn<TestProperty, String>, TableCell<TestProperty, String>>()
+			{
 
-						@Override
-						public TableCell<javafx.beans.property.Property<String>, String> call(
-								TableColumn<javafx.beans.property.Property<String>, String> table )
-						{
-							TextFieldTableCell<javafx.beans.property.Property<String>, String> cell = new TextFieldTableCell<>(
-									new DefaultStringConverter() );
+				@Override
+				public TableCell<TestProperty, String> call( TableColumn<TestProperty, String> table )
+				{
+					TextFieldTableCell<TestProperty, String> cell = new TextFieldTableCell<>( new DefaultStringConverter() );
 
-							cell.setEditable( true );
+					cell.setEditable( true );
 
-							return cell;
-						}
-					} );
+					return cell;
+				}
+			} );
 
-			valueColumn
-					.setOnEditCommit( new EventHandler<TableColumn.CellEditEvent<javafx.beans.property.Property<String>, String>>()
-					{
+			valueColumn.setOnEditCommit( new EventHandler<TableColumn.CellEditEvent<TestProperty, String>>()
+			{
 
-						@Override
-						public void handle( CellEditEvent<javafx.beans.property.Property<String>, String> event )
-						{
-							log.info( "Setting property {} to {}", event.getRowValue().getName(), event.getNewValue() );
-							setOrCreateContextProperty( event.getRowValue().getName(), event.getNewValue() );
+				@Override
+				public void handle( CellEditEvent<TestProperty, String> event )
+				{
+					log.info( "Setting property {} to {}", event.getRowValue().getName(), event.getNewValue() );
+					setOrCreateContextProperty( event.getRowValue().getName(), event.getNewValue() );
 
-							setList( context.getProperties() );
-						}
+					//					setList( context.getProperties() );
+				}
 
-					} );
+			} );
 
 			valueColumn.setEditable( true );
 
@@ -283,27 +270,6 @@ final public class TestCasePropertiesNode extends VBox
 			System.out.println( "CREATED TABLE?)?=?=???=?=?=?=?=?=?=??==?=??=?=?=?=??=?!       " + this.toString() );
 		}
 
-		public void setList( Collection<Property<?>> list )
-		{
-			log.info( "Setting items(" + list.size() + ")" );
-
-			Collection<StringProperty> stringList = new ArrayList<>();
-
-			for( Property<?> p : list )
-			{
-				log.debug( "item: {}, {}", p.getKey(), p.getValue() );
-				if( p.getKey().startsWith( "_valueToOverride_" ) )
-				{
-					stringList.add( new SimpleStringProperty( null, p.getKey().replaceFirst( "_valueToOverride_", "" ), p
-							.getValue() + "" ) );
-				}
-			}
-			;
-
-			getItems().clear();
-
-			getItems().setAll( stringList );
-		}
 	}
 
 }
