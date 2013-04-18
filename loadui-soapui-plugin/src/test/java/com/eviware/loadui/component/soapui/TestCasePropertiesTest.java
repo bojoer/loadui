@@ -139,7 +139,7 @@ public class TestCasePropertiesTest
 		ComponentContext context = createContextMock();
 		WsdlTestCase testCase = createTestCaseMock();
 
-		TestCasePropertiesNode properties = new TestCasePropertiesNode( "", context, testCase );
+		TestCasePropertiesNode properties = new TestCasePropertiesNode();
 
 		Collection<Property<?>> overridingProperties = new ArrayList<>();
 

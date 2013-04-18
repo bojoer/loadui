@@ -11,7 +11,7 @@
 	<description>Allows loadUI to run soapUI tests.</description>
 	<properties>
 		<loadUIVersion>${project.version}</loadUIVersion>
-		<soapUIVersion>4.5.1</soapUIVersion>
+		<soapUIVersion>4.5.2-SOAP165</soapUIVersion>
 	</properties>
 	<repositories>
 		<repository>
@@ -247,21 +247,15 @@
 			<version>3.1.0</version>
 		</dependency>
 		<dependency>
-			<groupId>eviware</groupId>
+			<groupId>com.smartbear.soapui</groupId>
 			<artifactId>soapui</artifactId>
 			<version>${soapUIVersion}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>eviware</groupId>
+			<groupId>com.smartbear.soapui</groupId>
 			<artifactId>soapui-pro</artifactId>
-			<version>${soapUIVersion}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>eviware</groupId>
-			<artifactId>soapui-xmlbeans</artifactId>
-			<version>${soapUIVersion}</version>
+			<version>4.5.2-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>

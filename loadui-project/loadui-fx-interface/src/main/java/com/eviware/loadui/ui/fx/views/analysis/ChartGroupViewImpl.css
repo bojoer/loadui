@@ -11,9 +11,7 @@
 	-fx-background-color: #252525;
 }
 
-#chartMenuButton.menu-button{
-	-fx-font-weight: bold;  
-}
+
 
 /**
  * Segment-box specifics for all charts
@@ -148,11 +146,19 @@
  */
 .main-chart-group{
 	-fx-background-color: linear-gradient(to bottom, #888888 0%, #666666 12px, #666666 96%, #555555 100%);
-	-fx-padding: 9 9 0 9; 
+	-fx-padding: 3 9 0 9; 
 	-fx-background-radius: 5; 
 	-fx-border-color: #7E7E7E linear-gradient(to bottom, #888888 0%, #666666 12px, #666666 97%, #7E7E7E 100%) #7E7E7E linear-gradient(to bottom, #888888 0%, #666666 12px, #666666 97%, #7E7E7E 100%);
 	-fx-border-width: 0 1 0 1;
 	-fx-border-radius: 4 4 0 0;   
+}
+
+.main-chart-group .title #titleMenuButton{
+	-fx-font-size: 12px; 
+}
+
+.main-chart-group .title{
+	-fx-padding: 6 6 6 0; 
 }
 
 .main-chart-group #zoomMenuButton.menu-button{
@@ -215,6 +221,13 @@
 	-fx-padding: 3; 
 }
 
+.sub-chart-group .title .label{
+	-fx-text-fill: derive(#7E7E7E, 30%);
+}
+
+.sub-chart-group .title{
+	-fx-padding: 0 8 8 8; 
+}
 
 /*This is because this button is a special breed and label does not seem to adhere to regular zoomMenubutton */
 .sub-chart-group #zoomMenuButton.menu-button .label{

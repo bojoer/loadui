@@ -45,7 +45,7 @@
 			</BorderPane>
 		</ToolBar>
 		<HBox spacing="27" snapToPixel="true" fillHeight="false">
-			<ToolBox fx:id="toolbox" heightPerItem="110" HBox.hgrow="ALWAYS" minWidth="110" maxWidth="120">
+			<ToolBox fx:id="toolbox" heightPerItem="126" HBox.hgrow="ALWAYS" minWidth="120" maxWidth="120">
 				<categoryComparator>
 					<ExplicitOrdering>
 						<String fx:value="Projects"/>

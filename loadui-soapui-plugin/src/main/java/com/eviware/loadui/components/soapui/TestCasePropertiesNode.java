@@ -30,6 +30,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -60,10 +61,6 @@ final public class TestCasePropertiesNode extends VBox
 
 	protected static final Logger log = LoggerFactory.getLogger( TestCasePropertiesNode.class );
 
-	ComponentContext context;
-	PropertiesTableView table;
-	WsdlTestCase testCase;
-
 	//	public static TestCaseProperties newInstance( ComponentContext context )
 	//	{
 	//		TestCaseProperties t = new TestCaseProperties();
@@ -71,16 +68,8 @@ final public class TestCasePropertiesNode extends VBox
 	//		return t;
 	//	}
 
-	public TestCasePropertiesNode( String label, ComponentContext context, WsdlTestCase testCase )
+	public TestCasePropertiesNode()
 	{
-		this.context = context;
-		this.testCase = testCase;
-		table = new PropertiesTableView();
-
-		table.getItems().setAll( testCase.getPropertyList() );
-
-		this.getChildren().addAll( new Label( label ), table );
-
 		//data = new ArrayList( context.getProperties() );
 	}
 
@@ -121,28 +110,28 @@ final public class TestCasePropertiesNode extends VBox
 	//
 	//	}
 
-	//	/**
-	//	 * Applies properties to a TestCase from an incoming message.
-	//	 * 
-	//	 * @param testCase
-	//	 * @param triggerMessage
-	//	 */
-	//
-	//	public void overrideTestCaseProperties( WsdlTestCase testCase, TerminalMessage triggerMessage )
-	//	{
-	//		log.debug( "overidingTestCaseProperties({})", transformedProperties.size() );
-	//		for( Property<?> p : transformedProperties )
-	//		{
-	//			log.debug( "setting property:" + p.getKey() + ", " + p.getValue() );
-	//			testCase.setPropertyValue( p.getKey().replaceFirst( OVERRIDING_VALUE_PREFIX, "" ), p.getValue() + "" );
-	//		}
-	//
-	//		for( String name : testCase.getPropertyNames() )
-	//		{
-	//			if( triggerMessage.containsKey( name ) )
-	//				testCase.setPropertyValue( name, String.valueOf( triggerMessage.get( name ) ) );
-	//		}
-	//	}
+	/**
+	 * Applies properties to a TestCase from an incoming message.
+	 * 
+	 * @param testCase
+	 * @param triggerMessage
+	 */
+
+	public void overrideTestCaseProperties( WsdlTestCase testCase, TerminalMessage triggerMessage )
+	{
+		//		log.debug( "overidingTestCaseProperties({})", transformedProperties.size() );
+		//		for( Property<?> p : transformedProperties )
+		//		{
+		//			log.debug( "setting property:" + p.getKey() + ", " + p.getValue() );
+		//			testCase.setPropertyValue( p.getKey().replaceFirst( OVERRIDING_VALUE_PREFIX, "" ), p.getValue() + "" );
+		//		}
+		//
+		//		for( String name : testCase.getPropertyNames() )
+		//		{
+		//			if( triggerMessage.containsKey( name ) )
+		//				testCase.setPropertyValue( name, String.valueOf( triggerMessage.get( name ) ) );
+		//		}
+	}
 
 	/**
 	 * Updates the table, replacing the default TestCase Property values with the
@@ -171,40 +160,51 @@ final public class TestCasePropertiesNode extends VBox
 		return overridingValue.getKey().equals( OVERRIDING_VALUE_PREFIX + suiProperty.getName() );
 	}
 
-	@Nonnull
-	private Property<?> setOrCreateContextProperty( String key, String value )
-	{
-		System.out.println( "setting property to context: " + key + " = " + value );
+	//	@Nonnull
+	//	private Property<?> setOrCreateContextProperty( String key, String value )
+	//	{
+	//		System.out.println( "setting property to context: " + key + " = " + value );
+	//
+	//		if( hasContextProperty( key ) )
+	//		{
+	//			return setContextProperty( key, value );
+	//		}
+	//		else
+	//		{
+	//			return context.createProperty( OVERRIDING_VALUE_PREFIX + key, String.class, value );
+	//		}
+	//	}
+	//
+	//	private boolean hasContextProperty( String key )
+	//	{
+	//		return any( context.getProperties(), keyEquals( OVERRIDING_VALUE_PREFIX + key ) );
+	//	}
+	//
+	//	private Property<?> setContextProperty( String key, String value )
+	//	{
+	//		for( Property<?> p : context.getProperties() )
+	//		{
+	//			if( p.getKey().equals( OVERRIDING_VALUE_PREFIX + key ) )
+	//			{
+	//				p.setValue( value );
+	//				return p;
+	//			}
+	//		}
+	//		throw new NoSuchElementException();
+	//	}
 
-		if( hasContextProperty( key ) )
-		{
-			return setContextProperty( key, value );
-		}
-		else
-		{
-			return context.createProperty( OVERRIDING_VALUE_PREFIX + key, String.class, value );
-		}
+	public static Node createTableView( WsdlTestCase testCase )
+	{
+		PropertiesTableView table = new PropertiesTableView();
+
+		table.getItems().setAll( testCase.getPropertyList() );
+
+		TestCasePropertiesNode properties = new TestCasePropertiesNode();
+		properties.getChildren().addAll( new Label( "TestCase Properties" ), table );
+		return properties;
 	}
 
-	private boolean hasContextProperty( String key )
-	{
-		return any( context.getProperties(), keyEquals( OVERRIDING_VALUE_PREFIX + key ) );
-	}
-
-	private Property<?> setContextProperty( String key, String value )
-	{
-		for( Property<?> p : context.getProperties() )
-		{
-			if( p.getKey().equals( OVERRIDING_VALUE_PREFIX + key ) )
-			{
-				p.setValue( value );
-				return p;
-			}
-		}
-		throw new NoSuchElementException();
-	}
-
-	private class PropertiesTableView extends TableView<TestProperty>
+	private static class PropertiesTableView extends TableView<TestProperty>
 	{
 		public PropertiesTableView()
 		{
@@ -257,7 +257,7 @@ final public class TestCasePropertiesNode extends VBox
 				public void handle( CellEditEvent<TestProperty, String> event )
 				{
 					log.info( "Setting property {} to {}", event.getRowValue().getName(), event.getNewValue() );
-					setOrCreateContextProperty( event.getRowValue().getName(), event.getNewValue() );
+					//					setOrCreateContextProperty( event.getRowValue().getName(), event.getNewValue() );
 
 					//					setList( context.getProperties() );
 				}

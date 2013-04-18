@@ -52,6 +52,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tbee.javafx.scene.layout.MigPane;
 
+import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.layout.ActionLayoutComponent;
 import com.eviware.loadui.api.layout.LabelLayoutComponent;
 import com.eviware.loadui.api.layout.LayoutComponent;
@@ -278,11 +279,18 @@ public class ComponentLayoutUtils
 	@SuppressWarnings( "unchecked" )
 	private static Node createCheckBox( PropertyLayoutComponent<?> propLayoutComp )
 	{
-		CheckBox checkBox = new CheckBox( propLayoutComp.getLabel() );
-		javafx.beans.property.Property<Boolean> jfxProp = Properties.convert( ( Property<Boolean> )propLayoutComp
-				.getProperty() );
-		checkBox.selectedProperty().bindBidirectional( jfxProp );
-		return nodeWithProperty( checkBox, jfxProp );
+		if( propLayoutComp.getProperty().getKey().equals( "enabledInDistMode" ) && !LoadUI.isPro() )
+		{
+			return VBoxBuilder.create().styleClass( "only-relevant-for-pro" ).build();
+		}
+		else
+		{
+				CheckBox checkBox = new CheckBox( propLayoutComp.getLabel() );
+					javafx.beans.property.Property<Boolean> jfxProp = Properties.convert( ( Property<Boolean> )propLayoutComp
+		 				.getProperty() );
+				checkBox.selectedProperty().bindBidirectional( jfxProp );
+				return nodeWithProperty( checkBox, jfxProp );
+		}
 	}
 
 	@SuppressWarnings( "unchecked" )

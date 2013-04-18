@@ -26,21 +26,18 @@ import com.eviware.loadui.ui.fx.control.Dialog;
 
 public class ResultsPopup extends Dialog implements Callback<Data, Void>, Closeable
 {
-
 	public ResultsPopup( Node owner, ExecutionsInfo executionsInfo )
 	{
-		super( owner, "TEST RUNS" );
+		super( owner, "Test Runs" );
 		getScene().getRoot().setStyle( "-fx-padding: 0;" );
 		executionsInfo.runWhenReady( this );
 	}
-	
+
 	@Override
 	public Void call( Data data )
 	{
-		
 		ResultView resultView = new ResultView( data.getRecentExecutions(), data.getArchivedExecutions(), this );
 		getItems().setAll( resultView );
 		return null;
 	}
-
 }

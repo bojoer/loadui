@@ -20,6 +20,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.ObjectBinding;
 import javafx.beans.property.ObjectProperty;
@@ -41,6 +43,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBuilder;
+import javafx.scene.control.Label;
 import javafx.scene.control.LabelBuilder;
 import javafx.scene.control.PopupControl;
 import javafx.scene.layout.BorderPane;
@@ -67,7 +70,7 @@ public class ToolBoxSkin<E extends Node> extends SkinBase<ToolBox<E>, BehaviorBa
 {
 	protected static final Logger log = LoggerFactory.getLogger( LineChartViewNode.class );
 
-	private final ObservableMap<String, ToolBoxCategory> categories = FXCollections.observableHashMap();
+	private final ObservableMap<String, ToolBoxCategory> categoriesByName = FXCollections.observableHashMap();
 	private final Comparator<ToolBoxCategory> categoryComparator = new Comparator<ToolBoxCategory>()
 	{
 		@Override
@@ -96,7 +99,7 @@ public class ToolBoxSkin<E extends Node> extends SkinBase<ToolBox<E>, BehaviorBa
 		categoryList.sizePerItemProperty().bind( toolBox.heightPerItemProperty() );
 
 		//Keep pager items synchronized with the categories.
-		categories.addListener( new MapChangeListener<String, ToolBoxCategory>()
+		categoriesByName.addListener( new MapChangeListener<String, ToolBoxCategory>()
 		{
 			@Override
 			public void onChanged( MapChangeListener.Change<? extends String, ? extends ToolBoxCategory> change )
@@ -134,14 +137,14 @@ public class ToolBoxSkin<E extends Node> extends SkinBase<ToolBox<E>, BehaviorBa
 				String categoryName = change.getKey();
 				if( categoryName == null )
 				{
-					for( ToolBoxCategory category : categories.values() )
+					for( ToolBoxCategory category : categoriesByName.values() )
 					{
 						FXCollections.sort( category.categoryItems, toolBox.getComparator( category.category ) );
 					}
 				}
 				else
 				{
-					ToolBoxCategory category = categories.get( categoryName );
+					ToolBoxCategory category = categoriesByName.get( categoryName );
 					if( category != null )
 					{
 						FXCollections.sort( category.categoryItems, toolBox.getComparator( categoryName ) );
@@ -157,30 +160,33 @@ public class ToolBoxSkin<E extends Node> extends SkinBase<ToolBox<E>, BehaviorBa
 			public void onChanged( ListChangeListener.Change<? extends E> change )
 			{
 				Set<ToolBoxCategory> possiblyEmpty = Sets.newHashSet();
-
 				while( change.next() )
 				{
 					for( E removed : change.getRemoved() )
 					{
-
-						if( categories.get( ToolBox.getCategory( removed ) ) == null )
+						if( categoriesByName.get( ToolBox.getCategory( removed ) ) == null )
 						{
 							throw new RuntimeException( " Cannot find the category for toolbox item (" + removed
 									+ "), you should probably set the category on creation of this object" );
 						}
 
-						ToolBoxCategory category = categories.get( ToolBox.getCategory( removed ) );
+						ToolBoxCategory category = categoriesByName.get( ToolBox.getCategory( removed ) );
 						category.categoryItems.remove( removed );
+
+						if( category.categoryItems.isEmpty() )
+						{
+							categoryList.getItems().remove( category );
+						}
 						possiblyEmpty.add( category );
 					}
 
 					for( E added : change.getAddedSubList() )
 					{
 						String categoryName = ToolBox.getCategory( added );
-						ToolBoxCategory category = categories.get( categoryName );
+						ToolBoxCategory category = categoriesByName.get( categoryName );
 						if( category == null )
 						{
-							categories.put( categoryName, category = new ToolBoxCategory( categoryName ) );
+							categoriesByName.put( categoryName, category = new ToolBoxCategory( categoryName ) );
 						}
 						int index = Math.max( 0, -Collections.binarySearch( category.categoryItems, added,
 								toolBox.getComparator( categoryName ) ) - 1 );
@@ -193,7 +199,7 @@ public class ToolBoxSkin<E extends Node> extends SkinBase<ToolBox<E>, BehaviorBa
 				{
 					if( category.categoryItems.isEmpty() )
 					{
-						categories.remove( category.category );
+						categoriesByName.remove( category.category );
 					}
 				}
 			}
@@ -203,16 +209,18 @@ public class ToolBoxSkin<E extends Node> extends SkinBase<ToolBox<E>, BehaviorBa
 
 		for( E item : toolBox.getItems() )
 		{
+
 			String categoryName = ToolBox.getCategory( item );
-			ToolBoxCategory category = categories.get( categoryName );
+
+			ToolBoxCategory category = categoriesByName.get( categoryName );
 			if( category == null )
 			{
-				categories.put( categoryName, category = new ToolBoxCategory( categoryName ) );
+				categoriesByName.put( categoryName, category = new ToolBoxCategory( categoryName ) );
 			}
 			category.categoryItems.add( item );
 		}
 
-		for( ToolBoxCategory category : categories.values() )
+		for( ToolBoxCategory category : categoriesByName.values() )
 		{
 			FXCollections.sort( category.categoryItems, toolBox.getComparator( category.category ) );
 		}
@@ -236,6 +244,7 @@ public class ToolBoxSkin<E extends Node> extends SkinBase<ToolBox<E>, BehaviorBa
 			this.category = category;
 
 			itemHolder = new ItemHolder( category );
+
 			shownElement.addListener( new ChangeListener<E>()
 			{
 				@Override
@@ -265,11 +274,28 @@ public class ToolBoxSkin<E extends Node> extends SkinBase<ToolBox<E>, BehaviorBa
 					Bindings.when( expander.expandedCategory.isEqualTo( this ) ).then( heightProperty() )
 							.otherwise( USE_COMPUTED_SIZE ) );
 
+			itemHolder
+					.getCategory()
+					.visibleProperty()
+					.bind(
+							Bindings.when( expander.showingProperty() )
+									.then( expander.expandedCategory.isEqualTo( this ).not() ).otherwise( true ) );
+			/*
+			 * expander.showingProperty().addListener( new InvalidationListener(){
+			 * 
+			 * @Override public void invalidated( Observable arg0 ) {
+			 * if(expander.expandedCategory.isEqualTo( ToolBoxCategory.this
+			 * ).get()){ itemHolder.getCategory().visibleProperty().set( false );
+			 * }else{ itemHolder.getCategory().visibleProperty().set( true ); } }
+			 * });
+			 */
+
 			expanderButton.setOnAction( new EventHandler<ActionEvent>()
 			{
 				@Override
 				public void handle( ActionEvent event )
 				{
+
 					expander.show( ToolBoxCategory.this );
 				}
 			} );
@@ -284,12 +310,27 @@ public class ToolBoxSkin<E extends Node> extends SkinBase<ToolBox<E>, BehaviorBa
 	{
 		private final ObservableList<E> items = FXCollections.observableArrayList();
 
+		private final Label category;
+		private final HBox itemsBox;
+
 		public ItemHolder( String category )
 		{
+			this.category = LabelBuilder.create().text( category ).styleClass( "category-label" ).build();
+			setAlignment( Pos.TOP_LEFT );
 			getStyleClass().setAll( "item-holder" );
-			HBox hbox = HBoxBuilder.create().styleClass( "items" ).build();
-			Bindings.bindContent( hbox.getChildren(), items );
-			getChildren().setAll( LabelBuilder.create().text( category ).styleClass( "category-label" ).build(), hbox );
+			itemsBox = HBoxBuilder.create().styleClass( "items" ).alignment( Pos.TOP_LEFT ).build();
+			Bindings.bindContent( itemsBox.getChildren(), items );
+			getChildren().setAll( this.category, itemsBox );
+		}
+
+		public HBox getItemsBox()
+		{
+			return itemsBox;
+		}
+
+		public Label getCategory()
+		{
+			return category;
 		}
 	}
 
@@ -303,6 +344,7 @@ public class ToolBoxSkin<E extends Node> extends SkinBase<ToolBox<E>, BehaviorBa
 			getStyleClass().setAll( "tool-box-expander" );
 			setAutoFix( false );
 			setAutoHide( true );
+			setAlignment( Pos.BOTTOM_LEFT );
 
 			setOnHidden( new EventHandler<WindowEvent>()
 			{
@@ -319,14 +361,23 @@ public class ToolBoxSkin<E extends Node> extends SkinBase<ToolBox<E>, BehaviorBa
 			expandedCategory.set( category );
 
 			ItemHolder itemHolder = new ItemHolder( category.category );
-			itemHolder.setMinWidth( ToolBoxSkin.this.getWidth() );
-			itemHolder.setMinHeight( category.itemHolder.getHeight() );
+
+			itemHolder.setAlignment( Pos.BOTTOM_LEFT );
+			itemHolder.setMinWidth( ToolBoxSkin.this.getMinWidth() );
+			itemHolder.setMinHeight( category.getMinHeight() );
+			itemHolder.setMaxHeight( category.getMaxHeight() );
+			itemHolder.setPrefHeight( category.getPrefHeight() );
+
 			itemHolder.items.setAll( category.categoryItems );
+
+			itemHolder.setAlignment( Pos.BOTTOM_LEFT );
+			itemHolder.getItemsBox().setAlignment( Pos.BOTTOM_LEFT );
 
 			//The padding here allows the ItemHolder to grow beyond its usual size using negative insets, while still remaining in its correct position.
 			StackPane pane = new StackPane();
-			double padding = 10;
-			pane.setPadding( new Insets( padding ) );
+			double padding = 12;
+			pane.setPadding( new Insets( padding, 0, 0, 12 ) );
+			pane.setAlignment( Pos.BOTTOM_LEFT );
 			pane.getChildren().setAll( itemHolder );
 
 			bridge.getChildren().setAll( pane );

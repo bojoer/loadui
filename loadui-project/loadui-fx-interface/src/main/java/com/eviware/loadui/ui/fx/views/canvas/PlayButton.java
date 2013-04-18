@@ -108,6 +108,9 @@ public class PlayButton extends StackPane
 	public PlayButton( @Nonnull final CanvasItem canvas )
 	{
 		this.canvas = canvas;
+		
+		maxHeight( 27 );
+		maxWidth( 27 );
 
 		playingProperty.addListener( playCanvas );
 		playingProperty.bindBidirectional( toggleButton.selectedProperty() );

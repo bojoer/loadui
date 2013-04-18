@@ -34,6 +34,7 @@ import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableColumnBuilder;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TableViewBuilder;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.ImageViewBuilder;
 import javafx.scene.image.WritableImage;
@@ -60,8 +61,6 @@ import com.google.common.collect.ImmutableMap;
 
 public class TestStepsTableModel
 {
-	private static final ImageView DISABLED_ICON = new ImageView( TestStepsTableModel.class.getResource(
-			"/images/disabledTestStep.png" ).toExternalForm() );
 	private final static long UPDATE_INTERVAL = 500;
 
 	protected static final Logger log = LoggerFactory.getLogger( SoapUiProjectSelector.class );
@@ -177,7 +176,7 @@ public class TestStepsTableModel
 			final TestStep step = p.getValue();
 			ImageView image = null;
 			if( step.isDisabled() )
-				image = DISABLED_ICON;
+				image = newDisabledImage();
 			Label label = LabelBuilder.create().graphic( image ).minWidth( 45 ).minHeight( 20 )
 					.onMouseClicked( new EventHandler<MouseEvent>()
 					{
@@ -188,6 +187,11 @@ public class TestStepsTableModel
 						}
 					} ).build();
 			return new ReadOnlyObjectWrapper<Label>( label );
+		}
+
+		private ImageView newDisabledImage()
+		{
+			return new ImageView( TestStepsTableModel.class.getResource( "/images/disabledTestStep.png" ).toExternalForm() );
 		}
 	}
 
