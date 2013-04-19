@@ -59,6 +59,16 @@ public class UIUtils
 	@Nonnull
 	public static Image getImageFor( Object object )
 	{
+		try {
+			return doGetImage( object );
+		} catch (Exception e) {
+			log.warn( "Could not get image for " + object, e );
+			return new Image( root( "default-component-icon.png" ) );
+		}
+	}
+
+	private static Image doGetImage( Object object )
+	{
 		for( ImageResolver resolver : imageResolvers )
 		{
 			System.out.println( "Asking resolver." );
@@ -69,7 +79,7 @@ public class UIUtils
 
 		if( object instanceof AgentItem || AgentItem.class.equals( object ) )
 		{
-			return new Image( root( "agent-icon.png" ) );
+			return new Image( root( "*agent-icon.png" ) );
 		}
 		else if( object instanceof ProjectItem || ProjectItem.class.equals( object ) )
 		{
