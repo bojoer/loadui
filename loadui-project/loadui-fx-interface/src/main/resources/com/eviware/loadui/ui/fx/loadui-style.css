@@ -129,6 +129,7 @@
 	-fx-skin: "com.eviware.loadui.ui.fx.control.skin.StyleableGraphicToggleButtonSkin";
 }
 
+/*
 .label.styleable-graphic .graphic {
 	-fx-padding: 3;
 	-fx-background-radius: 50;
@@ -145,7 +146,7 @@
 
 .label.styleable-graphic.label-enabled .graphic  {
 	-graphic-color: red;
-}
+}*/
 
 .label.slim-icon {
 	-fx-background-radius: 3;
@@ -656,10 +657,6 @@
 
 .tool-box .expander-button:disabled .graphic{
 	-fx-background-color: transparent; 
-}
-
-.tool-box .expander-button:disabled {
-	visibility: hidden;
 }
 
 .tool-box .expander-button .graphic{
