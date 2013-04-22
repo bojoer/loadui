@@ -1,5 +1,6 @@
 package com.eviware.loadui.component.soapui;
 
+import static com.eviware.loadui.components.soapui.TestCasePropertiesNode.OVERRIDING_VALUE_PREFIX;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -13,7 +14,6 @@ import javax.xml.namespace.QName;
 
 import org.apache.xmlbeans.SchemaType;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
@@ -22,7 +22,6 @@ import org.mockito.stubbing.Answer;
 import com.eviware.loadui.api.component.ComponentContext;
 import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.components.soapui.TestCasePropertiesNode;
-import static com.eviware.loadui.components.soapui.TestCasePropertiesNode.OVERRIDING_VALUE_PREFIX;
 import com.eviware.loadui.ui.fx.util.TestingProperty;
 import com.eviware.soapui.impl.wsdl.testcase.WsdlTestCase;
 import com.eviware.soapui.model.ModelItem;

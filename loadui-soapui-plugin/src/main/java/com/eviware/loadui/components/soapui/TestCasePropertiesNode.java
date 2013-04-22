@@ -22,8 +22,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.concurrent.Callable;
 
 import javax.annotation.Nonnull;
+import javax.annotation.concurrent.Immutable;
 
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleStringProperty;
@@ -50,6 +52,7 @@ import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.api.terminal.TerminalMessage;
 import com.eviware.loadui.util.property.PropertyUtils;
 import com.eviware.soapui.impl.wsdl.testcase.WsdlTestCase;
+import com.eviware.soapui.model.testsuite.TestCase;
 import com.eviware.soapui.model.testsuite.TestProperty;
 import com.google.common.base.Objects;
 import com.google.common.collect.Collections2;
@@ -67,11 +70,6 @@ final public class TestCasePropertiesNode extends VBox
 	//		t.addTableModelListener( t.new PropertiesTableListener( context ) );
 	//		return t;
 	//	}
-
-	public TestCasePropertiesNode()
-	{
-		//data = new ArrayList( context.getProperties() );
-	}
 
 	//	public Collection<Property<?>> getViewProperties()
 	//	{
@@ -193,17 +191,29 @@ final public class TestCasePropertiesNode extends VBox
 	//		throw new NoSuchElementException();
 	//	}
 
-	public static Node createTableView( WsdlTestCase testCase )
+	public static Callable<Node> createTableView( final SoapUISamplerComponent component )
 	{
-		PropertiesTableView table = new PropertiesTableView();
+		return new Callable<Node>()
+		{
+			@Override
+			public Node call() throws Exception
+			{
+				PropertiesTableView table = new PropertiesTableView();
+				TestCase testCase = component.getTestCase();
 
-		table.getItems().setAll( testCase.getPropertyList() );
+				if( testCase != null )
+				{
+					table.getItems().setAll( testCase.getPropertyList() );
+				}
 
-		TestCasePropertiesNode properties = new TestCasePropertiesNode();
-		properties.getChildren().addAll( new Label( "TestCase Properties" ), table );
-		return properties;
+				TestCasePropertiesNode properties = new TestCasePropertiesNode();
+				properties.getChildren().addAll( new Label( "TestCase Properties" ), table );
+				return properties;
+			}
+		};
 	}
 
+	@Immutable
 	private static class PropertiesTableView extends TableView<TestProperty>
 	{
 		public PropertiesTableView()

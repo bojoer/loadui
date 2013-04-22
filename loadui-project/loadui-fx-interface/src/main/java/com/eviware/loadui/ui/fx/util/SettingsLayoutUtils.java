@@ -18,6 +18,7 @@ package com.eviware.loadui.ui.fx.util;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import javafx.scene.Node;
 
@@ -73,8 +74,12 @@ public class SettingsLayoutUtils
 				Object c = component.get( "component" );
 				if( c instanceof Node )
 				{
-					System.out.println( "building component NODE: " + c );
 					tabBuilder.node( ( Node )c );
+				}
+				else if( c instanceof Callable )
+				{
+					Callable<Node> nodeLoader = ( Callable<Node> )c;
+					tabBuilder.node( nodeLoader );
 				}
 			}
 			else if( component instanceof LayoutContainer )

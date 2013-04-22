@@ -91,6 +91,7 @@ import com.eviware.soapui.model.support.ModelSupport;
 import com.eviware.soapui.model.support.TestRunListenerAdapter;
 import com.eviware.soapui.model.testsuite.LoadTestRunListener;
 import com.eviware.soapui.model.testsuite.SamplerTestStep;
+import com.eviware.soapui.model.testsuite.TestCase;
 import com.eviware.soapui.model.testsuite.TestCaseRunContext;
 import com.eviware.soapui.model.testsuite.TestCaseRunner;
 import com.eviware.soapui.model.testsuite.TestRunner;
@@ -193,7 +194,6 @@ public class SoapUISamplerComponent extends RunnerBase
 	private final AtomicLong sampleIndex = new AtomicLong();
 	private final ActionLayoutComponentImpl runOnceAction;
 	private final ActionLayoutComponentImpl openInSoapUIAction;
-	private final TestCasePropertiesNode testCasePropertiesNode;
 
 	private final GeneralSettings generalSettings;
 
@@ -233,7 +233,6 @@ public class SoapUISamplerComponent extends RunnerBase
 		projectFileWorkingCopy = context.createProperty( PROJECT_FILE_WORKING_COPY, File.class );
 		projectRelativePath = context.createProperty( PROJECT_RELATIVE_PATH, String.class, null, false );
 
-		testCasePropertiesNode = new TestCasePropertiesNode();
 		testSteps_isDisabled = context.createProperty( DISABLED_TESTSTEPS, String.class, "" );
 
 		ProjectItem project = context.getCanvas().getProject();
@@ -391,12 +390,10 @@ public class SoapUISamplerComponent extends RunnerBase
 		SettingsLayoutContainerImpl settingsTestCaseTab = new SettingsLayoutContainerImpl( "Properties", "", "",
 				"align top", "" );
 
-		HashMap<String, Node> nodeMap = new HashMap<>();
-		nodeMap.put( "component", testCasePropertiesNode );
+		HashMap<String, Callable<Node>> nodeMap = new HashMap<>();
+		nodeMap.put( "component", TestCasePropertiesNode.createTableView( this ) );
 
 		settingsTestCaseTab.add( new LayoutComponentImpl( nodeMap ) );
-
-		testCasePropertiesNode.loadOverridingProperties( getContext().getProperties() );
 
 		context.addSettingsTab( settingsTestCaseTab );
 		context.addSettingsTab( generateAdvancedTab() );
@@ -535,6 +532,11 @@ public class SoapUISamplerComponent extends RunnerBase
 			projectRelativePath.setValue( SoapUIComponentActivator.findRelativePath( loaduiProjectFolder, projectFile ) );
 			projectFileWorkingCopy.setValue( SoapUiProjectUtils.makeNonCompositeCopy( projectFile ) );
 		}
+	}
+
+	public TestCase getTestCase()
+	{
+		return soapuiTestCase;
 	}
 
 	private final class PropertyChangedListener implements EventHandler<PropertyEvent>
@@ -724,7 +726,7 @@ public class SoapUISamplerComponent extends RunnerBase
 			{
 				testCase = getTestCase();
 				testCaseRevisions.put( testCase, testCaseRevisionCount );
-				testCasePropertiesNode.overrideTestCaseProperties( testCase, triggerMessage );
+				//				testCasePropertiesNode.overrideTestCaseProperties( testCase, triggerMessage );
 				testCase.addTestRunListener( testStepNotifier );
 
 				//Use existing context if available
