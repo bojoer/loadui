@@ -40,6 +40,7 @@ import com.eviware.loadui.api.events.ActionEvent;
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.PropertyEvent;
+import com.eviware.loadui.api.layout.SettingsLayoutContainer;
 import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.ModelItem;
@@ -53,6 +54,8 @@ import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.api.terminal.TerminalMessage;
 import com.eviware.loadui.impl.component.ActivityStrategies;
 import com.eviware.loadui.impl.component.BlinkOnUpdateActivityStrategy;
+import com.eviware.loadui.impl.layout.PropertyLayoutComponentImpl;
+import com.eviware.loadui.impl.layout.SettingsLayoutContainerImpl;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.statistics.CounterStatisticSupport;
@@ -90,8 +93,8 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 
 	private final ExecutorService executor;
 
-	private final Property<Long> concurrentSamplesProperty;
-	private final Property<Long> maxQueueSizeProperty;
+	protected final Property<Long> concurrentSamplesProperty;
+	protected final Property<Long> maxQueueSizeProperty;
 	private final Property<Boolean> countDiscarded;
 
 	private long concurrentSamples;

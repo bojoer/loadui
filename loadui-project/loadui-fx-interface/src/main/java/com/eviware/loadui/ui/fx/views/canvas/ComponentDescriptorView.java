@@ -17,8 +17,13 @@ package com.eviware.loadui.ui.fx.views.canvas;
 
 import java.net.MalformedURLException;
 
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import javafx.scene.control.LabelBuilder;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.VBox;
+import javafx.scene.layout.VBoxBuilder;
 
 import com.eviware.loadui.api.component.ComponentDescriptor;
 import com.eviware.loadui.ui.fx.control.DragNode;
@@ -27,32 +32,39 @@ import com.eviware.loadui.ui.fx.util.Properties;
 public class ComponentDescriptorView extends Label
 {
 	private final ComponentDescriptor descriptor;
+	private final VBox vbox;
+	private Label label;
 
 	public ComponentDescriptorView( ComponentDescriptor descriptor )
 	{
 		this.descriptor = descriptor;
-
+		vbox = VBoxBuilder.create().spacing( 6 ).maxWidth( 85 ).alignment( Pos.TOP_LEFT ).build();
 		getStyleClass().add( "icon" );
 
-		setMaxHeight( 80 );
-		setMinHeight( 80 );
-
-		textProperty().bind( Properties.forLabel( descriptor ) );
-
-		ImageView icon;
 		try
 		{
-			icon = new ImageView( descriptor.getIcon().toURL().toString() );
-			DragNode dragNode = DragNode.install( this, new ImageView( icon.getImage() ) );
+			Image image = new Image( descriptor.getIcon().toURL().toString(), 72, 0, true, true );
+
+			ImageView icon = new ImageView( image );
+
+			DragNode dragNode = DragNode.install( vbox, new ImageView( icon.getImage() ) );
 			dragNode.setData( descriptor );
 
-			setGraphic( icon );
+			vbox.getChildren().add( icon );
 		}
 		catch( MalformedURLException e )
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
+		textProperty().bind( Properties.forLabel( descriptor ) );
+		label = LabelBuilder.create().id( "component" ).alignment( Pos.TOP_LEFT ).build();
+		label.textProperty().bind( Properties.forLabel( descriptor ) );
+		label.setWrapText( true );
+		label.maxWidth( 80 );
+
+		vbox.getChildren().add( label );
+		this.setGraphic( vbox );
 	}
 
 	public ComponentDescriptor getDescriptor()

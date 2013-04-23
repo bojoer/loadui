@@ -18,6 +18,7 @@
 
 <fx:root type="javafx.scene.layout.VBox" xmlns:fx="http://javafx.com/fxml"
 	styleClass="chart-view-node, line-chart-view-node">
+	<HBox fx:id="titleBox" styleClass="title"/> 
 	<StackPane fx:id="chartContainer"/>
 	<HBox minHeight="9" />
 	<HBox alignment="baseline_right">

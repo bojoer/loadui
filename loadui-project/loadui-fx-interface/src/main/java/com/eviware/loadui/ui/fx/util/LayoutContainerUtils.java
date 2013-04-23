@@ -33,9 +33,11 @@ public class LayoutContainerUtils
 			Collection<? extends SettingsLayoutContainer> containers )
 	{
 		List<SettingsTab> tabs = new LinkedList<>();
+
 		for( SettingsLayoutContainer layoutContainer : containers )
 		{
 			Builder tabBuilder = Builder.create( layoutContainer.getLabel() );
+
 			layoutContainerToField( layoutContainer, tabBuilder );
 			tabs.add( tabBuilder.build() );
 		}
@@ -51,9 +53,9 @@ public class LayoutContainerUtils
 				PropertyLayoutComponent<?> propertyComponent = ( PropertyLayoutComponent<?> )component;
 				tabBuilder.field( propertyComponent.getLabel(), propertyComponent.getProperty() );
 			}
-			else if( component instanceof ActionLayoutComponent)
+			else if( component instanceof ActionLayoutComponent )
 			{
-				ActionLayoutComponent action = (ActionLayoutComponent) component;
+				ActionLayoutComponent action = ( ActionLayoutComponent )component;
 				tabBuilder.button( action );
 			}
 			else if( component instanceof LayoutContainer )

@@ -155,7 +155,7 @@ public class GeneralSettings
 
 		settingsLayoutTab.add( new PropertyLayoutComponentImpl<File>( ImmutableMap.<String, Object> builder() //
 				.put( PropertyLayoutComponentImpl.PROPERTY, settingsFile ) //
-				.put( PropertyLayoutComponentImpl.LABEL, "soapUI settings" ) //
+				.put( PropertyLayoutComponentImpl.LABEL, "SoapUI settings" ) //
 				.put( PropertyLayoutComponentImpl.CONSTRAINTS, "w 200!, spanx 2" ) //
 				.build() ) );
 
@@ -183,7 +183,7 @@ public class GeneralSettings
 
 		settingsLayoutTab.add( new PropertyLayoutComponentImpl<String>( ImmutableMap.<String, Object> builder() //
 				.put( PropertyLayoutComponentImpl.PROPERTY, disableSoapUIAssertions ) //
-				.put( PropertyLayoutComponentImpl.LABEL, "Disable all soapUI assertions" ) //
+				.put( PropertyLayoutComponentImpl.LABEL, "Disable all SoapUI assertions" ) //
 				.build() ) );
 
 		return settingsLayoutTab;

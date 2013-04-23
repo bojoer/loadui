@@ -46,14 +46,12 @@
  * Text 
  */
 .text{
-	-fx-font-family: "lucida sans";
 	-fx-font-size: 12; 
 }
 
 .tooltip {
    -fx-background-color: snow;
    -fx-background-radius: 7 7 7 7;
-   -fx-font-family: "lucida sans";
    -fx-font-size: 10;   
 }
 
@@ -621,7 +619,7 @@
 	-fx-background-insets: 0, 1 1 1 0, 3 1 1 0, 20 3 3 0;
 	-fx-background-radius: 0 4 4 0, 0 4 4 0, 0 3 3 0, 0 0 3 0;
 	-fx-padding: 0 0 0 0;
-	-fx-alignment: center;
+	-fx-alignment: top_left;
 }
 .tool-box .nav {
 	/* changes size for nav buttons */
@@ -641,13 +639,13 @@
 
 .tool-box .scrollable-list .box {
 	/* spacing for nav buttons */
-	-fx-spacing: 8;
+	-fx-spacing: 10;
 }
 
 .tool-box .item-box {
 	-fx-background-color: #616161, #6d6d6d, #505050, #444444, #565656;
 	-fx-background-insets: 3 3 2 1, 2 3 3 1, 2 3 4 1, 3 3 4 1, 3 3 4 1;
-	-fx-padding: 4 0 4 0;
+	-fx-padding: 6 0 6 0;
 }
 
 .tool-box .category {
@@ -681,17 +679,22 @@
 }
 
 .item-holder {
-	-fx-padding: 5;
-	-fx-spacing: 5;
+	-fx-padding: 9;
+	-fx-spacing: 6;
 }
 
 .item-holder .category-label {
 	-fx-text-fill: #f2f2f2;
 }
 
-.item-holder .icon 
-{
-	-fx-text-fill: #f2f2f2;
+.item-holder .icon .text{
+	-fx-fill: #f2f2f2;
+	visibility: hidden;
+}
+
+.item-holder .icon #component.label .text{
+	-fx-fill: #f2f2f2;
+	visibility: visible;
 }
 
 .item-holder > .items {
@@ -699,10 +702,10 @@
 }
 
 .tool-box-expander .item-holder {
+	-fx-alignment: top-left;  
 	-fx-backgroundFill: rgb(68,68,68,0.8);
 	-fx-borderFill: rgb(38,38,38,0.8);
-	/* -fx-textFill: rgb(156,156,156); */
-
+	
 	-fx-border-color: -fx-borderFill;
 	-fx-border-radius:  0 5 5 0;
 	-fx-border-insets: -1 0 -1 0;
@@ -723,8 +726,8 @@
 	-fx-background-radius: 8;
 	-fx-padding: 10;
 	-fx-background-color: 
-	linear-gradient(from 0% 0% to 0% 100%, #262626 0%,#636363 50%,#272727 100%),
-	linear-gradient(from 0% 0% to 0% 100%, #262626 0%,#343434 70%,#272727 100%);
+	linear-gradient(from 0% 0% to 0% 100%, #1a1a1a 0%,#636363 50%,#1a1a1a 100%),
+	linear-gradient(from 0% 0% to 0% 100%, #1a1a1a 0%,#333333 70%,#1a1a1a 100%);
 	-fx-background-insets: 0, 0 2 0 2;
 }
 

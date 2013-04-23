@@ -47,6 +47,7 @@ import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.PropertyEvent;
 import com.eviware.loadui.api.events.WeakEventHandler;
 import com.eviware.loadui.api.layout.LayoutContainer;
+import com.eviware.loadui.api.layout.SettingsLayoutContainer;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.property.Property;
@@ -280,7 +281,7 @@ public class SoapUISamplerComponent extends RunnerBase
 		boolean isHeadless = GraphicsEnvironment.isHeadless();
 		if( isHeadless )
 		{
-			log.debug( "Skipping creation of soapUI Runner's TestStepsTable, since in headless mode." );
+			log.debug( "Skipping creation of SoapUI Runner's TestStepsTable, since in headless mode." );
 		}
 		else
 		{
@@ -361,6 +362,8 @@ public class SoapUISamplerComponent extends RunnerBase
 		testCasePropertiesTableModel.loadOverridingProperties( getContext().getProperties() );
 
 		context.addSettingsTab( settingsTestCaseTab );
+		SettingsLayoutContainer advancedSettings = generateAdvancedTab();
+		context.addSettingsTab( advancedSettings );
 		context.setLayout( layout );
 
 		executor = Executors.newSingleThreadScheduledExecutor( new ThreadFactoryBuilder().setDaemon( true )
@@ -392,6 +395,20 @@ public class SoapUISamplerComponent extends RunnerBase
 		} );
 	}
 
+	private SettingsLayoutContainer generateAdvancedTab()
+	{
+		SettingsLayoutContainer advancedSettings = new SettingsLayoutContainerImpl( "Advanced", "", "", "align top", "" );
+		advancedSettings.add( new PropertyLayoutComponentImpl<String>( ImmutableMap.<String, Object> builder() //
+				.put( PropertyLayoutComponentImpl.PROPERTY, concurrentSamplesProperty ) //
+				.put( PropertyLayoutComponentImpl.LABEL, "Max concurrent requests" ) //
+				.build() ) );
+		advancedSettings.add( new PropertyLayoutComponentImpl<String>( ImmutableMap.<String, Object> builder() //
+				.put( PropertyLayoutComponentImpl.PROPERTY, maxQueueSizeProperty ) //
+				.put( PropertyLayoutComponentImpl.LABEL, "Max queue size" ) //
+				.build() ) );
+		return advancedSettings;
+	}
+
 	boolean isOnRunningCanvas()
 	{
 		return getContext().getCanvas().isRunning();
@@ -415,12 +432,12 @@ public class SoapUISamplerComponent extends RunnerBase
 		}
 		else if( !projectFile.exists() )
 		{
-			showMessage( "Specified soapUI project file " + projectFile.getAbsolutePath()
+			showMessage( "Specified SoapUI project file " + projectFile.getAbsolutePath()
 					+ " does not exist. File may have been moved, renamed or deleted." );
 			return;
 		}
 
-		log.debug( "Setting soapUI project to {}", projectFile );
+		log.debug( "Setting SoapUI project to {}", projectFile );
 		runner.reloadProject( projectFile );
 	}
 
@@ -929,8 +946,11 @@ public class SoapUISamplerComponent extends RunnerBase
 
 		private synchronized void setTestCase( @CheckForNull final String testCaseName )
 		{
+			log.debug( "setting testcase: {}", testCaseName );
 			if( testSuite == null || testCaseName == null )
 			{
+				testCasePool.clear();
+				testStepsTableModel.clearTestCase();
 				projectSelector.setTestCases( new String[0] );
 				return;
 			}
@@ -958,6 +978,7 @@ public class SoapUISamplerComponent extends RunnerBase
 				// testCase has changed
 				soapuiTestCase.getId();
 				SoapUiProjectUtils.makeAllDataSourcesShared( soapuiTestCase );
+				SoapUiProjectUtils.enableResponseDiscarding( soapuiTestCase );
 
 				testCasePool.clear();
 				config = null;

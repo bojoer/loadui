@@ -51,16 +51,19 @@ public class ToolBox<E extends Node> extends Control
 	 */
 	public static void setCategory( Node node, String category )
 	{
+				
 		Object oldCategory = node.getProperties().get( CATEGORY_PROPERTY );
+		
 		@SuppressWarnings( "unchecked" )
 		ToolBox<Node> toolBox = ( ToolBox<Node> )node.getProperties().get( TOOL_BOX_PROPERTY );
-
+				
 		if( toolBox != null && oldCategory != null )
 			toolBox.getItems().remove( node );
-
+				
 		node.getProperties().put( CATEGORY_PROPERTY, category );
 		if( toolBox != null && !toolBox.getItems().contains( node ) )
 			toolBox.getItems().add( node );
+		
 	}
 
 	/**
@@ -84,6 +87,7 @@ public class ToolBox<E extends Node> extends Control
 	public ToolBox()
 	{
 		this.label = new Label();
+		
 		initialize();
 	}
 
@@ -121,6 +125,7 @@ public class ToolBox<E extends Node> extends Control
 
 					for( E node : change.getAddedSubList() )
 					{
+						
 						node.getProperties().put( TOOL_BOX_PROPERTY, ToolBox.this );
 					}
 				}
@@ -207,7 +212,7 @@ public class ToolBox<E extends Node> extends Control
 		return getComparator();
 	}
 
-	private final DoubleProperty heightPerItem = new SimpleDoubleProperty( this, "heightPerItem", 100.0 );
+	private final DoubleProperty heightPerItem = new SimpleDoubleProperty( this, "heightPerItem", 120.0 );
 
 	public DoubleProperty heightPerItemProperty()
 	{

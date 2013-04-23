@@ -50,6 +50,7 @@ import javafx.scene.effect.Effect;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.PaneBuilder;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.RegionBuilder;
 import javafx.scene.layout.StackPane;
@@ -307,14 +308,16 @@ public class CanvasView extends StackPane
 
 		descriptors.setMaxWidth( 120 );
 		descriptors.setMinWidth( 110 );
-		descriptors.setHeightPerItem( 120 );
+
+		descriptors.setHeightPerItem( 128 );
+
 		StackPane.setAlignment( descriptors, Pos.CENTER_LEFT );
 		StackPane.setMargin( descriptors, new Insets( 17, 0, 57, 0 ) );
 		descriptors.maxHeightProperty().bind( descriptors.prefHeightProperty() );
 
 		Bindings.bindContent( descriptors.getItems(), createToolBoxContent() );
 
-		Pane componentWrapper = new Pane();
+		Pane componentWrapper = PaneBuilder.create().styleClass( "pane" ).build();
 		Rectangle clipRect = new Rectangle();
 		clipRect.widthProperty().bind( componentWrapper.widthProperty() );
 		clipRect.heightProperty().bind( componentWrapper.heightProperty() );
@@ -423,8 +426,7 @@ public class CanvasView extends StackPane
 				enforceCanvasBounds();
 			}
 		} );
-		
-		
+
 	}
 
 	private void enforceCanvasBounds()
@@ -489,7 +491,7 @@ public class CanvasView extends StackPane
 				canvasLayer.setLayoutY( maxY );
 			}
 		}
-		
+
 	}
 
 	public CanvasItem getCanvas()
@@ -518,8 +520,8 @@ public class CanvasView extends StackPane
 		descriptors.setComparator( GeneratorCategory.CATEGORY,
 				order( "Fixed Rate", "Variance", "Random", "Ramp Sequence", "Ramp", "Usage", "Fixed Load" ) );
 		descriptors.setComparator( RunnerCategory.CATEGORY,
-				order( "soapUI Runner", "Web Page Runner", "Script Runner", "Process Runner" ) );
-		descriptors.setComparator( FlowCategory.CATEGORY, order( "Splitter", "Delay", "Condition", "Loop" ) );
+				order( "SoapUI Runner", "Web Page Runner", "Script Runner", "Process Runner" ) );
+		descriptors.setComparator( FlowCategory.CATEGORY, order( "Loop", "Splitter", "Delay", "Condition" ) );
 		descriptors.setComparator( SchedulerCategory.CATEGORY, order( "Interval", "Scheduler" ) );
 		descriptors.setComparator( OutputCategory.CATEGORY, order( "Table Log" ) );
 		descriptors.setComparator( AnalysisCategory.CATEGORY, order( "Assertion", "Statistics" ) );

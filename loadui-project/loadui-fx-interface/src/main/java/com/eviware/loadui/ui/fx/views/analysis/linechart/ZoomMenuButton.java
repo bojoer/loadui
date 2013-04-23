@@ -27,6 +27,7 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 
 import com.eviware.loadui.api.charting.line.ZoomLevel;
+import com.eviware.loadui.util.StringUtils;
 
 public class ZoomMenuButton extends MenuButton
 {
@@ -56,20 +57,19 @@ public class ZoomMenuButton extends MenuButton
 		{
 			ZoomLevel z = values[i];
 
-			RadioMenuItem added = RadioMenuItemBuilder.create().text( z.name() ).userData( z ).build();
+			RadioMenuItem added = RadioMenuItemBuilder.create().text( StringUtils.capitalize( z.name() ) ).userData( z )
+					.build();
 			added.setToggleGroup( toggleGroup );
 			this.getItems().add( added );
 		}
 
 		toggleGroup.selectedToggleProperty().addListener( new ChangeListener<Toggle>()
 		{
-
 			@Override
 			public void changed( ObservableValue<? extends Toggle> arg0, Toggle arg1, final Toggle newToggle )
 			{
 				Platform.runLater( new Runnable()
 				{
-
 					@Override
 					public void run()
 					{
@@ -77,14 +77,10 @@ public class ZoomMenuButton extends MenuButton
 						{
 							selectedProperty.setValue( ( ZoomLevel )newToggle.getUserData() );
 						}
-
 					}
 				} );
-
 			}
-
 		} );
-
 	}
 
 	public ObjectProperty<ZoomLevel> selectedProperty()

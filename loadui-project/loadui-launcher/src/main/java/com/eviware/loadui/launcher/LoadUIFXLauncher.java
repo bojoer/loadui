@@ -83,26 +83,6 @@ public class LoadUIFXLauncher extends LoadUILauncher
 		{
 			File workingDir = new File( System.getProperty( "loadui.working", "." ) ).getAbsoluteFile();
 			Scene splashScene;
-			try
-			{
-				splashScene = FXMLLoader.load( new File( workingDir, "res/loadui-splash.fxml" ).toURI().toURL() );
-			}
-			catch( IOException e )
-			{
-				splashScene = SceneBuilder.create().width( 600 ).height( 320 ).fill( Color.DARKGRAY )
-						.root( LabelBuilder.create().text( System.getProperty( LOADUI_NAME, "loadUI" ) ).build() ).build();
-			}
-
-			Image[] icons = new Image[0];
-			try
-			{
-				icons = new Image[] { new Image( new File( workingDir, "res/icon_64x64.png" ).toURI().toURL().toString() ),
-						new Image( new File( workingDir, "res/icon_32x32.png" ).toURI().toURL().toString() ) };
-			}
-			catch( Exception e )
-			{
-				//e.printStackTrace();
-			}
 
 			final String noFx = getParameters().getNamed().get( NOFX_OPTION );
 			final String agent = getParameters().getNamed().get( "agent" );
@@ -112,6 +92,28 @@ public class LoadUIFXLauncher extends LoadUILauncher
 
 			if( "false".equals( noFx ) )
 			{
+				try
+				{
+					splashScene = FXMLLoader.load( new File( workingDir, "res/loadui-splash.fxml" ).toURI().toURL() );
+				}
+				catch( IOException e )
+				{
+					splashScene = SceneBuilder.create().width( 600 ).height( 320 ).fill( Color.DARKGRAY )
+							.root( LabelBuilder.create().text( System.getProperty( LOADUI_NAME, "loadUI" ) ).build() ).build();
+				}
+
+				Image[] icons = new Image[0];
+				try
+				{
+					icons = new Image[] {
+							new Image( new File( workingDir, "res/icon_64x64.png" ).toURI().toURL().toString() ),
+							new Image( new File( workingDir, "res/icon_32x32.png" ).toURI().toURL().toString() ) };
+				}
+				catch( Exception e )
+				{
+					//e.printStackTrace();
+				}
+
 				setDefaultSystemProperty( "loadui.headless", "false" );
 				final Stage splash = StageBuilder.create().style( StageStyle.TRANSPARENT ).scene( splashScene )
 						.icons( icons ).build();
@@ -141,11 +143,8 @@ public class LoadUIFXLauncher extends LoadUILauncher
 				{
 					System.setSecurityManager( null );
 
-					System.out.println( "LoadUIFXLauncher: Creating launcher" );
 					launcher = createLauncher( getParameters().getRaw().toArray( new String[0] ) );
-					System.out.println( "LoadUIFXLauncher: Initializing launcher" );
 					launcher.init();
-					System.out.println( "LoadUIFXLauncher: Starting launcher" );
 					launcher.start();
 
 					if( "false".equals( noFx ) )

@@ -54,6 +54,18 @@ public class ValidatableLongField extends ValidatableTextField<Long>
 		}
 	};
 
+	public final static Function<String, Long> EMPTY_TO_NULL = new Function<String, Long>()
+	{
+		@Override
+		@Nullable
+		public Long apply( @Nullable String input )
+		{
+			if( input.isEmpty() )
+				return null;
+			return Long.parseLong( input );
+		}
+	};
+
 	public final static Predicate<String> CONVERTABLE_TO_LONG = new Predicate<String>()
 	{
 		@Override
@@ -96,7 +108,6 @@ public class ValidatableLongField extends ValidatableTextField<Long>
 	{
 		if( !super.validate() )
 			return false;
-		log.debug( "constraint2: " + constraint );
 		if( constraint.apply( convert.apply( getText() ) ) )
 		{
 			ValidatableFieldSupport.setValid( this );

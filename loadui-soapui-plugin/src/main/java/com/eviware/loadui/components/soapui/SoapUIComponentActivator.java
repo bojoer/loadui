@@ -64,8 +64,8 @@ public final class SoapUIComponentActivator implements BundleActivator
 		bundleContext = context;
 		loadUIIntegrator = LoadUIIntegrator.getInstance();
 		final ComponentDescriptor componentDescriptor = new ComponentDescriptor( SoapUISamplerComponent.TYPE,
-				RunnerCategory.CATEGORY, "soapUI Runner", "Runs a soapUI TestCase.", getClass().getResource(
-						"/images/SoapuiRunner.png" ).toURI() );
+				RunnerCategory.CATEGORY, LoadUIIntegrator.SOAPUI_RUNNER_BASE_NAME, "Runs a soapUI TestCase.",
+				getClass().getResource( "/images/SoapuiRunner.png" ).toURI() );
 
 		final ComponentDescriptor mockServiceDescriptor = new ComponentDescriptor( MockServiceComponent.TYPE,
 				MiscCategory.CATEGORY, "soapUI MockService", "Runs a soapUI MockService.", getClass().getResource(

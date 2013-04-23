@@ -25,7 +25,7 @@ then
 fi
 export LOADUI_RUNNER_HOME
 
-LOADUI_RUNNER_CLASSPATH="$LOADUI_RUNNER_HOME:$LOADUI_RUNNER_HOME/lib/*"
+LOADUI_RUNNER_CLASSPATH="$LOADUI_RUNNER_HOME:$LOADUI_RUNNER_HOME/lib/*:$LOADUI_RUNNER_HOME/jre/lib/*"
 
 # For Cygwin, switch paths to Windows format before running java
 if $cygwin
