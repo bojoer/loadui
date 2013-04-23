@@ -76,7 +76,7 @@ public class GroovyEnvironment implements Releasable
 		scriptName = "Groovy" + id.replaceAll( "[^a-zA-Z]", "" );
 		log = LoggerFactory.getLogger( basePackage + "." + id );
 
-		classLoader = classLoaderRegistry.useClassLoader( classLoaderId, this );
+		classLoader = classLoaderRegistry.useClassLoader( classLoaderId );
 		shell = new GroovyShell( classLoader );
 
 		methodResolver = resolver instanceof GroovyResolver.Methods ? ( GroovyResolver.Methods )resolver

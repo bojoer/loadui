@@ -1,39 +1,36 @@
 package com.eviware.loadui.util.groovy;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import com.eviware.loadui.test.categories.IntegrationTest;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.io.File;
 import java.io.IOException;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
+@Category( IntegrationTest.class )
 public class GroovyEnvironmentClassLoaderTest
 {
 
 	private static final String CLASS_NOT_IN_CLASS_PATH = "org.fit.cssbox.css.CSSUnits";
 	private static final String[] DEPENDENCY = { "cssbox", "cssbox", "3.4" };
 
-	private static String normalGrapeRoot;
 	private static GroovyEnvironmentClassLoader cl;
 
 	@BeforeClass
 	public static void setup()
 	{
-		cl = new GroovyEnvironmentClassLoader( GroovyEnvironmentClassLoaderTest.class.getClassLoader() );
-
-		File f = new File( "target" );
-		normalGrapeRoot = System.getProperty( "grape.root" );
-		System.setProperty( "grape.root", f.getAbsolutePath() );
+		cl = new GroovyEnvironmentClassLoader( GroovyEnvironmentClassLoaderTest.class.getClassLoader(),
+				new File( "target", ".groovy" ) );
 	}
 
 	@AfterClass
 	public static void cleanup() throws IOException
 	{
-		System.setProperty( "grape.root", normalGrapeRoot );
-
 		try
 		{
 			cl.close();
@@ -41,8 +38,10 @@ public class GroovyEnvironmentClassLoaderTest
 		catch( IOException e )
 		{
 			e.printStackTrace();
+		} finally
+		{
+			cl = null;
 		}
-		cl = null;
 	}
 
 	@Test( expected = ClassNotFoundException.class )

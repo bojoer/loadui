@@ -15,28 +15,27 @@
  */
 package com.eviware.loadui.groovy.components;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-
-import java.io.File;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
-
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import com.eviware.loadui.api.component.ComponentCreationException;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.groovy.util.GroovyComponentTestUtils;
 import com.eviware.loadui.util.test.TestUtils;
 import com.google.common.base.Joiner;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import java.io.File;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 public class EventsHandlingTest
 {
-	
+
 	private ComponentItem component;
-	
+
 	@BeforeClass
 	public static void classSetup()
 	{
@@ -49,12 +48,13 @@ public class EventsHandlingTest
 		GroovyComponentTestUtils.getDefaultBeanInjectorMocker();
 		component = GroovyComponentTestUtils.createComponent( "Splitter" );
 	}
-	
+
 	@Test
 	public void ensureAllEventsTriggered() throws InterruptedException, ExecutionException, TimeoutException
 	{
 		int target = 0;
-		for (int i = 0; i < 1000; i++) {
+		for( int i = 0; i < 1000; i++ )
+		{
 			target = i % 101;
 			component.getProperty( "probability0" ).setValue( target );
 			TestUtils.awaitEvents( component );

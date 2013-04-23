@@ -20,6 +20,7 @@ import static org.junit.Assert.assertThat;
 
 import java.io.File;
 
+import com.eviware.loadui.test.categories.IntegrationTest;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -31,7 +32,9 @@ import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.groovy.util.GroovyComponentTestUtils;
 import com.google.common.base.Joiner;
+import org.junit.experimental.categories.Category;
 
+@Category( IntegrationTest.class )
 public class GebRunnerTest
 {
 	private ComponentItem component;
@@ -43,7 +46,6 @@ public class GebRunnerTest
 	}
 
 	@Before
-	@SuppressWarnings( "unchecked" )
 	public void setup() throws ComponentCreationException
 	{
 		GroovyComponentTestUtils.getDefaultBeanInjectorMocker();
