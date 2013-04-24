@@ -20,12 +20,21 @@ import groovy.lang.GroovyClassLoader;
 
 import java.io.File;
 import java.net.MalformedURLException;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.eviware.loadui.LoadUI;
+import com.eviware.loadui.api.testevents.MessageLevel;
+import com.eviware.loadui.api.testevents.TestEventManager;
+import com.eviware.loadui.util.BeanInjector;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -45,6 +54,8 @@ public class GroovyEnvironmentClassLoader extends GroovyClassLoader
 	public GroovyEnvironmentClassLoader( ClassLoader classLoader )
 	{
 		super( classLoader );
+		File groovyHome = new File( System.getProperty( LoadUI.LOADUI_HOME ), ".groovy" );
+		System.setProperty( "grape.root", groovyHome.getAbsolutePath() );
 	}
 
 	/**
@@ -58,48 +69,78 @@ public class GroovyEnvironmentClassLoader extends GroovyClassLoader
 	 */
 	public synchronized void loadDependency( String group, String module, String version )
 	{
-		//bundleContext.getBundle().loadClass( name );
-
 		String dependency = Joiner.on( ':' ).join( group, module );
 		if( loadedDeps.add( dependency ) )
 		{
 			log.debug( "Loading dependency: {}", dependency );
-
 			HashMap<String, Object> args = Maps.newHashMap();
 			args.put( "group", group );
 			args.put( "module", module );
 			args.put( "version", version );
 			args.put( "classLoader", this );
+
 			try
 			{
 				if( Boolean.getBoolean( "loadui.grape.disable" ) )
-					throw new Exception( "Groovy loading disabled!" );
+					throw new Exception( "Groovy Grapes disabled!" );
 
 				Grape.grab( args );
 			}
 			catch( Exception e )
 			{
 				log.error( "Error loading dependency: " + dependency + " using Grape, fallback to manual JAR loading.", e );
-
-				File depFile = new File( System.getProperty( "groovy.root" ), "grapes" + File.separator + group
-						+ File.separator + module + File.separator + "jars" + File.separator + module + "-" + version
-						+ ".jar" );
-				if( depFile.exists() )
+				boolean dependencyFound = loadJarFile( group, module, version );
+				if( !dependencyFound )
 				{
-					try
-					{
-						addURL( depFile.toURI().toURL() );
-					}
-					catch( MalformedURLException e2 )
-					{
-						log.error( "Failed manual JAR loading. Dependency loading failed.", e2 );
-					}
-				}
-				else
-				{
-					log.error( "File: {} doesn't exist, dependency loading failed.", depFile );
+					impossibleToLoad( dependency );
 				}
 			}
 		}
 	}
+
+	private void impossibleToLoad( String dependency )
+	{
+		try
+		{
+			BeanInjector
+					.getBeanFuture( TestEventManager.class )
+					.get( 500, TimeUnit.MILLISECONDS )
+					.logMessage(
+							MessageLevel.WARNING,
+							"It was not possible to find the following Groovy component's dependency: " + dependency
+									+ ".\nThe component will not work. Please check the documentation at\n"
+									+ "http://loadui.org/Developers-Corner/custom-component-reference-new.html" );
+		}
+		catch( InterruptedException | ExecutionException | TimeoutException e1 )
+		{
+			log.warn( "Could not load dependency " + dependency, e1 );
+		}
+	}
+
+	protected boolean loadJarFile( String group, String module, String version )
+	{
+
+		Path depFile = FileSystems.getDefault().getPath( System.getProperty( "grape.root" ), "grapes", group, module,
+				"jars", module + "-" + version + ".jar" );
+
+		if( depFile.toFile().exists() )
+		{
+			try
+			{
+				addURL( depFile.toUri().toURL() );
+				return true;
+			}
+			catch( MalformedURLException e2 )
+			{
+				log.error( "Failed manual JAR loading. Dependency loading failed.", e2 );
+				return false;
+			}
+		}
+		else
+		{
+			log.error( "File: {} doesn't exist, dependency loading failed.", depFile );
+			return false;
+		}
+	}
+
 }
