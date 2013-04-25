@@ -237,7 +237,7 @@ settings( label: "General" ) {
 settings( label:'Logging' ) {
 	box {
 		property( property: saveFile, label: 'Save Logs?' )
-		property( property: logFilePath, label: 'Log File (Comma separated, relative to loadUI home dir)' )
+		property( property: logFilePath, label: 'Log File (Relative to LoadUI\'s home directory)' )
 		property( property: appendSaveFile, label: 'Check to append selected file' )
 		property( property: formatTimestamps, label: 'Check to format timestamps(hh:mm:ss:ms)' )
 		property( property: addHeaders, label: 'Check to add headers to a file' )

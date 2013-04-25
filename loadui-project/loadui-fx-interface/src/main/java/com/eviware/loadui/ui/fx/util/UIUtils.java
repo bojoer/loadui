@@ -59,9 +59,12 @@ public class UIUtils
 	@Nonnull
 	public static Image getImageFor( Object object )
 	{
-		try {
+		try
+		{
 			return doGetImage( object );
-		} catch (Exception e) {
+		}
+		catch( Exception e )
+		{
 			log.warn( "Could not get image for " + object, e );
 			return new Image( root( "default-component-icon.png" ) );
 		}
@@ -108,7 +111,7 @@ public class UIUtils
 		return UIUtils.class.getResource( TOOLBOX_IMAGES_PATH + fileName ).toExternalForm();
 	}
 
-	public static String toCssId( String label )
+	public static String toCssId( @Nonnull String label )
 	{
 		return label.toLowerCase().replace( " ", "-" );
 	}
@@ -134,7 +137,7 @@ public class UIUtils
 
 		return scaledImage;
 	}
-	
+
 	public static void openInExternalBrowser( final String url )
 	{
 		if( !PlatformUtil.isMac() )
