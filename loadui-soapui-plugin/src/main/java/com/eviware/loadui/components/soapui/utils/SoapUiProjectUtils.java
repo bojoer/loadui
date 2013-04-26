@@ -36,6 +36,7 @@ import com.eviware.soapui.impl.wsdl.teststeps.HttpTestRequestStep;
 import com.eviware.soapui.impl.wsdl.teststeps.JdbcRequestTestStep;
 import com.eviware.soapui.impl.wsdl.teststeps.RestTestRequest;
 import com.eviware.soapui.impl.wsdl.teststeps.RestTestRequestStep;
+import com.eviware.soapui.impl.wsdl.teststeps.WsdlDataSourceLoopTestStep;
 import com.eviware.soapui.impl.wsdl.teststeps.WsdlDataSourceTestStep;
 import com.eviware.soapui.impl.wsdl.teststeps.WsdlMessageAssertion;
 import com.eviware.soapui.impl.wsdl.teststeps.WsdlTestRequest;
@@ -127,6 +128,12 @@ public class SoapUiProjectUtils
 	{
 		for( WsdlDataSourceTestStep s : testCase.getTestStepsOfType( WsdlDataSourceTestStep.class ) )
 			s.setShared( true );
+	}
+
+	public static void disableAllDataSourceLoops( @Nonnull WsdlTestCase testCase )
+	{
+		for( WsdlDataSourceLoopTestStep s : testCase.getTestStepsOfType( WsdlDataSourceLoopTestStep.class ) )
+			s.setDisabled( true );
 	}
 
 	public static void enableResponseDiscarding( @Nonnull WsdlTestCase testCase )

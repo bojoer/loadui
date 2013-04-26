@@ -978,6 +978,7 @@ public class SoapUISamplerComponent extends RunnerBase
 				// testCase has changed
 				soapuiTestCase.getId();
 				SoapUiProjectUtils.makeAllDataSourcesShared( soapuiTestCase );
+				SoapUiProjectUtils.disableAllDataSourceLoops( soapuiTestCase );
 				SoapUiProjectUtils.enableResponseDiscarding( soapuiTestCase );
 
 				testCasePool.clear();
