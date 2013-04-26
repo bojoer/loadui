@@ -48,11 +48,10 @@ import static org.mockito.Mockito.*;
 
 public class GroovyComponentTestUtils extends ComponentTestUtils
 {
-	private static final Object lock = new Object();
-	private static final ConcurrentMap<ComponentDescriptor, BehaviorProvider> descriptors = Maps.newConcurrentMap();
-	private static final ComponentRegistry registry = mock( ComponentRegistry.class );
+	private final Object lock = new Object();
+	private final ConcurrentMap<ComponentDescriptor, BehaviorProvider> descriptors = Maps.newConcurrentMap();
+	private final ComponentRegistry registry = mock( ComponentRegistry.class );
 
-	static
 	{
 		System.setProperty( "groovy.root", new File( "target", ".groovy" ).getAbsolutePath() );
 
@@ -74,7 +73,7 @@ public class GroovyComponentTestUtils extends ComponentTestUtils
 		} ).when( registry ).registerDescriptor( any( ComponentDescriptor.class ), any( BehaviorProvider.class ) );
 	}
 
-	public static void initialize( String pathToComponentScripts )
+	public void initialize( String pathToComponentScripts )
 	{
 		new GroovyBehaviorProvider( registry, Executors.newSingleThreadScheduledExecutor(), new File(
 				pathToComponentScripts ), new ClassLoaderRegistry()
@@ -88,9 +87,9 @@ public class GroovyComponentTestUtils extends ComponentTestUtils
 	}
 
 	@SuppressWarnings( "unchecked" )
-	public static ComponentItem createComponent( final String componentName ) throws ComponentCreationException
+	public ComponentItem createComponent( final String componentName ) throws ComponentCreationException
 	{
-		ComponentItem component = ComponentTestUtils.createComponentItem();
+		ComponentItem component = createComponentItem();
 		ComponentItem componentSpy = mock( ComponentItem.class, delegatesTo( component ) );
 		ComponentContext contextSpy = mock( ComponentContext.class, delegatesTo( componentSpy.getContext() ) );
 		doReturn( contextSpy ).when( componentSpy ).getContext();
@@ -116,7 +115,7 @@ public class GroovyComponentTestUtils extends ComponentTestUtils
 		return componentSpy;
 	}
 
-	public static ComponentItem createComponent( final String componentName, ComponentItem component )
+	public ComponentItem createComponent( final String componentName, ComponentItem component )
 			throws ComponentCreationException
 	{
 		Optional<ComponentDescriptor> descriptorOptional = null;
@@ -150,13 +149,13 @@ public class GroovyComponentTestUtils extends ComponentTestUtils
 		ComponentDescriptor descriptor = descriptorOptional.get();
 
 		component.setAttribute( ComponentItem.TYPE, descriptor.getLabel() );
-		ComponentTestUtils.setComponentBehavior( component,
+		setComponentBehavior( component,
 				descriptors.get( descriptor ).createBehavior( descriptor, component.getContext() ) );
 
 		return component;
 	}
 
-	public static GroovyEnvironment getEnvironment( ComponentItem component )
+	public GroovyEnvironment getEnvironment( ComponentItem component )
 	{
 		try
 		{

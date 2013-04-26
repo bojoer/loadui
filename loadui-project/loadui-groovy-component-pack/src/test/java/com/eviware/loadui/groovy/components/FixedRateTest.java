@@ -26,7 +26,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.eviware.loadui.api.component.ComponentCreationException;
@@ -38,7 +37,6 @@ import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.api.terminal.TerminalMessage;
 import com.eviware.loadui.groovy.util.GroovyComponentTestUtils;
-import com.eviware.loadui.util.component.ComponentTestUtils;
 import com.eviware.loadui.util.groovy.GroovyEnvironment;
 import com.eviware.loadui.util.test.TestUtils;
 import com.google.common.base.Joiner;
@@ -46,18 +44,15 @@ import com.google.common.base.Joiner;
 public class FixedRateTest
 {
 	private ComponentItem component;
-
-	@BeforeClass
-	public static void classSetup()
-	{
-		GroovyComponentTestUtils.initialize( Joiner.on( File.separator ).join( "src", "main", "groovy" ) );
-	}
+	private GroovyComponentTestUtils ctu;
 
 	@Before
 	public void setup() throws ComponentCreationException
 	{
-		GroovyComponentTestUtils.getDefaultBeanInjectorMocker();
-		component = GroovyComponentTestUtils.createComponent( "Fixed Rate" );
+		ctu = new GroovyComponentTestUtils();
+		ctu.initialize( Joiner.on( File.separator ).join( "src", "main", "groovy" ) );
+		ctu.getDefaultBeanInjectorMocker();
+		component = ctu.createComponent( "Fixed Rate" );
 		component.fireEvent( new ActionEvent( component, CanvasItem.STOP_ACTION ) );
 	}
 
@@ -76,11 +71,11 @@ public class FixedRateTest
 	@Test
 	public void shouldTriggerBursts() throws InterruptedException, ExecutionException, TimeoutException
 	{
-		BlockingQueue<TerminalMessage> messages = ComponentTestUtils.getMessagesFrom( ( OutputTerminal )component
+		BlockingQueue<TerminalMessage> messages = ctu.getMessagesFrom( ( OutputTerminal )component
 				.getTerminalByName( GeneratorCategory.TRIGGER_TERMINAL ) );
 		component.getProperty( "burstSize" ).setValue( 3 );
 
-		GroovyEnvironment env = GroovyComponentTestUtils.getEnvironment( component );
+		GroovyEnvironment env = ctu.getEnvironment( component );
 		env.invokeClosure( false, false, "triggerBurst" );
 
 		assertThat( messages.poll( 1, TimeUnit.SECONDS ), notNullValue( TerminalMessage.class ) );

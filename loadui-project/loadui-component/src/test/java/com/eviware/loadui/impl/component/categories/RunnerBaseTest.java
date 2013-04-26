@@ -48,14 +48,16 @@ public class RunnerBaseTest
 	private ComponentItem component;
 	private InputTerminal triggerTerminal;
 	private OutputTerminal resultsTerminal;
+	private ComponentTestUtils ctu;
 
 	@Before
 	@SuppressWarnings( "unchecked" )
 	public void setup()
 	{
-		ComponentTestUtils.getDefaultBeanInjectorMocker();
+		ctu = new ComponentTestUtils();
+		ctu.getDefaultBeanInjectorMocker();
 
-		component = ComponentTestUtils.createComponentItem();
+		component = ctu.createComponentItem();
 		ComponentItem componentSpy = spy( component );
 		ComponentContext contextSpy = spy( component.getContext() );
 		doReturn( contextSpy ).when( componentSpy ).getContext();
@@ -88,7 +90,7 @@ public class RunnerBaseTest
 			}
 
 		};
-		ComponentTestUtils.setComponentBehavior( component, runnerBase );
+		ctu.setComponentBehavior( component, runnerBase );
 		contextSpy.setNonBlocking( true );
 		component = componentSpy;
 
@@ -99,8 +101,8 @@ public class RunnerBaseTest
 	@Test
 	public void shouldSampleOnIncomingMessage() throws InterruptedException
 	{
-		BlockingQueue<TerminalMessage> results = ComponentTestUtils.getMessagesFrom( resultsTerminal );
-		ComponentTestUtils.sendMessage( triggerTerminal,
+		BlockingQueue<TerminalMessage> results = ctu.getMessagesFrom( resultsTerminal );
+		ctu.sendMessage( triggerTerminal,
 				ImmutableMap.<String, Object> of( GeneratorCategory.TRIGGER_TIMESTAMP_MESSAGE_PARAM, 0 ) );
 
 		TerminalMessage message = results.poll( 5, TimeUnit.SECONDS );

@@ -36,22 +36,24 @@ public class GeneratorBaseTest
 {
 	private GeneratorBase generatorBase;
 	private ComponentItem component;
+	private ComponentTestUtils ctu;
 
 	@Before
 	public void setup()
 	{
-		ComponentTestUtils.getDefaultBeanInjectorMocker();
-		component = ComponentTestUtils.createComponentItem();
+		ctu = new ComponentTestUtils();
+		ctu.getDefaultBeanInjectorMocker();
+		component = ctu.createComponentItem();
 		generatorBase = new GeneratorBase( component.getContext() )
 		{
 		};
-		ComponentTestUtils.setComponentBehavior( component, generatorBase );
+		ctu.setComponentBehavior( component, generatorBase );
 	}
 
 	@Test
 	public void shouldSendTriggerMessages() throws InterruptedException, ExecutionException, TimeoutException
 	{
-		BlockingQueue<TerminalMessage> messages = ComponentTestUtils.getMessagesFrom( generatorBase.getTriggerTerminal() );
+		BlockingQueue<TerminalMessage> messages = ctu.getMessagesFrom( generatorBase.getTriggerTerminal() );
 		generatorBase.trigger();
 
 		assertThat(
@@ -76,7 +78,7 @@ public class GeneratorBaseTest
 	@Test
 	public void shouldNotSendTriggerMessagesWhenOff() throws InterruptedException, ExecutionException, TimeoutException
 	{
-		BlockingQueue<TerminalMessage> messages = ComponentTestUtils.getMessagesFrom( generatorBase.getTriggerTerminal() );
+		BlockingQueue<TerminalMessage> messages = ctu.getMessagesFrom( generatorBase.getTriggerTerminal() );
 
 		generatorBase.getStateProperty().setValue( false );
 

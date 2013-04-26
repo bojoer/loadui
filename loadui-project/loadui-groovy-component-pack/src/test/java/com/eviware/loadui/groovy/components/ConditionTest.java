@@ -23,7 +23,6 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.eviware.loadui.api.component.ComponentCreationException;
@@ -40,18 +39,15 @@ import com.google.common.collect.ImmutableMap;
 public class ConditionTest
 {
 	private ComponentItem component;
-
-	@BeforeClass
-	public static void classSetup()
-	{
-		GroovyComponentTestUtils.getDefaultBeanInjectorMocker();
-		GroovyComponentTestUtils.initialize( Joiner.on( File.separator ).join( "src", "main", "groovy" ) );
-	}
+	private GroovyComponentTestUtils ctu;
 
 	@Before
 	public void setup() throws ComponentCreationException
 	{
-		component = GroovyComponentTestUtils.createComponent( "Condition" );
+		ctu = new GroovyComponentTestUtils();
+		ctu.getDefaultBeanInjectorMocker();
+		ctu.initialize( Joiner.on( File.separator ).join( "src", "main", "groovy" ) );
+		component = ctu.createComponent( "Condition" );
 	}
 
 	@Test
@@ -76,18 +72,18 @@ public class ConditionTest
 		OutputTerminal trueTerminal = ( OutputTerminal )component.getTerminalByName( "trueOutput" );
 		OutputTerminal falseTerminal = ( OutputTerminal )component.getTerminalByName( "falseOutput" );
 
-		BlockingQueue<TerminalMessage> trueMessages = GroovyComponentTestUtils.getMessagesFrom( trueTerminal );
-		BlockingQueue<TerminalMessage> falseMessages = GroovyComponentTestUtils.getMessagesFrom( falseTerminal );
+		BlockingQueue<TerminalMessage> trueMessages = ctu.getMessagesFrom( trueTerminal );
+		BlockingQueue<TerminalMessage> falseMessages = ctu.getMessagesFrom( falseTerminal );
 
 		component.getProperty( "valueName" ).setValue( "TestValue" );
 		component.getProperty( "min" ).setValue( 5 );
 		component.getProperty( "max" ).setValue( 10 );
 
-		GroovyComponentTestUtils.sendMessage( incoming, ImmutableMap.of( "TestValue", 5 ) );
+		ctu.sendMessage( incoming, ImmutableMap.of( "TestValue", 5 ) );
 		TerminalMessage message = trueMessages.poll( 5, TimeUnit.SECONDS );
 		assertThat( message.get( "TestValue" ), is( ( Object )5 ) );
 
-		GroovyComponentTestUtils.sendMessage( incoming, ImmutableMap.of( "TestValue", 11 ) );
+		ctu.sendMessage( incoming, ImmutableMap.of( "TestValue", 11 ) );
 		message = falseMessages.poll( 5, TimeUnit.SECONDS );
 		assertThat( message.get( "TestValue" ), is( ( Object )11 ) );
 	}
@@ -99,18 +95,18 @@ public class ConditionTest
 		OutputTerminal trueTerminal = ( OutputTerminal )component.getTerminalByName( "trueOutput" );
 		OutputTerminal falseTerminal = ( OutputTerminal )component.getTerminalByName( "falseOutput" );
 
-		BlockingQueue<TerminalMessage> trueMessages = GroovyComponentTestUtils.getMessagesFrom( trueTerminal );
-		BlockingQueue<TerminalMessage> falseMessages = GroovyComponentTestUtils.getMessagesFrom( falseTerminal );
+		BlockingQueue<TerminalMessage> trueMessages = ctu.getMessagesFrom( trueTerminal );
+		BlockingQueue<TerminalMessage> falseMessages = ctu.getMessagesFrom( falseTerminal );
 
 		component.getProperty( "advancedMode" ).setValue( true );
 		component.getProperty( "condition" ).setValue( "TestValue == 7" );
 		TestUtils.awaitEvents( component );
 
-		GroovyComponentTestUtils.sendMessage( incoming, ImmutableMap.of( "TestValue", 7 ) );
+		ctu.sendMessage( incoming, ImmutableMap.of( "TestValue", 7 ) );
 		TerminalMessage message = trueMessages.poll( 5, TimeUnit.SECONDS );
 		assertThat( message.get( "TestValue" ), is( ( Object )7 ) );
 
-		GroovyComponentTestUtils.sendMessage( incoming, ImmutableMap.of( "ToastValue", 10 ) );
+		ctu.sendMessage( incoming, ImmutableMap.of( "ToastValue", 10 ) );
 		message = falseMessages.poll( 5, TimeUnit.SECONDS );
 		assertThat( message.get( "ToastValue" ), is( ( Object )10 ) );
 	}

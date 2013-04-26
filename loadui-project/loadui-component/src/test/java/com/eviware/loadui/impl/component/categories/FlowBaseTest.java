@@ -39,16 +39,18 @@ public class FlowBaseTest
 {
 	private FlowBase flowBase;
 	private ComponentItem component;
+	private ComponentTestUtils ctu;
 
 	@Before
 	public void setup()
 	{
-		ComponentTestUtils.getDefaultBeanInjectorMocker();
-		component = ComponentTestUtils.createComponentItem();
+		ctu = new ComponentTestUtils();
+		ctu.getDefaultBeanInjectorMocker();
+		component = ctu.createComponentItem();
 		flowBase = new FlowBase( component.getContext() )
 		{
 		};
-		ComponentTestUtils.setComponentBehavior( component, flowBase );
+		ctu.setComponentBehavior( component, flowBase );
 	}
 
 	@Test
@@ -104,7 +106,7 @@ public class FlowBaseTest
 	{
 		Map<String, Class<? extends Object>> signature = ImmutableMap.of( "A", Object.class, "B", String.class );
 
-		ComponentContext context = ComponentTestUtils.createComponentItem().getContext();
+		ComponentContext context = ctu.createComponentItem().getContext();
 		OutputTerminal otherOutput = context.createOutput( "output" );
 		context.setSignature( otherOutput, signature );
 
