@@ -40,7 +40,6 @@ public class GeneralSettings
 	private static final String DISABLE_SOAPUI_ASSERTIONS = "disableSoapuiAssertions";
 	private static final String CLOSE_CONNECTIONS_AFTER_REQUEST = "closeConnectionsAfterRequest";
 	private static final String TEST_CASE_ONLY = "TestCase only";
-	private static final String MAX_CONCURRENT_CONNECTIONS = "Max concurrent connection";
 	public static final String PROJECT_PASSWORD = "_projectPassword";
 	public static final String SETTINGS_FILE = "settingsFile";
 	public static final String OUTPUT_LEVEL = "OutputLevel";
@@ -62,7 +61,6 @@ public class GeneralSettings
 	private final Property<Boolean> outputTestCaseProperties;
 	private final Property<Boolean> closeConnections;
 	private final Property<Boolean> disableSoapUIAssertions;
-	private final Property<Integer> maxConcurrentConnections;
 
 	public static GeneralSettings newInstance( ComponentContext context, SoapUITestCaseRunner testCaseRunner )
 	{
@@ -81,7 +79,6 @@ public class GeneralSettings
 		outputLevel = context.createProperty( OUTPUT_LEVEL, String.class, TEST_CASE_ONLY );
 		closeConnections = context.createProperty( CLOSE_CONNECTIONS_AFTER_REQUEST, Boolean.class, false );
 		disableSoapUIAssertions = context.createProperty( DISABLE_SOAPUI_ASSERTIONS, Boolean.class, false );
-		maxConcurrentConnections = context.createProperty( MAX_CONCURRENT_CONNECTIONS, Integer.class, 100 );
 		context.addEventListener( PropertyEvent.class, new PropertyChangedHandler( testCaseRunner ) );
 	}
 
@@ -189,11 +186,6 @@ public class GeneralSettings
 				.put( PropertyLayoutComponentImpl.LABEL, "Disable all SoapUI assertions" ) //
 				.build() ) );
 
-		settingsLayoutTab.add( new PropertyLayoutComponentImpl<Integer>( ImmutableMap.<String, Object> builder() //
-				.put( PropertyLayoutComponentImpl.PROPERTY, maxConcurrentConnections ) //
-				.put( PropertyLayoutComponentImpl.LABEL, "Maximim concurrent connections" ) //
-				.build() ) );
-
 		return settingsLayoutTab;
 	}
 
@@ -236,8 +228,6 @@ public class GeneralSettings
 				log.debug( "Reload TestCase because disableSoapUIAssertions changed." );
 				testCaseRunner.reloadTestCase();
 			}
-
 		}
-
 	}
 }
