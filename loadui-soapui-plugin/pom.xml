@@ -219,6 +219,12 @@
 		</dependency>
 		<dependency>
 			<groupId>com.eviware.loadui</groupId>
+			<artifactId>loadui-fx-test-utils</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.eviware.loadui</groupId>
 			<artifactId>loadui-component</artifactId>
 			<version>${loadUIVersion}</version>
 			<type>test-jar</type>
@@ -517,7 +523,7 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.4</version>
+			<version>4.10</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>

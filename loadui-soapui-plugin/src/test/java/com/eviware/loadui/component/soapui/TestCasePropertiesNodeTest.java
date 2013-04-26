@@ -27,7 +27,7 @@ import com.eviware.soapui.impl.wsdl.testcase.WsdlTestCase;
 import com.eviware.soapui.model.ModelItem;
 import com.eviware.soapui.model.testsuite.TestProperty;
 
-public class TestCasePropertiesTest
+public class TestCasePropertiesNodeTest
 {
 	private List<TestProperty> testCaseProperties = new ArrayList<>();
 
@@ -65,6 +65,26 @@ public class TestCasePropertiesTest
 	{
 		WsdlTestCase testCase = mock( WsdlTestCase.class );
 		when( testCase.getPropertyList() ).thenReturn( testCaseProperties );
+
+		Mockito.doAnswer( new Answer<Void>()
+		{
+			@Override
+			public Void answer( InvocationOnMock invocation ) throws Throwable
+			{
+
+				for( TestProperty p : testCaseProperties )
+				{
+					if( p.getName().equals( invocation.getArguments()[0] ) )
+					{
+						p.setValue( ( String )invocation.getArguments()[1] );
+						return null;
+					}
+				}
+
+				return null;
+			}
+		} ).when( testCase ).setPropertyValue( Mockito.anyString(), Mockito.anyString() );
+
 		return testCase;
 	}
 
@@ -133,12 +153,9 @@ public class TestCasePropertiesTest
 	//	}
 
 	@Test
-	public void loadOverridingPropertiesTest()
+	public void OverridingTestCasePropertiesTest()
 	{
-		ComponentContext context = createContextMock();
 		WsdlTestCase testCase = createTestCaseMock();
-
-		TestCasePropertiesNode properties = new TestCasePropertiesNode();
 
 		Collection<Property<?>> overridingProperties = new ArrayList<>();
 
@@ -150,7 +167,8 @@ public class TestCasePropertiesTest
 				.add( new TestingProperty<String>( String.class, OVERRIDING_VALUE_PREFIX + "p5", "newValue5" ) );
 		overridingProperties.add( new TestingProperty<String>( String.class, "p2", "newValue" ) );
 
-		properties.loadOverridingProperties( testCase, overridingProperties );
+		System.out.println( testCase.getPropertyList().size() );
+		TestCasePropertiesNode.overrideTestCaseProperties( testCase, overridingProperties );
 
 		List<TestProperty> data = testCase.getPropertyList();
 
@@ -170,85 +188,4 @@ public class TestCasePropertiesTest
 		assertEquals( "newValue5", data.get( 4 ).getValue() );
 	}
 
-	private class TestTestProperty implements TestProperty
-	{
-
-		private String name;
-		private String value;
-
-		public TestTestProperty( String name, String value )
-		{
-			this.name = name;
-			this.value = value;
-
-		}
-
-		@Override
-		public String getDefaultValue()
-		{
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		@Override
-		public String getDescription()
-		{
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		@Override
-		public ModelItem getModelItem()
-		{
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		@Override
-		public String getName()
-		{
-			return name;
-		}
-
-		@Override
-		public SchemaType getSchemaType()
-		{
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		@Override
-		public QName getType()
-		{
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		@Override
-		public String getValue()
-		{
-			return value;
-		}
-
-		@Override
-		public boolean isReadOnly()
-		{
-			// TODO Auto-generated method stub
-			return false;
-		}
-
-		@Override
-		public boolean isRequestPart()
-		{
-			// TODO Auto-generated method stub
-			return false;
-		}
-
-		@Override
-		public void setValue( String value )
-		{
-			this.value = value;
-		}
-
-	}
 }

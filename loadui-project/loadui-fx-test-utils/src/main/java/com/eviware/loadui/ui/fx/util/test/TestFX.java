@@ -431,13 +431,19 @@ public class TestFX
 
 	public TestFX type( char character )
 	{
-		KeyCode[] modifiers = Character.isUpperCase( character ) ? new KeyCode[] { KeyCode.SHIFT } : new KeyCode[0];
-
 		KeyCode keyCode = findKeyCode( character );
-
-		press( modifiers );
-		type( keyCode );
-		return release( modifiers );
+		
+		if(!Character.isUpperCase( character ))
+		{
+			return type( keyCode );
+		}
+		else
+		{
+			KeyCode[] modifiers =  new KeyCode[] { KeyCode.SHIFT };	
+			press( modifiers );
+			type( keyCode );
+			return release( modifiers );
+		}
 	}
 
 	public TestFX type( KeyCode... keys )

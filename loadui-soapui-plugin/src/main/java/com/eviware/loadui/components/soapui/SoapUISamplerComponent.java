@@ -391,7 +391,7 @@ public class SoapUISamplerComponent extends RunnerBase
 				"align top", "" );
 
 		HashMap<String, Callable<Node>> nodeMap = new HashMap<>();
-		nodeMap.put( "component", TestCasePropertiesNode.createTableView( this ) );
+		nodeMap.put( "component", TestCasePropertiesNode.createTableView( this, context ) );
 
 		settingsTestCaseTab.add( new LayoutComponentImpl( nodeMap ) );
 
@@ -726,7 +726,8 @@ public class SoapUISamplerComponent extends RunnerBase
 			{
 				testCase = getTestCase();
 				testCaseRevisions.put( testCase, testCaseRevisionCount );
-				//				testCasePropertiesNode.overrideTestCaseProperties( testCase, triggerMessage );
+				TestCasePropertiesNode.overrideTestCaseProperties( testCase, getContext().getProperties() );
+				TestCasePropertiesNode.overrideTestCaseProperties( testCase, triggerMessage );
 				testCase.addTestRunListener( testStepNotifier );
 
 				//Use existing context if available
