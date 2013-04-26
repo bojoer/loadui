@@ -17,10 +17,10 @@ package com.eviware.loadui.util.component;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
@@ -76,7 +76,7 @@ public class ComponentTestUtils
 		when( outputDummy.getTerminalHolder() ).thenReturn( dummyComponent );
 	}
 
-	public static BeanInjectorMocker getDefaultBeanInjectorMocker()
+	public BeanInjectorMocker getDefaultBeanInjectorMocker()
 	{
 		return new BeanInjectorMocker().put( ConversionService.class, new DefaultConversionService() )
 				.put( ExecutorService.class, Executors.newCachedThreadPool() )
@@ -84,8 +84,7 @@ public class ComponentTestUtils
 				.put( AddressableRegistry.class, new AddressableRegistryImpl() );
 	}
 
-	@SuppressWarnings( "rawtypes" )
-	public static ComponentItem createComponentItem()
+	public ComponentItem createComponentItem()
 	{
 		WorkspaceItem workspace = mock( WorkspaceItem.class );
 		ProjectItem project = mock( ProjectItem.class );
@@ -114,13 +113,13 @@ public class ComponentTestUtils
 						return connect( output, input );
 					}
 				} );
-		when( ( Collection )project.getConnections() ).thenReturn( connections );
+		doReturn( connections ).when( project ).getConnections();
 
 		ComponentItemImpl component = ComponentItemImpl.newInstance( project, ComponentItemConfig.Factory.newInstance() );
 		return component;
 	}
 
-	public static void setComponentBehavior( ComponentItem component, ComponentBehavior behavior )
+	public void setComponentBehavior( ComponentItem component, ComponentBehavior behavior )
 	{
 		if( component instanceof ComponentItemImpl )
 		{
@@ -128,7 +127,7 @@ public class ComponentTestUtils
 		}
 	}
 
-	public static void sendMessage( InputTerminal terminal, Map<String, ?> message )
+	public void sendMessage( InputTerminal terminal, Map<String, ?> message )
 	{
 		ComponentItem component = ( ComponentItem )terminal.getTerminalHolder();
 		TerminalMessageImpl terminalMessage = new TerminalMessageImpl( BeanInjector.getBean( ConversionService.class ) );
@@ -158,7 +157,7 @@ public class ComponentTestUtils
 		}
 	}
 
-	public static BlockingQueue<TerminalMessage> getMessagesFrom( OutputTerminal terminal )
+	public BlockingQueue<TerminalMessage> getMessagesFrom( OutputTerminal terminal )
 	{
 		LinkedBlockingQueue<TerminalMessage> queue = new LinkedBlockingQueue<>();
 		terminal.addEventListener( TerminalMessageEvent.class, new MessageListener( queue ) );
@@ -166,26 +165,22 @@ public class ComponentTestUtils
 		return queue;
 	}
 
-	private static Connection connect( OutputTerminal output, InputTerminal input )
+	private Connection connect( OutputTerminal output, InputTerminal input )
 	{
 		ConnectionImpl connection = new ConnectionImpl( output, input );
 		connections.add( connection );
 
 		if( output instanceof OutputTerminalImpl )
 		{
+			output.addEventListener( TerminalConnectionEvent.class, connection );
+			output.fireEvent( new TerminalConnectionEvent( connection, output, input,
+					TerminalConnectionEvent.Event.CONNECT ) );
+
 			try
 			{
 				TestUtils.awaitEvents( output );
 			}
-			catch( InterruptedException e )
-			{
-				e.printStackTrace();
-			}
-			catch( ExecutionException e )
-			{
-				e.printStackTrace();
-			}
-			catch( TimeoutException e )
+			catch( Exception e )
 			{
 				e.printStackTrace();
 			}
@@ -194,7 +189,7 @@ public class ComponentTestUtils
 		return connection;
 	}
 
-	private static class MessageListener implements EventHandler<TerminalMessageEvent>
+	private class MessageListener implements EventHandler<TerminalMessageEvent>
 	{
 		private final BlockingQueue<TerminalMessage> queue;
 
@@ -210,17 +205,11 @@ public class ComponentTestUtils
 		}
 	}
 
-	private static class ConnectionImpl extends ConnectionBase implements EventHandler<TerminalConnectionEvent>
+	private class ConnectionImpl extends ConnectionBase implements EventHandler<TerminalConnectionEvent>
 	{
 		private ConnectionImpl( OutputTerminal output, InputTerminal input )
 		{
 			super( output, input );
-
-			if( output instanceof OutputTerminalImpl )
-			{
-				output.addEventListener( TerminalConnectionEvent.class, this );
-				output.fireEvent( new TerminalConnectionEvent( this, output, input, TerminalConnectionEvent.Event.CONNECT ) );
-			}
 		}
 
 		@Override
