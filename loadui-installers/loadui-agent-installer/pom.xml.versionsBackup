@@ -3,15 +3,12 @@
 	<parent>
 		<artifactId>loadui-installers</artifactId>
 		<groupId>com.eviware.loadui</groupId>
-		<version>2.5.4-SNAPSHOT</version>
+		<version>2.5.2-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>loadui-pro-controller-installer</artifactId>
+	<artifactId>loadui-agent-installer</artifactId>
 	<packaging>pom</packaging>
-	<name>loadUI Pro Controller Installer</name>
-	<properties>
-		<loadui.name>loadUI Pro</loadui.name>
-	</properties>
+	<name>loadUI Agent Installer</name>
 	<build>
 		<plugins>
 			<plugin>
@@ -26,13 +23,9 @@
 							<goal>copy-resources</goal>
 						</goals>
 						<configuration>
-							<overwrite>true</overwrite>
 							<resources>
 								<resource>
 									<directory>${project.parent.basedir}/src/main/resources</directory>
-								</resource>
-								<resource>
-									<directory>${project.parent.basedir}/loadui-controller-installer/src/main/resources</directory>
 								</resource>
 								<resource>
 									<directory>src/main/resources</directory>
@@ -56,9 +49,6 @@
 							<resources>
 								<resource>
 									<directory>${project.parent.basedir}/src/main/install4j_resources</directory>
-								</resource>
-								<resource>
-									<directory>${project.parent.basedir}/loadui-controller-installer/src/main/install4j_resources</directory>
 								</resource>
 								<resource>
 									<directory>src/main/install4j_resources</directory>
@@ -87,13 +77,13 @@
 				<artifactId>maven-install4j-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>install-pro-controller</id>
+						<id>install-agent</id>
 						<phase>package</phase>
 						<goals>
 							<goal>compile</goal>
 						</goals>
 						<configuration>
-							<configFile>"${project.basedir}/src/main/install4j/loadUI-pro-controller.install4j"</configFile>
+							<configFile>"${project.basedir}/src/main/install4j/loadUI-agent.install4j"</configFile>
 						</configuration>
 					</execution>
 				</executions>
@@ -103,21 +93,9 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.eviware.loadui.pro</groupId>
-			<artifactId>loadui-pro-controller-deps</artifactId>
+			<artifactId>loadui-pro-agent-deps</artifactId>
 			<version>${project.parent.version}</version>
 			<type>pom</type>
-		</dependency>
-		<dependency>
-			<groupId>com.eviware.loadui</groupId>
-			<artifactId>loadui-groovy-component-pack</artifactId>
-			<version>${project.parent.version}</version>
-			<type>jar</type>
-		</dependency>
-		<dependency>
-			<groupId>com.eviware.loadui.pro</groupId>
-			<artifactId>loadui-pro-groovy-monitor-pack</artifactId>
-			<version>${project.parent.version}</version>
-			<type>jar</type>
 		</dependency>
 	</dependencies>
 </project>

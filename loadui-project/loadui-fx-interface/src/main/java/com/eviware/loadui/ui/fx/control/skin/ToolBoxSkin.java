@@ -264,7 +264,7 @@ public class ToolBoxSkin<E extends Node> extends SkinBase<ToolBox<E>, BehaviorBa
 			setLeft( itemHolder );
 
 			expanderButton = ButtonBuilder.create().build();
-			expanderButton.getStyleClass().addAll( "expander-button", "toolbar-button", "styleable-graphic" );
+			expanderButton.getStyleClass().addAll( "expander-button", "toolbar-button" );
 			expanderButton.disableProperty().bind( Bindings.size( categoryItems ).lessThan( 2 ) );
 
 			maxHeightProperty().bind(
