@@ -1,0 +1,57 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<parent>
+		<artifactId>loadui-project</artifactId>
+		<groupId>com.eviware.loadui</groupId>
+		<version>2.5.2-SNAPSHOT</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>loadui-groovy-utils</artifactId>
+	<packaging>bundle</packaging>
+	<name>loadUI Groovy Utils</name>
+	<description>Support classes for creating Groovy DSLs</description>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<version>${mavenBundlePluginVersion}</version>
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<Export-Package>com.eviware.loadui.util.groovy.*</Export-Package>
+						<Import-Package>!com.eviware.loadui.util.groovy.*;*</Import-Package>
+						<Embed-Dependency>*;scope=provided</Embed-Dependency>
+					</instructions>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	<dependencies>
+		<dependency>
+			<groupId>com.eviware.loadui</groupId>
+			<artifactId>loadui-api</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.eviware.loadui</groupId>
+			<artifactId>loadui-layout</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.eviware.loadui</groupId>
+			<artifactId>loadui-utils</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.groovy</groupId>
+			<artifactId>groovy-all</artifactId>
+			<version>${groovyVersion}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.ant</groupId>
+			<artifactId>com.springsource.org.apache.ivy</artifactId>
+			<version>2.2.0</version>
+		</dependency>
+	</dependencies>
+</project>

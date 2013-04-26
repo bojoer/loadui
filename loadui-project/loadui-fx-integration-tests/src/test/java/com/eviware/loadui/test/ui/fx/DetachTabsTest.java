@@ -118,6 +118,7 @@ public class DetachTabsTest
 	public static void cleanup()
 	{
 		controller = null;
+		ProjectLoadedWithoutAgentsState.STATE.getParent().enter();
 	}
 
 }

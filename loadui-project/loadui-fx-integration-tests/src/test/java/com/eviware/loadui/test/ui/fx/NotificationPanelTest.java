@@ -29,6 +29,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -51,7 +52,14 @@ public class NotificationPanelTest
 	@BeforeClass
 	public static void enterState() throws Exception
 	{
+		ProjectLoadedWithoutAgentsState.STATE.enter();
 		controller = GUI.getController();
+	}
+	
+	@AfterClass
+	public static void cleanup() {
+		controller = null;
+		ProjectLoadedWithoutAgentsState.STATE.getParent().enter();
 	}
 	
 	@Test
@@ -233,6 +241,9 @@ public class NotificationPanelTest
 
 		// inspector view is opened!
 		assertTrue( ( ( Region )inspectorView ).getHeight() > 150 );
+		
+		// hide the inspector view so it won't break other tests
+		controller.move( "#Assertions" ).moveBy( 400, 0 ).doubleClick();
 
 		controller.click( "#hide-notification-panel" ).sleep( 1000 );
 

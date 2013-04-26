@@ -18,7 +18,6 @@ package com.eviware.loadui.ui.fx.views.analysis.linechart;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
-import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -89,12 +88,13 @@ public class LineChartViewNode extends VBox
 	private ToggleButton followCheckBox;
 
 	@FXML
-	private HBox titleBox; 
-	
-	public LineChartViewNode( final ObservableValue<Execution> currentExecution, final LineChartView chartView, Observable poll )
+	private HBox titleBox;
+
+	public LineChartViewNode( final ObservableValue<Execution> currentExecution, final LineChartView chartView,
+			Observable poll )
 	{
 		log.debug( "new LineChartViewNode created! " );
-		
+
 		NonSingletonFactory nonSingletonFactory = getNonSingletonFactory();
 		executionChart = nonSingletonFactory.createExecutionChart( chartView );
 
@@ -123,24 +123,12 @@ public class LineChartViewNode extends VBox
 
 		loadAttributes();
 
-		Platform.runLater( new Runnable(){
-			@Override
-			public void run()
-			{
-				for(String styleClass : getParent().getStyleClass()){
-					if(styleClass.compareTo( "sub-chart-group" ) == 0){
-						Label title = LabelBuilder.create().build();
-						title.textProperty().bind( Properties.forLabel( chartView ) ); 
-						titleBox.getChildren().add( title );	
-					}
-				}
-			}
-		});
-		
+		loadTitleForSubcharts();
+
 		chartContainer.getChildren().add( executionChart.getNode() );
 
 		executionChart.setChartProperties( currentExecution, poll );
-	
+
 		executionChart.titleProperty().bind( Properties.forLabel( chartView ) );
 
 		zoomMenuButton.selectedProperty().addListener( new ChangeListener<ZoomLevel>()
@@ -164,6 +152,26 @@ public class LineChartViewNode extends VBox
 		followCheckBox.setDisable( !TestExecutionUtils.isExecutionRunning() );
 		followCheckBox.selectedProperty().bindBidirectional( executionChart.scrollbarFollowStateProperty() );
 
+	}
+	
+	private void loadTitleForSubcharts(){
+		Platform.runLater( new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				for( String styleClass : getParent().getStyleClass() )
+				{
+					if( styleClass.compareTo( "sub-chart-group" ) == 0 )
+					{
+						Label title = LabelBuilder.create().build();
+						title.textProperty().bind( Properties.forLabel( chartView ) );
+						titleBox.getChildren().add( title );
+						break;
+					}
+				}
+			}
+		} );
 	}
 
 	private void loadAttributes()

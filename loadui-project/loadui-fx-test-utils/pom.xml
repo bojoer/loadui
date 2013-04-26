@@ -1,79 +1,97 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<parent>
-		<artifactId>loadui-project</artifactId>
-		<groupId>com.eviware.loadui</groupId>
-		<version>2.5.2-SNAPSHOT</version>
-		<relativePath>..</relativePath>
-	</parent>
-	<modelVersion>4.0.0</modelVersion>
-	<artifactId>loadui-fx-test-utils</artifactId>
-	<packaging>bundle</packaging>
-	<name>loadUI JavaFX Test Utils</name>
-	<description>loadUI test utils for JavaFX 2</description>
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.felix</groupId>
-				<artifactId>maven-bundle-plugin</artifactId>
-				<version>${mavenBundlePluginVersion}</version>
-				<extensions>true</extensions>
-				<configuration>
-					<instructions>
-						<Bundle-Activator>com.eviware.loadui.ui.fx.util.test.ScriptRunnerBundleActivator</Bundle-Activator>
-						<Export-Package>com.eviware.loadui.ui.fx.util.test</Export-Package>
-						<Import-Package>!com.eviware.loadui.launcher,!com.eviware.loadui.test,!org.hamcrest,!org.junit,!org.mockito*,*</Import-Package>
-						<Embed-Dependency>*;scope=provided</Embed-Dependency>
-						<!-- <Import-Package>*;javafx.*</Import-Package> -->
-					</instructions>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<configuration>
-					<excludedGroups>com.eviware.loadui.test.categories.GUITest</excludedGroups>
-				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-failsafe-plugin</artifactId>
-				<configuration>
-					<forkMode>always</forkMode>
-					<groups>com.eviware.loadui.test.categories.GUITest</groups>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
-	<dependencies>
-		<dependency>
-			<groupId>com.oracle</groupId>
-			<artifactId>javafx-runtime</artifactId>
-			<version>2.2</version>
-			<systemPath>${env.JAVA_HOME}/jre/lib/jfxrt.jar</systemPath>
-			<scope>system</scope>
-		</dependency>
-		<!-- <dependency> <groupId>scenic-view</groupId> <artifactId>scenic-view</artifactId> 
-			<version>1.0</version> <scope>provided</scope> </dependency> -->
-		<dependency>
-			<groupId>com.eviware.loadui</groupId>
-			<artifactId>loadui-utils</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.eviware.loadui</groupId>
-			<artifactId>loadui-test-utils</artifactId>
-			<version>${project.version}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.codehaus.groovy</groupId>
-			<artifactId>groovy-all</artifactId>
-			<version>${groovyVersion}</version>
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.10</version>
-		</dependency>
-	</dependencies>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>loadui-project</artifactId>
+        <groupId>com.eviware.loadui</groupId>
+        <version>2.5.4-SNAPSHOT</version>
+        <relativePath>..</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>loadui-fx-test-utils</artifactId>
+    <packaging>bundle</packaging>
+    <name>loadUI JavaFX Test Utils</name>
+    <description>loadUI test utils for JavaFX 2</description>
+
+    <profiles>
+        <profile>
+            <id>gui-tests</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <version>2.14.1</version>
+                        <configuration>
+                            <forkMode>always</forkMode>
+                            <groups>com.eviware.loadui.test.categories.GUITest</groups>
+                            <failIfNoTests>false</failIfNoTests>
+                            <testFailureIgnore>false</testFailureIgnore>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>${mavenBundlePluginVersion}</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Bundle-Activator>com.eviware.loadui.ui.fx.util.test.ScriptRunnerBundleActivator
+                        </Bundle-Activator>
+                        <Export-Package>com.eviware.loadui.ui.fx.util.test</Export-Package>
+                        <Import-Package>
+                            !com.eviware.loadui.launcher,!com.eviware.loadui.test,!org.hamcrest,!org.junit,!org.mockito*,*
+                        </Import-Package>
+                        <Embed-Dependency>*;scope=provided</Embed-Dependency>
+                        <!-- <Import-Package>*;javafx.*</Import-Package> -->
+                    </instructions>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.14.1</version>
+                <configuration>
+                    <excludedGroups>com.eviware.loadui.test.categories.GUITest</excludedGroups>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <dependencies>
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>javafx-runtime</artifactId>
+            <version>2.2</version>
+            <systemPath>${env.JAVA_HOME}/jre/lib/jfxrt.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+        <!-- <dependency> <groupId>scenic-view</groupId> <artifactId>scenic-view</artifactId>
+            <version>1.0</version> <scope>provided</scope> </dependency> -->
+        <dependency>
+            <groupId>com.eviware.loadui</groupId>
+            <artifactId>loadui-utils</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.eviware.loadui</groupId>
+            <artifactId>loadui-test-utils</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-all</artifactId>
+            <version>${groovyVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.10</version>
+        </dependency>
+    </dependencies>
 </project>

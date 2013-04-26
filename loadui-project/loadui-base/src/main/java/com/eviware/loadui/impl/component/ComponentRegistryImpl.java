@@ -91,7 +91,7 @@ public class ComponentRegistryImpl implements ComponentRegistry, BundleContextAw
 	{
 		for( ComponentDescriptor cd : getDescriptors() )
 		{
-			if( cd.getLabel().equals( label ) )
+			if( cd.getLabel().equalsIgnoreCase( label ) )
 				return cd;
 		}
 		return null;

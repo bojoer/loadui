@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import com.eviware.loadui.test.categories.GUITest;
 import javafx.application.Application;
 import javafx.beans.Observable;
 import javafx.beans.value.ObservableValue;
@@ -32,6 +33,7 @@ import javafx.scene.SceneBuilder;
 import javafx.stage.Stage;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.eviware.loadui.api.addressable.Addressable;
@@ -51,7 +53,10 @@ import com.eviware.loadui.ui.fx.util.test.TestFX;
 import com.eviware.loadui.util.test.BeanInjectorMocker;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.SettableFuture;
+import org.junit.experimental.categories.Category;
 
+@Ignore
+@Category( GUITest.class )
 public class ChartGroupViewTest
 {
 

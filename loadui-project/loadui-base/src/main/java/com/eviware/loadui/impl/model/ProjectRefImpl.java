@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.EventObject;
 
+import javax.annotation.Nonnull;
+
 import org.apache.xmlbeans.XmlException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +49,8 @@ public final class ProjectRefImpl implements ProjectRef, Releasable
 	private final AttributeHolderSupport attributeHolderSupport;
 	private final File projectFile;
 	private volatile ProjectItem project;
-	private String label;
+	@Nonnull
+	private String label = "";
 	// With the current UI, we do not wish to autoload projects at startup, so do
 	// not save the enabled state as true, ever.
 	private boolean enabled = false;

@@ -20,9 +20,9 @@
  * @name Geb Runner
  * @category runners
  * @id com.eviware.GebRunner
- * @dependency htmlunit:htmlunit:1.14
- * @dependency org.gebish:geb-core:0.9.0
- * @dependency org.seleniumhq.selenium:selenium-htmlunit-driver:2.31.0
+ * @dependency net.sourceforge.htmlunit:htmlunit:2.9
+ * @dependency org.codehaus.geb:geb-core:0.7.2
+ * @dependency org.seleniumhq.selenium:selenium-htmlunit-driver:2.4.0
  */
  
 import com.eviware.loadui.impl.component.categories.RunnerBase.SampleCancelledException
