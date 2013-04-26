@@ -21,7 +21,6 @@ import static org.junit.Assert.assertThat;
 import java.io.File;
 
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.eviware.loadui.api.component.ComponentCreationException;
@@ -35,18 +34,15 @@ import com.google.common.base.Joiner;
 public class TableLogTest
 {
 	private ComponentItem component;
-
-	@BeforeClass
-	public static void classSetup()
-	{
-		GroovyComponentTestUtils.initialize( Joiner.on( File.separator ).join( "src", "main", "groovy" ) );
-	}
-
+	private GroovyComponentTestUtils ctu;
+	
 	@Before
 	public void setup() throws ComponentCreationException
 	{
-		GroovyComponentTestUtils.getDefaultBeanInjectorMocker();
-		component = GroovyComponentTestUtils.createComponent( "Table Log" );
+		ctu = new GroovyComponentTestUtils();
+		ctu.initialize( Joiner.on( File.separator ).join( "src", "main", "groovy" ) );
+		ctu.getDefaultBeanInjectorMocker();
+		component = ctu.createComponent( "Table Log" );
 	}
 
 	@Test

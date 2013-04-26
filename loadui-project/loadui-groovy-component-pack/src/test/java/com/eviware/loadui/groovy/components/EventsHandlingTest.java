@@ -15,38 +15,40 @@
  */
 package com.eviware.loadui.groovy.components;
 
-import com.eviware.loadui.api.component.ComponentCreationException;
-import com.eviware.loadui.api.model.ComponentItem;
-import com.eviware.loadui.groovy.util.GroovyComponentTestUtils;
-import com.eviware.loadui.util.test.TestUtils;
-import com.google.common.base.Joiner;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 import java.io.File;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import org.junit.Before;
+import org.junit.Test;
+
+import com.eviware.loadui.api.component.ComponentCreationException;
+import com.eviware.loadui.api.model.ComponentItem;
+import com.eviware.loadui.groovy.util.GroovyComponentTestUtils;
+import com.eviware.loadui.util.test.TestUtils;
+import com.google.common.base.Joiner;
 
 public class EventsHandlingTest
 {
 
 	private ComponentItem component;
+	private GroovyComponentTestUtils ctu;
 
-	@BeforeClass
-	public static void classSetup()
+	@Before
+	public void classSetup()
 	{
-		GroovyComponentTestUtils.initialize( Joiner.on( File.separator ).join( "src", "main", "groovy" ) );
+		ctu = new GroovyComponentTestUtils();
+		ctu.initialize( Joiner.on( File.separator ).join( "src", "main", "groovy" ) );
 	}
 
 	@Before
 	public void setup() throws ComponentCreationException
 	{
-		GroovyComponentTestUtils.getDefaultBeanInjectorMocker();
-		component = GroovyComponentTestUtils.createComponent( "Splitter" );
+		ctu.getDefaultBeanInjectorMocker();
+		component = ctu.createComponent( "Splitter" );
 	}
 
 	@Test
