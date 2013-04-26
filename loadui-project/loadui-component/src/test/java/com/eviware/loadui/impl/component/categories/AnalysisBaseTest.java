@@ -36,12 +36,14 @@ public class AnalysisBaseTest
 	private BlockingQueue<TerminalMessage> analyzedMessages = new LinkedBlockingQueue<>();
 	private AnalysisBase analysisBase;
 	private ComponentItem component;
+	private ComponentTestUtils ctu;
 
 	@Before
 	public void setup()
 	{
-		ComponentTestUtils.getDefaultBeanInjectorMocker();
-		component = ComponentTestUtils.createComponentItem();
+		ctu = new ComponentTestUtils();
+		ctu.getDefaultBeanInjectorMocker();
+		component = ctu.createComponentItem();
 		analysisBase = new AnalysisBase( component.getContext() )
 		{
 			@Override
@@ -50,7 +52,7 @@ public class AnalysisBaseTest
 				analyzedMessages.add( message );
 			}
 		};
-		ComponentTestUtils.setComponentBehavior( component, analysisBase );
+		ctu.setComponentBehavior( component, analysisBase );
 	}
 
 	@Test
@@ -58,7 +60,7 @@ public class AnalysisBaseTest
 	{
 		InputTerminal input = analysisBase.getInputTerminal();
 
-		ComponentTestUtils.sendMessage( input, ImmutableMap.<String, Object> of( "Key", "Value" ) );
+		ctu.sendMessage( input, ImmutableMap.<String, Object> of( "Key", "Value" ) );
 
 		TerminalMessage message = analyzedMessages.poll( 5, TimeUnit.SECONDS );
 		assertThat( message.get( "Key" ), is( ( Object )"Value" ) );

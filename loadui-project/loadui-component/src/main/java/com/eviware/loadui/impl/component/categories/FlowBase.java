@@ -183,8 +183,9 @@ public abstract class FlowBase extends BaseCategory implements FlowCategory
 
 	protected void updateSignature()
 	{
+		System.out.println("Will do connections: " + incomingTerminal.getConnections());
 		Map<String, Class<?>> newSig = new HashMap<>();
-		for( Connection connection : new ArrayList<>( incomingTerminal.getConnections() ) )
+		for( Connection connection : incomingTerminal.getConnections() )
 			for( Entry<String, Class<?>> entry : connection.getOutputTerminal().getMessageSignature().entrySet() )
 				newSig.put( entry.getKey(), entry.getValue() );
 		inputSignature = newSig;

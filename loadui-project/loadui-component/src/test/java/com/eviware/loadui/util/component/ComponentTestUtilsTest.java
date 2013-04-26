@@ -26,6 +26,7 @@ import static org.mockito.Mockito.when;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.convert.support.DefaultConversionService;
 
@@ -43,17 +44,24 @@ import com.google.common.collect.ImmutableMap;
 
 public class ComponentTestUtilsTest
 {
+	private ComponentTestUtils ctu;
+	
+	@Before
+	public void setup() {
+		ctu = new ComponentTestUtils();
+	}
+	
 	@Test
 	public void shouldReturnBeanInjectorMocker()
 	{
-		assertThat( ComponentTestUtils.getDefaultBeanInjectorMocker(), is( BeanInjectorMocker.class ) );
+		assertThat( ctu.getDefaultBeanInjectorMocker(), is( BeanInjectorMocker.class ) );
 	}
 
 	@Test
 	public void shouldCreateComponentItem()
 	{
-		ComponentTestUtils.getDefaultBeanInjectorMocker();
-		ComponentItem component = ComponentTestUtils.createComponentItem();
+		ctu.getDefaultBeanInjectorMocker();
+		ComponentItem component = ctu.createComponentItem();
 		assertNotNull( component.getContext() );
 	}
 
@@ -64,7 +72,7 @@ public class ComponentTestUtilsTest
 		InputTerminal terminal = mock( InputTerminal.class );
 		when( terminal.getTerminalHolder() ).thenReturn( component );
 
-		ComponentTestUtils.sendMessage( terminal, ImmutableMap.of( "Test", "Test" ) );
+		ctu.sendMessage( terminal, ImmutableMap.of( "Test", "Test" ) );
 
 		verify( component ).handleTerminalEvent( any( InputTerminal.class ), any( TerminalEvent.class ) );
 	}
@@ -73,7 +81,7 @@ public class ComponentTestUtilsTest
 	public void shouldGetMessagesFromTerminal() throws InterruptedException
 	{
 		OutputTerminal terminal = new OutputTerminalImpl( mock( TerminalHolder.class ), "output", "output", "output" );
-		BlockingQueue<TerminalMessage> messages = ComponentTestUtils.getMessagesFrom( terminal );
+		BlockingQueue<TerminalMessage> messages = ctu.getMessagesFrom( terminal );
 
 		TerminalMessageImpl terminalMessage = new TerminalMessageImpl( new DefaultConversionService() );
 		terminalMessage.put( "Test", "TestValue" );

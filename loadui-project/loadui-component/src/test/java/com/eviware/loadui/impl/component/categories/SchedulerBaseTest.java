@@ -36,22 +36,24 @@ public class SchedulerBaseTest
 {
 	private SchedulerBase schedulerBase;
 	private ComponentItem component;
+	private ComponentTestUtils ctu;
 
 	@Before
 	public void setup()
 	{
-		ComponentTestUtils.getDefaultBeanInjectorMocker();
-		component = ComponentTestUtils.createComponentItem();
+		ctu = new ComponentTestUtils();
+		ctu.getDefaultBeanInjectorMocker();
+		component = ctu.createComponentItem();
 		schedulerBase = new SchedulerBase( component.getContext() )
 		{
 		};
-		ComponentTestUtils.setComponentBehavior( component, schedulerBase );
+		ctu.setComponentBehavior( component, schedulerBase );
 	}
 
 	@Test
 	public void shouldSendTriggerMessages() throws InterruptedException, ExecutionException, TimeoutException
 	{
-		BlockingQueue<TerminalMessage> messages = ComponentTestUtils.getMessagesFrom( schedulerBase.getOutputTerminal() );
+		BlockingQueue<TerminalMessage> messages = ctu.getMessagesFrom( schedulerBase.getOutputTerminal() );
 		schedulerBase.sendEnabled( true );
 
 		assertThat( messages.poll( 1, TimeUnit.SECONDS ).get( OnOffCategory.ENABLED_MESSAGE_PARAM ), is( ( Object )true ) );
@@ -71,7 +73,7 @@ public class SchedulerBaseTest
 		schedulerBase.getStateProperty().setValue( false );
 		TestUtils.awaitEvents( component );
 
-		BlockingQueue<TerminalMessage> messages = ComponentTestUtils.getMessagesFrom( schedulerBase.getOutputTerminal() );
+		BlockingQueue<TerminalMessage> messages = ctu.getMessagesFrom( schedulerBase.getOutputTerminal() );
 		schedulerBase.sendEnabled( true );
 		schedulerBase.sendEnabled( false );
 

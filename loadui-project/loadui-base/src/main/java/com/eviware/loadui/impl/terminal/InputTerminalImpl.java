@@ -40,12 +40,14 @@ public class InputTerminalImpl extends TerminalImpl implements InputTerminal
 	@Override
 	public Collection<Connection> getConnections()
 	{
+		
 		Set<Connection> connections = new HashSet<>();
 		CanvasItem canvas = getTerminalHolder().getCanvas();
+		System.out.println("Building connections for input terminal, canvas connections: " + canvas.getConnections());
 		for( Connection connection : new ArrayList<>( canvas.getConnections() ) )
 			if( connection.getInputTerminal() == this )
 				connections.add( connection );
-
+		System.out.println("Canvas is instanceof SceneItem ? " + (canvas instanceof SceneItem));
 		if( canvas instanceof SceneItem && canvas.getProject() != null )
 			for( Connection connection : new ArrayList<>( canvas.getProject().getConnections() ) )
 				if( connection.getInputTerminal() == this )

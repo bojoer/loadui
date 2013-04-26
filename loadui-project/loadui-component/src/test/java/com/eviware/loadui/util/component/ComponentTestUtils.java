@@ -19,10 +19,13 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doReturn;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
@@ -65,18 +68,17 @@ import com.eviware.loadui.util.test.TestUtils;
 
 public class ComponentTestUtils
 {
-	private static final ComponentItem dummyComponent = mock( ComponentItem.class );
-	private static final OutputTerminal outputDummy = mock( OutputTerminal.class );
-	private static final Set<ConnectionImpl> connections = Collections.synchronizedSet( new HashSet<ConnectionImpl>() );
+	private final ComponentItem dummyComponent = mock( ComponentItem.class );
+	private final OutputTerminal outputDummy = mock( OutputTerminal.class );
+	private final Collection<Connection> connections = new HashSet<>();
 
-	static
 	{
 		System.setProperty( LoadUI.INSTANCE, LoadUI.CONTROLLER );
 
 		when( outputDummy.getTerminalHolder() ).thenReturn( dummyComponent );
 	}
 
-	public static BeanInjectorMocker getDefaultBeanInjectorMocker()
+	public BeanInjectorMocker getDefaultBeanInjectorMocker()
 	{
 		return new BeanInjectorMocker().put( ConversionService.class, new DefaultConversionService() )
 				.put( ExecutorService.class, Executors.newCachedThreadPool() )
@@ -85,7 +87,7 @@ public class ComponentTestUtils
 	}
 
 	@SuppressWarnings( "rawtypes" )
-	public static ComponentItem createComponentItem()
+	public ComponentItem createComponentItem()
 	{
 		WorkspaceItem workspace = mock( WorkspaceItem.class );
 		ProjectItem project = mock( ProjectItem.class );
@@ -110,17 +112,20 @@ public class ComponentTestUtils
 					{
 						OutputTerminal output = ( OutputTerminal )invocation.getArguments()[0];
 						InputTerminal input = ( InputTerminal )invocation.getArguments()[1];
-
-						return connect( output, input );
+						System.out.println("Connecting " + output + " and  " + input);
+						Connection c = connect( output, input );
+						System.out.println("Here is the connection: " + c);
+						System.out.println("Connections: " + connections);
+						return c;
 					}
 				} );
-		when( ( Collection )project.getConnections() ).thenReturn( connections );
-
+		doReturn( connections ).when( project ).getConnections();
+		
 		ComponentItemImpl component = ComponentItemImpl.newInstance( project, ComponentItemConfig.Factory.newInstance() );
 		return component;
 	}
 
-	public static void setComponentBehavior( ComponentItem component, ComponentBehavior behavior )
+	public void setComponentBehavior( ComponentItem component, ComponentBehavior behavior )
 	{
 		if( component instanceof ComponentItemImpl )
 		{
@@ -128,7 +133,7 @@ public class ComponentTestUtils
 		}
 	}
 
-	public static void sendMessage( InputTerminal terminal, Map<String, ?> message )
+	public void sendMessage( InputTerminal terminal, Map<String, ?> message )
 	{
 		ComponentItem component = ( ComponentItem )terminal.getTerminalHolder();
 		TerminalMessageImpl terminalMessage = new TerminalMessageImpl( BeanInjector.getBean( ConversionService.class ) );
@@ -158,7 +163,7 @@ public class ComponentTestUtils
 		}
 	}
 
-	public static BlockingQueue<TerminalMessage> getMessagesFrom( OutputTerminal terminal )
+	public BlockingQueue<TerminalMessage> getMessagesFrom( OutputTerminal terminal )
 	{
 		LinkedBlockingQueue<TerminalMessage> queue = new LinkedBlockingQueue<>();
 		terminal.addEventListener( TerminalMessageEvent.class, new MessageListener( queue ) );
@@ -166,9 +171,9 @@ public class ComponentTestUtils
 		return queue;
 	}
 
-	private static Connection connect( OutputTerminal output, InputTerminal input )
+	private Connection connect( OutputTerminal output, InputTerminal input )
 	{
-		ConnectionImpl connection = new ConnectionImpl( output, input );
+		Connection connection = new ConnectionImpl( output, input );
 		connections.add( connection );
 
 		if( output instanceof OutputTerminalImpl )
@@ -194,7 +199,7 @@ public class ComponentTestUtils
 		return connection;
 	}
 
-	private static class MessageListener implements EventHandler<TerminalMessageEvent>
+	private class MessageListener implements EventHandler<TerminalMessageEvent>
 	{
 		private final BlockingQueue<TerminalMessage> queue;
 
@@ -210,7 +215,7 @@ public class ComponentTestUtils
 		}
 	}
 
-	private static class ConnectionImpl extends ConnectionBase implements EventHandler<TerminalConnectionEvent>
+	private class ConnectionImpl extends ConnectionBase implements EventHandler<TerminalConnectionEvent>
 	{
 		private ConnectionImpl( OutputTerminal output, InputTerminal input )
 		{
