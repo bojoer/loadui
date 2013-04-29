@@ -754,7 +754,10 @@ public class SoapUISamplerComponent extends RunnerBase
 
 					// only put back if it hasn't changed because of a reload
 					if( testCaseRevisions.get( testCase ) == testCaseRevisionCount )
+					{
+						SoapUiProjectUtils.clearResponse( testCase );
 						testCasePool.add( testCase );
+					}
 					else
 					{
 						log.debug( "Dropping testCase" );
@@ -979,7 +982,6 @@ public class SoapUISamplerComponent extends RunnerBase
 				soapuiTestCase.getId();
 				SoapUiProjectUtils.makeAllDataSourcesShared( soapuiTestCase );
 				SoapUiProjectUtils.disableAllDataSourceLoops( soapuiTestCase );
-				SoapUiProjectUtils.enableResponseDiscarding( soapuiTestCase );
 
 				testCasePool.clear();
 				config = null;
