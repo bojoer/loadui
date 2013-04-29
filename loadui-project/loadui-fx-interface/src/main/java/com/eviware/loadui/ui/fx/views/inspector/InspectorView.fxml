@@ -24,6 +24,13 @@
 		</padding>
 	</HBox>	
 	<VBox id="arrow-graphics" AnchorPane.leftAnchor="6" AnchorPane.topAnchor="0">
-		<ToggleButton fx:id="toggleInspectorButton" id="toggleInspector" onAction="#toggleMinimized" styleClass="styleable-graphic, toolbar-button"/>		
+		<ToggleButton fx:id="toggleInspectorButton" id="toggleInspector" onAction="#toggleMinimized" styleClass="toolbar-button">
+			<graphic>
+				<HBox>
+					<Region styleClass="graphic" />
+					<Region styleClass="secondary-graphic" />
+				</HBox>
+			</graphic>
+		</ToggleButton>		
 	</VBox>
 </fx:root>

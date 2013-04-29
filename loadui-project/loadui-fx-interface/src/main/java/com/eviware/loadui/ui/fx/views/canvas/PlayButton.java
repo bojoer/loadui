@@ -24,6 +24,7 @@ import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.ProgressIndicatorBuilder;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleButtonBuilder;
+import javafx.scene.layout.HBoxBuilder;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.RegionBuilder;
 import javafx.scene.layout.StackPane;
@@ -45,8 +46,15 @@ import com.eviware.loadui.util.execution.TestExecutionUtils;
 
 public class PlayButton extends StackPane
 {
-	private final ToggleButton toggleButton = ToggleButtonBuilder.create()
-			.styleClass( "styleable-graphic", "play-button" ).build();
+	private final ToggleButton toggleButton = ToggleButtonBuilder
+			.create()
+			.styleClass( "play-button" )
+			.graphic(
+					HBoxBuilder
+							.create()
+							.children( RegionBuilder.create().styleClass( "graphic" ).build(),
+									RegionBuilder.create().styleClass( "secondary-graphic" ).build() ).build() ).build();
+	
 	private final CanvasItem canvas;
 	private final BooleanProperty playingProperty = new SimpleBooleanProperty();
 
@@ -108,7 +116,7 @@ public class PlayButton extends StackPane
 	public PlayButton( @Nonnull final CanvasItem canvas )
 	{
 		this.canvas = canvas;
-		
+
 		maxHeight( 27 );
 		maxWidth( 27 );
 

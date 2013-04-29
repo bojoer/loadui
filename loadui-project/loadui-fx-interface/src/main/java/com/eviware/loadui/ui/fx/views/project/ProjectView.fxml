@@ -10,6 +10,7 @@
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.HBox?>
 <?import java.net.URL?>
@@ -42,9 +43,21 @@
 	</VBox>
 	<HBox maxWidth="200" maxHeight="27" alignment="CENTER_RIGHT" AnchorPane.topAnchor="7" AnchorPane.rightAnchor="12" spacing="9">
 		<Separator orientation="vertical"/>
-		<Button fx:id="summaryButton" id="summaryButton" styleClass="styleable-graphic, toolbar-button" onAction="#openSummaryPage" />
-		<Button fx:id="openHelpPageButton" id="openHelpPageButton" styleClass="styleable-graphic, toolbar-button" onAction="#openHelpPage" />
-		<Button fx:id="closeProjectButton" id="closeProjectButton" styleClass="styleable-graphic, toolbar-button" onAction="#closeProject" />
+		<Button fx:id="summaryButton" id="summaryButton" styleClass="toolbar-button" onAction="#openSummaryPage">
+			<graphic>
+				<Region styleClass="graphic"/>
+			</graphic>
+		</Button>
+		<Button fx:id="openHelpPageButton" id="openHelpPageButton" styleClass="toolbar-button" onAction="#openHelpPage">
+			<graphic>
+				<Region styleClass="graphic"/>
+			</graphic>
+		</Button>
+		<Button fx:id="closeProjectButton" id="closeProjectButton" styleClass="toolbar-button" onAction="#closeProject">
+			<graphic>
+				<Region styleClass="graphic"/>
+			</graphic>
+		</Button>
 	</HBox>	
 	<MenuButton maxWidth="170" fx:id="menuButton" styleClass="title"
 		AnchorPane.topAnchor="8" AnchorPane.leftAnchor="75">
