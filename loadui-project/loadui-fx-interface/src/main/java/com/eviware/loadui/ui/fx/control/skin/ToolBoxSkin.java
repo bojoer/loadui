@@ -264,28 +264,20 @@ public class ToolBoxSkin<E extends Node> extends SkinBase<ToolBox<E>, BehaviorBa
 			setLeft( itemHolder );
 
 			expanderButton = ButtonBuilder.create().build();
-
-			Platform.runLater( new Runnable()
+			expanderButton.getStyleClass().addAll( "expander-button", "toolbar-button" );
+			expanderButton.setGraphic( RegionBuilder.create().styleClass( "graphic" ).build() );
+			expanderButton.disableProperty().bind( Bindings.size( categoryItems ).lessThan( 2 ) );
+			expanderButton.setOnAction( new EventHandler<ActionEvent>()
 			{
 				@Override
-				public void run()
+				public void handle( ActionEvent event )
 				{
-					expanderButton.getStyleClass().addAll( "expander-button", "toolbar-button" );
-					expanderButton.setGraphic( RegionBuilder.create().styleClass( "graphic" ).build() );
-					expanderButton.disableProperty().bind( Bindings.size( categoryItems ).lessThan( 2 ) );
-					expanderButton.setOnAction( new EventHandler<ActionEvent>()
-					{
-						@Override
-						public void handle( ActionEvent event )
-						{
-
-							expander.show( ToolBoxCategory.this );
-						}
-					} );
-					setAlignment( expanderButton, Pos.CENTER_RIGHT );
-					setRight( expanderButton );
+					expander.show( ToolBoxCategory.this );
 				}
 			} );
+			
+			setAlignment( expanderButton, Pos.CENTER_RIGHT );
+			setRight( expanderButton );
 
 			maxHeightProperty().bind(
 					Bindings.when( expander.expandedCategory.isEqualTo( this ) ).then( heightProperty() )
