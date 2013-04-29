@@ -17,6 +17,7 @@ package com.eviware.loadui.components.soapui;
 
 import java.awt.GraphicsEnvironment;
 import java.io.File;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -79,8 +80,15 @@ import com.eviware.soapui.config.TestCaseConfig;
 import com.eviware.soapui.impl.wsdl.WsdlProject;
 import com.eviware.soapui.impl.wsdl.WsdlTestSuite;
 import com.eviware.soapui.impl.wsdl.loadtest.WsdlLoadTestContext;
+import com.eviware.soapui.impl.wsdl.submit.transports.http.BaseHttpResponse;
+import com.eviware.soapui.impl.wsdl.submit.transports.http.HttpResponse;
 import com.eviware.soapui.impl.wsdl.testcase.WsdlTestCase;
 import com.eviware.soapui.impl.wsdl.testcase.WsdlTestCaseRunner;
+import com.eviware.soapui.impl.wsdl.teststeps.AMFRequestTestStep;
+import com.eviware.soapui.impl.wsdl.teststeps.HttpTestRequestStep;
+import com.eviware.soapui.impl.wsdl.teststeps.JdbcRequestTestStep;
+import com.eviware.soapui.impl.wsdl.teststeps.RestTestRequestStep;
+import com.eviware.soapui.impl.wsdl.teststeps.WsdlTestRequestStep;
 import com.eviware.soapui.impl.wsdl.teststeps.WsdlTestStep;
 import com.eviware.soapui.impl.wsdl.teststeps.datasink.DataSink;
 import com.eviware.soapui.impl.wsdl.teststeps.datasource.DataSource;
@@ -754,7 +762,10 @@ public class SoapUISamplerComponent extends RunnerBase
 
 					// only put back if it hasn't changed because of a reload
 					if( testCaseRevisions.get( testCase ) == testCaseRevisionCount )
+					{
+						SoapUiProjectUtils.clearResponse( testCase );
 						testCasePool.add( testCase );
+					}
 					else
 					{
 						log.debug( "Dropping testCase" );
@@ -979,7 +990,6 @@ public class SoapUISamplerComponent extends RunnerBase
 				soapuiTestCase.getId();
 				SoapUiProjectUtils.makeAllDataSourcesShared( soapuiTestCase );
 				SoapUiProjectUtils.disableAllDataSourceLoops( soapuiTestCase );
-				SoapUiProjectUtils.enableResponseDiscarding( soapuiTestCase );
 
 				testCasePool.clear();
 				config = null;
