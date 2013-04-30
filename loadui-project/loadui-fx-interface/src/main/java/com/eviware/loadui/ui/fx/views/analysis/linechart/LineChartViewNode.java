@@ -153,25 +153,20 @@ public class LineChartViewNode extends VBox
 		followCheckBox.selectedProperty().bindBidirectional( executionChart.scrollbarFollowStateProperty() );
 
 	}
-	
-	private void loadTitleForSubcharts(){
-		Platform.runLater( new Runnable()
+
+	private boolean isSubchart()
+	{
+		return chartView.getChartGroup().getChartView() != chartView;
+	}
+
+	private void loadTitleForSubcharts()
+	{
+		if( isSubchart() )
 		{
-			@Override
-			public void run()
-			{
-				for( String styleClass : getParent().getStyleClass() )
-				{
-					if( styleClass.compareTo( "sub-chart-group" ) == 0 )
-					{
-						Label title = LabelBuilder.create().build();
-						title.textProperty().bind( Properties.forLabel( chartView ) );
-						titleBox.getChildren().add( title );
-						break;
-					}
-				}
-			}
-		} );
+			Label title = LabelBuilder.create().build();
+			title.textProperty().bind( Properties.forLabel( chartView ) );
+			titleBox.getChildren().add( title );
+		}
 	}
 
 	private void loadAttributes()
