@@ -23,4 +23,4 @@ rem ********* run loadUI Runner ***********
 
 rem "%JAVA%" %JAVA_OPTS% -cp "%CLASSPATH%" com.eviware.loadui.launcher.LoadUILauncher -Djava.awt.headless=true -nofx %*
 
-"%JAVA%" %JAVA_OPTS% -cp "%CLASSPATH%" com.javafx.main.Main --nofx=true --agent=true -nofx %*
+"%JAVA%" %JAVA_OPTS% -cp "%CLASSPATH%" com.javafx.main.Main --nofx=true --agent=true -nofx -Dlog4j.configuration=log4j_headless.xml %*
