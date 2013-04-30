@@ -33,15 +33,12 @@ public class LTableDataSource extends JRTableModelDataSource
 	public LTableDataSource( TableModel model )
 	{
 		super( model );
-		//		System.out.println( "--created: " + model.getColumnName( 0 ) + " " + model.getColumnName( 1 ) );
-		//		System.out.println( "--first value: " + model.getValueAt( 0, 0 ) );
 		this.model = model;
 	}
 
 	@Override
 	public Object getFieldValue( JRField jrField ) throws JRException
 	{
-		System.out.println( "! jrField.getName(): " + jrField.getName() );
 		if( jrField.getName().equals( "columns" ) )
 		{
 			List<String> result = Lists.newArrayList();
@@ -54,11 +51,8 @@ public class LTableDataSource extends JRTableModelDataSource
 		if( jrField.getName().startsWith( "COLUMN_" ) )
 		{
 			int index = Integer.parseInt( jrField.getName().substring( 7 ) );
-			System.out.println( "!!! index: " + index + " model.getColumnCount(): " + model.getColumnCount() );
 			if( index < model.getColumnCount() )
 			{
-				//				System.out.println( "!!! model.getColumnName( index ): " + model.getColumnName( index ) );
-				//				System.out.println( "!!! super.getFieldValue( jrField ): " + super.getFieldValue( jrField ) );
 				return super.getFieldValue( jrField );
 			}
 		}

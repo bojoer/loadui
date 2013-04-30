@@ -90,10 +90,6 @@ public class LoadUICommandLineLauncher extends LoadUILauncher
 					e.printStackTrace();
 				}
 			}
-			else
-			{
-				System.out.println( "Starting: " + bundle.getSymbolicName() );
-			}
 		}
 
 	}
