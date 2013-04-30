@@ -13,6 +13,7 @@
  * express or implied. See the Licence for the specific language governing permissions and limitations
  * under the Licence.
  */
+
 package com.eviware.loadui.ui.fx.control.skin;
 
 import javafx.scene.control.Button;
@@ -25,7 +26,6 @@ public class StyleableGraphicButtonSkin extends ButtonSkin
 	public StyleableGraphicButtonSkin( Button button )
 	{
 		super( button );
-
 		button.setGraphic( RegionBuilder.create().styleClass( "graphic" ).build() );
 	}
 }

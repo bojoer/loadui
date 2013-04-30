@@ -34,6 +34,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.AnchorPaneBuilder;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.HBoxBuilder;
+import javafx.scene.layout.RegionBuilder;
 import javafx.scene.layout.VBox;
 
 import com.eviware.loadui.ui.fx.util.ManualObservable;
@@ -69,7 +70,8 @@ public class SegmentBox extends VBox
 
 		statisticsLabel = LabelBuilder.create().text( "Statistics" ).id( "statistics-label" ).alignment( Pos.CENTER_LEFT )
 				.build();
-		expandCollapseSegments = ToggleButtonBuilder.create().id( "expander" ).styleClass( "styleable-graphic" )
+		
+		expandCollapseSegments = ToggleButtonBuilder.create().id( "expander" ).graphic( HBoxBuilder.create().children( RegionBuilder.create().styleClass("graphic").build(), RegionBuilder.create().styleClass("secondary-graphic").build() ).build() )
 				.alignment( Pos.CENTER_RIGHT ).build();
 
 		AnchorPane topBox = AnchorPaneBuilder.create().children( statisticsLabel, expandCollapseSegments ).build();

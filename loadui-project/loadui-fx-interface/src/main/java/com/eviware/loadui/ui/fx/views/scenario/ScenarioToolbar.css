@@ -42,7 +42,7 @@
 	-fx-background-color: #BEBEBE; 
 }
 
-#link-scenario.toggle-button.styleable-graphic:focused{
+#link-scenario.toggle-button:focused{
 	-fx-background-insets: 2 16 2 6; 
 }
 
