@@ -13,6 +13,8 @@
  * express or implied. See the Licence for the specific language governing permissions and limitations
  * under the Licence.
  */
+import static com.eviware.loadui.util.component.ComponentTestUtils.getMessagesFrom;
+import static com.eviware.loadui.util.component.ComponentTestUtils.sendMessage;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -32,6 +34,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Matchers;
 
@@ -94,8 +97,7 @@ public class SoapUISamplerComponentTest
 	}
 
 	@Test
-	public void shouldOutput_testCaseProperties() throws InterruptedException, URISyntaxException, ExecutionException,
-			TimeoutException
+	public void shouldOutput_testCaseProperties() throws Exception
 	{
 		setTestCase( "soapUI-loadUI-plugin-project.xml", "TestSuite 1", "TestCase 1" );
 
@@ -112,8 +114,7 @@ public class SoapUISamplerComponentTest
 	 * Tests for SOAPUI-3947.
 	 */
 	@Test
-	public void shouldHandle_tenConcurrentRequests() throws URISyntaxException, InterruptedException,
-			ExecutionException, TimeoutException
+	public void shouldHandle_tenConcurrentRequests() throws Exception
 	{
 		setTestCase( "soapUI-loadUI-plugin-project.xml", "TestSuite 1", "TestCase 2" );
 
@@ -141,12 +142,11 @@ public class SoapUISamplerComponentTest
 	 * Tests for SOAPUI-3884.
 	 */
 	@Test
-	public void session_shouldNot_beMaintained() throws URISyntaxException, InterruptedException, ExecutionException,
-			TimeoutException
+	public void session_shouldNot_beMaintained() throws Exception
 	{
 		setTestCase( "soapUI-loadUI-plugin-project.xml", "TestSuite 1", "TestCase 5" );
 
-		BlockingQueue<TerminalMessage> results = ComponentTestUtils.getMessagesFrom( resultsTerminal );
+		BlockingQueue<TerminalMessage> results = getMessagesFrom( resultsTerminal );
 		sendSimpleTrigger();
 		sendSimpleTrigger();
 
@@ -156,12 +156,11 @@ public class SoapUISamplerComponentTest
 	}
 
 	@Test
-	public void assertionFailures_shouldFail_theSample() throws URISyntaxException, InterruptedException,
-			ExecutionException, TimeoutException
+	public void assertionFailures_shouldFail_theSample() throws Exception
 	{
 		setTestCase( "soapUI-loadUI-plugin-project.xml", "TestSuite 1", "TestCase 3" );
 
-		BlockingQueue<TerminalMessage> results = ComponentTestUtils.getMessagesFrom( resultsTerminal );
+		BlockingQueue<TerminalMessage> results = getMessagesFrom( resultsTerminal );
 		sendSimpleTrigger();
 
 		TerminalMessage message = results.poll( 5, TimeUnit.SECONDS );
@@ -170,12 +169,11 @@ public class SoapUISamplerComponentTest
 	}
 
 	@Test
-	public void disablingAssertions_shouldNotFail_theSample() throws URISyntaxException, InterruptedException,
-			ExecutionException, TimeoutException
+	public void disablingAssertions_shouldNotFail_theSample() throws Exception
 	{
 		setTestCase( "soapUI-loadUI-plugin-project.xml", "TestSuite 1", "TestCase 3" );
 		runner.setDisableSoapUIAssertions( true );
-		BlockingQueue<TerminalMessage> results = ComponentTestUtils.getMessagesFrom( resultsTerminal );
+		BlockingQueue<TerminalMessage> results = getMessagesFrom( resultsTerminal );
 		sendSimpleTrigger();
 
 		TerminalMessage message = results.poll( 5, TimeUnit.SECONDS );
@@ -184,11 +182,10 @@ public class SoapUISamplerComponentTest
 	}
 
 	@Test
-	public void fieldsInIncomingMessages_shouldOverride_testCaseProperties() throws InterruptedException,
-			URISyntaxException, ExecutionException, TimeoutException
+	public void fieldsInIncomingMessages_shouldOverride_testCaseProperties() throws Exception
 	{
 		setTestCase( "soapUI-loadUI-plugin-project.xml", "TestSuite 1", "TestCase 4" );
-		BlockingQueue<TerminalMessage> results = ComponentTestUtils.getMessagesFrom( resultsTerminal );
+		BlockingQueue<TerminalMessage> results = getMessagesFrom( resultsTerminal );
 
 		ComponentTestUtils.sendMessage( triggerTerminal, ImmutableMap.<String, Object> of( "hasBeenOverridden", "true" ) );
 
@@ -201,11 +198,10 @@ public class SoapUISamplerComponentTest
 	 * Tests for SOAPUI-3830.
 	 */
 	@Test
-	public void ampersands_should_beEncoded_inRestRequests() throws InterruptedException, URISyntaxException,
-			ExecutionException, TimeoutException
+	public void ampersands_should_beEncoded_inRestRequests() throws Exception
 	{
 		setTestCase( "soapUI-loadUI-plugin-project.xml", "TestSuite 1", "TestCase 6" );
-		BlockingQueue<TerminalMessage> results = ComponentTestUtils.getMessagesFrom( resultsTerminal );
+		BlockingQueue<TerminalMessage> results = getMessagesFrom( resultsTerminal );
 
 		sendSimpleTrigger();
 
@@ -214,36 +210,34 @@ public class SoapUISamplerComponentTest
 		assertThat( message.get( "Status" ), is( ( Object )Boolean.TRUE ) );
 	}
 
-	//	@Test
-	//	public void disablingTestSteps_should_work() throws InterruptedException, URISyntaxException, ExecutionException,
-	//			TimeoutException
-	//	{
-	//		setTestCase( "soapUI-loadUI-plugin-project.xml", "TestSuite 1", "TestCase 4" );
-	//		BlockingQueue<TerminalMessage> results = ComponentTestUtils.getMessagesFrom( resultsTerminal );
-	//
-	//		sendSimpleTrigger();
-	//
-	//		TerminalMessage message = results.poll( 5, TimeUnit.SECONDS );
-	//
-	//		assertThat( message.get( "changedLastBy" ), is( ( Object )"Step1" ) );
-	//
-	//		runner.setTestStepIsDisabled( 0, true );
-	//		TestUtils.awaitEvents( component );
-	//
-	//		sendSimpleTrigger();
-	//
-	//		message = results.poll( 5, TimeUnit.SECONDS );
-	//
-	//		assertThat( message.get( "changedLastBy" ), is( ( Object )"never" ) );
-	//
-	//	}
-
 	@Test
-	public void propertiesInSettings_shouldOverride_testCaseProperties() throws InterruptedException,
-			URISyntaxException, ExecutionException, TimeoutException
+	public void disablingTestSteps_should_work() throws Exception
 	{
 		setTestCase( "soapUI-loadUI-plugin-project.xml", "TestSuite 1", "TestCase 4" );
-		BlockingQueue<TerminalMessage> results = ComponentTestUtils.getMessagesFrom( resultsTerminal );
+		BlockingQueue<TerminalMessage> results = getMessagesFrom( resultsTerminal );
+
+		sendSimpleTrigger();
+
+		TerminalMessage message = results.poll( 5, TimeUnit.SECONDS );
+
+		assertThat( message.get( "changedLastBy" ), is( ( Object )"Step1" ) );
+
+		runner.setTestStepIsDisabled( "Step1", true );
+		TestUtils.awaitEvents( component );
+
+		sendSimpleTrigger();
+
+		message = results.poll( 5, TimeUnit.SECONDS );
+
+		assertThat( message.get( "changedLastBy" ), is( ( Object )"never" ) );
+
+	}
+
+	@Test
+	public void propertiesInSettings_shouldOverride_testCaseProperties() throws Exception
+	{
+		setTestCase( "soapUI-loadUI-plugin-project.xml", "TestSuite 1", "TestCase 4" );
+		BlockingQueue<TerminalMessage> results = getMessagesFrom( resultsTerminal );
 
 		ComponentTestUtils.sendMessage( triggerTerminal, ImmutableMap.<String, Object> of( "hasBeenOverridden", "true" ) );
 
@@ -252,12 +246,15 @@ public class SoapUISamplerComponentTest
 		assertThat( message.get( "hasBeenOverridden" ), is( ( Object )"true" ) );
 	}
 
+	/*
+	 * Tests for LOADUI-675.
+	 */
 	@Test
 	public void propertyTransfer_should_work() throws InterruptedException, URISyntaxException, ExecutionException,
 			TimeoutException
 	{
 		setTestCase( "soapUI-loadUI-plugin-project.xml", "TestSuite 1", "TestCase 7" );
-		BlockingQueue<TerminalMessage> results = ComponentTestUtils.getMessagesFrom( resultsTerminal );
+		BlockingQueue<TerminalMessage> results = getMessagesFrom( resultsTerminal );
 
 		sendSimpleTrigger();
 
@@ -268,7 +265,7 @@ public class SoapUISamplerComponentTest
 
 	private void sendSimpleTrigger()
 	{
-		ComponentTestUtils.sendMessage( triggerTerminal,
+		sendMessage( triggerTerminal,
 				ImmutableMap.<String, Object> of( GeneratorCategory.TRIGGER_TIMESTAMP_MESSAGE_PARAM, 0 ) );
 	}
 
