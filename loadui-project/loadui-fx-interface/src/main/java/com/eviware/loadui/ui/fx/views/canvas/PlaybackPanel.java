@@ -31,6 +31,8 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleButtonBuilder;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.HBoxBuilder;
+import javafx.scene.layout.RegionBuilder;
 import javafx.util.Duration;
 
 import javax.annotation.Nonnull;
@@ -111,8 +113,15 @@ public abstract class PlaybackPanel<T extends CounterDisplay, C extends CanvasIt
 
 	protected ToggleButton linkScenarioButton( SceneItem scenario )
 	{
-		ToggleButton linkButton = ToggleButtonBuilder.create().id( "link-scenario" ).styleClass( "styleable-graphic" )
-				.build();
+		ToggleButton linkButton = ToggleButtonBuilder
+				.create()
+				.id( "link-scenario" )
+				.graphic(
+						HBoxBuilder
+								.create()
+								.children( RegionBuilder.create().styleClass( "graphic" ).build(),
+										RegionBuilder.create().styleClass( "secondary-graphic" ).build() ).build() ).build();
+
 		Property<Boolean> linkedProperty = Properties.convert( scenario.followProjectProperty() );
 		linkButton.selectedProperty().bindBidirectional( linkedProperty );
 		return linkButton;

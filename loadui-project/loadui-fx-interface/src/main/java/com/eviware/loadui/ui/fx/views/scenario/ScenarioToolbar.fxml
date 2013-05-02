@@ -12,6 +12,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import java.net.URL?>
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
@@ -38,7 +39,15 @@
 	<HBox maxWidth="200" maxHeight="60" alignment="CENTER_RIGHT"
 		AnchorPane.topAnchor="3" AnchorPane.rightAnchor="12" spacing="9">
 		<Separator orientation="vertical"/>
-		<Button fx:id="openHelpPageButton" id="openHelpPageButton" styleClass="styleable-graphic, toolbar-button" onAction="#openHelpPage" />
-		<Button fx:id="closeScenarioButton" id="closeScenarioButton" styleClass="styleable-graphic, toolbar-button" onAction="#closeScenario" />
+		<Button fx:id="openHelpPageButton" id="openHelpPageButton" styleClass="toolbar-button" onAction="#openHelpPage" >
+			<graphic>
+				<Region styleClass="graphic"/>
+			</graphic>
+		</Button>
+		<Button fx:id="closeScenarioButton" id="closeScenarioButton" styleClass="toolbar-button" onAction="#closeScenario">
+			<graphic>
+				<Region styleClass="graphic"/>
+			</graphic>
+		</Button>
 	</HBox>
 </fx:root>
