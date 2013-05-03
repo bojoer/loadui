@@ -520,7 +520,7 @@ public class SoapUISamplerComponent extends RunnerBase
 	{
 		projectFileWorkingCopy.setValue( null );
 		projectRelativePath.setValue( null );
-		runner.setNewTestCase( null );
+		runner.setTestCase( null );
 		runner.setTestSuite( null );
 		projectSelector.reset();
 	}
@@ -813,6 +813,20 @@ public class SoapUISamplerComponent extends RunnerBase
 			testSteps_isDisabled_Map.clear();
 			testSteps_isDisabled.setValue( "" );
 			setTestCase( testCaseName );
+
+			clearOveriddableProperties( getContext() );
+		}
+
+		private void clearOveriddableProperties( ComponentContext context )
+		{
+			for( Property<?> property : context.getProperties() )
+			{
+				if( property.getKey().startsWith( TestCasePropertiesNode.OVERRIDING_VALUE_PREFIX ) )
+				{
+					context.deleteProperty( property.getKey() );
+				}
+
+			}
 		}
 
 		private synchronized WsdlTestCase getTestCase()
@@ -846,7 +860,7 @@ public class SoapUISamplerComponent extends RunnerBase
 			loader.removeProjectUpdateListener( this );
 
 			for( WsdlTestCaseRunner runnerToCancel : runners )
-				runnerToCancel.cancel( "Releasing component in loadUI" );
+				runnerToCancel.cancel( "Releasing SoapUIcomponent in loadUI" );
 
 			for( WsdlTestCase tc : testCasePool )
 				tc.release();
