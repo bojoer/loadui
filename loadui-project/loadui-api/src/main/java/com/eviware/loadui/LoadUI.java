@@ -23,7 +23,7 @@ public class LoadUI
 	/**
 	 * The main version number of loadUI.
 	 */
-	public static final String VERSION = System.getProperty( "loadui.version", "UNSPECIFIED VERSION" );
+	public static final String VERSION = System.getProperty( "loadui.version", "2.5.0" );
 
 	/**
 	 * Internal version number used to determine controller/agent compatibility.

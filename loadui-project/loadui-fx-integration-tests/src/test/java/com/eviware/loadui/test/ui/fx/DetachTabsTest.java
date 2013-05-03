@@ -63,7 +63,7 @@ public class DetachTabsTest
 	public void shouldDetachAndReattachWorkspace() throws Exception
 	{
 
-		controller.click( "#designTab" ).click( "#designTab .styleable-graphic" );
+		controller.click( "#designTab" ).click( "#designTab #detachButton" );
 
 		try
 		{
@@ -90,7 +90,7 @@ public class DetachTabsTest
 	public void shouldDetachAndReattachStatistics() throws Exception
 	{
 
-		controller.click( "#statsTab" ).click( "#statsTab .styleable-graphic" );
+		controller.click( "#statsTab" ).click( "#statsTab #detachButton" );
 
 		try
 		{

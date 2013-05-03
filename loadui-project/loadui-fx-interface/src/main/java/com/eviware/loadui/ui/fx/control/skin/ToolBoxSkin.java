@@ -47,6 +47,7 @@ import javafx.scene.control.PopupControl;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.HBoxBuilder;
+import javafx.scene.layout.RegionBuilder;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.VBoxBuilder;
@@ -262,12 +263,21 @@ public class ToolBoxSkin<E extends Node> extends SkinBase<ToolBox<E>, BehaviorBa
 
 			expanderButton = ButtonBuilder.create().build();
 
-			expanderButton.getStyleClass().addAll( "expander-button", "toolbar-button"/*
-																												 * ,
-																												 * "styleable-graphic"
-																												 */);
+			expanderButton.getStyleClass().addAll( "expander-button", "toolbar-button" );
+			expanderButton.setGraphic( RegionBuilder.create().styleClass( "graphic" ).build() );
 
 			expanderButton.disableProperty().bind( Bindings.size( categoryItems ).lessThan( 2 ) );
+			expanderButton.setOnAction( new EventHandler<ActionEvent>()
+			{
+				@Override
+				public void handle( ActionEvent event )
+				{
+					expander.show( ToolBoxCategory.this );
+				}
+			} );
+
+			setAlignment( expanderButton, Pos.CENTER_RIGHT );
+			setRight( expanderButton );
 
 			maxHeightProperty().bind(
 					Bindings.when( expander.expandedCategory.isEqualTo( this ) ).then( heightProperty() )
@@ -292,19 +302,6 @@ public class ToolBoxSkin<E extends Node> extends SkinBase<ToolBox<E>, BehaviorBa
 			 * });
 			 */
 
-			expanderButton.setOnAction( new EventHandler<ActionEvent>()
-			{
-				@Override
-				public void handle( ActionEvent event )
-				{
-
-					expander.show( ToolBoxCategory.this );
-				}
-			} );
-
-			setAlignment( expanderButton, Pos.CENTER_RIGHT );
-
-			setRight( expanderButton );
 		}
 	}
 

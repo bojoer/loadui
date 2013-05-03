@@ -44,6 +44,7 @@ import javafx.scene.control.ToggleButtonBuilder;
 import javafx.scene.control.ToolBar;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBoxBuilder;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.RegionBuilder;
 import javafx.scene.layout.StackPane;
@@ -249,8 +250,16 @@ public class ProjectView extends AnchorPane
 
 					ScenarioToolbar toolbar = new ScenarioToolbar( scenario );
 
-					linkButton = ToggleButtonBuilder.create().id( "link-scenario" ).styleClass( "styleable-graphic" )
+					linkButton = ToggleButtonBuilder
+							.create()
+							.id( "link-scenario" )
+							.graphic(
+									HBoxBuilder
+											.create()
+											.children( RegionBuilder.create().styleClass( "graphic" ).build(),
+													RegionBuilder.create().styleClass( "secondary-graphic" ).build() ).build() )
 							.build();
+					
 					Property<Boolean> linkedProperty = Properties.convert( scenario.followProjectProperty() );
 					linkButton.selectedProperty().bindBidirectional( linkedProperty );
 					linkButton.visibleProperty().bind( statsTab.selectedProperty().not() );
