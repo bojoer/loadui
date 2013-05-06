@@ -84,8 +84,10 @@ public class LineSegmentView extends SegmentView<LineSegment>
 		slider = SliderBuilder.create().snapToTicks( true ).pickOnBounds( true ).visible( false ).min( -6 ).max( 6 )
 				.majorTickUnit( 1 ).minorTickCount( 0 ).build();
 
-		segmentLabel.minWidthProperty().bind( Bindings.when( isExpandedProperty ).then( 250 ).otherwise( 180 ) );
-		segmentLabel.maxWidthProperty().bind( Bindings.when( isExpandedProperty ).then( 320 ).otherwise( 200 ) );
+		prefWidthProperty().bind( segmentLabel.widthProperty().add( 85 ) );
+		minWidthProperty().bind( segmentLabel.widthProperty().add( 85 ) );
+		segmentLabel.maxWidth( 400 );
+		segmentLabel.wrapTextProperty().set( true );
 
 		String fullName;
 		if( LoadUI.isPro() )
