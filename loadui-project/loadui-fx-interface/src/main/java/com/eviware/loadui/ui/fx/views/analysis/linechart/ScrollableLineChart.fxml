@@ -16,7 +16,7 @@
 	<stylesheets>
 		<URL value="@ScrollableLineChart.css" />
 	</stylesheets>
-	<SegmentBox fx:id="segmentBox" fillWidth="true" minWidth="200"/>
+	<SegmentBox fx:id="segmentBox" fillWidth="true"/>
 	<StackPane minWidth="12"/>
 	<VBox HBox.hgrow="ALWAYS">
 		<AnchorPane VBox.vgrow="ALWAYS">
