@@ -18,6 +18,9 @@ package com.eviware.loadui.ui.fx.util;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.Callable;
+
+import javafx.scene.Node;
 
 import com.eviware.loadui.api.layout.ActionLayoutComponent;
 import com.eviware.loadui.api.layout.LayoutComponent;
@@ -27,7 +30,14 @@ import com.eviware.loadui.api.layout.SettingsLayoutContainer;
 import com.eviware.loadui.ui.fx.control.SettingsTab;
 import com.eviware.loadui.ui.fx.control.SettingsTab.Builder;
 
-public class LayoutContainerUtils
+/**
+ * Used to generate settings tabs from LayoutContainers.
+ * 
+ * @author maximilian.skog
+ * 
+ */
+
+public class SettingsLayoutUtils
 {
 	public static List<SettingsTab> settingsTabsFromLayoutContainers(
 			Collection<? extends SettingsLayoutContainer> containers )
@@ -46,6 +56,7 @@ public class LayoutContainerUtils
 
 	private static void layoutContainerToField( LayoutContainer container, Builder tabBuilder )
 	{
+
 		for( LayoutComponent component : container )
 		{
 			if( component instanceof PropertyLayoutComponent )
@@ -57,6 +68,19 @@ public class LayoutContainerUtils
 			{
 				ActionLayoutComponent action = ( ActionLayoutComponent )component;
 				tabBuilder.button( action );
+			}
+			else if( component.has( "component" ) )
+			{
+				Object c = component.get( "component" );
+				if( c instanceof Node )
+				{
+					tabBuilder.node( ( Node )c );
+				}
+				else if( c instanceof Callable )
+				{
+					Callable<Node> nodeLoader = ( Callable<Node> )c;
+					tabBuilder.node( nodeLoader );
+				}
 			}
 			else if( component instanceof LayoutContainer )
 			{

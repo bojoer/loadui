@@ -22,15 +22,23 @@ import static org.junit.Assert.assertThat;
 import java.io.File;
 import java.io.IOException;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import com.eviware.loadui.api.component.ComponentCreationException;
 import com.eviware.loadui.api.model.ComponentItem;
-import com.eviware.loadui.util.component.ComponentTestUtils;
 import com.eviware.loadui.util.groovy.GroovyEnvironment;
 
 public class GroovyComponentTestUtilsTest
 {
+	private GroovyComponentTestUtils ctu;
+
+	@Before
+	public void setup()
+	{
+		ctu = new GroovyComponentTestUtils();
+	}
+
 	@Test
 	public void shouldCreateComponent() throws ComponentCreationException, IOException
 	{
@@ -39,7 +47,7 @@ public class GroovyComponentTestUtilsTest
 		assertThat( component.getBehavior().getClass().getSimpleName(), startsWith( "Groovy" ) );
 	}
 
-	private static ComponentItem createSimpleScriptComponent() throws IOException, ComponentCreationException
+	private ComponentItem createSimpleScriptComponent() throws IOException, ComponentCreationException
 	{
 		File scriptDir = new File( "target", "scripts" );
 		scriptDir.mkdirs();
@@ -47,16 +55,16 @@ public class GroovyComponentTestUtilsTest
 		File scriptFile = new File( scriptDir, "Test.groovy" );
 		scriptFile.createNewFile();
 
-		GroovyComponentTestUtils.initialize( scriptDir.getPath() );
-		ComponentTestUtils.getDefaultBeanInjectorMocker();
-		ComponentItem component = GroovyComponentTestUtils.createComponent( "Test" );
+		ctu.initialize( scriptDir.getPath() );
+		ctu.getDefaultBeanInjectorMocker();
+		ComponentItem component = ctu.createComponent( "Test" );
 		return component;
 	}
 
 	@Test
 	public void shouldReturnGroovyEnvorinment() throws ComponentCreationException, IOException
 	{
-		GroovyEnvironment environment = GroovyComponentTestUtils.getEnvironment( createSimpleScriptComponent() );
+		GroovyEnvironment environment = ctu.getEnvironment( createSimpleScriptComponent() );
 
 		assertThat( environment, notNullValue() );
 	}

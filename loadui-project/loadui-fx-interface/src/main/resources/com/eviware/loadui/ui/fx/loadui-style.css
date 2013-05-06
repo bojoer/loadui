@@ -121,11 +121,11 @@
 	-fx-padding: 3.0;
 	-fx-background-radius: 50.0;
 	-graphic-color: lightgray;
-		
+
 	-fx-background-color: 
 		black,
 		-graphic-color;
-	
+
 	-fx-background-insets: 
 		0.0,
 		1.0;	
@@ -645,10 +645,6 @@
 
 .tool-box .expander-button:disabled .graphic{
 	-fx-background-color: transparent; 
-}
-
-.tool-box .expander-button:disabled {
-	visibility: hidden;
 }
 
 .tool-box .expander-button .graphic{

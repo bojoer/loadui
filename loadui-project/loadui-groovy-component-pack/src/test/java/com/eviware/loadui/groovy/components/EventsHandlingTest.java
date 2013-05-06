@@ -23,7 +23,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.eviware.loadui.api.component.ComponentCreationException;
@@ -34,27 +33,30 @@ import com.google.common.base.Joiner;
 
 public class EventsHandlingTest
 {
-	
+
 	private ComponentItem component;
-	
-	@BeforeClass
-	public static void classSetup()
+	private GroovyComponentTestUtils ctu;
+
+	@Before
+	public void classSetup()
 	{
-		GroovyComponentTestUtils.initialize( Joiner.on( File.separator ).join( "src", "main", "groovy" ) );
+		ctu = new GroovyComponentTestUtils();
+		ctu.initialize( Joiner.on( File.separator ).join( "src", "main", "groovy" ) );
 	}
 
 	@Before
 	public void setup() throws ComponentCreationException
 	{
-		GroovyComponentTestUtils.getDefaultBeanInjectorMocker();
-		component = GroovyComponentTestUtils.createComponent( "Splitter" );
+		ctu.getDefaultBeanInjectorMocker();
+		component = ctu.createComponent( "Splitter" );
 	}
-	
+
 	@Test
 	public void ensureAllEventsTriggered() throws InterruptedException, ExecutionException, TimeoutException
 	{
 		int target = 0;
-		for (int i = 0; i < 1000; i++) {
+		for( int i = 0; i < 1000; i++ )
+		{
 			target = i % 101;
 			component.getProperty( "probability0" ).setValue( target );
 			TestUtils.awaitEvents( component );

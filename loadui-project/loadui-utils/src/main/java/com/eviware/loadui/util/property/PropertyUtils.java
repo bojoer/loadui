@@ -18,7 +18,11 @@ package com.eviware.loadui.util.property;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import javax.annotation.Nullable;
+
 import com.eviware.loadui.api.property.Property;
+import com.google.common.base.Objects;
+import com.google.common.base.Predicate;
 
 public class PropertyUtils
 {
@@ -42,4 +46,15 @@ public class PropertyUtils
 		return visibles;
 	}
 
+	public static Predicate<Property<?>> keyEquals( final String keyName )
+	{
+		return new Predicate<Property<?>>()
+		{
+			@Override
+			public boolean apply( @Nullable Property<?> property )
+			{
+				return Objects.equal( property.getKey(), keyName );
+			}
+		};
+	}
 }

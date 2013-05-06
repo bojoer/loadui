@@ -23,17 +23,11 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.SceneBuilder;
-import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBuilder;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.ComboBoxBuilder;
-import javafx.scene.control.Label;
 import javafx.scene.control.SplitPaneBuilder;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextAreaBuilder;
@@ -49,32 +43,11 @@ import com.google.common.io.Files;
 
 public class StyleTester extends Application
 {
-	private Node createTestNode( Stage stage )
+
+	private Node createTestNode( Stage stage ) throws Exception
 	{
-		//		Node n =  SoapUiProjectSelector.buildNode();
-		//
-		//		return GroupBuilder.create().children( n ).build();
-		ObservableList<String> ol = FXCollections.<String> observableArrayList( "a", "b" );
-		final ComboBox<String> c = ComboBoxBuilder.<String> create().items( ol ).build();
-		Button b = new Button( "Change options" );
-		final Label l = new Label( "" );
-		c.getSelectionModel().selectedItemProperty().addListener( new ChangeListener<String>()
-		{
-			@Override
-			public void changed( ObservableValue<? extends String> arg0, String arg1, String val )
-			{
-				l.setText( l.getText() + ";" + val );
-			}
-		} );
-		b.setOnAction( new EventHandler<ActionEvent>()
-		{
-			@Override
-			public void handle( ActionEvent e )
-			{
-				c.setItems( FXCollections.<String> observableArrayList( "x", "y" ) );
-			}
-		} );
-		return HBoxBuilder.create().children( c, b, l ).build();
+
+		return HBoxBuilder.create().build();
 	}
 
 	@Override
@@ -144,7 +117,15 @@ public class StyleTester extends Application
 																	@Override
 																	public void handle( ActionEvent arg0 )
 																	{
-																		panel.getChildren().setAll( createTestNode( primaryStage ) );
+																		try
+																		{
+																			panel.getChildren().setAll( createTestNode( primaryStage ) );
+																		}
+																		catch( Exception e )
+																		{
+																			// TODO Auto-generated catch block
+																			e.printStackTrace();
+																		}
 																	}
 																} ).build() ).build() ).build() ).build() );
 
@@ -159,6 +140,7 @@ public class StyleTester extends Application
 
 		//		final Dialog dialog = new ConfirmationDialog( panel, "sdad", "2d" );
 		//		dialog.show();
+		// ScenicView.show( primaryStage.getScene() );
 	}
 
 	public static void main( String[] args )

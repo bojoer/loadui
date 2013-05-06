@@ -36,12 +36,14 @@ public class OutputBaseTest
 	private BlockingQueue<TerminalMessage> outputtedMessages = new LinkedBlockingQueue<>();
 	private OutputBase outputBase;
 	private ComponentItem component;
+	private ComponentTestUtils ctu;
 
 	@Before
 	public void setup()
 	{
-		ComponentTestUtils.getDefaultBeanInjectorMocker();
-		component = ComponentTestUtils.createComponentItem();
+		ctu = new ComponentTestUtils();
+		ctu.getDefaultBeanInjectorMocker();
+		component = ctu.createComponentItem();
 		outputBase = new OutputBase( component.getContext() )
 		{
 			@Override
@@ -50,14 +52,14 @@ public class OutputBaseTest
 				outputtedMessages.add( message );
 			}
 		};
-		ComponentTestUtils.setComponentBehavior( component, outputBase );
+		ctu.setComponentBehavior( component, outputBase );
 	}
 
 	@Test
 	public void shouldOutputMessages() throws InterruptedException
 	{
 		InputTerminal input = outputBase.getInputTerminal();
-		ComponentTestUtils.sendMessage( input, ImmutableMap.of( "One", "Value" ) );
+		ctu.sendMessage( input, ImmutableMap.of( "One", "Value" ) );
 
 		TerminalMessage message = outputtedMessages.poll( 1, TimeUnit.SECONDS );
 		assertThat( message.containsKey( "One" ), is( true ) );
@@ -67,8 +69,8 @@ public class OutputBaseTest
 	public void shouldPassThroughMessages() throws InterruptedException
 	{
 		InputTerminal input = outputBase.getInputTerminal();
-		BlockingQueue<TerminalMessage> messages = ComponentTestUtils.getMessagesFrom( outputBase.getOutputTerminal() );
-		ComponentTestUtils.sendMessage( input, ImmutableMap.of( "Two", "Value" ) );
+		BlockingQueue<TerminalMessage> messages = ctu.getMessagesFrom( outputBase.getOutputTerminal() );
+		ctu.sendMessage( input, ImmutableMap.of( "Two", "Value" ) );
 
 		TerminalMessage message = messages.poll( 1, TimeUnit.SECONDS );
 		assertThat( message.containsKey( "Two" ), is( true ) );

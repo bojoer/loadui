@@ -15,29 +15,7 @@
  */
 package com.eviware.loadui.groovy.util;
 
-import static org.mockito.AdditionalAnswers.delegatesTo;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.io.File;
-import java.lang.reflect.Field;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.Executors;
-
-import org.mockito.Matchers;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-
-import com.eviware.loadui.api.component.BehaviorProvider;
-import com.eviware.loadui.api.component.ComponentBehavior;
-import com.eviware.loadui.api.component.ComponentContext;
-import com.eviware.loadui.api.component.ComponentCreationException;
-import com.eviware.loadui.api.component.ComponentDescriptor;
-import com.eviware.loadui.api.component.ComponentRegistry;
+import com.eviware.loadui.api.component.*;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.statistics.Statistic;
 import com.eviware.loadui.api.statistics.StatisticVariable;
@@ -48,19 +26,32 @@ import com.eviware.loadui.impl.model.ComponentItemImpl;
 import com.eviware.loadui.util.component.ComponentTestUtils;
 import com.eviware.loadui.util.groovy.ClassLoaderRegistry;
 import com.eviware.loadui.util.groovy.GroovyEnvironment;
+import com.eviware.loadui.util.groovy.GroovyEnvironmentClassLoader;
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
+import org.mockito.Matchers;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+
+import java.io.File;
+import java.lang.reflect.Field;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.Executors;
+
+import static org.mockito.AdditionalAnswers.delegatesTo;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.*;
 
 public class GroovyComponentTestUtils extends ComponentTestUtils
 {
-	private static final Object lock = new Object();
-	private static final ConcurrentMap<ComponentDescriptor, BehaviorProvider> descriptors = Maps.newConcurrentMap();
-	private static final ComponentRegistry registry = mock( ComponentRegistry.class );
+	private final Object lock = new Object();
+	private final ConcurrentMap<ComponentDescriptor, BehaviorProvider> descriptors = Maps.newConcurrentMap();
+	private final ComponentRegistry registry = mock( ComponentRegistry.class );
 
-	static
 	{
 		System.setProperty( "groovy.root", new File( "target", ".groovy" ).getAbsolutePath() );
 
@@ -82,16 +73,23 @@ public class GroovyComponentTestUtils extends ComponentTestUtils
 		} ).when( registry ).registerDescriptor( any( ComponentDescriptor.class ), any( BehaviorProvider.class ) );
 	}
 
-	public static void initialize( String pathToComponentScripts )
+	public void initialize( String pathToComponentScripts )
 	{
 		new GroovyBehaviorProvider( registry, Executors.newSingleThreadScheduledExecutor(), new File(
-				pathToComponentScripts ), new ClassLoaderRegistry() );
+				pathToComponentScripts ), new ClassLoaderRegistry()
+		{
+			@Override
+			protected GroovyEnvironmentClassLoader provideClassLoader( ClassLoader bundleClassLoader )
+			{
+				return new GroovyEnvironmentClassLoader( bundleClassLoader, new File( "target", ".groovy" ) );
+			}
+		} );
 	}
 
 	@SuppressWarnings( "unchecked" )
-	public static ComponentItem createComponent( final String componentName ) throws ComponentCreationException
+	public ComponentItem createComponent( final String componentName ) throws ComponentCreationException
 	{
-		ComponentItem component = ComponentTestUtils.createComponentItem();
+		ComponentItem component = createComponentItem();
 		ComponentItem componentSpy = mock( ComponentItem.class, delegatesTo( component ) );
 		ComponentContext contextSpy = mock( ComponentContext.class, delegatesTo( componentSpy.getContext() ) );
 		doReturn( contextSpy ).when( componentSpy ).getContext();
@@ -104,9 +102,9 @@ public class GroovyComponentTestUtils extends ComponentTestUtils
 		when( statisticMock.getStatisticVariable() ).thenReturn( mockVariable );
 		when( mockVariable.getStatistic( anyString(), anyString() ) ).thenReturn( statisticMock );
 		doReturn( mockVariable ).when( contextSpy ).addStatisticVariable( anyString(), anyString(),
-				Matchers.<String> anyVararg() );
+				Matchers.<String>anyVararg() );
 		doReturn( mockVariable ).when( contextSpy ).addListenableStatisticVariable( anyString(), anyString(),
-				Matchers.<String> anyVararg() );
+				Matchers.<String>anyVararg() );
 
 		ComponentItem componentItemImplSpy = mock( ComponentItemImpl.class, delegatesTo( component ) );
 		doReturn( contextSpy ).when( componentItemImplSpy ).getContext();
@@ -117,7 +115,7 @@ public class GroovyComponentTestUtils extends ComponentTestUtils
 		return componentSpy;
 	}
 
-	public static ComponentItem createComponent( final String componentName, ComponentItem component )
+	public ComponentItem createComponent( final String componentName, ComponentItem component )
 			throws ComponentCreationException
 	{
 		Optional<ComponentDescriptor> descriptorOptional = null;
@@ -151,13 +149,13 @@ public class GroovyComponentTestUtils extends ComponentTestUtils
 		ComponentDescriptor descriptor = descriptorOptional.get();
 
 		component.setAttribute( ComponentItem.TYPE, descriptor.getLabel() );
-		ComponentTestUtils.setComponentBehavior( component,
+		setComponentBehavior( component,
 				descriptors.get( descriptor ).createBehavior( descriptor, component.getContext() ) );
 
 		return component;
 	}
 
-	public static GroovyEnvironment getEnvironment( ComponentItem component )
+	public GroovyEnvironment getEnvironment( ComponentItem component )
 	{
 		try
 		{

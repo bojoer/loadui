@@ -15,24 +15,22 @@
  */
 package com.eviware.loadui.util.groovy;
 
+import com.eviware.loadui.api.traits.Releasable;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import groovy.lang.GroovyShell;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.concurrent.ExecutionException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.eviware.loadui.api.traits.Releasable;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-
 /**
  * Manages GroovyComponentClassLoaders by id. Creates ClassLoaders on demand,
  * and caches them, but will only use weak references.
- * 
+ *
  * @author dain.nilsson
  */
 public class ClassLoaderRegistry implements Releasable
@@ -51,13 +49,13 @@ public class ClassLoaderRegistry implements Releasable
 						@Override
 						public GroovyEnvironmentClassLoader run()
 						{
-							return new GroovyEnvironmentClassLoader( bundleClassLoader );
+							return provideClassLoader( bundleClassLoader );
 						}
 					} );
 				}
 			} );
 
-	public synchronized GroovyEnvironmentClassLoader useClassLoader( String id, Object user )
+	public synchronized GroovyEnvironmentClassLoader useClassLoader( String id )
 	{
 		try
 		{
@@ -75,5 +73,15 @@ public class ClassLoaderRegistry implements Releasable
 	public synchronized void release()
 	{
 		classLoaders.invalidateAll();
+	}
+
+	/**
+	 * Sub-classes can provide a different class loader by overriding this method
+	 * @param bundleClassLoader
+	 * @return
+	 */
+	protected GroovyEnvironmentClassLoader provideClassLoader( ClassLoader bundleClassLoader )
+	{
+		return new GroovyEnvironmentClassLoader( bundleClassLoader );
 	}
 }

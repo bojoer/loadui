@@ -34,7 +34,7 @@ import com.eviware.loadui.ui.fx.MenuItemsProvider;
 import com.eviware.loadui.ui.fx.MenuItemsProvider.HasMenuItems;
 import com.eviware.loadui.ui.fx.MenuItemsProvider.Options;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
-import com.eviware.loadui.ui.fx.util.LayoutContainerUtils;
+import com.eviware.loadui.ui.fx.util.SettingsLayoutUtils;
 import com.eviware.loadui.ui.fx.util.NodeUtils;
 import com.eviware.loadui.ui.fx.util.Properties;
 import com.eviware.loadui.ui.fx.views.canvas.CanvasObjectView;
@@ -56,7 +56,7 @@ public class ComponentView extends CanvasObjectView
 				this,
 				getCanvasObject(),
 				Options.are().settings( "Component Settings",
-						LayoutContainerUtils.settingsTabsFromLayoutContainers( getComponent().getSettingsTabs() ) ) );
+						SettingsLayoutUtils.settingsTabsFromLayoutContainers( getComponent().getSettingsTabs() ) ) );
 		menuButton.getItems().setAll( hasMenuItems.items() );
 		final ContextMenu ctxMenu = ContextMenuBuilder.create().items( hasMenuItems.items() ).build();
 

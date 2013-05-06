@@ -34,12 +34,14 @@ public class OnOffBaseTest
 {
 	private OnOffBase onOffBase;
 	private ComponentItem component;
+	private ComponentTestUtils ctu;
 
 	@Before
 	public void setup()
 	{
-		ComponentTestUtils.getDefaultBeanInjectorMocker();
-		component = ComponentTestUtils.createComponentItem();
+		ctu = new ComponentTestUtils();
+		ctu.getDefaultBeanInjectorMocker();
+		component = ctu.createComponentItem();
 		onOffBase = new OnOffBase( component.getContext() )
 		{
 			@Override
@@ -54,7 +56,7 @@ public class OnOffBaseTest
 				return null;
 			}
 		};
-		ComponentTestUtils.setComponentBehavior( component, onOffBase );
+		ctu.setComponentBehavior( component, onOffBase );
 	}
 
 	@Test
@@ -76,12 +78,12 @@ public class OnOffBaseTest
 		Property<Boolean> stateProperty = onOffBase.getStateProperty();
 		assertThat( stateProperty.getValue(), is( true ) );
 
-		ComponentTestUtils.sendMessage( onOffBase.getStateTerminal(),
+		ctu.sendMessage( onOffBase.getStateTerminal(),
 				ImmutableMap.of( SchedulerCategory.ENABLED_MESSAGE_PARAM, false ) );
 
 		assertThat( stateProperty.getValue(), is( false ) );
 
-		ComponentTestUtils.sendMessage( onOffBase.getStateTerminal(),
+		ctu.sendMessage( onOffBase.getStateTerminal(),
 				ImmutableMap.of( SchedulerCategory.ENABLED_MESSAGE_PARAM, true ) );
 
 		assertThat( stateProperty.getValue(), is( true ) );

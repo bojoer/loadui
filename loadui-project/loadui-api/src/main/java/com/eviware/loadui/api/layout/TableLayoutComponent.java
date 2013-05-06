@@ -15,24 +15,18 @@
  */
 package com.eviware.loadui.api.layout;
 
-import javax.swing.table.TableModel;
+import java.util.Collection;
+
+import com.eviware.loadui.api.property.Property;
 
 /**
- * A LayoutComponent which holds a TableModel value and makes it accessible from
- * the user interface.
+ * A LayoutComponent which holds a Collection of properties and makes it
+ * accessible from the user interface.
  * 
  * @author dain.nilsson
  */
 public interface TableLayoutComponent extends LayoutComponent
 {
-	/**
-	 * Accessor for the TableModel that is made available through this
-	 * LayoutComponent.
-	 * 
-	 * @return The bound TableModel
-	 */
-	public TableModel getTableModel();
-
 	/**
 	 * Each TableLayoutComponent may optionally have a label attached to it. If
 	 * the component does not have a label, this method will return null.
@@ -40,4 +34,11 @@ public interface TableLayoutComponent extends LayoutComponent
 	 * @return The label if one exists, otherwise null.
 	 */
 	public String getLabel();
+
+	/**
+	 * Accessor for the Collection of items displayed in the list
+	 * 
+	 * @return The Collection if one exists, otherwise null.
+	 */
+	public Collection<Property<String>> getRows();
 }

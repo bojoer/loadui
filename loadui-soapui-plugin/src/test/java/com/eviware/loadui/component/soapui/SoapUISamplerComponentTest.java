@@ -1,3 +1,5 @@
+package com.eviware.loadui.component.soapui;
+
 /*
  * Copyright 2013 SmartBear Software
  * 
@@ -13,8 +15,6 @@
  * express or implied. See the Licence for the specific language governing permissions and limitations
  * under the Licence.
  */
-import static com.eviware.loadui.util.component.ComponentTestUtils.getMessagesFrom;
-import static com.eviware.loadui.util.component.ComponentTestUtils.sendMessage;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -59,14 +59,16 @@ public class SoapUISamplerComponentTest
 	private ComponentItem component;
 	private InputTerminal triggerTerminal;
 	private OutputTerminal resultsTerminal;
+	private ComponentTestUtils ctu;
 
 	@Before
 	@SuppressWarnings( "unchecked" )
 	public void setup()
 	{
-		ComponentTestUtils.getDefaultBeanInjectorMocker();
+		ctu = new ComponentTestUtils();
+		ctu.getDefaultBeanInjectorMocker();
 
-		component = ComponentTestUtils.createComponentItem();
+		component = ctu.createComponentItem();
 		ComponentItem componentSpy = spy( component );
 		ComponentContext contextSpy = spy( component.getContext() );
 		doReturn( contextSpy ).when( componentSpy ).getContext();
@@ -88,7 +90,7 @@ public class SoapUISamplerComponentTest
 		when( projectMock.getProjectFile() ).thenReturn( new File( "temp.tmp" ) );
 
 		runner = new SoapUISamplerComponent( contextSpy );
-		ComponentTestUtils.setComponentBehavior( component, runner );
+		ctu.setComponentBehavior( component, runner );
 		contextSpy.setNonBlocking( true );
 		component = componentSpy;
 
@@ -101,7 +103,7 @@ public class SoapUISamplerComponentTest
 	{
 		setTestCase( "soapUI-loadUI-plugin-project.xml", "TestSuite 1", "TestCase 1" );
 
-		BlockingQueue<TerminalMessage> results = ComponentTestUtils.getMessagesFrom( resultsTerminal );
+		BlockingQueue<TerminalMessage> results = ctu.getMessagesFrom( resultsTerminal );
 		sendSimpleTrigger();
 
 		TerminalMessage message = results.poll( 5, TimeUnit.SECONDS );
@@ -118,7 +120,7 @@ public class SoapUISamplerComponentTest
 	{
 		setTestCase( "soapUI-loadUI-plugin-project.xml", "TestSuite 1", "TestCase 2" );
 
-		BlockingQueue<TerminalMessage> results = ComponentTestUtils.getMessagesFrom( resultsTerminal );
+		BlockingQueue<TerminalMessage> results = ctu.getMessagesFrom( resultsTerminal );
 		sendSimpleTrigger();
 		sendSimpleTrigger();
 		sendSimpleTrigger();
@@ -146,7 +148,7 @@ public class SoapUISamplerComponentTest
 	{
 		setTestCase( "soapUI-loadUI-plugin-project.xml", "TestSuite 1", "TestCase 5" );
 
-		BlockingQueue<TerminalMessage> results = getMessagesFrom( resultsTerminal );
+		BlockingQueue<TerminalMessage> results = ctu.getMessagesFrom( resultsTerminal );
 		sendSimpleTrigger();
 		sendSimpleTrigger();
 
@@ -160,7 +162,7 @@ public class SoapUISamplerComponentTest
 	{
 		setTestCase( "soapUI-loadUI-plugin-project.xml", "TestSuite 1", "TestCase 3" );
 
-		BlockingQueue<TerminalMessage> results = getMessagesFrom( resultsTerminal );
+		BlockingQueue<TerminalMessage> results = ctu.getMessagesFrom( resultsTerminal );
 		sendSimpleTrigger();
 
 		TerminalMessage message = results.poll( 5, TimeUnit.SECONDS );
@@ -173,7 +175,7 @@ public class SoapUISamplerComponentTest
 	{
 		setTestCase( "soapUI-loadUI-plugin-project.xml", "TestSuite 1", "TestCase 3" );
 		runner.setDisableSoapUIAssertions( true );
-		BlockingQueue<TerminalMessage> results = getMessagesFrom( resultsTerminal );
+		BlockingQueue<TerminalMessage> results = ctu.getMessagesFrom( resultsTerminal );
 		sendSimpleTrigger();
 
 		TerminalMessage message = results.poll( 5, TimeUnit.SECONDS );
@@ -185,9 +187,9 @@ public class SoapUISamplerComponentTest
 	public void fieldsInIncomingMessages_shouldOverride_testCaseProperties() throws Exception
 	{
 		setTestCase( "soapUI-loadUI-plugin-project.xml", "TestSuite 1", "TestCase 4" );
-		BlockingQueue<TerminalMessage> results = getMessagesFrom( resultsTerminal );
+		BlockingQueue<TerminalMessage> results = ctu.getMessagesFrom( resultsTerminal );
 
-		ComponentTestUtils.sendMessage( triggerTerminal, ImmutableMap.<String, Object> of( "hasBeenOverridden", "true" ) );
+		ctu.sendMessage( triggerTerminal, ImmutableMap.<String, Object> of( "hasBeenOverridden", "true" ) );
 
 		TerminalMessage message = results.poll( 5, TimeUnit.SECONDS );
 
@@ -201,7 +203,7 @@ public class SoapUISamplerComponentTest
 	public void ampersands_should_beEncoded_inRestRequests() throws Exception
 	{
 		setTestCase( "soapUI-loadUI-plugin-project.xml", "TestSuite 1", "TestCase 6" );
-		BlockingQueue<TerminalMessage> results = getMessagesFrom( resultsTerminal );
+		BlockingQueue<TerminalMessage> results = ctu.getMessagesFrom( resultsTerminal );
 
 		sendSimpleTrigger();
 
@@ -214,7 +216,7 @@ public class SoapUISamplerComponentTest
 	public void disablingTestSteps_should_work() throws Exception
 	{
 		setTestCase( "soapUI-loadUI-plugin-project.xml", "TestSuite 1", "TestCase 4" );
-		BlockingQueue<TerminalMessage> results = getMessagesFrom( resultsTerminal );
+		BlockingQueue<TerminalMessage> results = ctu.getMessagesFrom( resultsTerminal );
 
 		sendSimpleTrigger();
 
@@ -237,9 +239,9 @@ public class SoapUISamplerComponentTest
 	public void propertiesInSettings_shouldOverride_testCaseProperties() throws Exception
 	{
 		setTestCase( "soapUI-loadUI-plugin-project.xml", "TestSuite 1", "TestCase 4" );
-		BlockingQueue<TerminalMessage> results = getMessagesFrom( resultsTerminal );
+		BlockingQueue<TerminalMessage> results = ctu.getMessagesFrom( resultsTerminal );
 
-		ComponentTestUtils.sendMessage( triggerTerminal, ImmutableMap.<String, Object> of( "hasBeenOverridden", "true" ) );
+		ctu.sendMessage( triggerTerminal, ImmutableMap.<String, Object> of( "hasBeenOverridden", "true" ) );
 
 		TerminalMessage message = results.poll( 5, TimeUnit.SECONDS );
 
@@ -254,7 +256,7 @@ public class SoapUISamplerComponentTest
 			TimeoutException
 	{
 		setTestCase( "soapUI-loadUI-plugin-project.xml", "TestSuite 1", "TestCase 7" );
-		BlockingQueue<TerminalMessage> results = getMessagesFrom( resultsTerminal );
+		BlockingQueue<TerminalMessage> results = ctu.getMessagesFrom( resultsTerminal );
 
 		sendSimpleTrigger();
 
@@ -265,7 +267,7 @@ public class SoapUISamplerComponentTest
 
 	private void sendSimpleTrigger()
 	{
-		sendMessage( triggerTerminal,
+		ctu.sendMessage( triggerTerminal,
 				ImmutableMap.<String, Object> of( GeneratorCategory.TRIGGER_TIMESTAMP_MESSAGE_PARAM, 0 ) );
 	}
 

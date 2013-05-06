@@ -15,8 +15,17 @@
  */
 package com.eviware.loadui.util.groovy;
 
+import com.eviware.loadui.LoadUI;
+import com.eviware.loadui.api.testevents.MessageLevel;
+import com.eviware.loadui.api.testevents.TestEventManager;
+import com.eviware.loadui.util.BeanInjector;
+import com.google.common.base.Joiner;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import groovy.grape.Grape;
 import groovy.lang.GroovyClassLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -28,21 +37,10 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.eviware.loadui.LoadUI;
-import com.eviware.loadui.api.testevents.MessageLevel;
-import com.eviware.loadui.api.testevents.TestEventManager;
-import com.eviware.loadui.util.BeanInjector;
-import com.google.common.base.Joiner;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-
 /**
  * A GroovyClassLoader which can load dependencies dynamically from a Maven
  * repository using Grape.
- * 
+ *
  * @author dain.nilsson
  */
 public class GroovyEnvironmentClassLoader extends GroovyClassLoader
@@ -53,8 +51,12 @@ public class GroovyEnvironmentClassLoader extends GroovyClassLoader
 
 	public GroovyEnvironmentClassLoader( ClassLoader classLoader )
 	{
+		this( classLoader, new File( System.getProperty( LoadUI.LOADUI_HOME ), ".groovy" ) );
+	}
+
+	public GroovyEnvironmentClassLoader( ClassLoader classLoader, File groovyHome )
+	{
 		super( classLoader );
-		File groovyHome = new File( System.getProperty( LoadUI.LOADUI_HOME ), ".groovy" );
 		System.setProperty( "grape.root", groovyHome.getAbsolutePath() );
 	}
 
@@ -62,7 +64,7 @@ public class GroovyEnvironmentClassLoader extends GroovyClassLoader
 	 * Loads the given dependency, unless it is already loaded. If Grape should
 	 * fail, an attempt is made to manually load the JAR file from the file
 	 * system. This does not take into consideration any transitive dependencies.
-	 * 
+	 *
 	 * @param group
 	 * @param module
 	 * @param version

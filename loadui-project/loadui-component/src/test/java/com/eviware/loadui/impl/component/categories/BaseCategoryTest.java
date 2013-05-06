@@ -44,12 +44,14 @@ public class BaseCategoryTest
 {
 	private ComponentItem component;
 	private BaseCategory baseCategory;
+	private ComponentTestUtils ctu;
 
 	@Before
 	public void setup()
 	{
-		ComponentTestUtils.getDefaultBeanInjectorMocker();
-		component = ComponentTestUtils.createComponentItem();
+		ctu = new ComponentTestUtils();
+		ctu.getDefaultBeanInjectorMocker();
+		component = ctu.createComponentItem();
 		baseCategory = new BaseCategory( component.getContext() )
 		{
 			@Override
@@ -64,7 +66,7 @@ public class BaseCategoryTest
 				return null;
 			}
 		};
-		ComponentTestUtils.setComponentBehavior( component, baseCategory );
+		ctu.setComponentBehavior( component, baseCategory );
 	}
 
 	@Test
@@ -92,7 +94,7 @@ public class BaseCategoryTest
 		when( callable.call() ).thenReturn( 7 );
 
 		BaseCategory baseCategorySpy = spy( baseCategory );
-		ComponentTestUtils.setComponentBehavior( component, baseCategorySpy );
+		ctu.setComponentBehavior( component, baseCategorySpy );
 
 		final CountDownLatch messageAwaiter = new CountDownLatch( 1 );
 

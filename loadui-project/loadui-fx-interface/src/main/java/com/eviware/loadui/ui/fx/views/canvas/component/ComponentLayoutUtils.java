@@ -75,6 +75,14 @@ import com.google.common.base.Objects;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
+/**
+ * Used to generate the component UI widgets (such as knobs and textfields) from
+ * LayoutComponents.
+ * 
+ * @author maximilian.skog
+ * 
+ */
+
 public class ComponentLayoutUtils
 {
 	protected static final Logger log = LoggerFactory.getLogger( ComponentLayoutUtils.class );

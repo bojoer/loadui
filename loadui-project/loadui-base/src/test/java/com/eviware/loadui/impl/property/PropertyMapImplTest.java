@@ -68,7 +68,19 @@ public class PropertyMapImplTest
 
 		p.setValue( "Hello world" );
 
+		assertEquals( "test", config.getPropertyList().get( 0 ).getKey() );
+
 		assertThat( p.getValue(), is( "Hello world" ) );
+	}
+
+	@Test
+	public void shouldDeleteProperty()
+	{
+		map.createProperty( "test", String.class );
+		assertEquals( 1, map.size() );
+		map.remove( "test" );
+		assertEquals( 0, config.getPropertyList().size() );
+		assertEquals( 0, map.size() );
 	}
 
 	@SuppressWarnings( "unchecked" )

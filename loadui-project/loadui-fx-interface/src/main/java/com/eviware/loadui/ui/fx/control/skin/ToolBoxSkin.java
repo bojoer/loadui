@@ -20,7 +20,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
-import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.ObjectBinding;
 import javafx.beans.property.ObjectProperty;
@@ -60,7 +59,6 @@ import org.slf4j.LoggerFactory;
 import com.eviware.loadui.ui.fx.control.ScrollableList;
 import com.eviware.loadui.ui.fx.control.ToolBox;
 import com.eviware.loadui.ui.fx.control.behavior.ToolBoxBehavior;
-import com.eviware.loadui.ui.fx.views.analysis.linechart.LineChartViewNode;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
 import com.sun.javafx.scene.control.behavior.BehaviorBase;
@@ -68,7 +66,7 @@ import com.sun.javafx.scene.control.skin.SkinBase;
 
 public class ToolBoxSkin<E extends Node> extends SkinBase<ToolBox<E>, BehaviorBase<ToolBox<E>>>
 {
-	protected static final Logger log = LoggerFactory.getLogger( LineChartViewNode.class );
+	protected static final Logger log = LoggerFactory.getLogger( ToolBoxSkin.class );
 
 	private final ObservableMap<String, ToolBoxCategory> categoriesByName = FXCollections.observableHashMap();
 	private final Comparator<ToolBoxCategory> categoryComparator = new Comparator<ToolBoxCategory>()
@@ -264,8 +262,10 @@ public class ToolBoxSkin<E extends Node> extends SkinBase<ToolBox<E>, BehaviorBa
 			setLeft( itemHolder );
 
 			expanderButton = ButtonBuilder.create().build();
+
 			expanderButton.getStyleClass().addAll( "expander-button", "toolbar-button" );
 			expanderButton.setGraphic( RegionBuilder.create().styleClass( "graphic" ).build() );
+
 			expanderButton.disableProperty().bind( Bindings.size( categoryItems ).lessThan( 2 ) );
 			expanderButton.setOnAction( new EventHandler<ActionEvent>()
 			{
@@ -275,7 +275,7 @@ public class ToolBoxSkin<E extends Node> extends SkinBase<ToolBox<E>, BehaviorBa
 					expander.show( ToolBoxCategory.this );
 				}
 			} );
-			
+
 			setAlignment( expanderButton, Pos.CENTER_RIGHT );
 			setRight( expanderButton );
 

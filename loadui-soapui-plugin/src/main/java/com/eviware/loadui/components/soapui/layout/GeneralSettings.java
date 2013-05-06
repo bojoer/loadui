@@ -228,8 +228,6 @@ public class GeneralSettings
 				log.debug( "Reload TestCase because disableSoapUIAssertions changed." );
 				testCaseRunner.reloadTestCase();
 			}
-
 		}
-
 	}
 }
