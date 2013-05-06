@@ -51,7 +51,7 @@
 }
 
 .detachable-tab{
-	-fx-padding: 0 0 -1 18;
+	-fx-padding: 0 0 0 18;
 	-fx-translate-y: -5; 
 }
 
