@@ -260,7 +260,7 @@ public class SoapUISamplerComponentTest
 			TimeoutException
 	{
 		setTestCase( "soapUI-loadUI-plugin-project.xml", "TestSuite 1", "TestCase 7" );
-		BlockingQueue<TerminalMessage> results = ComponentTestUtils.getMessagesFrom( resultsTerminal );
+		BlockingQueue<TerminalMessage> results = ctu.getMessagesFrom( resultsTerminal );
 
 		sendSimpleTrigger();
 
