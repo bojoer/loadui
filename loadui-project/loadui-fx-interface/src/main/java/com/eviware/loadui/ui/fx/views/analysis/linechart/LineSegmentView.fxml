@@ -16,10 +16,9 @@
 			AnchorPane.bottomAnchor="9" height="9" width="9" />
 		<Label fx:id="segmentLabel" AnchorPane.leftAnchor="27"
 			AnchorPane.topAnchor="6" text="Label" />
-		<HBox AnchorPane.topAnchor="0" AnchorPane.rightAnchor="0" spacing="4" >
+		<HBox AnchorPane.topAnchor="0" AnchorPane.rightAnchor="0" spacing="6" >
 			<Separator orientation="vertical" />
-			<MenuButton fx:id="menuButton" minWidth="${segmentLabel.width+40}" minHeight="27" />
+			<MenuButton fx:id="menuButton" minWidth="40" minHeight="27" />
 		</HBox>
-
 	</AnchorPane>
 </fx:root>
