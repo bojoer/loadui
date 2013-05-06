@@ -33,6 +33,7 @@ import javafx.scene.control.ButtonBuilder;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.PaneBuilder;
+import javafx.scene.layout.RegionBuilder;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.StackPaneBuilder;
 import javafx.stage.Stage;
@@ -119,7 +120,7 @@ public class DetachableTab extends Tab
 			}
 		} );
 
-		Button detachButton = ButtonBuilder.create().styleClass( "styleable-graphic" )
+		Button detachButton = ButtonBuilder.create().id( "detachButton" ).graphic( RegionBuilder.create().styleClass( "graphic" ).build() )
 				.onAction( new EventHandler<ActionEvent>()
 				{
 					@Override
@@ -128,6 +129,7 @@ public class DetachableTab extends Tab
 						setDetached( !isDetached() );
 					}
 				} ).build();
+		
 		detachButton.visibleProperty().bind( selectedProperty() );
 		setGraphic( detachButton );
 	}

@@ -4,9 +4,12 @@
 	<groupId>com.eviware.loadui</groupId>
 	<artifactId>loadui-project</artifactId>
 	<packaging>pom</packaging>
-	<version>2.5.2-SNAPSHOT</version>
+	<version>2.5.4-SNAPSHOT</version>
 	<name>loadUI Project</name>
 	<url>http://www.loadui.org</url>
+	<scm>
+   		<developerConnection>scm:git:ssh://git@github.com:SmartBear/loadui.git</developerConnection>
+  	</scm>
 	<properties>
 		<mavenBundlePluginVersion>2.3.7</mavenBundlePluginVersion>
 		<jettyVersion>7.5.4.v20111024</jettyVersion>

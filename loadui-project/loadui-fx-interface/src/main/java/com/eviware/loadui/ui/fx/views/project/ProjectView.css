@@ -51,8 +51,8 @@
 }
 
 .detachable-tab{
-	-fx-padding: 0 0 0 18;
-	-fx-translate-y: -6; 
+	-fx-padding: 0 0 -1 18;
+	-fx-translate-y: -5; 
 }
 
 .detachable-tab .tab-label {
@@ -61,7 +61,8 @@
 	-fx-padding: -2 2 0 0;
 }
 
-.detachable-tab .styleable-graphic {
+.detachable-tab #detachButton {
+	-fx-border-color: transparent; 
 	-color-button-gradient: transparent;
 	-color-button-border: transparent;
 	-color-arrow: -fx-body-color;
@@ -78,17 +79,17 @@
 		4;
 	
 	-fx-background-insets: 
-		-3 -2 5 1,
-		-2 -1 6 2;	
+		-3 -2 3 1,
+		-2 -1 4 2;	
 }
 
-.detachable-tab .styleable-graphic:hover {
+.detachable-tab #detachButton:hover {
 	-color-button-gradient:  linear-gradient(to bottom, derive(-base-color-mid, 50%),  derive(-base-color-mid, 10%));
 	-color-button-border: #666666;
 	-color-arrow: #666666;
 }
 
-.detachable-tab .graphic {
+.detachable-tab #detachButton .graphic {
 	-fx-background-color: -color-arrow;
 	-fx-background-insets: 1 2 9 5;
 	-fx-padding: 0 6;

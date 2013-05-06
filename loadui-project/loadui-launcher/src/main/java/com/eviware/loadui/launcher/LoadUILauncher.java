@@ -97,7 +97,7 @@ public abstract class LoadUILauncher
 		Application.launch( FXApplication.class, args );
 	}
 
-	private static void loadPropertiesFile()
+	public static void loadPropertiesFile()
 	{
 		Properties systemProperties = new Properties();
 		try (FileInputStream fis = new FileInputStream( "conf" + File.separator + "system.properties" ))

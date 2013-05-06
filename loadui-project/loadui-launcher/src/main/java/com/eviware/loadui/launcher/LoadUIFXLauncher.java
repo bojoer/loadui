@@ -90,6 +90,8 @@ public class LoadUIFXLauncher extends LoadUILauncher
 			if( "true".equals( agent ) )
 				setDefaultSystemProperty( "loadui.instance", "agent" );
 
+			loadPropertiesFile();
+
 			if( "false".equals( noFx ) )
 			{
 				try
@@ -134,7 +136,7 @@ public class LoadUIFXLauncher extends LoadUILauncher
 				} );
 			}
 
-			System.out.println( "start called!" );
+			System.out.println( "start called" );
 
 			Task<Void> task = new Task<Void>()
 			{

@@ -1,3 +1,4 @@
+package com.eviware.loadui.component.soapui;
 /*
  * Copyright 2013 SmartBear Software
  * 
@@ -252,6 +253,20 @@ public class SoapUISamplerComponentTest
 		TerminalMessage message = results.poll( 5, TimeUnit.SECONDS );
 
 		assertThat( message.get( "hasBeenOverridden" ), is( ( Object )"true" ) );
+	}
+
+	@Test
+	public void propertyTransfer_should_work() throws InterruptedException, URISyntaxException, ExecutionException,
+			TimeoutException
+	{
+		setTestCase( "soapUI-loadUI-plugin-project.xml", "TestSuite 1", "TestCase 7" );
+		BlockingQueue<TerminalMessage> results = ComponentTestUtils.getMessagesFrom( resultsTerminal );
+
+		sendSimpleTrigger();
+
+		TerminalMessage message = results.poll( 5, TimeUnit.SECONDS );
+
+		assertThat( message.get( "myTestCaseProperty" ), is( ( Object )"response value" ) );
 	}
 
 	private void sendSimpleTrigger()

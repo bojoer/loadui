@@ -20,6 +20,7 @@ import static com.eviware.loadui.ui.fx.util.ObservableLists.ofCollection;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.transform;
 import static com.eviware.loadui.ui.fx.util.Properties.forLabel;
 import static com.google.common.base.Strings.isNullOrEmpty;
+import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.StringProperty;
@@ -110,6 +111,21 @@ public class StatisticTab extends Tab implements Releasable
 
 	public void setCurrentExecution( final ObservableValue<Execution> currentExecution )
 	{
+		currentExecution.addListener( new InvalidationListener()
+		{
+
+			@Override
+			public void invalidated( Observable arg0 )
+			{
+				// good for general debugging purposes
+				if( currentExecution.getValue() != null )
+					log.info( "currentExecution set to: {} with id: {} ", currentExecution.getValue().getLabel(),
+							currentExecution.getValue().getId() );
+				else
+					log.info( "currentExecution set to: null" );
+			}
+		} );
+
 		chartGroupViews = transform( fx( ofCollection( page ) ), new Function<ChartGroup, ChartGroupView>()
 		{
 			@Override

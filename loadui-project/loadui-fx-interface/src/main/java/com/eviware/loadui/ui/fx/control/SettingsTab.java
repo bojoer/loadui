@@ -17,14 +17,17 @@ package com.eviware.loadui.ui.fx.control;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBuilder;
 import javafx.scene.control.Label;
@@ -54,6 +57,7 @@ import com.google.common.collect.Iterables;
 
 public class SettingsTab extends Tab
 {
+	private final Set<Callable<Node>> nodeLoaders = new HashSet<>();
 	private final BiMap<Field<?>, Property<?>> fieldToLoaduiProperty = HashBiMap.create();
 	private final BiMap<Field<?>, FieldSaveHandler<?>> fieldToFieldSaveHandler = HashBiMap.create();
 	private final BiMap<Field<?>, javafx.beans.property.Property<?>> fieldToJavafxProperty = HashBiMap.create();
@@ -263,6 +267,16 @@ public class SettingsTab extends Tab
 		}
 	}
 
+	public void addNode( Node node )
+	{
+		vBox.getChildren().add( node );
+	}
+
+	public void addNode( Callable<Node> nodeLoader )
+	{
+		nodeLoaders.add( nodeLoader );
+	}
+
 	@SuppressWarnings( "unchecked" )
 	public void refreshFields()
 	{
@@ -306,6 +320,18 @@ public class SettingsTab extends Tab
 			else
 			{
 				//do nothing.
+			}
+		}
+		for( Callable<Node> nodeLoader : nodeLoaders )
+		{
+			vBox.getChildren().clear();
+			try
+			{
+				vBox.getChildren().add( nodeLoader.call() );
+			}
+			catch( Exception e )
+			{
+				e.printStackTrace();
 			}
 		}
 	}
@@ -434,6 +460,18 @@ public class SettingsTab extends Tab
 			return this;
 		}
 
+		public Builder node( Node node )
+		{
+			tab.addNode( node );
+			return this;
+		}
+
+		public Builder node( Callable<Node> nodeLoader )
+		{
+			tab.addNode( nodeLoader );
+			return this;
+		}
+
 		public Builder id( String id )
 		{
 			tab.setId( id );
@@ -446,4 +484,5 @@ public class SettingsTab extends Tab
 			return tab;
 		}
 	}
+
 }

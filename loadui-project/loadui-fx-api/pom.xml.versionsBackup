@@ -1,0 +1,68 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<parent>
+		<artifactId>loadui-project</artifactId>
+		<groupId>com.eviware.loadui</groupId>
+		<version>2.5.2-SNAPSHOT</version>
+		<relativePath>../</relativePath>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>loadui-fx-api</artifactId>
+	<packaging>bundle</packaging>
+	<name>loadUI JavaFX 2 API</name>
+	<description>loadUI Graphical User Interface API using JavaFX 2</description>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<version>${mavenBundlePluginVersion}</version>
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<Export-Package>com.eviware.loadui.ui.fx.api*</Export-Package>
+						<Embed-Dependency>*;scope=provided</Embed-Dependency>
+					</instructions>
+				</configuration>
+			</plugin>
+			
+		</plugins>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<excludes>
+					<exclude>**/*.css</exclude>
+				</excludes>
+			</resource>
+		</resources>
+	</build>
+	<dependencies>
+		<dependency>
+			<groupId>com.oracle</groupId>
+			<artifactId>javafx-runtime</artifactId>
+			<version>2.2</version>
+			<systemPath>${env.JAVA_HOME}/jre/lib/jfxrt.jar</systemPath>
+			<scope>system</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.eviware.loadui</groupId>
+			<artifactId>loadui-api</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.eviware.loadui</groupId>
+			<artifactId>loadui-utils</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.eviware.loadui</groupId>
+			<artifactId>loadui-layout</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.eviware.loadui</groupId>
+			<artifactId>loadui-reporting</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+	</dependencies>
+</project>

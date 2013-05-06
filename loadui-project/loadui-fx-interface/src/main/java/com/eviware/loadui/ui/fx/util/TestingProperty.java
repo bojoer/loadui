@@ -75,8 +75,9 @@ public class TestingProperty<T> implements Property<T>
 		if( value == null )
 			this.value = null;
 		else
-			this.value = type.isInstance( value ) ? type.cast( value ) : BeanInjector.getBean( ConversionService.class )
-					.convert( value, type );
+			this.value = type.cast( value );
+//			type.isInstance( value ) ? type.cast( value ) : BeanInjector.getBean( ConversionService.class )
+//					.convert( value, type );
 	}
 
 	@Override

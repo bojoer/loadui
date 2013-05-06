@@ -31,6 +31,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
+import javafx.scene.Node;
+
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 
@@ -65,11 +67,11 @@ import com.eviware.loadui.components.soapui.utils.SoapUiProjectUtils;
 import com.eviware.loadui.impl.component.ActivityStrategies;
 import com.eviware.loadui.impl.component.categories.RunnerBase;
 import com.eviware.loadui.impl.layout.ActionLayoutComponentImpl;
+import com.eviware.loadui.impl.layout.LayoutComponentImpl;
 import com.eviware.loadui.impl.layout.LayoutContainerImpl;
 import com.eviware.loadui.impl.layout.PropertyLayoutComponentImpl;
 import com.eviware.loadui.impl.layout.SeparatorLayoutComponentImpl;
 import com.eviware.loadui.impl.layout.SettingsLayoutContainerImpl;
-import com.eviware.loadui.impl.layout.TableLayoutComponentImpl;
 import com.eviware.loadui.integration.SoapUIProjectLoader;
 import com.eviware.soapui.SoapUIExtensionClassLoader;
 import com.eviware.soapui.SoapUIExtensionClassLoader.SoapUIClassLoaderState;
@@ -89,6 +91,7 @@ import com.eviware.soapui.model.support.ModelSupport;
 import com.eviware.soapui.model.support.TestRunListenerAdapter;
 import com.eviware.soapui.model.testsuite.LoadTestRunListener;
 import com.eviware.soapui.model.testsuite.SamplerTestStep;
+import com.eviware.soapui.model.testsuite.TestCase;
 import com.eviware.soapui.model.testsuite.TestCaseRunContext;
 import com.eviware.soapui.model.testsuite.TestCaseRunner;
 import com.eviware.soapui.model.testsuite.TestRunner;
@@ -191,7 +194,6 @@ public class SoapUISamplerComponent extends RunnerBase
 	private final AtomicLong sampleIndex = new AtomicLong();
 	private final ActionLayoutComponentImpl runOnceAction;
 	private final ActionLayoutComponentImpl openInSoapUIAction;
-	private final TestCasePropertiesTableModel testCasePropertiesTableModel;
 
 	private final GeneralSettings generalSettings;
 
@@ -219,7 +221,6 @@ public class SoapUISamplerComponent extends RunnerBase
 	public SoapUISamplerComponent( ComponentContext context )
 	{
 		super( context );
-
 		context.setHelpUrl( "http://www.loadui.org/Runners/soapui-runner-component.html" );
 		errorTerminal = context.createOutput( "samplerErrors", "Errors", "Outputs the result of each failed request." );
 		Map<String, Class<?>> resultSignature = Maps.newHashMap();
@@ -232,7 +233,6 @@ public class SoapUISamplerComponent extends RunnerBase
 		projectFileWorkingCopy = context.createProperty( PROJECT_FILE_WORKING_COPY, File.class );
 		projectRelativePath = context.createProperty( PROJECT_RELATIVE_PATH, String.class, null, false );
 
-		testCasePropertiesTableModel = TestCasePropertiesTableModel.newInstance( context );
 		testSteps_isDisabled = context.createProperty( DISABLED_TESTSTEPS, String.class, "" );
 
 		ProjectItem project = context.getCanvas().getProject();
@@ -350,20 +350,7 @@ public class SoapUISamplerComponent extends RunnerBase
 
 		layout.add( wrapperBox );
 
-		context.addSettingsTab( generalSettings.buildLayout() );
-
-		// testcase properties tab
-		SettingsLayoutContainerImpl settingsTestCaseTab = new SettingsLayoutContainerImpl( "Properties", "", "",
-				"align top", "" );
-
-		settingsTestCaseTab.add( new TableLayoutComponentImpl( testCasePropertiesTableModel,
-				"Override TestCase Properties", "" ) );
-
-		testCasePropertiesTableModel.loadOverridingProperties( getContext().getProperties() );
-
-		context.addSettingsTab( settingsTestCaseTab );
-		SettingsLayoutContainer advancedSettings = generateAdvancedTab();
-		context.addSettingsTab( advancedSettings );
+		clearAndCreateSettingTabs( context );
 		context.setLayout( layout );
 
 		executor = Executors.newSingleThreadScheduledExecutor( new ThreadFactoryBuilder().setDaemon( true )
@@ -393,6 +380,23 @@ public class SoapUISamplerComponent extends RunnerBase
 				}
 			}
 		} );
+	}
+
+	private void clearAndCreateSettingTabs( ComponentContext context )
+	{
+		context.clearSettingsTabs();
+		context.addSettingsTab( generalSettings.buildLayout() );
+		// testcase properties tab
+		SettingsLayoutContainerImpl settingsTestCaseTab = new SettingsLayoutContainerImpl( "Properties", "", "",
+				"align top", "" );
+
+		HashMap<String, Callable<Node>> nodeMap = new HashMap<>();
+		nodeMap.put( "component", TestCasePropertiesNode.createTableView( this, context ) );
+
+		settingsTestCaseTab.add( new LayoutComponentImpl( nodeMap ) );
+
+		context.addSettingsTab( settingsTestCaseTab );
+		context.addSettingsTab( generateAdvancedTab() );
 	}
 
 	private SettingsLayoutContainer generateAdvancedTab()
@@ -516,7 +520,7 @@ public class SoapUISamplerComponent extends RunnerBase
 	{
 		projectFileWorkingCopy.setValue( null );
 		projectRelativePath.setValue( null );
-		runner.setNewTestCase( null );
+		runner.setTestCase( null );
 		runner.setTestSuite( null );
 		projectSelector.reset();
 	}
@@ -530,6 +534,11 @@ public class SoapUISamplerComponent extends RunnerBase
 		}
 	}
 
+	public TestCase getTestCase()
+	{
+		return soapuiTestCase;
+	}
+
 	private final class PropertyChangedListener implements EventHandler<PropertyEvent>
 	{
 		@Override
@@ -540,6 +549,7 @@ public class SoapUISamplerComponent extends RunnerBase
 				Property<?> property = event.getProperty();
 				if( property == projectFileWorkingCopy && !reloadingProject )
 				{
+					log.debug( "setting project" );
 					setProject( projectFileWorkingCopy.getValue() );
 				}
 				else if( property == testSteps_isDisabled )
@@ -716,7 +726,8 @@ public class SoapUISamplerComponent extends RunnerBase
 			{
 				testCase = getTestCase();
 				testCaseRevisions.put( testCase, testCaseRevisionCount );
-				testCasePropertiesTableModel.overrideTestCaseProperties( testCase, triggerMessage );
+				TestCasePropertiesNode.overrideTestCaseProperties( testCase, getContext().getProperties() );
+				TestCasePropertiesNode.overrideTestCaseProperties( testCase, triggerMessage );
 				testCase.addTestRunListener( testStepNotifier );
 
 				//Use existing context if available
@@ -754,7 +765,10 @@ public class SoapUISamplerComponent extends RunnerBase
 
 					// only put back if it hasn't changed because of a reload
 					if( testCaseRevisions.get( testCase ) == testCaseRevisionCount )
+					{
+						SoapUiProjectUtils.clearResponse( testCase );
 						testCasePool.add( testCase );
+					}
 					else
 					{
 						log.debug( "Dropping testCase" );
@@ -802,6 +816,20 @@ public class SoapUISamplerComponent extends RunnerBase
 			testSteps_isDisabled_Map.clear();
 			testSteps_isDisabled.setValue( "" );
 			setTestCase( testCaseName );
+
+			clearOveriddableProperties( getContext() );
+		}
+
+		private void clearOveriddableProperties( ComponentContext context )
+		{
+			for( Property<?> property : context.getProperties() )
+			{
+				if( property.getKey().startsWith( TestCasePropertiesNode.OVERRIDING_VALUE_PREFIX ) )
+				{
+					context.deleteProperty( property.getKey() );
+				}
+
+			}
 		}
 
 		private synchronized WsdlTestCase getTestCase()
@@ -835,7 +863,7 @@ public class SoapUISamplerComponent extends RunnerBase
 			loader.removeProjectUpdateListener( this );
 
 			for( WsdlTestCaseRunner runnerToCancel : runners )
-				runnerToCancel.cancel( "Releasing component in loadUI" );
+				runnerToCancel.cancel( "Releasing SoapUIcomponent in loadUI" );
 
 			for( WsdlTestCase tc : testCasePool )
 				tc.release();
@@ -946,11 +974,8 @@ public class SoapUISamplerComponent extends RunnerBase
 
 		private synchronized void setTestCase( @CheckForNull final String testCaseName )
 		{
-			log.debug( "setting testcase: {}", testCaseName );
 			if( testSuite == null || testCaseName == null )
 			{
-				testCasePool.clear();
-				testStepsTableModel.clearTestCase();
 				projectSelector.setTestCases( new String[0] );
 				return;
 			}
@@ -978,7 +1003,7 @@ public class SoapUISamplerComponent extends RunnerBase
 				// testCase has changed
 				soapuiTestCase.getId();
 				SoapUiProjectUtils.makeAllDataSourcesShared( soapuiTestCase );
-				SoapUiProjectUtils.enableResponseDiscarding( soapuiTestCase );
+				SoapUiProjectUtils.disableAllDataSourceLoops( soapuiTestCase );
 
 				testCasePool.clear();
 				config = null;
@@ -1006,7 +1031,7 @@ public class SoapUISamplerComponent extends RunnerBase
 			}
 			testStepsInvocationCount.invalidateAll();
 			testStepsTableModel.updateTestCase( soapuiTestCase );
-			testCasePropertiesTableModel.putTestCaseProperties( runner.getTestCase().getPropertyList() );
+			//			testCasePropertiesNode.putTestCaseProperties( runner.getTestCase().getPropertyList() ); //TODO
 
 			for( Map.Entry<String, Value<Number>> entry : totalValues.entrySet() )
 			{

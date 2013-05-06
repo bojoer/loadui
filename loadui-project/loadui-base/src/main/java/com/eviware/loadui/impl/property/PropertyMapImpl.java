@@ -129,6 +129,18 @@ public class PropertyMapImpl implements PropertyMap
 		{
 			firePropertyEvent( property, PropertyEvent.Event.DELETED, property.getValue() );
 		}
+
+		int i = 0;
+		for( PropertyConfig p : config.getPropertyList() )
+		{
+			if( p.getKey().equals( key ) )
+			{
+				config.removeProperty( i );
+				break;
+			}
+			i++ ;
+		}
+
 		return property;
 	}
 

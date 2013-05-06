@@ -36,6 +36,7 @@ import com.eviware.soapui.impl.wsdl.teststeps.HttpTestRequestStep;
 import com.eviware.soapui.impl.wsdl.teststeps.JdbcRequestTestStep;
 import com.eviware.soapui.impl.wsdl.teststeps.RestTestRequest;
 import com.eviware.soapui.impl.wsdl.teststeps.RestTestRequestStep;
+import com.eviware.soapui.impl.wsdl.teststeps.WsdlDataSourceLoopTestStep;
 import com.eviware.soapui.impl.wsdl.teststeps.WsdlDataSourceTestStep;
 import com.eviware.soapui.impl.wsdl.teststeps.WsdlMessageAssertion;
 import com.eviware.soapui.impl.wsdl.teststeps.WsdlTestRequest;
@@ -129,20 +130,26 @@ public class SoapUiProjectUtils
 			s.setShared( true );
 	}
 
-	public static void enableResponseDiscarding( @Nonnull WsdlTestCase testCase )
+	public static void disableAllDataSourceLoops( @Nonnull WsdlTestCase testCase )
+	{
+		for( WsdlDataSourceLoopTestStep s : testCase.getTestStepsOfType( WsdlDataSourceLoopTestStep.class ) )
+			s.setDisabled( true );
+	}
+
+	public static void clearResponse( @Nonnull WsdlTestCase testCase )
 	{
 		for( TestStep s : testCase.getTestStepList() )
 		{
 			if( s instanceof AMFRequestTestStep )
-				( ( AMFRequestTestStep )s ).setDiscardResponse( true );
+				( ( AMFRequestTestStep )s ).setResponse( null, null );
 			else if( s instanceof HttpTestRequestStep )
-				( ( HttpTestRequestStep )s ).getTestRequest().setDiscardResponse( true );
+				( ( HttpTestRequestStep )s ).getTestRequest().setResponse( null, null );
 			else if( s instanceof JdbcRequestTestStep )
-				( ( JdbcRequestTestStep )s ).setDiscardResponse( true );
+				( ( JdbcRequestTestStep )s ).setResponse( null, null );
 			else if( s instanceof RestTestRequestStep )
-				( ( RestTestRequestStep )s ).getTestRequest().setDiscardResponse( true );
+				( ( RestTestRequestStep )s ).getTestRequest().setResponse( null, null );
 			else if( s instanceof WsdlTestRequestStep )
-				( ( WsdlTestRequestStep )s ).getTestRequest().setDiscardResponse( true );
+				( ( WsdlTestRequestStep )s ).getTestRequest().setResponse( null, null );
 		}
 	}
 

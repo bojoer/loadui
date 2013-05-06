@@ -162,7 +162,7 @@ public class NotificationPanelTest
 
 		Node panelNode = getOrFail( ".notification-panel" );
 
-		controller.click( "#statsTab" ).click( "#statsTab .styleable-graphic" );
+		controller.click( "#statsTab" ).click( "#statsTab .graphic" );
 
 		class DetachedAnalysisViewHolder
 		{
