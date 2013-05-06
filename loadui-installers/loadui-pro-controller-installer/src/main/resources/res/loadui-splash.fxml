@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?language javascript?>
+
 <?import javafx.scene.Scene?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.StackPane?>
@@ -23,7 +25,10 @@
 			<HBox spacing="4" alignment="top_right">
 				<Label style="-fx-text-fill: white; -fx-font-weight: bold;"
 					text="LoadUI Pro" />
-				<Label style="-fx-text-fill: white;" text="2.5.1" />
+				<Label fx:id="versionLabel" style="-fx-text-fill: white;" />
+				<fx:script>
+					versionLabel.text = java.lang.System.getProperty( "loadui.version" );
+				</fx:script>
 			</HBox>
 			<Label style="-fx-text-fill: white; -fx-text-alignment: right" text="Copyright SmartBear Software&#10;&#10;www.loadui.org&#10;www.smartbear.com" />
 		</VBox>
