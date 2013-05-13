@@ -11,17 +11,14 @@
 <fx:root type="javafx.scene.layout.StackPane" xmlns:fx="http://javafx.com/fxml"
 	styleClass="slim-icon">
 	<AnchorPane styleClass="line-segment-view">
-<!-- 		<Rectangle AnchorPane.leftAnchor="9" AnchorPane.topAnchor="3" -->
-<!-- 			AnchorPane.bottomAnchor="3" height="21" width="21" fill="red" /> -->
 		<Rectangle fx:id="legendColorRectangle"
 			AnchorPane.leftAnchor="9" AnchorPane.topAnchor="9"
 			AnchorPane.bottomAnchor="9" height="9" width="9" />
 		<Label fx:id="segmentLabel" AnchorPane.leftAnchor="27"
 			AnchorPane.topAnchor="6" text="Label" />
-		<HBox AnchorPane.topAnchor="0" AnchorPane.rightAnchor="0" spacing="4" >
+		<HBox AnchorPane.topAnchor="0" AnchorPane.rightAnchor="0" spacing="6" >
 			<Separator orientation="vertical" />
-			<MenuButton fx:id="menuButton" minWidth="50" minHeight="27" />
+			<MenuButton fx:id="menuButton" minWidth="40" minHeight="27" />
 		</HBox>
-
 	</AnchorPane>
 </fx:root>

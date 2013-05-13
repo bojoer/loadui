@@ -65,13 +65,20 @@ public class SegmentBox extends VBox
 	public SegmentBox()
 	{
 		getStyleClass().setAll( styleClass );
-
+		setMinWidth( 170 );
 		scaling.set( false );
 
 		statisticsLabel = LabelBuilder.create().text( "Statistics" ).id( "statistics-label" ).alignment( Pos.CENTER_LEFT )
 				.build();
-		
-		expandCollapseSegments = ToggleButtonBuilder.create().id( "expander" ).graphic( HBoxBuilder.create().children( RegionBuilder.create().styleClass("graphic").build(), RegionBuilder.create().styleClass("secondary-graphic").build() ).build() )
+
+		expandCollapseSegments = ToggleButtonBuilder
+				.create()
+				.id( "expander" )
+				.graphic(
+						HBoxBuilder
+								.create()
+								.children( RegionBuilder.create().styleClass( "graphic" ).build(),
+										RegionBuilder.create().styleClass( "secondary-graphic" ).build() ).build() )
 				.alignment( Pos.CENTER_RIGHT ).build();
 
 		AnchorPane topBox = AnchorPaneBuilder.create().children( statisticsLabel, expandCollapseSegments ).build();
@@ -95,6 +102,19 @@ public class SegmentBox extends VBox
 			if( node instanceof LineSegmentView )
 			{
 				LineSegmentView view = ( LineSegmentView )node;
+				if( getMinWidth() < view.getWidth() )
+				{
+					if( minWidthProperty().isBound() )
+					{
+						minWidthProperty().unbind();
+						minWidthProperty().bind( view.widthProperty() );
+					}
+					else
+					{
+						minWidthProperty().bind( view.widthProperty() );
+					}
+				}
+
 				view.scalingProperty().bind( scaling );
 				view.setContainer( this );
 			}

@@ -15,7 +15,6 @@
  */
 package com.eviware.loadui.ui.fx.views.analysis.linechart;
 
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.MenuButton;
@@ -45,8 +44,10 @@ public class EventSegmentView extends SegmentView<TestEventSegment>
 		super.init();
 		segmentLabel.setText( segment.getTypeLabel() + " " + segment.getSourceLabel() );
 
-		segmentLabel.minWidthProperty().bind( Bindings.when( isExpandedProperty ).then( 250 ).otherwise( 180 ) );
-		segmentLabel.maxWidthProperty().bind( Bindings.when( isExpandedProperty ).then( 320 ).otherwise( 200 ) );
+		prefWidthProperty().bind( segmentLabel.widthProperty().add( 85 ) );
+		minWidthProperty().bind( segmentLabel.widthProperty().add( 85 ) );
+		segmentLabel.maxWidth( 400 );
+		segmentLabel.wrapTextProperty().set( true );
 
 		setMenuItemsFor( menuButton );
 	}
