@@ -502,7 +502,12 @@ public class SoapUISamplerComponent extends RunnerBase
 
 	public void setTestStepIsDisabled( TestStep step, boolean isDisabled )
 	{
-		testSteps_isDisabled_Map.put( escapeTestStepName( step.getName() ), Boolean.toString( isDisabled ) );
+		setTestStepIsDisabled( step.getName(), isDisabled );
+	}
+
+	public void setTestStepIsDisabled( String stepName, boolean isDisabled )
+	{
+		testSteps_isDisabled_Map.put( escapeTestStepName( stepName ), Boolean.toString( isDisabled ) );
 		testSteps_isDisabled.setValue( mapJoiner.join( testSteps_isDisabled_Map ) );
 	}
 

@@ -15,6 +15,10 @@
  */
 package com.eviware.loadui.launcher.util;
 
+import static com.sun.javafx.PlatformUtil.isLinux;
+import static com.sun.javafx.PlatformUtil.isWindows;
+import static java.lang.Runtime.getRuntime;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -114,13 +118,13 @@ public class ErrorHandler
 			String classPath = ".;lib/*;";
 			String java = "java";
 
-			if( PlatformUtil.isWindows() )
+			if( isWindows() )
 			{
 				File f = new File( "jre/bin/java.exe" );
 				if( f.exists() )
 					java = "jre/bin/java.exe";
 			}
-			else if( PlatformUtil.isLinux() )
+			else if( isLinux() )
 			{
 				classPath = classPath.replace( ";", ":" );
 				File f = new File( "jre/bin/java" );
@@ -130,7 +134,7 @@ public class ErrorHandler
 
 			try
 			{
-				Runtime.getRuntime().exec(
+				getRuntime().exec(
 						java + " -Xms128m -Xmx1024m -XX:MaxPermSize=256m -cp " + classPath
 								+ " com.javafx.main.Main --nofx=false" );
 			}

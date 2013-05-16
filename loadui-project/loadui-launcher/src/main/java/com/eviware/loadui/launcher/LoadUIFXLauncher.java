@@ -130,13 +130,10 @@ public class LoadUIFXLauncher extends LoadUILauncher
 					@Override
 					public void handle( WindowEvent event )
 					{
-						System.out.println( "closing splash!" );
 						splash.close();
 					}
 				} );
 			}
-
-			System.out.println( "start called" );
 
 			Task<Void> task = new Task<Void>()
 			{

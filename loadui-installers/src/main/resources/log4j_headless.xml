@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/"
+	debug="false">
+
+	<!-- =================== -->
+	<!-- Appenders -->
+	<!-- =================== -->
+
+	<appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
+		<errorHandler class="org.apache.log4j.helpers.OnlyOnceErrorHandler" />
+		<param name="Target" value="System.out" />
+		<param name="Threshold" value="DEBUG" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<!-- The default pattern: Date Priority [Category] Message\n -->
+			<param name="ConversionPattern" value="%d{ABSOLUTE} %-5p [%c{1}] %m%n" />
+		</layout>
+	</appender>
+
+	<appender name="FILE" class="org.apache.log4j.RollingFileAppender">
+		<errorHandler class="org.apache.log4j.helpers.OnlyOnceErrorHandler" />
+		<param name="File" value="loadui.log" />
+		<param name="Threshold" value="DEBUG" />
+		<param name="Append" value="false" />
+		<param name="MaxFileSize" value="5000KB" />
+		<param name="MaxBackupIndex" value="50" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d %-5p [%c{1}] %m%n" />
+		</layout>
+	</appender>
+
+	<appender name="ERRORFILE" class="org.apache.log4j.RollingFileAppender">
+		<errorHandler class="org.apache.log4j.helpers.OnlyOnceErrorHandler" />
+		<param name="File" value="loadui-errors.log" />
+		<param name="Threshold" value="DEBUG" />
+		<param name="Append" value="true" />
+		<param name="MaxFileSize" value="5000KB" />
+		<param name="MaxBackupIndex" value="50" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d %-5p [%c{1}] %m%n" />
+		</layout>
+	</appender>
+
+	<!-- =============== -->
+	<!-- Loggers -->
+	<!-- =============== -->
+
+	<logger name="com.eviware.loadui" additivity="false">
+		<level value="INFO" />
+		<appender-ref ref="CONSOLE" />
+	</logger>
+
+	<logger name="org.cometd.client.BayeuxClient">
+		<level value="ERROR" />
+		<appender-ref ref="CONSOLE" />
+	</logger>
+
+	<logger name="com.eviware.loadui.impl.messaging.BayeuxServiceServerEndpoint">
+		<level value="ERROR" />
+		<appender-ref ref="CONSOLE" />
+	</logger>
+
+	<logger name="org.eclipse.jetty.util.log" additivity="false">
+		<level value="ERROR" />
+		<appender-ref ref="CONSOLE" />
+	</logger>
+
+	<logger name="com.sun.embeddedswing.EmbeddedEventQueue"
+		additivity="false">
+		<level value="OFF" />
+		<appender-ref ref="CONSOLE" />
+	</logger>
+
+	<!-- <logger name="loadui.errorlog"> <level value="DEBUG" /> <appender-ref 
+		ref="ERRORFILE" /> </logger> -->
+
+	<root>
+		<priority value="WARN" />
+		<appender-ref ref="CONSOLE" />
+	</root>
+
+</log4j:configuration>

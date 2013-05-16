@@ -64,7 +64,14 @@ public class MainWindow
 			}
 		} );
 
-		loadDimensions();
+		Platform.runLater( new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				loadDimensions();
+			}
+		} );
 		return this;
 	}
 

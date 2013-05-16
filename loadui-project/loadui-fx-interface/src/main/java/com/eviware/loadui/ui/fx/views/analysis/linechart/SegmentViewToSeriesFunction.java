@@ -16,6 +16,7 @@
 package com.eviware.loadui.ui.fx.views.analysis.linechart;
 
 import static com.eviware.loadui.ui.fx.util.ObservableLists.fromExpression;
+import static javafx.collections.FXCollections.observableArrayList;
 
 import java.util.LinkedList;
 import java.util.concurrent.Callable;
@@ -62,8 +63,8 @@ public final class SegmentViewToSeriesFunction implements Function<SegmentView<?
 
 	protected static final Logger log = LoggerFactory.getLogger( SegmentViewToSeriesFunction.class );
 
-	public SegmentViewToSeriesFunction( ObservableValue<Execution> execution, Group<Observable> observablesUpdatedByUser,
-			Observable timePulse, Observable position, ExecutionChart chart )
+	public SegmentViewToSeriesFunction( ObservableValue<Execution> execution,
+			Group<Observable> observablesUpdatedByUser, Observable timePulse, Observable position, ExecutionChart chart )
 	{
 		this.execution = execution;
 		this.observablesUpdatedByUser = observablesUpdatedByUser;
@@ -77,10 +78,9 @@ public final class SegmentViewToSeriesFunction implements Function<SegmentView<?
 	{
 		if( segment instanceof LineSegmentView )
 			return lineSegmentToSeries( ( LineSegmentView )segment );
-		else if( segment instanceof EventSegmentView )
+		if( segment instanceof EventSegmentView )
 			return eventSegmentToSeries( ( EventSegmentView )segment );
-		else
-			throw new RuntimeException( "Unsupported Segment type" );
+		throw new RuntimeException( "Unsupported Segment type" );
 	}
 
 	private static final Function<DataPoint<?>, XYChart.Data<Long, Number>> datapointToChartdata = new Function<DataPoint<?>, XYChart.Data<Long, Number>>()
@@ -231,7 +231,7 @@ public final class SegmentViewToSeriesFunction implements Function<SegmentView<?
 							}
 						} );
 			}
-		}, FXCollections.observableArrayList( observablesUpdatedByUser, position, timePulse ) ) );
+		}, observableArrayList( observablesUpdatedByUser, position, timePulse ) ) );
 
 		series.nodeProperty().addListener( new ChangeListener<Node>()
 		{

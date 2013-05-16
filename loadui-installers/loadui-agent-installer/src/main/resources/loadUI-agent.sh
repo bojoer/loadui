@@ -40,4 +40,4 @@ JAVA="jre/bin/java"
 
 JAVA_OPTS="-Xms128m -Xmx768m -XX:MaxPermSize=128m"
 
-$JAVA $JAVA_OPTS -cp "$LOADUI_RUNNER_CLASSPATH" com.eviware.loadui.launcher.LoadUILauncher -Dloadui.instance=agent --nofx=true -nofx "$@"
+$JAVA $JAVA_OPTS -cp "$LOADUI_RUNNER_CLASSPATH" com.javafx.main.Main --nofx=true --agent=true -nofx -Dlog4j.configuration=log4j_headless.xml "$@"
