@@ -23,7 +23,6 @@ import org.junit.experimental.categories.Category;
 import com.eviware.loadui.test.categories.IntegrationTest;
 
 /**
- * 
  * @author henrik.olsson
  */
 @Category( IntegrationTest.class )

@@ -17,45 +17,18 @@ package com.eviware.loadui.test.ui.fx.states;
 
 import static com.eviware.loadui.ui.fx.util.test.TestFX.findAll;
 
-import java.util.Set;
 import java.util.concurrent.Callable;
-
-import javafx.scene.Node;
 
 import com.eviware.loadui.test.TestState;
 import com.eviware.loadui.test.ui.fx.GUI;
+import com.eviware.loadui.ui.fx.util.test.ComponentHandle;
+import com.eviware.loadui.ui.fx.util.test.LoadUiRobot;
+import com.eviware.loadui.ui.fx.util.test.LoadUiRobot.Component;
 import com.eviware.loadui.ui.fx.util.test.TestFX;
 import com.eviware.loadui.util.test.TestUtils;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
 
 public class SimpleWebTestState extends TestState
 {
-	private static final Predicate<Node> WEB_RUNNER = new Predicate<Node>()
-	{
-		@Override
-		public boolean apply( Node input )
-		{
-			if( input.getClass().getSimpleName().equals( "ComponentDescriptorView" ) )
-			{
-				return input.toString().equals( "Web Page Runner" );
-			}
-			return false;
-		}
-	};
-	private static final Predicate<Node> FIXED_RATE = new Predicate<Node>()
-	{
-		@Override
-		public boolean apply( Node input )
-		{
-			if( input.getClass().getSimpleName().equals( "ComponentDescriptorView" ) )
-			{
-				return input.toString().equals( "Fixed Rate" );
-			}
-			return false;
-		}
-	};
-
 	public static final SimpleWebTestState STATE = new SimpleWebTestState();
 
 	private SimpleWebTestState()
@@ -71,34 +44,15 @@ public class SimpleWebTestState extends TestState
 	@Override
 	protected void enterFromParent() throws Exception
 	{
-		log.debug( "Creating simple web test." );
 		TestFX controller = GUI.getController();
+		LoadUiRobot robot = LoadUiRobot.usingController( controller );
 
-		controller.click( "#Runners.category .expander-button" ).drag( WEB_RUNNER ).by( 100, 150 ).drop();
-		TestUtils.awaitCondition( new Callable<Boolean>()
-		{
-			@Override
-			public Boolean call() throws Exception
-			{
-				return TestFX.findAll( ".canvas-object-view" ).size() == 1;
-			}
-		}, 25000 );
+		ComponentHandle webRunner = robot.createComponent( Component.WEB_PAGE_RUNNER );
 		controller.click( ".component-view .text-field" ).type( "www.google.com" );
 
-		controller.click( "#Generators.category .expander-button" ).drag( FIXED_RATE ).by( 200, -150 ).drop();
-		TestUtils.awaitCondition( new Callable<Boolean>()
-		{
-			@Override
-			public Boolean call() throws Exception
-			{
-				return TestFX.findAll( ".canvas-object-view" ).size() == 2;
-			}
-		} );
+		ComponentHandle fixedRate = robot.createComponent( Component.FIXED_RATE_GENERATOR );
 
-		Set<Node> outputs = TestFX.findAll( ".canvas-object-view .terminal-view.output-terminal" );
-		Set<Node> inputs = TestFX.findAll( ".canvas-object-view .terminal-view.input-terminal" );
-
-		controller.drag( Iterables.get( outputs, 2 ) ).to( Iterables.get( inputs, 0 ) );
+		fixedRate.connectTo( webRunner );
 	}
 
 	@Override
