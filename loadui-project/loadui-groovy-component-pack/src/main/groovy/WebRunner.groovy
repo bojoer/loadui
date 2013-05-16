@@ -300,6 +300,7 @@ addEventListener( PropertyEvent ) { event ->
 
 //Layout
 layout {
+	
 	box( layout:'wrap 2, ins 0' ) {
 		property( property:url, label:'Web Page Address', constraints: 'w 300!, spanx 2', style: '-fx-font-size: 17pt' )
 		action( label:'Open in Browser', constraints:'spanx 2', action: {
@@ -308,6 +309,7 @@ layout {
 		runAction = action( label:'Run Once', action: { triggerAction( 'SAMPLE' ) } )
 		action( label:'Abort Running Pages', action: { triggerAction( 'CANCEL' ) } )
 	}
+	
 	separator(vertical:true)
 	box( layout:'wrap, ins 0' ){
 		box( widget:'display', layout:'wrap 3, align right' ) {
@@ -325,7 +327,7 @@ layout {
 			failedResetValue = failureCounter.get()
 			triggerAction('CANCEL')
 		}, constraints:'align right' )
-	}
+	} 
 }
 
 //Compact Layout
@@ -347,6 +349,7 @@ settings( label: "Basic" ) {
 	property( property: maxQueueSize, label: 'Max Queue' )
 	property( property: errorCodeList, label: 'Error Codes that Count as Failures', constraints:'w 200!')
 	property( property: countDiscarded, label: 'Count Discarded Requests as Failed' )
+	
 }
 
 settings( label: "Authentication" ) {
