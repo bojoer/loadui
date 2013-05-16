@@ -28,10 +28,10 @@ import com.eviware.loadui.util.BeanInjector;
 
 public class LoadUiMainWindowCreator
 {
-
 	private static final Logger log = LoggerFactory.getLogger( LoadUiMainWindowCreator.class );
 
-	public LoadUiMainWindowCreator( WorkspaceProvider workspaceProvider, TestEventManager tem, FxExecutionsInfo executionsInfo )
+	public LoadUiMainWindowCreator( WorkspaceProvider workspaceProvider, TestEventManager tem,
+			FxExecutionsInfo executionsInfo )
 	{
 		boolean isHeadless = LoadUI.isHeadless();
 		log.info( "JavaFX2 bundle started, is Headless mode ? " + isHeadless );
